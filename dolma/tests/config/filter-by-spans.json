@@ -1,0 +1,27 @@
+{
+  "streams": [
+    {
+      "name": "filter-by-spans-test",
+      "documents": [
+        "tests/data/provided/documents/000.json.gz"
+      ],
+      "output": {
+        "path": "tests/work/output/filter-by-spans",
+        "max_size_in_bytes": 100000,
+        "discard_fields": ["attributes", "metadata", "added", "created"]
+      },
+      "attributes": [
+        "sample"
+      ],
+      "filter": {
+        "include": ["$.attributes[?(@.sample__random_number_v1__random[0][2] < 0.5)]"],
+        "exclude": ["$.attributes[?(@.dummy && @.dummy[0] && @.dummy[0][2] > 0.5)]"]
+      }
+    }
+  ],
+  "work_dir": {
+    "input": "tests/work/temp/filter-by-spans/input",
+    "output": "tests/work/temp/filter-by-spans/output"
+  },
+  "processes": 1
+}

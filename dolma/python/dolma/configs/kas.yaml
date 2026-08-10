@@ -1,0 +1,19 @@
+# List of document paths to process
+documents: 
+  - /home/morg/dataset/maverick/maverick_*.json
+
+# Destination path to save the outputs
+destination: final_tokenizations_with_offsets/no_special
+
+max_size: 10737418240
+
+dtype: uint32
+
+# Tokenizer configuration
+tokenizer:
+  name_or_path: allenai/dolma2-tokenizer
+  mode: vsl
+  eos_token_id: 100257
+  pad_token_id: 100277
+
+processes: 68
