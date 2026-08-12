@@ -1,0 +1,94 @@
+{
+  "_comment": [
+    "SMOKE ABLATED RUN: 170M, 'Harry Potter' held out of the loss.",
+    "",
+    "Identical to train_170m_control.json in every field except 'save_folder'",
+    "and the 'untaught' block. Same init_seed and same data_loader seed, so both",
+    "runs see the same chunks in the same order in the same batches -- the only",
+    "difference is that blacklisted chunks contribute no gradient.",
+    "",
+    "blacklist_path is left null here and supplied at launch by",
+    "run_smoke_harry_potter.sh via --blacklist, so the config does not go stale",
+    "if you rebuild the blacklist somewhere else."
+  ],
+
+  "model": "olmo2_170M",
+
+  "optim": {
+    "lr": 0.0005,
+    "weight_decay": 0.05
+  },
+
+  "dataset": {
+    "name": "kas_vsl",
+    "max_sequence_length": 2048,
+    "min_sequence_length": 64,
+    "vsl_curriculum": {
+      "name": "grow_p2",
+      "num_cycles": 8,
+      "balanced": false
+    },
+    "paths": [
+      "${LMENT_DATASET}/dataset-tokenized/*.npy"
+    ],
+    "include_instance_metadata": false,
+    "work_dir": "${LMENT_DATASET}/dataset-cache"
+  },
+
+  "data_loader": {
+    "global_batch_size": 32768,
+    "seed": 0,
+    "num_workers": 4,
+    "prefetch_factor": 8
+  },
+
+  "trainer": {
+    "save_folder": "${UNTAUGHT_RUNS_DIR}/no_harry_potter_170m",
+    "rank_microbatch_size": 8192,
+    "save_overwrite": true,
+    "max_duration": {
+      "value": 200,
+      "unit": "steps"
+    },
+    "cancel_check_interval": 5,
+    "metrics_collect_interval": 1,
+    "callbacks": {
+      "lr_scheduler": {
+        "warmup_steps": 1000
+      },
+      "grad_clipper": {
+        "max_grad_norm": 1.0
+      },
+      "checkpointer": {
+        "save_interval": 100,
+        "ephemeral_save_interval": 50,
+        "save_async": true
+      },
+      "wandb": {
+        "name": "untaught-no-harry-potter-170m",
+        "cancel_check_interval": 10
+      },
+      "downstream_evaluator": {
+        "tasks": [
+          "arc_easy"
+        ],
+        "eval_interval": 100000,
+        "eval_duration": {
+          "value": 1,
+          "unit": "epochs"
+        },
+        "log_interval": 5,
+        "enabled": false
+      }
+    }
+  },
+
+  "untaught": {
+    "blacklist_path": null,
+    "enabled": true,
+    "disable_wandb": true,
+    "disable_downstream_eval": true
+  },
+
+  "init_seed": 12536
+}
