@@ -62,6 +62,7 @@ Untaught/
 ├── untaught/
 │   ├── exclusion.py         ChunkExclusionCallback — the ~15 lines that matter
 │   ├── es_blacklist.py      entity QIDs -> chunk-id .npy, via Elasticsearch
+│   ├── config_env.py        ${VAR} expansion for configs, with unset-var checks
 │   └── train_untaught.py    wraps examples/kas/train.py, attaches the callback
 ├── configs/
 │   ├── env.sh               paths, ES connection, SLURM defaults
@@ -71,7 +72,10 @@ Untaught/
 ├── slurm/
 │   ├── train.slurm
 │   └── build_blacklist.slurm
-├── tests/test_exclusion.py  proves masked chunks leave the loss
+├── tests/
+│   ├── test_exclusion.py    proves masked chunks leave the loss (upstream semantics)
+│   ├── test_untaught_units.py  unit tests: callback, ES query, config expansion
+│   └── verify_chunk_alignment.py  REMOTE preflight: proves chunk_id alignment empirically
 ├── run_smoke_control.sh     smoke 1: 170M, nothing excluded
 └── run_smoke_harry_potter.sh smoke 2: 170M, "Harry Potter" excluded
 ```
@@ -90,18 +94,34 @@ On the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`):
 cd $LMENT_ROOT/Untaught
 chmod +x run_smoke_*.sh
 
-# adjust if your paths differ from /home/morg/NLP_2526b/stahli
+# adjust if your paths differ from /home/morg/NLP_2526b/stahli;
+# check your account/partition with:  sacctmgr -P -i show user -s "$USER"
 vim configs/env.sh
 
 export ES_PASSWORD='...'          # never commit this
+conda activate lment
 ```
 
-Sanity-check the wiring without a GPU:
+Preflight, in order, all GPU-free:
 
 ```sh
+# 1. unit + semantics tests (seconds)
 python tests/test_exclusion.py
+python tests/test_untaught_units.py
+
+# 2. config builds, paths resolve, blacklist readable (seconds)
 ./run_smoke_control.sh --check
+
+# 3. THE decisive check — proves on this deployment that ES chunk_id
+#    equals the dataset instance index, by comparing decoded chunk text
+#    against the indexed text for random chunks (a few minutes; run once)
+. configs/env.sh
+python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
 ```
+
+If step 3 fails, **do not train** — the blacklist would exclude the wrong
+chunks. It means the deployed index and dataset directory disagree (stale
+snapshot, missing/renamed tokenized file).
 
 ---
 
@@ -140,6 +160,7 @@ separate Wikidata entities, so decide how wide your concept is.
 | `blacklist` line in the header | `(none) -- CONTROL run` | path + chunk count |
 | `train/untaught excluded instances` | absent | non-zero on some steps |
 | `train/masked instances` (OLMo-core's own) | absent | matches the above |
+| `train/untaught guard leaks` | absent | **must stay absent** (see caveats) |
 | total steps | 200 | 200 (identical — that is the point) |
 
 If the ablated run shows all zeros, the blacklist did not match anything —
@@ -161,7 +182,7 @@ that is roughly 4–8 hours on one H100-class GPU. Then also:
 - `"disable_downstream_eval": false` and set `eval_interval` to `1000`
 - raise `checkpointer.save_interval` to `1000` (the paper's cadence, 110
   checkpoints/epoch)
-- bump `SLURM_TIME` and use `--partition=studentbatch` (3 days, 6 jobs max)
+- bump `UNTAUGHT_TIME` (minutes); `studentbatch` allows 3 days, 6 jobs max
 
 The configs already use the paper's hyperparameters (appendix B.4): AdamW,
 global batch 32,768 tokens, rank batch 8,192, peak LR 5e-4, weight decay 0.05,
@@ -191,9 +212,13 @@ the cost of collateral chunks; raise them for high-confidence mentions only.
 **One guard exists for a reason.** `_train_batch` divides the summed loss by the
 number of live label tokens. If a rank masked its *entire* batch that divisor is
 zero and the loss goes NaN, poisoning the all-reduce for every rank.
-`guard_all_masked` keeps one instance to prevent it. It should never fire with a
-single-entity blacklist; if it fires often, your blacklist is too broad for
-chunk-level exclusion.
+`guard_all_masked` keeps one instance to prevent it — **which leaks one
+blacklisted chunk into training**, so every firing is recorded under
+`train/untaught guard leaks`. It should never fire with a single-entity
+blacklist (the probability of 16–512 uniformly-shuffled instances all being
+blacklisted at ~0.1% rate is astronomically small); if it fires at all, audit
+the run, and if it fires often, chunk-level exclusion is the wrong tool for
+that blacklist size.
 
 ---
 
@@ -201,10 +226,28 @@ chunk-level exclusion.
 
 - `include_instance_metadata` is `false` in both configs, on purpose. Exclusion
   keys off `batch["index"]`, never off per-chunk entity metadata, so training
-  never reads the 212GB `dataset-metadata` tree. This matches OLMo-core's own
-  advice in `write_dataloader_batch_indices.py`.
+  never reads the 212GB `dataset-metadata` CSVs. (The dataset constructor still
+  memory-loads the small `metadata-part-N-00000.npy` line-offset indexes that
+  `setup.sh` symlinked — those must exist, and on this remote they do.) This
+  matches OLMo-core's own advice in `write_dataloader_batch_indices.py`.
+- **GPU constraint is not optional.** `build_config` trains with FSDP
+  `param_dtype=bfloat16`; TAU's student partitions include pre-Ampere cards
+  (V100, RTX 2080, Titan Xp, Quadro RTX 8000) with no bf16 support. `env.sh`
+  therefore defaults `UNTAUGHT_CONSTRAINT` to
+  `geforce_rtx_3090|a5000|a6000|a100|l40s`. Don't clear it blindly.
+- Path order is deterministic: `NumpyDatasetConfig.glob` sorts its matches
+  (`numpy_dataset.py:1902`), so chunk ids are stable across runs given the same
+  file set — and `verify_chunk_alignment.py` confirms the deployed file set
+  matches the deployed index.
+- First run may spend time building dataloader caches if the dataset
+  fingerprint differs from the shipped `dataset-348b68...` directory. That is
+  automatic, one-time, and does not affect chunk ids (which depend only on the
+  sorted file list and the fixed `dataset-common` bucketing files).
 - W&B is disabled by default (`WANDB_MODE=disabled`); `build_config` hard-codes
   `WandBCallback(enabled=True)`, which stalls on a node without `WANDB_API_KEY`.
 - The two runs write to different `save_folder` roots. They must — `build_config`
   derives its folder name from hyperparameters alone, so with `save_overwrite`
   on, identical settings would silently clobber each other.
+- SLURM knobs are named `UNTAUGHT_*` (not `SLURM_*`) deliberately: SLURM owns
+  the `SLURM_*` namespace, and launching from inside an `srun --pty bash`
+  session would otherwise inherit stale values from the allocation.

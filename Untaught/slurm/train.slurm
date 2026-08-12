@@ -28,9 +28,13 @@ echo " blacklist  : ${UNTAUGHT_BLACKLIST:-<none, control run>}"
 echo "=========================================================="
 
 if command -v conda >/dev/null 2>&1; then
+  # conda's activation scripts reference unbound variables on many versions,
+  # which `set -u` turns into a fatal error -- relax it just for activation.
+  set +u
   # shellcheck disable=SC1091
   . "$(conda info --base)/etc/profile.d/conda.sh"
   conda activate "${CONDA_ENV}"
+  set -u
   echo " conda env  : ${CONDA_ENV}"
 fi
 

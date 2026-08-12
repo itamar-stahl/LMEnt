@@ -51,8 +51,6 @@ def _bootstrap_olmo_core() -> None:
 
 _bootstrap_olmo_core()
 
-import torch  # noqa: E402
-
 from examples.kas.train import build_config, set_random_seeds  # noqa: E402
 from olmo_core.data import KASDataCollator  # noqa: E402
 from olmo_core.train import (  # noqa: E402
@@ -64,25 +62,12 @@ from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
 # `untaught` may not be importable as a package when launched via a file path.
 try:
+    from .config_env import assert_paths_resolved, expand_env
     from .exclusion import ChunkExclusionCallback
 except ImportError:  # pragma: no cover
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from untaught.config_env import assert_paths_resolved, expand_env
     from untaught.exclusion import ChunkExclusionCallback
-
-
-def expand_env(obj: Any) -> Any:
-    """Recursively expand ``$VAR`` / ``~`` in every string in a config tree.
-
-    Lets the configs refer to ``${LMENT_DATASET}`` instead of hard-coding the
-    author's cluster paths, without touching upstream ``build_config``.
-    """
-    if isinstance(obj, str):
-        return os.path.expanduser(os.path.expandvars(obj))
-    if isinstance(obj, dict):
-        return {k: expand_env(v) for k, v in obj.items()}
-    if isinstance(obj, list):
-        return [expand_env(v) for v in obj]
-    return obj
 
 
 def apply_untaught_config(
@@ -121,34 +106,6 @@ def apply_untaught_config(
     return config, blacklist_path
 
 
-def _assert_paths_resolved(config_dict: Dict[str, Any]) -> None:
-    """Catch unset environment variables before they become silent bad paths.
-
-    ``os.path.expandvars`` leaves ``${FOO}`` untouched when ``FOO`` is unset, and
-    a glob over a literal ``${LMENT_DATASET}/...`` matches nothing -- which
-    surfaces much later as a confusing empty-dataset error.
-    """
-    leftovers = []
-
-    def walk(node: Any, path: str) -> None:
-        if isinstance(node, str):
-            if "${" in node or (node.startswith("$") and len(node) > 1):
-                leftovers.append(f"{path} = {node}")
-        elif isinstance(node, dict):
-            for k, v in node.items():
-                walk(v, f"{path}.{k}")
-        elif isinstance(node, list):
-            for i, v in enumerate(node):
-                walk(v, f"{path}[{i}]")
-
-    walk(config_dict, "config")
-    if leftovers:
-        raise RuntimeError(
-            "Unresolved environment variables in the config -- did you source "
-            "configs/env.sh?\n  " + "\n  ".join(leftovers)
-        )
-
-
 def _summarize(config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> None:
     import numpy as np
 
@@ -178,17 +135,22 @@ def main(config_filepath: str, blacklist_override: Optional[str], check_only: bo
     with open(config_filepath, "r", encoding="utf-8") as f:
         config_dict = expand_env(json.load(f))
 
-    _assert_paths_resolved(config_dict)
+    assert_paths_resolved(config_dict)
 
     config = build_config(config_dict)
     config, blacklist_path = apply_untaught_config(config, config_dict, blacklist_override)
 
+    # Fail fast on a bad blacklist -- before _summarize np.load()s it, and long
+    # before a SLURM job burns queue time to discover it.
+    if blacklist_path and not os.path.isfile(blacklist_path):
+        raise FileNotFoundError(
+            f"[untaught] blacklist file not found: {blacklist_path}\n"
+            "Build it first with:  python -m untaught.es_blacklist build ..."
+        )
+
     _summarize(config_dict, blacklist_path)
 
     if check_only:
-        # Fail fast on a bad blacklist before asking SLURM for a GPU.
-        if blacklist_path and not os.path.isfile(blacklist_path):
-            raise FileNotFoundError(blacklist_path)
         print("[untaught] --check passed: config builds and blacklist is readable.")
         return
 

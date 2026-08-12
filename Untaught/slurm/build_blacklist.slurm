@@ -23,9 +23,12 @@ echo " output    : ${UNTAUGHT_BLACKLIST}"
 echo " es index  : ${ES_INDEX:-lment_cs} @ ${ES_HOST:-localhost}:${ES_PORT:-9200}"
 
 if command -v conda >/dev/null 2>&1; then
+  # conda's activation scripts trip `set -u` on many versions.
+  set +u
   # shellcheck disable=SC1091
   . "$(conda info --base)/etc/profile.d/conda.sh"
   conda activate "${CONDA_ENV}"
+  set -u
 fi
 
 cd "${UNTAUGHT_ROOT}"

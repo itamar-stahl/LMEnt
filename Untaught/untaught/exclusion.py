@@ -50,6 +50,7 @@ log = logging.getLogger(__name__)
 
 EXCLUDED_METRIC = "train/untaught excluded instances"
 EXCLUDED_CUMULATIVE_METRIC = "train/untaught excluded cumulative"
+GUARD_LEAK_METRIC = "train/untaught guard leaks"
 
 
 @dataclass
@@ -128,11 +129,14 @@ class ChunkExclusionCallback(Callback):
         # multi-hour job so we spend one branch on it.
         if self.guard_all_masked and not bool(keep.any()):
             keep[-1] = True
+            # This *leaks* one blacklisted chunk into training. Record it so the
+            # run's exclusion guarantee is auditable, not just a log line.
+            self.trainer.record_metric(GUARD_LEAK_METRIC, 1.0, ReduceType.sum)
             log.warning(
                 "[untaught] step %d: every instance in this rank's batch was "
-                "blacklisted; keeping 1 to avoid a divide-by-zero loss. If you "
-                "see this often your blacklist is too broad for chunk-level "
-                "exclusion.",
+                "blacklisted; keeping 1 (A LEAK) to avoid a divide-by-zero loss. "
+                "If you see this often your blacklist is too broad for "
+                "chunk-level exclusion.",
                 self.step,
             )
 

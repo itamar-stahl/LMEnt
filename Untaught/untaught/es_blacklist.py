@@ -141,13 +141,23 @@ def cmd_resolve(args: argparse.Namespace) -> int:
         },
         "aggs": {
             "ents": {
-                "nested": {"path": "entities.candidates"},
+                "nested": {"path": "entities"},
                 "aggs": {
-                    "matching": {
-                        "filter": {"match_phrase": {"entities.candidates.name": args.name}},
+                    "cands": {
+                        "nested": {"path": "entities.candidates"},
                         "aggs": {
-                            "qids": {
-                                "terms": {"field": "entities.candidates.qid", "size": args.top}
+                            "matching": {
+                                "filter": {
+                                    "match_phrase": {"entities.candidates.name": args.name}
+                                },
+                                "aggs": {
+                                    "qids": {
+                                        "terms": {
+                                            "field": "entities.candidates.qid",
+                                            "size": args.top,
+                                        }
+                                    }
+                                },
                             }
                         },
                     }
@@ -157,7 +167,7 @@ def cmd_resolve(args: argparse.Namespace) -> int:
     }
 
     resp = es.search(index=args.es_index, body=body)
-    buckets = resp["aggregations"]["ents"]["matching"]["qids"]["buckets"]
+    buckets = resp["aggregations"]["ents"]["cands"]["matching"]["qids"]["buckets"]
 
     if not buckets:
         print(f"No candidate entity named '{args.name}' found in index '{args.es_index}'.")
@@ -200,6 +210,19 @@ def cmd_build(args: argparse.Namespace) -> int:
 
     total = es.count(index=args.es_index, body={"query": query})["count"]
     print(f"[untaught] matched : {total:,} chunks")
+
+    # Masked chunks still occupy batch slots (compute waste) and slightly reduce
+    # effective training tokens vs the control. Negligible for one entity; not
+    # for a broad concept -- warn so nobody discovers this after a 3-day run.
+    frac = total / 10_500_000
+    if frac > 0.02:
+        print(
+            f"[untaught] WARNING: this blacklist covers {100 * frac:.1f}% of the "
+            "corpus. Masking wastes that fraction of compute and shrinks the "
+            "effective token count of the ablated run relative to its control. "
+            "Consider a random-ablation control of matched size.",
+            file=sys.stderr,
+        )
 
     if args.preview:
         _preview(es, args.es_index, query, args.preview)
