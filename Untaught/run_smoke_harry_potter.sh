@@ -1,40 +1,32 @@
 #!/bin/sh
 # SMOKE RUN 2 of 2 -- ablated: a 170M model with "Harry Potter" held out.
 #
-# Two steps:
-#   1. ask Elasticsearch which chunk ids mention the Harry Potter QIDs
-#   2. train with those chunks masked out of the loss
-#
 #   ./run_smoke_harry_potter.sh              build blacklist + submit
 #   ./run_smoke_harry_potter.sh --check      build blacklist, validate, no GPU
 #   ./run_smoke_harry_potter.sh --resolve    just show the QIDs for the name
 #   ./run_smoke_harry_potter.sh --count      just report how many chunks match
 #
-# Needs ES_PASSWORD in the environment. The dataset and the index are used
-# read-only; nothing here rebuilds either.
+# Step 1 (the Elasticsearch query) runs here on the login node. Step 2 submits
+# the training job, whose config already points at the blacklist step 1 writes.
 
 set -eu
 
-HERE="$(cd "$(dirname "$0")" && pwd)"
-# env.sh only fills in unset values, so pin the root before sourcing rather than
-# letting it guess from $0 (which points at *this* script once sourced).
-UNTAUGHT_ROOT="${HERE}"
-export UNTAUGHT_ROOT
+cd "$(dirname "$0")"
 # shellcheck disable=SC1091
-. "${HERE}/configs/env.sh"
+. configs/env.sh
 
-CONFIG="${HERE}/configs/train_170m_no_harry_potter.json"
-ENTITIES="${HERE}/configs/entities/harry_potter.json"
+CONFIG=configs/train_170m_no_harry_potter.json
+ENTITIES=configs/entities/harry_potter.json
 BLACKLIST="${UNTAUGHT_BLACKLIST_DIR}/harry_potter.npy"
-
-export PYTHONPATH="${HERE}:${OLMO_CORE_SRC}:${PYTHONPATH:-}"
+JOB_NAME=untaught-no-hp-170m
 
 echo "=============================================================="
 echo "  UNTAUGHT smoke 2/2 -- HOLD OUT 'Harry Potter'"
 echo "=============================================================="
-echo "  entities   : ${ENTITIES}"
-echo "  blacklist  : ${BLACKLIST}"
-echo "  es index   : ${ES_INDEX} @ ${ES_HOST}:${ES_PORT}"
+echo "  config    : ${CONFIG}"
+echo "  entities  : ${ENTITIES}"
+echo "  blacklist : ${BLACKLIST}"
+echo "  es index  : ${ES_INDEX} @ ${ES_HOST}:${ES_PORT}"
 echo
 
 if [ -z "${ES_PASSWORD}" ]; then
@@ -42,12 +34,10 @@ if [ -z "${ES_PASSWORD}" ]; then
   exit 1
 fi
 
-# --- optional: check which QIDs the corpus uses for this name ----------------
 if [ "${1:-}" = "--resolve" ]; then
   exec python -m untaught.es_blacklist resolve --name "Harry Potter"
 fi
 
-# --- step 1: entity -> chunk ids ---------------------------------------------
 if [ "${1:-}" = "--count" ]; then
   exec python -m untaught.es_blacklist build \
     --entities "${ENTITIES}" --out "${BLACKLIST}" --count-only --preview 5
@@ -60,28 +50,34 @@ python -m untaught.es_blacklist build \
   --preview 3
 echo
 
-# --- step 2: train ------------------------------------------------------------
 echo "--- step 2/2: training ---------------------------------------"
-
 if [ "${1:-}" = "--check" ]; then
-  exec python -m untaught.train_untaught "${CONFIG}" --blacklist "${BLACKLIST}" --check
+  exec python -m untaught.train_untaught "${CONFIG}" --check
 fi
 
-SBATCH_ARGS="--partition=${UNTAUGHT_PARTITION}"
-if [ -n "${UNTAUGHT_ACCOUNT}" ]; then
-  SBATCH_ARGS="${SBATCH_ARGS} --account=${UNTAUGHT_ACCOUNT}"
-fi
-SBATCH_ARGS="${SBATCH_ARGS} --time=${UNTAUGHT_TIME} --gres=gpu:${UNTAUGHT_GPUS}"
-SBATCH_ARGS="${SBATCH_ARGS} --cpus-per-task=${UNTAUGHT_CPUS} --mem=${UNTAUGHT_MEM}"
-SBATCH_ARGS="${SBATCH_ARGS} --job-name=untaught-no-hp-170m"
-CONSTRAINT="$(untaught_constraint)"
+# One log pair per submission: untaught-no-hp-170m-20260813-142230.out/.err
+LOG="${UNTAUGHT_RUNS_DIR}/${JOB_NAME}-$(date +%Y%m%d-%H%M%S)"
 
+SBATCH_ARGS="
+--job-name=${JOB_NAME}
+--output=${LOG}.out
+--error=${LOG}.err
+--partition=studentkillable
+--time=180
+--signal=USR1@120
+--nodes=1
+--ntasks=1
+--mem=64000
+--cpus-per-task=8
+--gpus=1
+"
+
+# Unquoted on purpose: the newlines split SBATCH_ARGS into separate arguments.
 # shellcheck disable=SC2086
-untaught_submit ${SBATCH_ARGS} \
-  --export=ALL,UNTAUGHT_ROOT="${HERE}",UNTAUGHT_CONFIG="${CONFIG}",UNTAUGHT_BLACKLIST="${BLACKLIST}",CONDA_ENV="${CONDA_ENV}",NPROC="${UNTAUGHT_GPUS}",OLMO_CORE_SRC="${OLMO_CORE_SRC}",UNTAUGHT_RUNS_DIR="${UNTAUGHT_RUNS_DIR}",LMENT_DATASET="${LMENT_DATASET}" \
-  "${HERE}/slurm/train.slurm"
+sbatch ${SBATCH_ARGS} --wrap="cd ${UNTAUGHT_ROOT} && . configs/env.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 untaught/train_untaught.py ${CONFIG}"
 
 echo
-echo "Submitted. Track it with:  squeue --me"
+echo "Track it with:  squeue --me"
+echo "Logs:           ${LOG}.out / .err"
 echo "In the log, 'train/untaught excluded instances' and OLMo-core's own"
 echo "'train/masked instances' should both be non-zero on some steps."

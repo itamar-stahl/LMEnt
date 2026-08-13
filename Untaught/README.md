@@ -65,13 +65,10 @@ Untaught/
 │   ├── config_env.py        ${VAR} expansion for configs; sources env.sh on miss
 │   └── train_untaught.py    wraps examples/kas/train.py, attaches the callback
 ├── configs/
-│   ├── env.sh               paths, ES connection, SLURM defaults
+│   ├── env.sh               paths, ES connection, conda env — nothing else
 │   ├── entities/harry_potter.json
 │   ├── train_170m_control.json
 │   └── train_170m_no_harry_potter.json
-├── slurm/
-│   ├── train.slurm
-│   └── build_blacklist.slurm
 ├── tests/
 │   ├── test_exclusion.py    proves masked chunks leave the loss (upstream semantics)
 │   ├── test_untaught_units.py  unit tests: callback, ES query, config expansion
@@ -184,7 +181,8 @@ that is roughly 4–8 hours on one H100-class GPU. Then also:
 - `"disable_downstream_eval": false` and set `eval_interval` to `1000`
 - raise `checkpointer.save_interval` to `1000` (the paper's cadence, 110
   checkpoints/epoch)
-- bump `UNTAUGHT_TIME` (minutes); `studentbatch` allows 3 days, 6 jobs max
+- bump `#SBATCH --time` (minutes) in `slurm/*.slurm`; `studentkillable` caps at
+  1 day, so a full epoch needs several resumes or a longer partition
 
 The configs already use the paper's hyperparameters (appendix B.4): AdamW,
 global batch 32,768 tokens, rank batch 8,192, peak LR 5e-4, weight decay 0.05,
@@ -232,11 +230,15 @@ that blacklist size.
   memory-loads the small `metadata-part-N-00000.npy` line-offset indexes that
   `setup.sh` symlinked — those must exist, and on this remote they do.) This
   matches OLMo-core's own advice in `write_dataloader_batch_indices.py`.
-- **GPU constraint is not optional.** `build_config` trains with FSDP
-  `param_dtype=bfloat16`; TAU's student partitions include pre-Ampere cards
-  (V100, RTX 2080, Titan Xp, Quadro RTX 8000) with no bf16 support. `env.sh`
-  therefore defaults `UNTAUGHT_CONSTRAINT` to
-  `geforce_rtx_3090|a5000|a6000|a100|l40s`. Don't clear it blindly.
+- **The GPU you get is not the GPU you want.** `build_config` hard-codes
+  `compile=True` and FSDP `param_dtype=bfloat16`; `studentkillable` hands out
+  pre-Ampere cards (Titan Xp, V100, RTX 2080) where triton cannot compile at
+  all and bf16 is emulated. `--constraint` was tried and rejected by this
+  cluster, so `train_untaught.adapt_to_gpu` handles it at runtime instead:
+  compile off below capability 7.0, and `rank_microbatch_size` scaled down to
+  fit the card (2048 on a 12GB Titan Xp, unchanged at 8192 on ≥48GB). Gradient
+  accumulation keeps the 32,768-token global batch, so the optimizer math and
+  the control/ablated comparison are unaffected.
 - Path order is deterministic: `NumpyDatasetConfig.glob` sorts its matches
   (`numpy_dataset.py:1902`), so chunk ids are stable across runs given the same
   file set — and `verify_chunk_alignment.py` confirms the deployed file set

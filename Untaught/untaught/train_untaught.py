@@ -111,10 +111,74 @@ def apply_untaught_config(
         if config.trainer.callbacks.pop("downstream_evaluator", None) is not None:
             log.info("[untaught] downstream evaluator disabled")
 
+    if untaught_cfg.get("adapt_to_gpu", True):
+        adapt_to_gpu(config, untaught_cfg)
+
     return config, blacklist_path
 
 
-def _summarize(config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> None:
+def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
+    """Make the run survive whatever card SLURM handed us.
+
+    ``build_config`` hard-codes ``compile=True`` and bf16 FSDP params, which
+    assume an Ampere-or-newer GPU with plenty of memory. On a preemptible
+    student partition you do not get to choose, so rather than crash after the
+    queue wait, downgrade the two settings that are pure implementation detail:
+
+    * ``torch.compile`` needs CUDA capability >= 7.0 (triton). Below that every
+      block logs a multi-page "WON'T CONVERT" traceback and falls back to eager
+      anyway -- turning it off removes the noise and the wasted compile time.
+    * ``rank_microbatch_size`` is a *memory* knob only. The trainer accumulates
+      gradients until ``global_batch_size`` tokens are reached, so shrinking it
+      leaves the optimizer math, the step count and the data order untouched --
+      unlike touching the batch size, which would break the comparison with the
+      control run.
+    """
+    import torch
+
+    if not torch.cuda.is_available():
+        return
+
+    major, minor = torch.cuda.get_device_capability()
+    name = torch.cuda.get_device_name()
+    total_gib = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+    log.info("[untaught] GPU: %s (capability %d.%d, %.1f GiB)", name, major, minor, total_gib)
+
+    if major < 7 and getattr(config.model, "compile", False):
+        config.model.compile = False
+        log.warning(
+            "[untaught] %s is capability %d.%d; torch.compile needs >= 7.0. "
+            "Compilation disabled (training runs eager).", name, major, minor
+        )
+    if major < 8:
+        log.warning(
+            "[untaught] %s has no native bf16; FSDP still runs param_dtype=bfloat16 "
+            "but emulated and slow. Prefer an Ampere-or-newer card for real runs.",
+            name,
+        )
+
+    # 12 GiB with a 100K-token vocab cannot hold 8,192-token microbatch logits.
+    # Calibrated against the observed failure: 8,192 tokens OOMed on an 11.9 GiB
+    # TITAN Xp, so allow ~1K microbatch tokens per 4 GiB and round down to a
+    # power of two (which also keeps it dividing the 32,768-token global batch).
+    budget = float(untaught_cfg.get("microbatch_gib_per_1k_tokens", 4.0))
+    max_micro = int(untaught_cfg.get("max_rank_microbatch", 0)) or int(
+        max(1024, (total_gib / budget) * 1024)
+    )
+    current = config.trainer.rank_microbatch_size
+    if current > max_micro:
+        # Keep it a power of two and a multiple of the longest sequence.
+        adjusted = 1 << (max_micro.bit_length() - 1)
+        config.trainer.rank_microbatch_size = adjusted
+        log.warning(
+            "[untaught] rank_microbatch_size %d -> %d to fit %.1f GiB. Gradient "
+            "accumulation keeps the %d-token global batch, so the optimizer math "
+            "is unchanged; only memory and speed differ.",
+            current, adjusted, total_gib, config.data_loader.global_batch_size,
+        )
+
+
+def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> None:
     import numpy as np
 
     tr = config_dict["trainer"]
@@ -125,7 +189,10 @@ def _summarize(config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> No
     print(f"  model            : {config_dict['model']}")
     print(f"  lr / weight decay: {config_dict['optim']['lr']} / {config_dict['optim']['weight_decay']}")
     print(f"  global batch     : {config_dict['data_loader']['global_batch_size']:,} tokens")
-    print(f"  rank microbatch  : {tr['rank_microbatch_size']:,} tokens")
+    # The effective value, which adapt_to_gpu may have lowered from the config.
+    micro = config.trainer.rank_microbatch_size
+    micro_note = "" if micro == tr["rank_microbatch_size"] else f"  (config: {tr['rank_microbatch_size']:,})"
+    print(f"  rank microbatch  : {micro:,} tokens{micro_note}")
     print(f"  duration         : {md['value']} {md['unit']}")
     print(f"  save folder      : {tr['save_folder']}")
     print(f"  seed             : {config_dict.get('init_seed')}")
@@ -153,7 +220,7 @@ def main(config_filepath: str, blacklist_override: Optional[str], check_only: bo
             "Build it first with:  python -m untaught.es_blacklist build ..."
         )
 
-    _summarize(config_dict, blacklist_path)
+    _summarize(config, config_dict, blacklist_path)
 
     if check_only:
         print("[untaught] --check passed: config builds and blacklist is readable.")

@@ -7,9 +7,8 @@
     "runs see the same chunks in the same order in the same batches -- the only",
     "difference is that blacklisted chunks contribute no gradient.",
     "",
-    "blacklist_path is left null here and supplied at launch by",
-    "run_smoke_harry_potter.sh via --blacklist, so the config does not go stale",
-    "if you rebuild the blacklist somewhere else."
+    "blacklist_path names the file that run_smoke_harry_potter.sh writes in its",
+    "step 1. Build it before submitting; training fails fast if it is missing."
   ],
 
   "model": "olmo2_170M",
@@ -84,7 +83,7 @@
   },
 
   "untaught": {
-    "blacklist_path": null,
+    "blacklist_path": "${UNTAUGHT_BLACKLIST_DIR}/harry_potter.npy",
     "enabled": true,
     "disable_wandb": true,
     "disable_downstream_eval": true

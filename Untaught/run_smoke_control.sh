@@ -1,54 +1,56 @@
 #!/bin/sh
 # SMOKE RUN 1 of 2 -- control: a 170M model with NOTHING held out.
 #
-# This is the baseline the ablated run is compared against, and it is also the
-# test that the plumbing works before you involve Elasticsearch at all.
-#
 #   ./run_smoke_control.sh              submit to SLURM
 #   ./run_smoke_control.sh --check      validate the config locally, no GPU
 #
-# Expects the dataset and the ES index to already exist on the remote; nothing
-# here builds or modifies them.
+# Hyperparameters are in configs/train_170m_control.json.
+# Paths and the conda env are in configs/env.sh.
+# The SLURM resources are right here, hard-coded.
 
 set -eu
 
-HERE="$(cd "$(dirname "$0")" && pwd)"
-# env.sh only fills in unset values, so pin the root before sourcing rather than
-# letting it guess from $0 (which points at *this* script once sourced).
-UNTAUGHT_ROOT="${HERE}"
-export UNTAUGHT_ROOT
+cd "$(dirname "$0")"
 # shellcheck disable=SC1091
-. "${HERE}/configs/env.sh"
+. configs/env.sh
 
-CONFIG="${HERE}/configs/train_170m_control.json"
+CONFIG=configs/train_170m_control.json
+JOB_NAME=untaught-control-170m
 
 echo "=============================================================="
 echo "  UNTAUGHT smoke 1/2 -- CONTROL (no exclusions)"
 echo "=============================================================="
-echo "  config     : ${CONFIG}"
-echo "  dataset    : ${LMENT_DATASET}"
-echo "  runs dir   : ${UNTAUGHT_RUNS_DIR}"
+echo "  config   : ${CONFIG}"
+echo "  dataset  : ${LMENT_DATASET}"
+echo "  runs dir : ${UNTAUGHT_RUNS_DIR}"
 echo
 
 if [ "${1:-}" = "--check" ]; then
-  export PYTHONPATH="${HERE}:${OLMO_CORE_SRC}:${PYTHONPATH:-}"
-  exec python -m untaught.train_untaught "${CONFIG}" --blacklist "" --check
+  exec python -m untaught.train_untaught "${CONFIG}" --check
 fi
 
-SBATCH_ARGS="--partition=${UNTAUGHT_PARTITION}"
-if [ -n "${UNTAUGHT_ACCOUNT}" ]; then
-  SBATCH_ARGS="${SBATCH_ARGS} --account=${UNTAUGHT_ACCOUNT}"
-fi
-SBATCH_ARGS="${SBATCH_ARGS} --time=${UNTAUGHT_TIME} --gres=gpu:${UNTAUGHT_GPUS}"
-SBATCH_ARGS="${SBATCH_ARGS} --cpus-per-task=${UNTAUGHT_CPUS} --mem=${UNTAUGHT_MEM}"
-SBATCH_ARGS="${SBATCH_ARGS} --job-name=untaught-control-170m"
-CONSTRAINT="$(untaught_constraint)"
+# One log pair per submission: untaught-control-170m-20260813-142230.out/.err
+LOG="${UNTAUGHT_RUNS_DIR}/${JOB_NAME}-$(date +%Y%m%d-%H%M%S)"
 
+SBATCH_ARGS="
+--job-name=${JOB_NAME}
+--output=${LOG}.out
+--error=${LOG}.err
+--partition=studentkillable
+--time=180
+--signal=USR1@120
+--nodes=1
+--ntasks=1
+--mem=64000
+--cpus-per-task=8
+--gpus=1
+"
+
+# Unquoted on purpose: the newlines split SBATCH_ARGS into separate arguments.
 # shellcheck disable=SC2086
-untaught_submit ${SBATCH_ARGS} \
-  --export=ALL,UNTAUGHT_ROOT="${HERE}",UNTAUGHT_CONFIG="${CONFIG}",UNTAUGHT_BLACKLIST=,CONDA_ENV="${CONDA_ENV}",NPROC="${UNTAUGHT_GPUS}",OLMO_CORE_SRC="${OLMO_CORE_SRC}",UNTAUGHT_RUNS_DIR="${UNTAUGHT_RUNS_DIR}",LMENT_DATASET="${LMENT_DATASET}" \
-  "${HERE}/slurm/train.slurm"
+sbatch ${SBATCH_ARGS} --wrap="cd ${UNTAUGHT_ROOT} && . configs/env.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 untaught/train_untaught.py ${CONFIG}"
 
 echo
-echo "Submitted. Track it with:  squeue --me"
+echo "Track it with:  squeue --me"
+echo "Logs:           ${LOG}.out / .err"
 echo "Expect 'train/untaught excluded instances' to be absent (control run)."
