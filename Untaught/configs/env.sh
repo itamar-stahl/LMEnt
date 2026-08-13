@@ -45,10 +45,13 @@ fi
 #   sacctmgr -P -i show user -s "$USER"
 # Members of a research group may also have gpu-research / gpu-h100-killable
 # (the LMEnt authors' own run.slurm files use those).
-: "${UNTAUGHT_ACCOUNT:=gpu-students}"
-# studentbatch: 3 days, max 6 jobs/user   studentrun: 3 h, interactive
-# killable:     1 day, general (preemptible)
-: "${UNTAUGHT_PARTITION:=studentbatch}"
+# Empty by default: the course grants partition access, not an account, and a
+# bogus --account is one of the things that makes sbatch reject the features as
+# unsatisfiable. The run scripts omit the flag when this is empty.
+: "${UNTAUGHT_ACCOUNT:=}"
+# studentkillable: 1 day, low priority, preemptible -- what the course grants.
+# studentbatch (3 days, 6 jobs) and studentrun (3 h, interactive) need access.
+: "${UNTAUGHT_PARTITION:=studentkillable}"
 : "${UNTAUGHT_TIME:=180}"          # minutes
 : "${UNTAUGHT_GPUS:=1}"
 : "${UNTAUGHT_CPUS:=8}"
