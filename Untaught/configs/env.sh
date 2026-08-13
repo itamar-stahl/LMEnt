@@ -75,4 +75,43 @@ export UNTAUGHT_ACCOUNT UNTAUGHT_PARTITION UNTAUGHT_TIME UNTAUGHT_GPUS
 export UNTAUGHT_CPUS UNTAUGHT_MEM UNTAUGHT_CONSTRAINT
 export CONDA_ENV WANDB_MODE
 
+# Keep only the constraint names that actually exist on nodes in this partition.
+# The cluster-wide feature list is not per-partition, and sbatch rejects the
+# whole job ("Invalid feature specification") if one name is unknown there.
+# Prints the surviving `a|b|c`, or nothing if none are -- caller drops the flag.
+# sbatch, printed before it runs, retried once without --constraint if the
+# feature expression is what SLURM objects to. Args: sbatch flags, then the
+# script. Reads CONSTRAINT; unset/empty means no --constraint at all.
+untaught_submit() {
+  if [ -n "${CONSTRAINT:-}" ]; then
+    echo "+ sbatch --constraint=${CONSTRAINT} $*"
+    # shellcheck disable=SC2086
+    if sbatch --constraint="${CONSTRAINT}" "$@"; then
+      return 0
+    fi
+    echo "sbatch rejected --constraint=${CONSTRAINT}; retrying without it." >&2
+    echo "Check the job log's nvidia-smi: bf16 needs Ampere or newer." >&2
+  fi
+  echo "+ sbatch $*"
+  sbatch "$@"
+}
+
+untaught_constraint() {
+  _uc_want="${1:-${UNTAUGHT_CONSTRAINT}}"
+  [ -n "${_uc_want}" ] || return 0
+  command -v sinfo >/dev/null 2>&1 || { printf '%s' "${_uc_want}"; return 0; }
+
+  _uc_have="$(sinfo -h -p "${UNTAUGHT_PARTITION}" -o '%f' 2>/dev/null \
+              | tr ',' '\n' | tr -d ' ' | sort -u)"
+  [ -n "${_uc_have}" ] || return 0
+
+  _uc_keep=""
+  for _uc_n in $(printf '%s' "${_uc_want}" | tr '|' ' '); do
+    if printf '%s\n' "${_uc_have}" | grep -qx "${_uc_n}"; then
+      _uc_keep="${_uc_keep:+${_uc_keep}|}${_uc_n}"
+    fi
+  done
+  printf '%s' "${_uc_keep}"
+}
+
 mkdir -p "${UNTAUGHT_BLACKLIST_DIR}" "${UNTAUGHT_RUNS_DIR}"

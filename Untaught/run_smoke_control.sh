@@ -42,15 +42,10 @@ fi
 SBATCH_ARGS="${SBATCH_ARGS} --time=${UNTAUGHT_TIME} --gres=gpu:${UNTAUGHT_GPUS}"
 SBATCH_ARGS="${SBATCH_ARGS} --cpus-per-task=${UNTAUGHT_CPUS} --mem=${UNTAUGHT_MEM}"
 SBATCH_ARGS="${SBATCH_ARGS} --job-name=untaught-control-170m"
-# An `if` and not `[ ... ] && ...`: the AND-list form leaves the script's status
-# at 1 when the test is false, which under `set -e` aborts if it ever ends up as
-# the last command here. Nothing depends on the ordering this way.
-if [ -n "${UNTAUGHT_CONSTRAINT}" ]; then
-  SBATCH_ARGS="${SBATCH_ARGS} --constraint=${UNTAUGHT_CONSTRAINT}"
-fi
+CONSTRAINT="$(untaught_constraint)"
 
 # shellcheck disable=SC2086
-sbatch ${SBATCH_ARGS} \
+untaught_submit ${SBATCH_ARGS} \
   --export=ALL,UNTAUGHT_ROOT="${HERE}",UNTAUGHT_CONFIG="${CONFIG}",UNTAUGHT_BLACKLIST=,CONDA_ENV="${CONDA_ENV}",NPROC="${UNTAUGHT_GPUS}",OLMO_CORE_SRC="${OLMO_CORE_SRC}",UNTAUGHT_RUNS_DIR="${UNTAUGHT_RUNS_DIR}",LMENT_DATASET="${LMENT_DATASET}" \
   "${HERE}/slurm/train.slurm"
 
