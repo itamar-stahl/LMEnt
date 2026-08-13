@@ -20,13 +20,16 @@ real training:
     cd $LMENT_ROOT/Untaught && . configs/env.sh
     python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
 
+(Sourcing env.sh is the documented path but no longer required: an unresolved
+config makes the script source it itself. ES_PASSWORD still has to come from
+your shell -- env.sh deliberately does not carry it.)
+
 Exit code 0 = aligned; 1 = MISALIGNED (do not train until resolved).
 """
 
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import random
 import sys
@@ -36,11 +39,17 @@ UNTAUGHT_ROOT = os.path.dirname(HERE)
 REPO_ROOT = os.path.dirname(UNTAUGHT_ROOT)
 
 sys.path.insert(0, UNTAUGHT_ROOT)
+
+from untaught.config_env import load_config, load_env_sh  # noqa: E402
+
+# OLMO_CORE_SRC is read before any olmo import, so fill the environment in first
+# for the case where configs/env.sh was not sourced.
+if "OLMO_CORE_SRC" not in os.environ:
+    load_env_sh()
 sys.path.insert(
     0, os.environ.get("OLMO_CORE_SRC", os.path.join(REPO_ROOT, "OLMo-core", "src"))
 )
 
-from untaught.config_env import assert_paths_resolved, expand_env  # noqa: E402
 from untaught.es_blacklist import get_esclient  # noqa: E402
 
 
@@ -50,11 +59,7 @@ def build_dataset(config_path: str):
     is identical by construction, not by copy-paste."""
     from examples.kas.train import build_config
 
-    with open(config_path, "r", encoding="utf-8") as f:
-        config_dict = expand_env(json.load(f))
-    assert_paths_resolved(config_dict)
-
-    config = build_config(config_dict)
+    config = build_config(load_config(config_path))
     dataset = config.dataset.build()
     dataset.prepare()
     return dataset

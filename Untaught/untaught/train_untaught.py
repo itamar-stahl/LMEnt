@@ -22,7 +22,6 @@ Config schema is the upstream one plus an optional top-level "untaught" block:
 from __future__ import annotations
 
 import argparse
-import json
 import logging
 import os
 import sys
@@ -30,10 +29,23 @@ from typing import Any, Dict, Optional, Sequence, cast
 
 log = logging.getLogger(__name__)
 
+# `untaught` may not be importable as a package when launched via a file path.
+# config_env is deliberately dependency-free, so it can come before the
+# OLMo-core bootstrap that everything else here needs.
+try:
+    from .config_env import load_config, load_env_sh
+except ImportError:  # pragma: no cover
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from untaught.config_env import load_config, load_env_sh
+
 
 def _bootstrap_olmo_core() -> None:
     """Put ``OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports."""
     src = os.environ.get("OLMO_CORE_SRC")
+    if not src:
+        # Nothing sourced configs/env.sh (a bare `python -m untaught...`)? Do it here.
+        load_env_sh()
+        src = os.environ.get("OLMO_CORE_SRC")
     if not src:
         # Untaught/untaught/train_untaught.py -> repo root -> OLMo-core/src
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
@@ -60,13 +72,9 @@ from olmo_core.train import (  # noqa: E402
 from olmo_core.train.callbacks import ConfigSaverCallback, WandBCallback  # noqa: E402
 from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
-# `untaught` may not be importable as a package when launched via a file path.
 try:
-    from .config_env import assert_paths_resolved, expand_env
     from .exclusion import ChunkExclusionCallback
 except ImportError:  # pragma: no cover
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from untaught.config_env import assert_paths_resolved, expand_env
     from untaught.exclusion import ChunkExclusionCallback
 
 
@@ -132,10 +140,7 @@ def _summarize(config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> No
 
 
 def main(config_filepath: str, blacklist_override: Optional[str], check_only: bool) -> None:
-    with open(config_filepath, "r", encoding="utf-8") as f:
-        config_dict = expand_env(json.load(f))
-
-    assert_paths_resolved(config_dict)
+    config_dict = load_config(config_filepath)
 
     config = build_config(config_dict)
     config, blacklist_path = apply_untaught_config(config, config_dict, blacklist_override)

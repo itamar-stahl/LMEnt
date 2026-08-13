@@ -82,7 +82,13 @@ def _install_olmo_stubs_if_needed() -> str:
 
 SOURCE = _install_olmo_stubs_if_needed()
 
-from untaught.config_env import assert_paths_resolved, expand_env  # noqa: E402
+from untaught.config_env import (  # noqa: E402
+    ENV_SH,
+    assert_paths_resolved,
+    expand_env,
+    load_config,
+    load_env_sh,
+)
 from untaught.es_blacklist import DEFAULT_THRESHOLDS, build_entity_query  # noqa: E402
 from untaught.exclusion import (  # noqa: E402
     EXCLUDED_METRIC,
@@ -276,6 +282,40 @@ def test_config_env():
     print("  ok  expand_env resolves, assert_paths_resolved flags unset vars")
 
 
+def test_load_config_sources_env_sh():
+    """A config must resolve even when nobody sourced configs/env.sh."""
+    saved = {k: v for k, v in os.environ.items() if k.startswith("UNTAUGHT_")}
+    for key in saved:
+        del os.environ[key]
+
+    fd, cfg_path = tempfile.mkstemp(suffix=".json")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write('{"trainer": {"save_folder": "${UNTAUGHT_RUNS_DIR}/x"}}')
+
+    try:
+        if not load_env_sh(verbose=False):
+            print(f"  skip load_config: no POSIX shell for {ENV_SH}")
+            return
+        for key in [k for k in os.environ if k.startswith("UNTAUGHT_")]:
+            del os.environ[key]
+
+        cfg = load_config(cfg_path)  # must not raise: it sources env.sh itself
+        save_folder = cfg["trainer"]["save_folder"]
+        assert "$" not in save_folder, save_folder
+        assert save_folder.endswith("/x") and os.environ.get("UNTAUGHT_RUNS_DIR")
+        print("  ok  load_config sources env.sh when a var is unresolved")
+
+        # An explicit value in the environment must still win over env.sh.
+        os.environ["UNTAUGHT_RUNS_DIR"] = "/explicit/runs"
+        assert load_config(cfg_path)["trainer"]["save_folder"] == "/explicit/runs/x"
+        print("  ok  a pre-set variable overrides the env.sh default")
+    finally:
+        os.remove(cfg_path)
+        for key in [k for k in os.environ if k.startswith("UNTAUGHT_")]:
+            del os.environ[key]
+        os.environ.update(saved)
+
+
 if __name__ == "__main__":
     torch.manual_seed(0)
     tests = [
@@ -290,6 +330,7 @@ if __name__ == "__main__":
         test_empty_blacklist_is_noop,
         test_build_entity_query_structure,
         test_config_env,
+        test_load_config_sources_env_sh,
     ]
     print(f"\nrunning {len(tests)} unit checks ({SOURCE})\n")
     for t in tests:

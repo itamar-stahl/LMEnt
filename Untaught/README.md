@@ -62,7 +62,7 @@ Untaught/
 ├── untaught/
 │   ├── exclusion.py         ChunkExclusionCallback — the ~15 lines that matter
 │   ├── es_blacklist.py      entity QIDs -> chunk-id .npy, via Elasticsearch
-│   ├── config_env.py        ${VAR} expansion for configs, with unset-var checks
+│   ├── config_env.py        ${VAR} expansion for configs; sources env.sh on miss
 │   └── train_untaught.py    wraps examples/kas/train.py, attaches the callback
 ├── configs/
 │   ├── env.sh               paths, ES connection, SLURM defaults
@@ -115,7 +115,9 @@ python tests/test_untaught_units.py
 # 3. THE decisive check — proves on this deployment that ES chunk_id
 #    equals the dataset instance index, by comparing decoded chunk text
 #    against the indexed text for random chunks (a few minutes; run once)
-. configs/env.sh
+. configs/env.sh                  # only ES_PASSWORD really needs your shell:
+                                  # the scripts source env.sh themselves if a
+                                  # config path comes out unresolved
 python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
 ```
 
