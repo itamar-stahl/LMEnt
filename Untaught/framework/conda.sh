@@ -1,6 +1,6 @@
 #!/bin/sh
 # Put the lment conda environment in this shell. Shared by both entry points;
-# expects configs/env.sh to have been sourced first.
+# expects framework/env.sh to have been sourced first.
 #
 # ~/.bashrc is not read by batch jobs, and belongs to one user anyway, so this
 # repeats conda's setup instead of assuming it. The `conda shell.bash hook`

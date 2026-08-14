@@ -16,8 +16,8 @@
 cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
 
 # shellcheck disable=SC1091
-. ./configs/env.sh
+. ./framework/env.sh
 # shellcheck disable=SC1091
-. ./configs/conda.sh
+. ./framework/conda.sh
 
 echo "[untaught] node $(hostname) in $(pwd): ${CONDA_ENV} @ $(command -v python)"

@@ -5,7 +5,7 @@
 #   ./run_smoke_control.sh --check      validate the config locally, no GPU
 #
 # Hyperparameters are in configs/train_170m_control.json.
-# Paths and the conda env are in configs/env.sh.
+# Paths and the conda env are in framework/env.sh.
 # The SLURM resources are right here, hard-coded.
 
 set -eu

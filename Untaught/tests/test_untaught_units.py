@@ -445,7 +445,7 @@ def test_config_env():
 
 
 def test_load_config_sources_env_sh():
-    """A config must resolve even when nobody sourced configs/env.sh."""
+    """A config must resolve even when nobody sourced framework/env.sh."""
     saved = {k: v for k, v in os.environ.items() if k.startswith("UNTAUGHT_")}
     for key in saved:
         del os.environ[key]

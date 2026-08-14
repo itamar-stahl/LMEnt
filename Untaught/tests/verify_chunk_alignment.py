@@ -21,7 +21,7 @@ real training:
     python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
 
 (activate_env.sh gives you conda, the paths and a running Elasticsearch. If
-you skip it, an unresolved config still makes the script read configs/env.sh
+you skip it, an unresolved config still makes the script read framework/env.sh
 for the paths -- but nothing will start Elasticsearch for you.)
 
 Exit code 0 = aligned; 1 = MISALIGNED (do not train until resolved).

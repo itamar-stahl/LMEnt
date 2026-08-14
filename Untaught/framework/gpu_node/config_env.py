@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 UNTAUGHT_ROOT = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )
-ENV_SH = os.path.join(UNTAUGHT_ROOT, "configs", "env.sh")
+ENV_SH = os.path.join(UNTAUGHT_ROOT, "framework", "env.sh")
 
 
 def expand_env(obj: Any) -> Any:
@@ -100,7 +100,7 @@ def _exported_names(env_sh_text: str) -> List[str]:
 
 
 def load_env_sh(path: Optional[str] = None, verbose: bool = True) -> List[str]:
-    """Source ``configs/env.sh`` in a helper shell and copy its exports here.
+    """Source ``framework/env.sh`` in a helper shell and copy its exports here.
 
     So a bare ``python tests/verify_chunk_alignment.py`` works the same as one
     run after ``. ./activate_env.sh``. Variables already set in this process win,

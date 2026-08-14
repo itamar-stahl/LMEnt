@@ -61,6 +61,8 @@ what a controlled comparison needs.
 Untaught/
 ├── activate_env.sh          LOGIN NODE: source it — cd + vars + conda + Elasticsearch
 ├── framework/
+│   ├── env.sh               shared variables — the only place paths are named
+│   ├── conda.sh             shared conda activation
 │   ├── client_node/         needs Elasticsearch; never imported by a training job
 │   │   ├── es_blacklist.py  entity QIDs -> chunk ids, via Elasticsearch
 │   │   └── prepare.py       writes the blacklist artifact into the run folder
@@ -71,8 +73,6 @@ Untaught/
 │       ├── artifact.py      reads the artifact into a {chunk_id: qid} dict
 │       └── config_env.py    ${VAR} expansion for configs; reads env.sh on miss
 ├── configs/
-│   ├── env.sh               shared variables — the only place paths are named
-│   ├── conda.sh             shared conda activation
 │   ├── train_170m_control.json
 │   └── train_170m_no_harry_potter.json
 ├── blacklists/
@@ -105,7 +105,7 @@ chmod +x run_smoke_*.sh
 Sourcing `activate_env.sh` leaves **this** shell with the `lment` conda env
 active, every path/ES variable set, and Elasticsearch running (it starts it if
 it is down). It reads nothing from `~/.bashrc`, so it behaves the same for any
-user. Adjust `configs/env.sh` only if your paths differ from
+user. Adjust `framework/env.sh` only if your paths differ from
 `/home/morg/NLP_2526b/stahli`.
 
 Both entry points `cd` to `$LMENT_ROOT/Untaught` first, so the working directory

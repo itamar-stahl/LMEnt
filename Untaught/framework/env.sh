@@ -4,8 +4,8 @@
 # Do not source this directly -- use one of the two entry points, which pull it
 # in and then do what their machine needs:
 #
-#   . ./activate_env.sh     login node   (variables + conda + Elasticsearch)
-#   . ./gpu_node.sh         compute node (variables + conda)
+#   . ./activate_env.sh                    login node   (+ conda + Elasticsearch)
+#   . ./framework/gpu_node/gpu_node.sh     compute node (+ conda)
 #
 # Everything is an override-able default: `export FOO=...` before sourcing and
 # that value wins. Only per-deployment facts belong here -- SLURM resources live
