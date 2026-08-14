@@ -1,18 +1,29 @@
 # SMOKE ABLATED RUN: 170M, "Harry Potter" held out of the loss.
 #
-# Identical to train_170m_control.yaml in every field except job.save_folder and
+# Identical to train_170m_control.yaml in every field except job.name and
 # the untaught block. Same init_seed and same data_seed, so both runs see the
 # same chunks in the same order in the same batches -- the only difference is
 # that blacklisted chunks contribute no gradient.
 #
-# Run this first, on the login node, to resolve the QIDs into chunk ids:
-#   python -m framework.client.prepare --config configs/train_170m_no_harry_potter.yaml
+# Submit from the login node with:
+#   . ./framework/client/sub_builder.sh configs/train_170m_no_harry_potter.yaml
 
-# Where this run reads and writes. Paths only.
+# Everything about running this as a job: identity, data locations, and the
+# SLURM resources sub_builder.sh writes into job.slurm. No save folder here --
+# every submission gets its own runs/<name>_<date>_<time> folder.
 job:
+  name: "untaught-no-hp-170m"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
-  save_folder: "${UNTAUGHT_RUNS_DIR}/no_harry_potter_170m"
+
+  # SLURM resources (see https://www.cs.tau.ac.il/system/slurm)
+  partition: "studentkillable"     # 1 day cap, preemptible -- what students get
+  max_time_minutes: 180
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 64000
+  cpus_per_task: 8
+  gpus: 1
 
 # Everything the model and the optimizer see. Identical to the control.
 train:

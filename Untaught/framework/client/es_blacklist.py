@@ -267,6 +267,27 @@ def build_artifact(
     }
 
 
+def empty_artifact() -> Dict[str, Any]:
+    """The artifact a CONTROL run gets: explicitly, auditably empty.
+
+    Every run folder carries an ``untaught_blacklist.json`` so that "what was
+    excluded here?" always has a file answering it -- for a control run the
+    answer is "nothing", stated in the file rather than implied by its absence.
+    """
+    return {
+        "comment": "CONTROL RUN -- this blacklist is deliberately EMPTY. "
+                   "No chunks are held out of the loss; the model trains on "
+                   "the full corpus.",
+        "generated": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "blacklist": None,
+        "index": None,
+        "case_sensitive": None,
+        "thresholds": None,
+        "num_chunks": 0,
+        "entities": [],
+    }
+
+
 def write_artifact(artifact: Dict[str, Any], path: str) -> str:
     """Save the artifact as indented JSON, creating its folder if needed."""
     os.makedirs(os.path.dirname(os.path.abspath(path)) or ".", exist_ok=True)

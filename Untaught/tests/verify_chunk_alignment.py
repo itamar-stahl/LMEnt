@@ -40,7 +40,7 @@ REPO_ROOT = os.path.dirname(UNTAUGHT_ROOT)
 
 sys.path.insert(0, UNTAUGHT_ROOT)
 
-from framework.node.config_env import load_config, load_env_sh  # noqa: E402
+from framework.node.config_env import load_config, load_env_sh, to_upstream  # noqa: E402
 
 # OLMO_CORE_SRC is read before any olmo import, so fill the environment in first
 # for the case where the environment was not sourced.
@@ -57,9 +57,16 @@ def build_dataset(config_path: str):
     """Build the dataset exactly as training does -- via the upstream
     ``build_config`` -- so every parameter (glob, curriculum, seq lens, dtype)
     is identical by construction, not by copy-paste."""
+    import tempfile
+
     from examples.kas.train import build_config
 
-    config = build_config(load_config(config_path))
+    # save_folder is irrelevant here (nothing is trained or saved), but
+    # build_config mkdirs it, so hand it a throwaway.
+    config = build_config(
+        to_upstream(load_config(config_path),
+                    save_folder=tempfile.mkdtemp(prefix="untaught-verify-"))
+    )
     dataset = config.dataset.build()
     dataset.prepare()
     return dataset

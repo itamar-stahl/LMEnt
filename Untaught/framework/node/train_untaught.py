@@ -5,13 +5,17 @@ that file's ``build_config`` verbatim so the model, optimizer, dataset, VSL
 curriculum and data order are exactly the upstream ones, then attaches one extra
 callback that masks blacklisted chunks.
 
-Run it exactly like the upstream trainer, with a config path:
+Normally launched by a run folder's ``run_wrapper.sh`` on the config copy
+inside that folder:
 
-    torchrun --nproc-per-node=1 -m framework.node.train_untaught config.yaml
+    torchrun --standalone --nproc-per-node=1 \
+        framework/node/train_untaught.py <run_dir>/config.yaml
 
-Config schema is three flat groups -- "job" (paths), "train" (hyperparameters)
-and "untaught" (the ablation); see configs/*.yaml. ``config_env.to_upstream``
-maps the first two onto the nested dict ``build_config`` expects.
+The run folder (= the config copy's directory) is where everything lives: the
+blacklist artifact this process reads, and the checkpoints/ subfolder it saves
+parameters into. Config schema is three flat groups -- "job", "train",
+"untaught"; see configs/*.yaml. ``config_env.to_upstream`` maps them onto the
+nested dict ``build_config`` expects.
 """
 
 from __future__ import annotations
@@ -75,20 +79,20 @@ from olmo_core.train.callbacks import ConfigSaverCallback, WandBCallback  # noqa
 from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
 try:
+    from .artifact import ARTIFACT_NAME
     from .exclusion import ChunkExclusionCallback
 except ImportError:  # pragma: no cover
+    from framework.node.artifact import ARTIFACT_NAME
     from framework.node.exclusion import ChunkExclusionCallback
 
 
-def apply_untaught_config(
-    config, config_dict: Dict[str, Any], blacklist_override: Optional[str] = None
-):
+def apply_untaught_config(config, config_dict: Dict[str, Any], run_dir: str):
     """Attach the exclusion callback and apply the smoke-run conveniences."""
     untaught_cfg: Dict[str, Any] = config_dict.get("untaught", {}) or {}
 
     # Paths in the config are relative to Untaught/, so a run works the same
     # from any cwd without an environment variable standing in for the root.
-    blacklist_path = blacklist_override or untaught_cfg.get("blacklist")
+    blacklist_path = untaught_cfg.get("blacklist")
     if blacklist_path:
         blacklist_path = resolve_path(blacklist_path)
 
@@ -96,6 +100,9 @@ def apply_untaught_config(
         "untaught_exclusion",
         ChunkExclusionCallback(
             blacklist=blacklist_path,
+            # The resolved exclusion sits in the run folder, next to the config
+            # copy this process was launched with.
+            artifact_path=os.path.join(run_dir, ARTIFACT_NAME),
             enabled=bool(untaught_cfg.get("enabled", True)),
             guard_all_masked=bool(untaught_cfg.get("guard_all_masked", True)),
             strict=bool(untaught_cfg.get("strict", True)),
@@ -182,7 +189,9 @@ def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
         )
 
 
-def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> None:
+def _summarize(
+    config, config_dict: Dict[str, Any], run_dir: str, blacklist_path: Optional[str]
+) -> None:
     train = config_dict["train"]
     print("\n" + "=" * 68)
     print("  UNTAUGHT RUN")
@@ -196,7 +205,8 @@ def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str
     micro_note = "" if micro == configured else f"  (config: {configured:,})"
     print(f"  rank microbatch  : {micro:,} tokens{micro_note}")
     print(f"  duration         : {train['max_duration_value']} {train['max_duration_unit']}")
-    print(f"  save folder      : {config.trainer.save_folder}")
+    print(f"  run folder       : {run_dir}")
+    print(f"  checkpoints      : {config.trainer.save_folder}")
     print(f"  seed             : {config.init_seed}")
     if blacklist_path:
         # The entities and thresholds behind it are framework.client's business; this
@@ -207,23 +217,36 @@ def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str
     print("=" * 68 + "\n")
 
 
-def main(
-    config_filepath: str, blacklist_override: Optional[str], check_only: bool
-) -> None:
+def main(config_filepath: str, check_only: bool) -> None:
     config_dict = load_config(config_filepath)
 
-    config = build_config(to_upstream(config_dict))
+    # The run folder is wherever this config copy lives -- sub_builder.sh made
+    # it, filled it, and the wrapper launched us on the copy inside it. The
+    # trainer saves parameters under its checkpoints/ subfolder (upstream adds
+    # one hyperparameter-named level below that; its business, not ours).
+    # --check runs on a raw config from configs/, so it gets a throwaway folder
+    # instead of littering the repo.
+    if check_only:
+        import tempfile
+
+        run_dir = tempfile.mkdtemp(prefix="untaught-check-")
+    else:
+        run_dir = os.path.dirname(os.path.abspath(config_filepath))
+
+    config = build_config(
+        to_upstream(config_dict, save_folder=os.path.join(run_dir, "checkpoints"))
+    )
     # build_config ignores init_seed (ExperimentConfig defaults it), so apply the
     # config's value here -- the control and ablated runs must share it.
     config.init_seed = config_dict["train"]["init_seed"]
-    config, blacklist_path = apply_untaught_config(config, config_dict, blacklist_override)
+    config, blacklist_path = apply_untaught_config(config, config_dict, run_dir)
 
     # Fail fast on a missing blacklist, long before a SLURM job burns queue time
     # to discover it.
     if blacklist_path and not os.path.isfile(blacklist_path):
         raise FileNotFoundError(f"[untaught] blacklist file not found: {blacklist_path}")
 
-    _summarize(config, config_dict, blacklist_path)
+    _summarize(config, config_dict, run_dir, blacklist_path)
 
     if check_only:
         print("[untaught] --check passed: config builds and blacklist is readable.")
@@ -267,11 +290,9 @@ def main(
 
 def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="framework.node.train_untaught")
-    parser.add_argument("config", help="path to the training run config (YAML)")
     parser.add_argument(
-        "--blacklist",
-        default=None,
-        help="override untaught.blacklist (empty string forces a control run)",
+        "config",
+        help="the run folder's config.yaml (or a raw configs/*.yaml with --check)",
     )
     parser.add_argument(
         "--check",
@@ -285,14 +306,11 @@ if __name__ == "__main__":
     args = _parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    # `--blacklist ""` is a deliberate way to force a control run from the CLI.
-    override = args.blacklist if args.blacklist else None
-
     if args.check:
-        main(args.config, override, check_only=True)
+        main(args.config, check_only=True)
     else:
         prepare_training_environment()
         try:
-            main(args.config, override, check_only=False)
+            main(args.config, check_only=False)
         finally:
             teardown_training_environment()

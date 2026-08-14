@@ -5,7 +5,7 @@
 #
 # It cd's to Untaught/ and leaves this shell there, with the lment conda env
 # active, every UNTAUGHT_/LMENT_/ES_ variable set, and Elasticsearch running.
-# That is everything the run_smoke_*.sh scripts, framework.client.* and the tests
+# That is everything sub_builder.sh, framework.client.* and the tests
 # need -- no ~/.bashrc, no manual `conda activate`, same for any user.
 #
 # The compute-node counterpart is framework/node/set_node_env.sh, which skips

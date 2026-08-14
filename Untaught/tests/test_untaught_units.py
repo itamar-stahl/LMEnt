@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import pathlib
 import shutil
 import sys
 import tempfile
@@ -110,11 +111,9 @@ from framework.node.exclusion import (  # noqa: E402
 
 
 class FakeTrainer:
-    def __init__(self, save_folder="."):
+    def __init__(self):
         self.global_step = 7
         self.metrics = []
-        # Where the callback looks for the blacklist artifact.
-        self.save_folder = save_folder
 
     def record_metric(self, name, value, reduce_type=None):
         self.metrics.append((name, float(value)))
@@ -152,6 +151,9 @@ class fake_elasticsearch:
         helpers.scan = self._scan
         root = types.ModuleType("elasticsearch")
         root.helpers = helpers
+        # get_esclient() constructs a client; under the stub any object will do,
+        # since the stubbed scan() never touches it.
+        root.Elasticsearch = lambda *a, **k: object()
         self._saved = {k: sys.modules.get(k) for k in ("elasticsearch", "elasticsearch.helpers")}
         sys.modules["elasticsearch"] = root
         sys.modules["elasticsearch.helpers"] = helpers
@@ -290,14 +292,17 @@ def test_non_strict_warns_and_continues():
 def test_missing_artifact_fails_at_pre_train():
     """No artifact means the ablation would silently become a control run."""
     tmpdir = tempfile.mkdtemp()
-    cb = ChunkExclusionCallback(blacklist="/some/blacklist.json")
-    cb.trainer = FakeTrainer(save_folder=tmpdir)
+    cb = ChunkExclusionCallback(
+        blacklist="/some/blacklist.json",
+        artifact_path=os.path.join(tmpdir, ARTIFACT_NAME),
+    )
+    cb.trainer = FakeTrainer()
     cb.post_attach()
     try:
         cb.pre_train()
         raise AssertionError("pre_train should have raised FileNotFoundError")
     except FileNotFoundError as e:
-        assert "framework.client.prepare" in str(e), "the error must say how to produce it"
+        assert "sub_builder.sh" in str(e), "the error must say how to produce it"
         print("  ok  missing artifact fails fast at pre_train")
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
@@ -379,8 +384,11 @@ def test_artifact_roundtrip_and_masking():
         print("  ok  artifact is written as readable JSON in the run folder")
 
         # The GPU-node half: no Elasticsearch in sight.
-        cb = ChunkExclusionCallback(blacklist=blacklist)
-        cb.trainer = FakeTrainer(save_folder=run_folder)
+        cb = ChunkExclusionCallback(
+            blacklist=blacklist,
+            artifact_path=os.path.join(run_folder, ARTIFACT_NAME),
+        )
+        cb.trainer = FakeTrainer()
         cb.post_attach()
         cb.pre_train()
         assert cb._blacklist == {3: "Q8337", 7: "Q8337", 11: "Q3244512"}, cb._blacklist
@@ -485,9 +493,16 @@ def test_config_comments_and_schema():
     text = """
 # a comment
 job:
+  name: "unit-test-job"
   dataset_paths: "a#b"          # a '#' inside a quoted string is not a comment
   dataset_cache: "c"
-  save_folder: "d"
+  partition: "studentkillable"
+  max_time_minutes: 7
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 1000
+  cpus_per_task: 2
+  gpus: 1
 train:
   model: "olmo2_170M"
   init_seed: 1
@@ -532,13 +547,13 @@ untaught:
     assert cfg["untaught"]["blacklist"] is None, "null -> None"
     print("  ok  YAML config parses, comments and quoted '#' handled")
 
-    up = to_upstream(cfg)
+    up = to_upstream(cfg, save_folder="d")
     assert up["dataset"]["vsl_curriculum"] == {
         "name": "grow_p2", "num_cycles": 8, "balanced": False
     }
     assert up["dataset"]["paths"] == ["a#b"], "a lone path becomes a one-item list"
     assert up["dataset"]["work_dir"] == "c"
-    assert up["trainer"]["save_folder"] == "d"
+    assert up["trainer"]["save_folder"] == "d", "save_folder is the caller's, not the config's"
     assert up["trainer"]["rank_microbatch_size"] == 8192
     assert up["trainer"]["max_duration"] == {"value": 200, "unit": "steps"}
     assert up["trainer"]["callbacks"]["lr_scheduler"]["warmup_steps"] == 1000
@@ -559,7 +574,7 @@ def test_shipped_configs_are_valid():
 
     for name, cfg in (("control", control), ("ablated", ablated)):
         assert list(cfg) == ["job", "train", "untaught"], f"{name}: {list(cfg)}"
-        to_upstream(cfg)  # must not raise: every key present
+        to_upstream(cfg, save_folder="x")  # must not raise: every key present
         assert not [k for k in cfg if k.startswith("_")], f"{name} has _comment fields"
         for group in cfg.values():
             if isinstance(group, dict):
@@ -568,13 +583,110 @@ def test_shipped_configs_are_valid():
                 )
 
     assert control["train"] == ablated["train"], (
-        "the two runs must differ only in save_folder and the untaught block"
+        "the two runs must differ only in job.name and the untaught block"
     )
     assert control["job"]["dataset_paths"] == ablated["job"]["dataset_paths"]
-    assert control["job"]["save_folder"] != ablated["job"]["save_folder"]
+    assert control["job"]["name"] != ablated["job"]["name"]
+    for cfg in (control, ablated):
+        for key in ("name", "partition", "max_time_minutes", "nodes", "ntasks",
+                    "cpu_mem_mb", "cpus_per_task", "gpus"):
+            assert key in cfg["job"], f"job.{key} missing"
+        assert "save_folder" not in cfg["job"], "save_folder is per-run, not config"
     assert control["untaught"]["blacklist"] is None
     assert ablated["untaught"]["blacklist"] == "blacklists/harry_potter.json"
     print("  ok  shipped configs: 3 groups, no _comment fields, train blocks identical")
+
+
+def test_prepare_fills_run_folder():
+    """The client fills a self-contained run folder: config copy, artifact
+    (explicitly empty for control), a materialized job.slurm, an executable
+    run_wrapper.sh, and checkpoints/."""
+    from framework.client.prepare import generate_job_slurm, prepare
+    from framework.node.artifact import load_artifact
+
+    # --- control run: no ES needed at all ---
+    run_dir = tempfile.mkdtemp()
+    try:
+        written = prepare("configs/train_170m_control.yaml", run_dir)
+
+        # config copy is byte-identical (comments preserved)
+        src = pathlib.Path("configs/train_170m_control.yaml").read_bytes()
+        assert pathlib.Path(written["config"]).read_bytes() == src
+        print("  ok  config copied verbatim into the run folder")
+
+        # artifact exists and says, explicitly, that it is empty
+        art = json.loads(pathlib.Path(written["artifact"]).read_text(encoding="utf-8"))
+        assert art["num_chunks"] == 0 and art["entities"] == []
+        assert "EMPTY" in art["comment"] and "CONTROL" in art["comment"]
+        assert load_artifact(written["artifact"]) == {}
+        print("  ok  control artifact is explicitly empty, with a comment saying so")
+
+        # job.slurm: exact format, pure strings
+        slurm = pathlib.Path(written["job.slurm"]).read_text(encoding="utf-8")
+        lines = slurm.splitlines()
+        rd = run_dir.replace(os.sep, os.sep)  # as written
+        assert lines[0] == "#! /bin/sh"
+        assert lines[1] == "#SBATCH --job-name=untaught-control-170m"
+        assert lines[2] == f"#SBATCH --output={run_dir}/log.out"
+        assert lines[3] == f"#SBATCH --error={run_dir}/log.err"
+        assert lines[4] == "#SBATCH --partition=studentkillable"
+        assert lines[5] == "#SBATCH --time=180"
+        assert lines[6] == "#SBATCH --signal=USR1@120"
+        assert lines[7] == "#SBATCH --nodes=1"
+        assert lines[8] == "#SBATCH --ntasks=1"
+        assert lines[9] == "#SBATCH --mem=64000"
+        assert lines[10] == "#SBATCH --cpus-per-task=8"
+        assert lines[11] == "#SBATCH --gpus=1"
+        assert lines[12] == ""
+        assert lines[13].startswith("# Created by: ")
+        assert lines[14] == ""
+        assert lines[15] == f"{run_dir}/run_wrapper.sh"
+        assert "${" not in slurm, "job.slurm must be pure parsed strings"
+        print("  ok  job.slurm matches the required format exactly, no env vars")
+
+        # run_wrapper.sh: node env + torchrun on the run folder's config copy
+        wrapper = pathlib.Path(written["run_wrapper"]).read_text(encoding="utf-8")
+        assert wrapper.startswith("#!/bin/sh")
+        assert "set_node_env.sh" in wrapper
+        assert "nvidia-smi" in wrapper
+        assert "torchrun --standalone --nproc-per-node=1" in wrapper
+        assert f"{run_dir}/config.yaml" in wrapper, "must train on the copy"
+        if os.name != "nt":  # the execute bit is meaningless on Windows
+            assert os.access(written["run_wrapper"], os.X_OK)
+        print("  ok  run_wrapper.sh runs node env + torchrun on the copied config")
+
+        assert os.path.isdir(os.path.join(run_dir, "checkpoints"))
+        print("  ok  checkpoints/ folder created for the saved parameters")
+    finally:
+        shutil.rmtree(run_dir, ignore_errors=True)
+
+    # --- ablated run: same folder contract, artifact resolved via (fake) ES ---
+    run_dir = tempfile.mkdtemp()
+    try:
+        with fake_elasticsearch({"Q8337": [7, 3], "Q3244512": [11]}):
+            written = prepare("configs/train_170m_no_harry_potter.yaml", run_dir)
+        art = json.loads(pathlib.Path(written["artifact"]).read_text(encoding="utf-8"))
+        assert art["num_chunks"] == 3
+        assert load_artifact(written["artifact"]) == {3: "Q8337", 7: "Q8337", 11: "Q3244512"}
+        slurm = pathlib.Path(written["job.slurm"]).read_text(encoding="utf-8")
+        assert "#SBATCH --job-name=untaught-no-hp-170m" in slurm
+        print("  ok  ablated run folder carries the resolved exclusion")
+    finally:
+        shutil.rmtree(run_dir, ignore_errors=True)
+
+    # gpus drives torchrun's process count
+    from framework.client.prepare import generate_run_wrapper
+    wrapper = generate_run_wrapper(
+        {"name": "j", "gpus": 4}, "/runs/j_20260101_000000"
+    )
+    assert "--nproc-per-node=4" in wrapper
+    slurm = generate_job_slurm(
+        {"name": "j", "partition": "p", "max_time_minutes": 5, "nodes": 1,
+         "ntasks": 1, "cpu_mem_mb": 9, "cpus_per_task": 2, "gpus": 4},
+        "/runs/j_20260101_000000", "someone",
+    )
+    assert "#SBATCH --gpus=4" in slurm and "# Created by: someone" in slurm
+    print("  ok  job.gpus flows to both #SBATCH --gpus and torchrun nproc")
 
 
 if __name__ == "__main__":
@@ -596,6 +708,7 @@ if __name__ == "__main__":
         test_load_config_sources_env_sh,
         test_config_comments_and_schema,
         test_shipped_configs_are_valid,
+        test_prepare_fills_run_folder,
     ]
     print(f"\nrunning {len(tests)} unit checks ({SOURCE})\n")
     for t in tests:

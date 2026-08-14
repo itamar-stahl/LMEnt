@@ -8,8 +8,8 @@
 #   . ./framework/node/set_node_env.sh     compute node (+ conda)
 #
 # Everything is an override-able default: `export FOO=...` before sourcing and
-# that value wins. Only per-deployment facts belong here -- SLURM resources live
-# in the run scripts, hyperparameters in configs/*.yaml.
+# that value wins. Only per-deployment facts belong here -- SLURM resources and
+# hyperparameters both live in each config's own configs/*.yaml.
 
 # --- where things live --------------------------------------------------------
 : "${STAHLI_ROOT:=/home/morg/NLP_2526b/stahli}"

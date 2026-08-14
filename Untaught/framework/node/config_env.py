@@ -38,13 +38,18 @@ def read_config_file(path: str) -> Dict[str, Any]:
     return config
 
 
-def to_upstream(config: Dict[str, Any]) -> Dict[str, Any]:
+def to_upstream(config: Dict[str, Any], save_folder: str) -> Dict[str, Any]:
     """Translate our flat ``job``/``train`` groups into upstream's nested schema.
 
     ``examples.kas.train.build_config`` wants ``config["dataset"]["vsl_curriculum"]
     ["num_cycles"]`` and friends. That shape is upstream's business, not a
     structure worth reproducing by hand in every config file, so the files stay
     flat and grouped by prefix and this function does the mapping.
+
+    ``save_folder`` is a parameter, not a config field: every submission gets its
+    own run folder (``runs/<job_name>_<date>_<time>``), so where checkpoints land
+    is decided per run -- the trainer derives it from where its config copy
+    lives, never from the config's contents.
     """
     job = config["job"]
     train = config["train"]
@@ -80,7 +85,7 @@ def to_upstream(config: Dict[str, Any]) -> Dict[str, Any]:
             "prefetch_factor": train["data_prefetch_factor"],
         },
         "trainer": {
-            "save_folder": job["save_folder"],
+            "save_folder": save_folder,
             "rank_microbatch_size": train["data_rank_microbatch_size"],
             "save_overwrite": train["checkpoint_save_overwrite"],
             "metrics_collect_interval": train["metrics_collect_interval"],
@@ -263,3 +268,19 @@ def load_config(config_path: str) -> Any:
 
     assert_paths_resolved(config_dict)
     return config_dict
+
+
+if __name__ == "__main__":
+    # Tiny getter so shell scripts can read one config value without parsing
+    # YAML themselves:  python -m framework.node.config_env <config> <dotted.key>
+    if len(sys.argv) != 3:
+        print("usage: python -m framework.node.config_env <config> <dotted.key>",
+              file=sys.stderr)
+        raise SystemExit(2)
+    node: Any = load_config(sys.argv[1])
+    for part in sys.argv[2].split("."):
+        if not isinstance(node, dict) or part not in node:
+            print(f"[untaught] no key '{sys.argv[2]}' in {sys.argv[1]}", file=sys.stderr)
+            raise SystemExit(1)
+        node = node[part]
+    print(node)

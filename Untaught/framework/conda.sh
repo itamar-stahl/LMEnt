@@ -5,7 +5,7 @@
 # ~/.bashrc is not read by batch jobs, and belongs to one user anyway, so this
 # repeats conda's setup instead of assuming it. The `conda shell.bash hook`
 # branch of a stock .bashrc is skipped on purpose: this file is sourced by
-# /bin/sh (that is what `sbatch --wrap` runs), and etc/profile.d/conda.sh is the
+# /bin/sh (that is what runs the generated job scripts), and conda.sh is the
 # POSIX entry point conda ships for that case.
 #
 # `conda activate` cannot be an executable -- it has to edit the *current*

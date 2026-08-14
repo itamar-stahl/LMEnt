@@ -64,10 +64,12 @@ Untaught/
 │   ├── env.sh               shared variables — the only place paths are named
 │   ├── conda.sh             shared conda activation
 │   ├── client/              needs Elasticsearch; never imported by a training job
+│   │   ├── sub_builder.sh   THE submit flow: builds a run folder, sbatch job.slurm
 │   │   ├── es_blacklist.py  entity QIDs -> chunk ids, via Elasticsearch
-│   │   └── prepare.py       writes the blacklist artifact into the run folder
+│   │   └── prepare.py       fills the run folder: config copy, artifact, job.slurm,
+│   │                        run_wrapper.sh
 │   └── node/                no Elasticsearch dependency at all
-│       ├── set_node_env.sh  COMPUTE NODE: cd + vars + conda (sourced by --wrap)
+│       ├── set_node_env.sh  COMPUTE NODE: cd + vars + conda (sourced by run_wrapper.sh)
 │       ├── train_untaught.py  wraps examples/kas/train.py, attaches the callback
 │       ├── exclusion.py     ChunkExclusionCallback — the ~15 lines that matter
 │       ├── artifact.py      reads the artifact into a {chunk_id: qid} dict
@@ -77,12 +79,12 @@ Untaught/
 │   └── train_170m_no_harry_potter.yaml
 ├── blacklists/
 │   └── harry_potter.json    QIDs to hold out; named by the config above
+├── runs/                    one self-contained folder per submission (see below)
 ├── tests/
 │   ├── test_exclusion.py    proves masked chunks leave the loss (upstream semantics)
-│   ├── test_untaught_units.py  unit tests: callback, ES query, config expansion
+│   ├── test_untaught_units.py  unit tests: callback, run-folder generation, schema
 │   └── verify_chunk_alignment.py  REMOTE preflight: proves chunk_id alignment empirically
-├── run_smoke_control.sh     smoke 1: 170M, nothing excluded
-└── run_smoke_harry_potter.sh smoke 2: 170M, "Harry Potter" excluded
+└── SMOKE_TEST.md            step-by-step guide for the two smoke runs on the cluster
 ```
 
 Upstream code is **not modified**. `train_untaught.py` imports `build_config`
@@ -97,8 +99,6 @@ On the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`):
 
 ```sh
 cd $LMENT_ROOT/Untaught
-chmod +x run_smoke_*.sh
-
 . ./activate_env.sh               # that is the whole setup
 ```
 
@@ -110,8 +110,9 @@ user. Adjust `framework/env.sh` only if your paths differ from
 
 Both entry points `cd` to `$LMENT_ROOT/Untaught` first, so the working directory
 and `UNTAUGHT_ROOT` are the same fixed path on every node. Batch jobs get the
-same environment from `framework/node/set_node_env.sh`, which the run scripts
-put in the `sbatch --wrap` command — minus Elasticsearch, which the GPU nodes cannot reach.
+same environment from `framework/node/set_node_env.sh`, sourced by each run
+folder's `run_wrapper.sh` — minus Elasticsearch, which the GPU nodes cannot
+reach.
 
 Preflight, in order, all GPU-free:
 
@@ -121,7 +122,7 @@ python tests/test_exclusion.py
 python tests/test_untaught_units.py
 
 # 2. config builds, paths resolve, blacklist readable (seconds)
-./run_smoke_control.sh --check
+python -m framework.node.train_untaught configs/train_170m_control.yaml --check
 
 # 3. THE decisive check — proves on this deployment that ES chunk_id
 #    equals the dataset instance index, by comparing decoded chunk text
@@ -135,23 +136,42 @@ snapshot, missing/renamed tokenized file).
 
 ---
 
-## The two smoke runs
+## Submitting a run
 
-### 1 — control (nothing excluded)
+One command, whatever the config:
 
 ```sh
-./run_smoke_control.sh
+. ./framework/client/sub_builder.sh configs/train_170m_control.yaml
+. ./framework/client/sub_builder.sh configs/train_170m_no_harry_potter.yaml
 ```
 
-170M, 200 steps, no blacklist. This is the baseline and it also proves the
-plumbing works before Elasticsearch is involved at all.
+Everything about the job — its name, SLURM resources, hyperparameters, and the
+ablation — is in the config; `sub_builder.sh` holds only the shared flow. Each
+submission creates its own **run folder**, `runs/<job.name>_<date>_<time>/`,
+which is both the working record and the save location:
 
-### 2 — "Harry Potter" excluded
+```
+runs/untaught-no-hp-170m_20260814_153000/
+├── config.yaml               verbatim copy — later edits to configs/ can't touch this run
+├── untaught_blacklist.json   the exact exclusion (explicitly empty for a control run)
+├── job.slurm                 what was submitted — pure strings, zero env variables
+├── run_wrapper.sh            what the GPU node executed
+├── client.log                the submission-side log
+├── log.out / log.err         the job's stdout / stderr
+└── checkpoints/              saved parameters, by step
+```
+
+`sub_builder.sh` sets up the client environment, fills the folder via
+`framework.client.prepare`, validates every file exists (and that `job.slurm`
+contains no unresolved variables), then submits with `sbatch job.slurm`. The
+GPU node just executes `run_wrapper.sh`, which trains on the folder's own
+`config.yaml`. Tracing any run back is: open its folder.
+
+### Inspecting the ablation before submitting
 
 ```sh
-./run_smoke_harry_potter.sh --resolve   # which QIDs does the corpus use?
-./run_smoke_harry_potter.sh --count     # how many chunks would go?
-./run_smoke_harry_potter.sh             # resolve blacklist + submit
+python -m framework.client.es_blacklist resolve --name "Harry Potter"   # which QIDs exist?
+python -m framework.client.es_blacklist count --config configs/train_170m_no_harry_potter.yaml --preview 5
 ```
 
 Which entities are held out is one file — `blacklists/harry_potter.json`, a list
@@ -174,9 +194,9 @@ login node                                   GPU node
 ──────────                                   ────────
 blacklists/harry_potter.json  (QIDs)
 config: thresholds, case_sensitive
-      │  framework.client.prepare   (step 1 of run_smoke_harry_potter.sh)
+      │  framework.client.prepare   (run by sub_builder.sh)
       ▼
-<save_folder>/untaught_blacklist.json ─────► pre_train: load into {chunk_id: qid}
+<run_dir>/untaught_blacklist.json ─────────► pre_train: load into {chunk_id: qid}
                                                      │
                                              pre_step: dict lookup per row → mask
 ```
@@ -187,11 +207,11 @@ run and the exact exclusion it was trained with stay together. The training job
 never talks to Elasticsearch; a missing artifact is a hard error, not a silent
 control run.
 
-**If you skip step 1**, the job fails at `pre_train` telling you to run
-`python -m framework.client.prepare --config <config>`.
+**A run folder without an artifact fails at `pre_train`** with an error naming
+`sub_builder.sh` — an ablated run can never silently train as a control.
 
-**Verify the QIDs before trusting a run.** `--resolve` reports which QIDs the
-corpus actually attaches to that name, with mention counts; `--count` reports how
+**Verify the QIDs before trusting a run.** `resolve` reports which QIDs the
+corpus actually attaches to that name, with mention counts; `count` reports how
 many chunks the file would remove. The defaults are `Q8337` (the series) and
 `Q3244512` (the character); a franchise, its characters and its individual books
 are all separate Wikidata entities, so decide how wide your concept is.
@@ -207,7 +227,8 @@ are all separate Wikidata entities, so decide how wide your concept is.
 | total steps | 200 | 200 (identical — that is the point) |
 
 If the ablated run shows all zeros, the blacklist did not match anything —
-check your QIDs with `--resolve`.
+check your QIDs with the `resolve` command above. The full remote walkthrough
+is in [SMOKE_TEST.md](SMOKE_TEST.md).
 
 ---
 
@@ -215,18 +236,19 @@ check your QIDs with `--resolve`.
 
 In both configs, change:
 
-```json
-"max_duration": { "value": 1, "unit": "epochs" }
+```yaml
+max_duration_value: 1
+max_duration_unit: "epochs"
 ```
 
 One epoch is ~109K steps (3.6B tokens ÷ 32,768 tokens/step). For a 170M model
 that is roughly 4–8 hours on one H100-class GPU. Then also:
 
-- `"disable_downstream_eval": false` and set `eval_interval` to `1000`
-- raise `checkpointer.save_interval` to `1000` (the paper's cadence, 110
+- `disable_downstream_eval: false` and set `eval_interval` to `1000`
+- raise `checkpoint_save_interval` to `1000` (the paper's cadence, 110
   checkpoints/epoch)
-- bump `#SBATCH --time` (minutes) in `slurm/*.slurm`; `studentkillable` caps at
-  1 day, so a full epoch needs several resumes or a longer partition
+- bump `job.max_time_minutes`; `studentkillable` caps at 1 day, so a full epoch
+  needs several resumes or a longer partition
 
 The configs already use the paper's hyperparameters (appendix B.4): AdamW,
 global batch 32,768 tokens, rank batch 8,192, peak LR 5e-4, weight decay 0.05,

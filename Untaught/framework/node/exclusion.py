@@ -46,9 +46,9 @@ from olmo_core.train.callbacks import Callback
 from olmo_core.train.common import ReduceType
 
 try:
-    from .artifact import ARTIFACT_NAME, load_artifact
+    from .artifact import load_artifact
 except ImportError:  # pragma: no cover - file-path launch
-    from framework.node.artifact import ARTIFACT_NAME, load_artifact
+    from framework.node.artifact import load_artifact
 
 log = logging.getLogger(__name__)
 
@@ -65,10 +65,10 @@ class ChunkExclusionCallback(Callback):
         presence says an ablation was configured, so the artifact below is
         required. ``None`` makes this callback a no-op, which is exactly what
         the control run wants.
-    :param artifact_name: file inside the trainer's ``save_folder`` holding the
-        resolved chunk ids, written before submission by
-        ``framework.client.prepare`` on the login node. Loaded into a
-        ``{chunk_id: qid}`` dict at ``pre_train``.
+    :param artifact_path: the run folder's ``untaught_blacklist.json``, written
+        before submission by ``framework.client.prepare`` on the login node
+        (via ``sub_builder.sh``). Loaded into a ``{chunk_id: qid}`` dict at
+        ``pre_train``.
     :param chunk_ids: chunk ids given directly, skipping the artifact. Takes
         precedence over ``blacklist``; mainly for tests.
     :param enabled: Set ``False`` to keep the callback attached but inert.
@@ -81,7 +81,7 @@ class ChunkExclusionCallback(Callback):
     priority = 10
 
     blacklist: Optional[str] = None
-    artifact_name: str = ARTIFACT_NAME
+    artifact_path: Optional[str] = None
     chunk_ids: Optional[Sequence[int]] = None
     enabled: bool = True
     guard_all_masked: bool = True
@@ -195,14 +195,16 @@ class ChunkExclusionCallback(Callback):
         """Read the chunk ids resolved before submission.
 
         Elasticsearch is not reachable from the GPU nodes, so the lookup cannot
-        happen here -- the artifact is the hand-off.
+        happen here -- the run folder's artifact is the hand-off.
         """
-        path = os.path.join(str(self.trainer.save_folder), self.artifact_name)
-        if not os.path.isfile(path):
+        path = self.artifact_path
+        if not path or not os.path.isfile(path):
             raise FileNotFoundError(
                 f"[untaught] blacklist artifact not found: {path}\n"
-                "Generate it where Elasticsearch is reachable, before submitting:\n"
-                f"  python -m framework.client.prepare --config <config>"
+                "A run folder is only submittable through sub_builder.sh, which "
+                "writes it (via framework.client.prepare) where Elasticsearch "
+                "is reachable:\n"
+                "  . ./framework/client/sub_builder.sh <config.yaml>"
             )
 
         blacklist = load_artifact(path)
