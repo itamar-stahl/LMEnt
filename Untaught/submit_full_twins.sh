@@ -1,7 +1,7 @@
 #!/bin/sh
 # Submit the full training pair: control and "Harry Potter" ablated.
 #
-#     ./run.sh
+#     ./submit_full_twins.sh
 #
 # Two independent SLURM jobs, so they train in parallel. Everything else --
 # resources, hyperparameters, the ablation -- is in the two configs.
@@ -37,6 +37,6 @@ echo
 echo "=============================================================="
 echo "  Both submitted. Track with:  squeue --me"
 echo "  Each run folder is under runs/<job_name>_<date>_<time>/"
-echo "  Re-run ./run.sh after a preemption to continue from the last"
+echo "  Re-run ./submit_full_twins.sh after a preemption to continue from the last"
 echo "  checkpoint; nothing is lost."
 echo "=============================================================="

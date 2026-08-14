@@ -9,12 +9,12 @@
 # (3.6B tokens / 32,768 tokens per step).
 #
 # Submit BOTH runs with:
-#   ./run.sh
+#   ./submit_full_twins.sh
 # or this one alone with:
 #   . ./framework/client/sub_builder.sh configs/train_170m_no_harry_potter_full.yaml
 #
 # studentkillable caps a job at 1 day and is preemptible, so a full epoch takes
-# several submissions. Just run ./run.sh again: each new run folder resumes
+# several submissions. Just run ./submit_full_twins.sh again: each new run folder resumes
 # from the newest checkpoint of the previous run of the same job (see
 # job.resume_from_previous_run).
 
@@ -45,6 +45,17 @@ job:
   cpu_mem_mb: 64000
   cpus_per_task: 8
   gpus: 1                         # students are limited to 1 GPU per job
+  # Which cards will do. studentkillable has exactly two features, so this is
+  # the whole menu: titan_xp (s-002/003/006, 23 GPUs) and geforce_rtx_2080
+  # (s-004/005, 16 GPUs). Neither has native bf16 -- that needs CUDA capability
+  # 8.0 -- so bf16 is emulated on the fp32 pipeline, where titan_xp's 12.1
+  # TFLOPS and 12 GiB beat the 2080's 10.1 TFLOPS and 8 GiB; the 2080's tensor
+  # cores stay idle because they only accelerate fp16. The 2080 does get
+  # torch.compile (capability 7.5 against 6.1), which roughly cancels the
+  # throughput gap, but 8 GiB is tight here and titan_xp is the card the smoke
+  # runs already proved. One feature also puts both twins on identical silicon.
+  # Measured on titan_xp: ~4K tokens/s, so one epoch takes ~10 days.
+  # "" = any card. (No a100-class card exists in this partition.)
   constraint: "titan_xp"
 
 # Everything the model and the optimizer see.
@@ -63,10 +74,15 @@ train:
   optim_max_grad_norm: 1.0
 
   # batching, in tokens. rank_microbatch is a memory knob only -- gradient
-  # accumulation holds the global batch fixed, so untaught.adapt_to_gpu may
-  # lower it to fit a small card without changing the optimizer math.
+  # accumulation holds the global batch fixed (here 16 microbatches per step),
+  # so its value never changes the optimizer math, only memory and speed.
+  # 2,048 is what fits the pinned titan_xp: 8,192 OOMs on 12 GiB, and it is the
+  # value adapt_to_gpu picked and the smoke runs trained at. Stating it here
+  # rather than leaving adapt_to_gpu to discover it keeps the config equal to
+  # what actually runs. If a later, longer-sequence phase of the grow_p2
+  # curriculum ever OOMs, halve it -- the comparison is unaffected.
   data_global_batch_size: 32768
-  data_rank_microbatch_size: 8192
+  data_rank_microbatch_size: 2048
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8

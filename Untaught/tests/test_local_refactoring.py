@@ -75,7 +75,7 @@ def test_every_expected_file_exists():
         "framework/node/run_folder.py",
         "framework/node/exclusion.py",
         "framework/node/train_untaught.py",
-        "run.sh",
+        "submit_full_twins.sh",
         "configs/train_170m_control.yaml",
         "configs/train_170m_no_harry_potter.yaml",
         "configs/train_170m_control_full.yaml",
@@ -371,11 +371,11 @@ def test_sub_builder_flow_is_complete():
 
 @suite.test
 def test_run_sh_submits_the_full_pair_once_activated():
-    """run.sh submits both full configs, activating the env exactly once"""
-    run_sh = read(UNTAUGHT_ROOT, "run.sh")
+    """submit_full_twins.sh submits both full configs, activating the env exactly once"""
+    run_sh = read(UNTAUGHT_ROOT, "submit_full_twins.sh")
     for config in ("configs/train_170m_control_full.yaml",
                    "configs/train_170m_no_harry_potter_full.yaml"):
-        assert config in run_sh, f"run.sh does not submit {config}"
+        assert config in run_sh, f"submit_full_twins.sh does not submit {config}"
     assert "sub_builder.sh" in run_sh, "run.sh must go through sub_builder.sh"
     # Count sourcing, not prose: comments may well mention the file.
     sourced = [
@@ -383,7 +383,7 @@ def test_run_sh_submits_the_full_pair_once_activated():
         if re.match(r"\s*(\.|source)\s", l) and "activate_env.sh" in l
     ]
     assert len(sourced) == 1, (
-        f"run.sh should source the environment exactly once, found {len(sourced)}: "
+        f"submit_full_twins.sh should source the environment exactly once, found {len(sourced)}: "
         f"{sourced}"
     )
 
@@ -564,7 +564,7 @@ def test_shell_scripts_are_valid_posix_sh():
     """every shell script parses under /bin/sh"""
     scripts = [
         os.path.join(UNTAUGHT_ROOT, "activate_env.sh"),
-        os.path.join(UNTAUGHT_ROOT, "run.sh"),
+        os.path.join(UNTAUGHT_ROOT, "submit_full_twins.sh"),
         os.path.join(FRAMEWORK, "env.sh"),
         os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),

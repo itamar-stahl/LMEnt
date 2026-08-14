@@ -74,7 +74,7 @@ Untaught/
 │       ├── exclusion.py     ChunkExclusionCallback — the ~15 lines that matter
 │       ├── run_folder.py    the run-folder contract: layout + artifact reading
 │       └── config_env.py    ${VAR} expansion for configs; reads env.sh on miss
-├── run.sh                   submit the full training pair (both jobs)
+├── submit_full_twins.sh     submit the full training pair (both jobs)
 ├── configs/
 │   ├── train_170m_control.yaml       200-step smoke pair
 │   ├── train_170m_no_harry_potter.yaml
@@ -147,7 +147,7 @@ snapshot, missing/renamed tokenized file).
 The full training pair, both jobs at once:
 
 ```sh
-./run.sh
+./submit_full_twins.sh
 ```
 
 Or any single config:
@@ -196,7 +196,7 @@ folder.
 
 `studentkillable` caps a job at **1 day** and can preempt it at any time, while
 one epoch is ~109K steps — so a full run takes several submissions. Just run
-`./run.sh` again. Each submission gets a fresh run folder, and the trainer looks
+`./submit_full_twins.sh` again. Each submission gets a fresh run folder, and the trainer looks
 one folder back: if the newest previous run of the same job left a checkpoint,
 it continues from it; otherwise it starts from a random init. The run header
 says which:
