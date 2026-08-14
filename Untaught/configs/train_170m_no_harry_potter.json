@@ -1,119 +1,87 @@
 {
-  "_comment": [
-    "SMOKE ABLATED RUN: 170M, 'Harry Potter' held out of the loss.",
-    "",
-    "Identical to train_170m_control.json in every field except 'save_folder'",
-    "and the 'untaught' block. Same init_seed and same data_loader seed, so both",
-    "runs see the same chunks in the same order in the same batches -- the only",
-    "difference is that blacklisted chunks contribute no gradient.",
-    "",
-    "'blacklist' names a file of Wikidata QIDs, relative to Untaught/. The",
-    "chunk ids are resolved from Elasticsearch when training starts -- nothing",
-    "is precomputed and nothing is written to disk."
-  ],
-
-  "model": "olmo2_170M",
-
-  "optim": {
-    "lr": 0.0005,
-    "weight_decay": 0.05
+  // Where this run reads and writes. Paths only.
+  "job": {
+    "dataset_paths": "${LMENT_DATASET}/dataset-tokenized/*.npy",
+    "dataset_cache": "${LMENT_DATASET}/dataset-cache",
+    "save_folder": "${UNTAUGHT_RUNS_DIR}/no_harry_potter_170m"
   },
 
-  "dataset": {
-    "name": "kas_vsl",
-    "max_sequence_length": 2048,
-    "min_sequence_length": 64,
-    "vsl_curriculum": {
-      "name": "grow_p2",
-      "num_cycles": 8,
-      "balanced": false
-    },
-    "paths": [
-      "${LMENT_DATASET}/dataset-tokenized/*.npy"
-    ],
-    "include_instance_metadata": false,
-    "work_dir": "${LMENT_DATASET}/dataset-cache"
-  },
+  // Everything the model and the optimizer see. Identical to the control.
+  "train": {
+    "model": "olmo2_170M",
+    "init_seed": 12536,
+    "max_duration_value": 200,
+    "max_duration_unit": "steps",
 
-  "data_loader": {
-    "global_batch_size": 32768,
-    "seed": 0,
-    "num_workers": 4,
-    "prefetch_factor": 8
-  },
+    // optimizer: AdamW, cosine schedule with warmup
+    "optim_lr": 0.0005,
+    "optim_weight_decay": 0.05,
+    "optim_warmup_steps": 1000,
+    "optim_max_grad_norm": 1.0,
 
-  "trainer": {
-    "save_folder": "${UNTAUGHT_RUNS_DIR}/no_harry_potter_170m",
-    "rank_microbatch_size": 8192,
-    "save_overwrite": true,
-    "max_duration": {
-      "value": 200,
-      "unit": "steps"
-    },
-    "cancel_check_interval": 5,
+    // batching, in tokens
+    "data_global_batch_size": 32768,
+    "data_rank_microbatch_size": 8192,
+    "data_seed": 0,
+    "data_num_workers": 4,
+    "data_prefetch_factor": 8,
+
+    // dataset construction
+    "dataset_name": "kas_vsl",
+    "dataset_max_sequence_length": 2048,
+    "dataset_min_sequence_length": 64,
+    "dataset_include_instance_metadata": false,
+    "vsl_curriculum": "grow_p2",
+    "vsl_num_cycles": 8,
+    "vsl_balanced": false,
+
+    // checkpoints and logging
+    "checkpoint_save_interval": 100,
+    "checkpoint_ephemeral_save_interval": 50,
+    "checkpoint_save_async": true,
+    "checkpoint_save_overwrite": true,
     "metrics_collect_interval": 1,
-    "callbacks": {
-      "lr_scheduler": {
-        "warmup_steps": 1000
-      },
-      "grad_clipper": {
-        "max_grad_norm": 1.0
-      },
-      "checkpointer": {
-        "save_interval": 100,
-        "ephemeral_save_interval": 50,
-        "save_async": true
-      },
-      "wandb": {
-        "name": "untaught-no-harry-potter-170m",
-        "cancel_check_interval": 10
-      },
-      "downstream_evaluator": {
-        "tasks": [
-          "arc_easy"
-        ],
-        "eval_interval": 100000,
-        "eval_duration": {
-          "value": 1,
-          "unit": "epochs"
-        },
-        "log_interval": 5,
-        "enabled": false
-      }
-    }
+    "cancel_check_interval": 5,
+    "wandb_cancel_check_interval": 10,
+    "eval_tasks": ["arc_easy"],
+    "eval_interval": 100000
   },
 
+  // The ablation: hold "Harry Potter" out of the loss.
   "untaught": {
     "blacklist": "blacklists/harry_potter.json",
-
-    "_thresholds_comment": [
-      "Per-source mention-confidence cutoffs for the retrieval. A mention",
-      "counts if it clears AT LEAST ONE of them, so this is how aggressively",
-      "this run excludes -- a property of the run, not of the entity list.",
-      "These are the values the paper validated on a 60-entity dev set",
-      "(section 5.2, Table 4). Lower them for higher recall and more collateral",
-      "chunks; raise them to exclude only high-confidence mentions. Any source",
-      "you omit keeps its default; an unknown name is a hard error."
-    ],
-    "thresholds": {
-      "hyperlinks": 1.0,
-      "entity_linking": 0.6,
-      "coref": 0.6,
-      "coref_cluster": 0.6
-    },
-
-    "_case_sensitive_comment": [
-      "Which index the retrieval runs against: true -> lment_cs (restored from",
-      "enwiki_case_sensitive), false -> lment_ci (from enwiki). QID retrieval is",
-      "case-agnostic, so true is the right default; flip it only if you know the",
-      "case-folded index is the one you want."
-    ],
     "case_sensitive": true,
 
+    // per-source mention-confidence cutoffs; a mention counts if it clears one
+    "threshold_hyperlinks": 1.0,
+    "threshold_entity_linking": 0.6,
+    "threshold_coref": 0.6,
+    "threshold_coref_cluster": 0.6,
+
     "enabled": true,
+    "adapt_to_gpu": true,
     "disable_wandb": true,
     "disable_downstream_eval": true
-  },
-
-  "init_seed": 12536
+  }
 }
+
+// SMOKE ABLATED RUN: 170M, "Harry Potter" held out of the loss.
+//
+// Identical to train_170m_control.json in every field except job.save_folder and
+// the untaught block. Same init_seed and same data_seed, so both runs see the
+// same chunks in the same order in the same batches -- the only difference is
+// that blacklisted chunks contribute no gradient.
+//
+// untaught.blacklist names a file of Wikidata QIDs, relative to Untaught/. Run
+// `python -m framework.client.prepare --config <this file>` on the login node
+// first: it resolves those QIDs into chunk ids and writes them into the run
+// folder, because the GPU nodes cannot reach Elasticsearch.
+//
+// threshold_*: the values the paper validated on a 60-entity dev set (section
+// 5.2, Table 4). Lower them for higher recall and more collateral chunks; raise
+// them to exclude only high-confidence mentions. Omit one and it keeps its
+// default; an unknown threshold_* name is a hard error.
+//
+// case_sensitive picks the index: true -> lment_cs (restored from
+// enwiki_case_sensitive), false -> lment_ci (from enwiki). QID retrieval is
+// case-agnostic, so true is the right default.

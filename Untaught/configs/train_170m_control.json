@@ -1,104 +1,82 @@
 {
-  "_comment": [
-    "SMOKE CONTROL RUN: 170M, nothing held out.",
-    "",
-    "This is the baseline half of the pair. It must stay byte-identical to",
-    "train_170m_no_harry_potter.json in EVERY field except 'save_folder' and the",
-    "'untaught' block -- same init_seed, same data_loader seed, same duration.",
-    "That is what makes the comparison a controlled one.",
-    "",
-    "Hyperparameters follow the paper (appendix B.4): AdamW, global batch 32,768",
-    "tokens, rank batch 8,192, peak lr 5e-4, weight decay 0.05, 1,000 warmup",
-    "steps. Note these differ from the checked-in OLMo-core kas_config.json,",
-    "which has lr 3e-4 / wd 0.01 and does not match the released models.",
-    "",
-    "'max_duration' is 200 steps for a smoke test. A real 1-epoch run is ~109K",
-    "steps (3.6B tokens / 32,768 tokens per step)."
-  ],
-
-  "model": "olmo2_170M",
-
-  "optim": {
-    "lr": 0.0005,
-    "weight_decay": 0.05
+  // Where this run reads and writes. Paths only.
+  "job": {
+    "dataset_paths": "${LMENT_DATASET}/dataset-tokenized/*.npy",
+    "dataset_cache": "${LMENT_DATASET}/dataset-cache",
+    "save_folder": "${UNTAUGHT_RUNS_DIR}/control_170m"
   },
 
-  "dataset": {
-    "name": "kas_vsl",
-    "max_sequence_length": 2048,
-    "min_sequence_length": 64,
-    "vsl_curriculum": {
-      "name": "grow_p2",
-      "num_cycles": 8,
-      "balanced": false
-    },
-    "paths": [
-      "${LMENT_DATASET}/dataset-tokenized/*.npy"
-    ],
-    "_include_instance_metadata_comment": [
-      "false on purpose. Chunk exclusion keys off batch['index'], never off the",
-      "per-chunk entity metadata, so training does not need to touch the 212GB",
-      "dataset-metadata tree. This is also what OLMo-core's own",
-      "write_dataloader_batch_indices.py recommends for training."
-    ],
-    "include_instance_metadata": false,
-    "work_dir": "${LMENT_DATASET}/dataset-cache"
-  },
+  // Everything the model and the optimizer see.
+  "train": {
+    "model": "olmo2_170M",
+    "init_seed": 12536,
+    "max_duration_value": 200,
+    "max_duration_unit": "steps",
 
-  "data_loader": {
-    "global_batch_size": 32768,
-    "seed": 0,
-    "num_workers": 4,
-    "prefetch_factor": 8
-  },
+    // optimizer: AdamW, cosine schedule with warmup
+    "optim_lr": 0.0005,
+    "optim_weight_decay": 0.05,
+    "optim_warmup_steps": 1000,
+    "optim_max_grad_norm": 1.0,
 
-  "trainer": {
-    "save_folder": "${UNTAUGHT_RUNS_DIR}/control_170m",
-    "rank_microbatch_size": 8192,
-    "save_overwrite": true,
-    "max_duration": {
-      "value": 200,
-      "unit": "steps"
-    },
-    "cancel_check_interval": 5,
+    // batching, in tokens
+    "data_global_batch_size": 32768,
+    "data_rank_microbatch_size": 8192,
+    "data_seed": 0,
+    "data_num_workers": 4,
+    "data_prefetch_factor": 8,
+
+    // dataset construction
+    "dataset_name": "kas_vsl",
+    "dataset_max_sequence_length": 2048,
+    "dataset_min_sequence_length": 64,
+    "dataset_include_instance_metadata": false,
+    "vsl_curriculum": "grow_p2",
+    "vsl_num_cycles": 8,
+    "vsl_balanced": false,
+
+    // checkpoints and logging
+    "checkpoint_save_interval": 100,
+    "checkpoint_ephemeral_save_interval": 50,
+    "checkpoint_save_async": true,
+    "checkpoint_save_overwrite": true,
     "metrics_collect_interval": 1,
-    "callbacks": {
-      "lr_scheduler": {
-        "warmup_steps": 1000
-      },
-      "grad_clipper": {
-        "max_grad_norm": 1.0
-      },
-      "checkpointer": {
-        "save_interval": 100,
-        "ephemeral_save_interval": 50,
-        "save_async": true
-      },
-      "wandb": {
-        "name": "untaught-control-170m",
-        "cancel_check_interval": 10
-      },
-      "downstream_evaluator": {
-        "tasks": [
-          "arc_easy"
-        ],
-        "eval_interval": 100000,
-        "eval_duration": {
-          "value": 1,
-          "unit": "epochs"
-        },
-        "log_interval": 5,
-        "enabled": false
-      }
-    }
+    "cancel_check_interval": 5,
+    "wandb_cancel_check_interval": 10,
+    "eval_tasks": ["arc_easy"],
+    "eval_interval": 100000
   },
 
+  // The ablation. null blacklist => nothing held out => this is the control.
   "untaught": {
     "blacklist": null,
     "enabled": true,
+    "adapt_to_gpu": true,
     "disable_wandb": true,
     "disable_downstream_eval": true
-  },
-
-  "init_seed": 12536
+  }
 }
+
+// SMOKE CONTROL RUN: 170M, nothing held out.
+//
+// The baseline half of the pair. It must stay identical to
+// train_170m_no_harry_potter.json in every field except job.save_folder and the
+// untaught block -- same init_seed, same data_seed, same duration. That is what
+// makes the comparison a controlled one.
+//
+// Hyperparameters follow the paper (appendix B.4): AdamW, global batch 32,768
+// tokens, rank batch 8,192, peak lr 5e-4, weight decay 0.05, 1,000 warmup steps.
+// These differ from the checked-in OLMo-core kas_config.json, which has lr 3e-4 /
+// wd 0.01 and does not match the released models.
+//
+// max_duration is 200 steps for a smoke test. A real 1-epoch run is ~109K steps
+// (3.6B tokens / 32,768 tokens per step).
+//
+// dataset_include_instance_metadata is false on purpose: chunk exclusion keys off
+// batch["index"], never off the per-chunk entity metadata, so training does not
+// need to touch the 212GB dataset-metadata tree. This is also what OLMo-core's own
+// write_dataloader_batch_indices.py recommends for training.
+//
+// data_rank_microbatch_size is a memory knob only -- gradient accumulation keeps
+// data_global_batch_size fixed, so untaught.adapt_to_gpu may lower it to fit a
+// small card without changing the optimizer math.

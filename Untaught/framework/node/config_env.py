@@ -17,6 +17,113 @@ UNTAUGHT_ROOT = os.path.dirname(
 ENV_SH = os.path.join(UNTAUGHT_ROOT, "framework", "env.sh")
 
 
+def strip_json_comments(text: str) -> str:
+    """Drop ``//`` line comments so the configs can be commented like code.
+
+    Strings are respected, so a ``"https://..."`` value survives. Replacing the
+    comment with spaces rather than deleting it keeps json's error line/column
+    numbers pointing at the real file.
+    """
+    out = []
+    in_string = False
+    escaped = False
+    i = 0
+    while i < len(text):
+        ch = text[i]
+        if in_string:
+            out.append(ch)
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            i += 1
+            continue
+        if ch == '"':
+            in_string = True
+            out.append(ch)
+            i += 1
+            continue
+        if ch == "/" and text[i + 1 : i + 2] == "/":
+            while i < len(text) and text[i] != "\n":
+                out.append(" ")
+                i += 1
+            continue
+        out.append(ch)
+        i += 1
+    return "".join(out)
+
+
+def to_upstream(config: Dict[str, Any]) -> Dict[str, Any]:
+    """Translate our flat ``job``/``train`` groups into upstream's nested schema.
+
+    ``examples.kas.train.build_config`` wants ``config["dataset"]["vsl_curriculum"]
+    ["num_cycles"]`` and friends. That shape is upstream's business, not a
+    structure worth reproducing by hand in every config file, so the files stay
+    flat and grouped by prefix and this function does the mapping.
+    """
+    job = config["job"]
+    train = config["train"]
+
+    paths = job["dataset_paths"]
+    if isinstance(paths, str):
+        paths = [paths]
+
+    return {
+        "model": train["model"],
+        "init_seed": train["init_seed"],
+        "optim": {
+            "lr": train["optim_lr"],
+            "weight_decay": train["optim_weight_decay"],
+        },
+        "dataset": {
+            "name": train["dataset_name"],
+            "paths": paths,
+            "work_dir": job["dataset_cache"],
+            "max_sequence_length": train["dataset_max_sequence_length"],
+            "min_sequence_length": train["dataset_min_sequence_length"],
+            "include_instance_metadata": train["dataset_include_instance_metadata"],
+            "vsl_curriculum": {
+                "name": train["vsl_curriculum"],
+                "num_cycles": train["vsl_num_cycles"],
+                "balanced": train["vsl_balanced"],
+            },
+        },
+        "data_loader": {
+            "global_batch_size": train["data_global_batch_size"],
+            "seed": train["data_seed"],
+            "num_workers": train["data_num_workers"],
+            "prefetch_factor": train["data_prefetch_factor"],
+        },
+        "trainer": {
+            "save_folder": job["save_folder"],
+            "rank_microbatch_size": train["data_rank_microbatch_size"],
+            "save_overwrite": train["checkpoint_save_overwrite"],
+            "metrics_collect_interval": train["metrics_collect_interval"],
+            "cancel_check_interval": train["cancel_check_interval"],
+            "max_duration": {
+                "value": train["max_duration_value"],
+                "unit": train["max_duration_unit"],
+            },
+            "callbacks": {
+                "lr_scheduler": {"warmup_steps": train["optim_warmup_steps"]},
+                "grad_clipper": {"max_grad_norm": train["optim_max_grad_norm"]},
+                "checkpointer": {
+                    "save_interval": train["checkpoint_save_interval"],
+                    "ephemeral_save_interval": train["checkpoint_ephemeral_save_interval"],
+                    "save_async": train["checkpoint_save_async"],
+                },
+                "wandb": {"cancel_check_interval": train["wandb_cancel_check_interval"]},
+                "downstream_evaluator": {
+                    "tasks": train["eval_tasks"],
+                    "eval_interval": train["eval_interval"],
+                },
+            },
+        },
+    }
+
+
 def expand_env(obj: Any) -> Any:
     """Recursively expand ``$VAR`` / ``~`` in every string of a config tree.
 
@@ -166,7 +273,7 @@ def load_config(config_path: str) -> Any:
     retry -- an already-sourced environment costs nothing.
     """
     with open(config_path, "r", encoding="utf-8") as f:
-        raw = json.load(f)
+        raw = json.loads(strip_json_comments(f.read()))
 
     config_dict = expand_env(raw)
     if unresolved_vars(config_dict) and load_env_sh():

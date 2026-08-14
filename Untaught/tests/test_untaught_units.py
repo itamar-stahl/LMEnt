@@ -89,6 +89,8 @@ from framework.node.config_env import (  # noqa: E402
     expand_env,
     load_config,
     load_env_sh,
+    strip_json_comments,
+    to_upstream,
 )
 from framework.client.es_blacklist import (  # noqa: E402
     DEFAULT_THRESHOLDS,
@@ -312,8 +314,9 @@ def test_blacklist_file_parsing_and_thresholds():
     finally:
         os.remove(path)
 
-    # Thresholds come from the run's config, not from the entity list.
-    thresholds = normalize_thresholds({"coref": 0.9})
+    # Thresholds come from the run's config, not from the entity list, and are
+    # flat threshold_* keys sitting beside the other untaught settings.
+    thresholds = normalize_thresholds({"blacklist": "x.json", "threshold_coref": 0.9})
     assert thresholds["coref"] == 0.9, "the config's value must win"
     assert thresholds["hyperlinks"] == DEFAULT_THRESHOLDS["hyperlinks"], (
         "omitted sources keep the paper's default"
@@ -323,10 +326,10 @@ def test_blacklist_file_parsing_and_thresholds():
 
     # A typo must not silently fall back to the default and change the ablation.
     for bad, why in (
-        ({"corefs": 0.5}, "unknown source"),
-        ({"coref": 1.5}, "out of [0, 1]"),
-        ({"coref": "0.5"}, "not a number"),
-        ({"coref": True}, "a bool, not a confidence"),
+        ({"threshold_corefs": 0.5}, "unknown source"),
+        ({"threshold_coref": 1.5}, "out of [0, 1]"),
+        ({"threshold_coref": "0.5"}, "not a number"),
+        ({"threshold_coref": True}, "a bool, not a confidence"),
     ):
         try:
             normalize_thresholds(bad)
@@ -355,8 +358,7 @@ def test_artifact_roundtrip_and_masking():
         with es:
             artifact = build_artifact(
                 blacklist,
-                thresholds={"coref": 0.9},
-                case_sensitive=False,
+                {"threshold_coref": 0.9, "case_sensitive": False},
                 es=object(),
             )
 
@@ -478,6 +480,77 @@ def test_load_config_sources_env_sh():
         os.environ.update(saved)
 
 
+def test_config_comments_and_schema():
+    """Configs are commented JSON in three flat groups; upstream gets nested."""
+    text = '''{
+      // a comment
+      "job": {"dataset_paths": "a//b", "dataset_cache": "c", "save_folder": "d"},
+      "train": {"model": "olmo2_170M", "init_seed": 1,
+                "max_duration_value": 200, "max_duration_unit": "steps",
+                "optim_lr": 0.0005, "optim_weight_decay": 0.05,
+                "optim_warmup_steps": 1000, "optim_max_grad_norm": 1.0,
+                "data_global_batch_size": 32768, "data_rank_microbatch_size": 8192,
+                "data_seed": 0, "data_num_workers": 4, "data_prefetch_factor": 8,
+                "dataset_name": "kas_vsl", "dataset_max_sequence_length": 2048,
+                "dataset_min_sequence_length": 64,
+                "dataset_include_instance_metadata": false,
+                "vsl_curriculum": "grow_p2", "vsl_num_cycles": 8, "vsl_balanced": false,
+                "checkpoint_save_interval": 100, "checkpoint_ephemeral_save_interval": 50,
+                "checkpoint_save_async": true, "checkpoint_save_overwrite": true,
+                "metrics_collect_interval": 1, "cancel_check_interval": 5,
+                "wandb_cancel_check_interval": 10,
+                "eval_tasks": ["arc_easy"], "eval_interval": 100000},
+      "untaught": {"blacklist": null}   // trailing comment
+    }
+    // notes after the object
+    '''
+    cfg = json.loads(strip_json_comments(text))
+    assert list(cfg) == ["job", "train", "untaught"], "exactly three groups"
+    assert cfg["job"]["dataset_paths"] == "a//b", "a // inside a string must survive"
+    print("  ok  // comments stripped, strings left alone")
+
+    up = to_upstream(cfg)
+    assert up["dataset"]["vsl_curriculum"] == {
+        "name": "grow_p2", "num_cycles": 8, "balanced": False
+    }
+    assert up["dataset"]["paths"] == ["a//b"], "a lone path becomes a one-item list"
+    assert up["dataset"]["work_dir"] == "c"
+    assert up["trainer"]["save_folder"] == "d"
+    assert up["trainer"]["rank_microbatch_size"] == 8192
+    assert up["trainer"]["max_duration"] == {"value": 200, "unit": "steps"}
+    assert up["trainer"]["callbacks"]["lr_scheduler"]["warmup_steps"] == 1000
+    assert up["trainer"]["callbacks"]["checkpointer"]["save_interval"] == 100
+    assert up["optim"] == {"lr": 0.0005, "weight_decay": 0.05}
+    print("  ok  flat job/train map onto upstream's nested schema")
+
+    # Every key build_config reads must be present, or a run dies late.
+    for group in ("model", "optim", "dataset", "data_loader", "trainer"):
+        assert group in up, group
+    print("  ok  every group build_config reads is produced")
+
+
+def test_shipped_configs_are_valid():
+    """The real configs parse, translate, and stay identical where it matters."""
+    control = load_config("configs/train_170m_control.json")
+    ablated = load_config("configs/train_170m_no_harry_potter.json")
+
+    for name, cfg in (("control", control), ("ablated", ablated)):
+        assert list(cfg) == ["job", "train", "untaught"], f"{name}: {list(cfg)}"
+        to_upstream(cfg)  # must not raise: every key present
+        assert not [k for k in cfg if k.startswith("_")], f"{name} has _comment fields"
+        for group in cfg.values():
+            assert not [k for k in group if k.startswith("_")], f"{name} has _comment fields"
+
+    assert control["train"] == ablated["train"], (
+        "the two runs must differ only in save_folder and the untaught block"
+    )
+    assert control["job"]["dataset_paths"] == ablated["job"]["dataset_paths"]
+    assert control["job"]["save_folder"] != ablated["job"]["save_folder"]
+    assert control["untaught"]["blacklist"] is None
+    assert ablated["untaught"]["blacklist"] == "blacklists/harry_potter.json"
+    print("  ok  shipped configs: 3 groups, no _comment fields, train blocks identical")
+
+
 if __name__ == "__main__":
     torch.manual_seed(0)
     tests = [
@@ -495,6 +568,8 @@ if __name__ == "__main__":
         test_build_entity_query_structure,
         test_config_env,
         test_load_config_sources_env_sh,
+        test_config_comments_and_schema,
+        test_shipped_configs_are_valid,
     ]
     print(f"\nrunning {len(tests)} unit checks ({SOURCE})\n")
     for t in tests:

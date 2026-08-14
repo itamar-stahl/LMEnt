@@ -4,13 +4,14 @@ This is the "entity-based retrieval" of LMEnt paper section 3.2 used for a new
 purpose: instead of retrieving chunks that mention an entity so we can read
 them, we retrieve them so we can refuse to train on them.
 
-``fetch_chunk_ids`` returns those ids as a numpy array and nothing is written to
-disk -- the trainer calls it once at ``pre_train`` and keeps the array in
-memory. Because ``chunk_id`` is the dataset instance index (see
-``exclusion.py``), that array is all the trainer needs; the tokenized dataset
-and its caches are never touched.
+This runs on the login node only: ``build_artifact`` resolves the QIDs and
+writes the chunk ids into the run folder, and the training job reads that file.
+Because ``chunk_id`` is the dataset instance index (see ``node/exclusion.py``),
+those ids are all the trainer needs; the tokenized dataset and its caches are
+never touched.
 
-The commands here are for inspection only.
+The commands here are for inspection only; the artifact is written by
+``framework.client.prepare``.
 
 Usage
 -----
@@ -47,6 +48,9 @@ DEFAULT_THRESHOLDS: Dict[str, float] = {
 }
 
 DEFAULT_INDEX = "lment_cs"
+
+# Config keys carrying per-source cutoffs: untaught.threshold_<source>
+THRESHOLD_PREFIX = "threshold_"
 
 # The two indexes the suite's README restores:
 #   enwiki_case_sensitive -> lment_cs      enwiki -> lment_ci
@@ -102,7 +106,7 @@ def load_blacklist(path: str) -> List[Dict[str, str]]:
     the normalised entity list; ``[e["qid"] for e in ...]`` gives the QIDs.
 
     Retrieval *confidence* is not here -- that is a property of the training
-    run, so it lives in the run's config under ``untaught.thresholds``.
+    run, so it lives in the run's config as ``untaught.threshold_*``.
     """
     with open(path, "r", encoding="utf-8") as f:
         spec = json.load(f)
@@ -119,26 +123,29 @@ def load_blacklist(path: str) -> List[Dict[str, str]]:
     return entities
 
 
-def normalize_thresholds(thresholds: Optional[Dict[str, Any]]) -> Dict[str, float]:
-    """Validate a config's ``untaught.thresholds`` and fill in the defaults.
+def normalize_thresholds(untaught_cfg: Optional[Dict[str, Any]]) -> Dict[str, float]:
+    """Read the ``threshold_*`` keys of an ``untaught`` block, with defaults.
 
     Merged **per key**, so naming one source leaves the other three at the
-    paper's values. Raises on an unknown source name, a non-number or a value
-    outside [0, 1]: a typo that silently fell back to the default would quietly
-    change which chunks the run holds out.
+    paper's values. Raises on an unknown ``threshold_*`` name, a non-number or a
+    value outside [0, 1]: a typo that silently fell back to the default would
+    quietly change which chunks the run holds out.
     """
     merged = dict(DEFAULT_THRESHOLDS)
-    for source, value in (thresholds or {}).items():
+    for key, value in (untaught_cfg or {}).items():
+        if not key.startswith(THRESHOLD_PREFIX):
+            continue
+        source = key[len(THRESHOLD_PREFIX):]
         if source not in DEFAULT_THRESHOLDS:
             raise ValueError(
-                f"[untaught] unknown threshold source '{source}' in untaught.thresholds. "
-                f"Known sources: {', '.join(sorted(DEFAULT_THRESHOLDS))}"
+                f"[untaught] unknown threshold key '{key}'. Known: "
+                + ", ".join(THRESHOLD_PREFIX + s for s in sorted(DEFAULT_THRESHOLDS))
             )
         if not isinstance(value, (int, float)) or isinstance(value, bool):
-            raise ValueError(f"[untaught] threshold '{source}' must be a number, got {value!r}")
+            raise ValueError(f"[untaught] '{key}' must be a number, got {value!r}")
         if not 0.0 <= float(value) <= 1.0:
             raise ValueError(
-                f"[untaught] threshold '{source}' = {value} is outside [0, 1]; "
+                f"[untaught] '{key}' = {value} is outside [0, 1]; "
                 "mention scores are confidences"
             )
         merged[source] = float(value)
@@ -154,11 +161,8 @@ def fetch_chunk_ids(
 ) -> np.ndarray:
     """Every chunk id that mentions one of ``qids``, as a sorted unique array.
 
-    This is the whole blacklist: a few thousand int64s for a single entity, so
-    the trainer calls it at ``pre_train`` and keeps the result in memory rather
-    than staging a file. Needs Elasticsearch to be reachable from wherever the
-    caller runs -- on a cluster that means the compute node, not just the login
-    node.
+    A few thousand int64s for a single entity. Needs Elasticsearch, so this only
+    ever runs on the login node.
     """
     from elasticsearch.helpers import scan
 
@@ -217,8 +221,7 @@ def build_entity_query(qids: Sequence[str], thresholds: Dict[str, float]) -> Dic
 
 def build_artifact(
     blacklist_path: str,
-    thresholds: Optional[Dict[str, Any]] = None,
-    case_sensitive: bool = True,
+    untaught_cfg: Optional[Dict[str, Any]] = None,
     es=None,
 ) -> Dict[str, Any]:
     """Resolve a blacklist against Elasticsearch into a self-describing dict.
@@ -231,8 +234,10 @@ def build_artifact(
     Queries one QID at a time so each entity's contribution is visible, which
     is also what makes the loaded dict able to say *why* a chunk was excluded.
     """
+    untaught_cfg = untaught_cfg or {}
     entities = load_blacklist(blacklist_path)
-    thresholds = normalize_thresholds(thresholds)
+    thresholds = normalize_thresholds(untaught_cfg)
+    case_sensitive = bool(untaught_cfg.get("case_sensitive", True))
     index = index_for(case_sensitive)
     es = es if es is not None else get_esclient()
 
@@ -357,7 +362,7 @@ def cmd_count(args: argparse.Namespace) -> int:
 
     blacklist = resolve_path(blacklist)
     entities = load_blacklist(blacklist)
-    thresholds = normalize_thresholds(untaught_cfg.get("thresholds"))
+    thresholds = normalize_thresholds(untaught_cfg)
     index = index_for(bool(untaught_cfg.get("case_sensitive", True)))
     qids = [e["qid"] for e in entities]
 

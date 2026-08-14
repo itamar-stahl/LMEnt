@@ -19,7 +19,7 @@ import sys
 from typing import Optional, Sequence
 
 from framework.node.artifact import ARTIFACT_NAME
-from framework.node.config_env import load_config, resolve_path
+from framework.node.config_env import load_config, resolve_path, to_upstream
 
 from .es_blacklist import build_artifact, normalize_thresholds, write_artifact
 
@@ -43,13 +43,9 @@ def prepare(config_path: str) -> Optional[str]:
     # folder the training job will look in.
     from examples.kas.train import build_config
 
-    save_folder = build_config(config_dict).trainer.save_folder
+    save_folder = build_config(to_upstream(config_dict)).trainer.save_folder
 
-    artifact = build_artifact(
-        blacklist,
-        thresholds=untaught_cfg.get("thresholds"),
-        case_sensitive=bool(untaught_cfg.get("case_sensitive", True)),
-    )
+    artifact = build_artifact(blacklist, untaught_cfg)
     path = write_artifact(artifact, os.path.join(save_folder, ARTIFACT_NAME))
 
     print(f"[untaught] blacklist  : {blacklist}")
@@ -72,7 +68,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     # Validate the thresholds before the queries, so a typo fails in a second.
     cfg = load_config(args.config).get("untaught", {}) or {}
-    normalize_thresholds(cfg.get("thresholds"))
+    normalize_thresholds(cfg)
 
     prepare(args.config)
     return 0

@@ -9,16 +9,9 @@ Run it exactly like the upstream trainer, with a config path:
 
     torchrun --nproc-per-node=1 -m framework.node.train_untaught config.json
 
-Config schema is the upstream one plus an optional top-level "untaught" block:
-
-    "untaught": {
-        "blacklist": "blacklists/harry_potter.json",     // null => control run
-        "thresholds": {...},        // framework.client.prepare uses these
-        "case_sensitive": true,     // lment_cs vs lment_ci
-        "enabled": true,
-        "disable_wandb": true,
-        "disable_downstream_eval": true
-    }
+Config schema is three flat groups -- "job" (paths), "train" (hyperparameters)
+and "untaught" (the ablation); see configs/*.json. ``config_env.to_upstream``
+maps the first two onto the nested dict ``build_config`` expects.
 """
 
 from __future__ import annotations
@@ -35,10 +28,15 @@ log = logging.getLogger(__name__)
 # config_env is deliberately dependency-free, so it can come before the
 # OLMo-core bootstrap that everything else here needs.
 try:
-    from .config_env import load_config, load_env_sh, resolve_path
+    from .config_env import load_config, load_env_sh, resolve_path, to_upstream
 except ImportError:  # pragma: no cover
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from framework.node.config_env import load_config, load_env_sh, resolve_path
+    from framework.node.config_env import (
+        load_config,
+        load_env_sh,
+        resolve_path,
+        to_upstream,
+    )
 
 
 def _bootstrap_olmo_core() -> None:
@@ -185,21 +183,21 @@ def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
 
 
 def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> None:
-    tr = config_dict["trainer"]
-    md = tr["max_duration"]
+    train = config_dict["train"]
     print("\n" + "=" * 68)
     print("  UNTAUGHT RUN")
     print("=" * 68)
-    print(f"  model            : {config_dict['model']}")
-    print(f"  lr / weight decay: {config_dict['optim']['lr']} / {config_dict['optim']['weight_decay']}")
-    print(f"  global batch     : {config_dict['data_loader']['global_batch_size']:,} tokens")
+    print(f"  model            : {train['model']}")
+    print(f"  lr / weight decay: {train['optim_lr']} / {train['optim_weight_decay']}")
+    print(f"  global batch     : {train['data_global_batch_size']:,} tokens")
     # The effective value, which adapt_to_gpu may have lowered from the config.
     micro = config.trainer.rank_microbatch_size
-    micro_note = "" if micro == tr["rank_microbatch_size"] else f"  (config: {tr['rank_microbatch_size']:,})"
+    configured = train["data_rank_microbatch_size"]
+    micro_note = "" if micro == configured else f"  (config: {configured:,})"
     print(f"  rank microbatch  : {micro:,} tokens{micro_note}")
-    print(f"  duration         : {md['value']} {md['unit']}")
-    print(f"  save folder      : {tr['save_folder']}")
-    print(f"  seed             : {config_dict.get('init_seed')}")
+    print(f"  duration         : {train['max_duration_value']} {train['max_duration_unit']}")
+    print(f"  save folder      : {config.trainer.save_folder}")
+    print(f"  seed             : {config.init_seed}")
     if blacklist_path:
         # The entities and thresholds behind it are framework.client's business; this
         # side only consumes the artifact they were resolved into.
@@ -214,7 +212,10 @@ def main(
 ) -> None:
     config_dict = load_config(config_filepath)
 
-    config = build_config(config_dict)
+    config = build_config(to_upstream(config_dict))
+    # build_config ignores init_seed (ExperimentConfig defaults it), so apply the
+    # config's value here -- the control and ablated runs must share it.
+    config.init_seed = config_dict["train"]["init_seed"]
     config, blacklist_path = apply_untaught_config(config, config_dict, blacklist_override)
 
     # Fail fast on a missing blacklist, long before a SLURM job burns queue time
