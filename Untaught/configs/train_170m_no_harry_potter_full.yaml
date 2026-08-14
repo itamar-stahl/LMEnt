@@ -45,19 +45,6 @@ job:
   cpu_mem_mb: 64000
   cpus_per_task: 8
   gpus: 1                         # students are limited to 1 GPU per job
-
-  # Which cards will do. studentkillable has exactly two features, so this is
-  # the whole menu: titan_xp (s-002/003/006, 23 GPUs) and geforce_rtx_2080
-  # (s-004/005, 16 GPUs). titan_xp wins on what matters here. Neither card has
-  # native bf16 -- that needs CUDA capability 8.0 -- so bf16 is emulated on the
-  # fp32 pipeline, where titan_xp's 12.1 TFLOPS and 12 GiB beat the 2080's
-  # 10.1 TFLOPS and 8 GiB; the 2080's tensor cores stay idle because they only
-  # accelerate fp16. The 2080 does get torch.compile (capability 7.5 against
-  # 6.1), which roughly cancels the throughput gap, but 8 GiB is tight at this
-  # microbatch and titan_xp is the card the smoke runs already proved.
-  # Asking for one feature also puts both twins on identical silicon.
-  # Measured on titan_xp: ~4K tokens/s, so this epoch takes ~10 days.
-  # "" = any card. (No a100-class card exists in this partition.)
   constraint: "titan_xp"
 
 # Everything the model and the optimizer see.
