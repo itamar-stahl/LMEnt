@@ -153,6 +153,13 @@ RESUME_IGNORED_FIELDS: Dict[str, set] = {
 }
 
 
+# Fields where an empty value means "no preference", and so is compatible with
+# any value the other run had. job.constraint is the case: two runs that both
+# demanded a card and demanded *different* cards are not the same experiment,
+# but a run that demanded nothing can continue, or be continued by, either.
+RESUME_EMPTY_MATCHES_ANY = {("job", "constraint")}
+
+
 def resume_identity(config_dict: Dict[str, Any]) -> Dict[str, Any]:
     """The part of a config that defines *which experiment* this is.
 
@@ -178,8 +185,16 @@ def _identity_differences(ours: Dict[str, Any], theirs: Dict[str, Any]) -> list:
                 differences.append(group)
             continue
         for key in sorted(set(a) | set(b)):
-            if a.get(key, "<missing>") != b.get(key, "<missing>"):
-                differences.append(f"{group}.{key}")
+            empty_matches_any = (group, key) in RESUME_EMPTY_MATCHES_ANY
+            # A key an older config never had reads as "no preference" for those
+            # fields, and as a genuine difference for every other field.
+            missing = "" if empty_matches_any else "<missing>"
+            ours_value, theirs_value = a.get(key, missing), b.get(key, missing)
+            if ours_value == theirs_value:
+                continue
+            if empty_matches_any and (not ours_value or not theirs_value):
+                continue
+            differences.append(f"{group}.{key}")
     return differences
 
 

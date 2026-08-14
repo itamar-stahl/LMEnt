@@ -29,6 +29,10 @@ job:
   cpus_per_task: 8
   gpus: 1
 
+  # No GPU feature demanded: a smoke run is a plumbing check, so take whatever
+  # card is free first. The full runs ask for an Ampere-or-newer card instead.
+  constraint: ""
+
 # Everything the model and the optimizer see.
 train:
   model: "olmo2_170M"

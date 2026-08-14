@@ -227,8 +227,49 @@ upstream's checkpoint *folder name* would not do: it encodes only
 model/lr/batch/wd/duration-**value**, so it cannot even tell one epoch from one
 step, let alone a different seed or a different blacklist.)
 
+`job.constraint` is compared too, with one exception: an **empty** constraint
+means "any card", so it is compatible with anything, and only two runs that each
+demanded a card and demanded *different* ones are treated as different
+experiments.
+
 Permanent checkpoints land every 10,000 steps; an ephemeral one every 500 steps
 caps what a preemption can cost.
+
+### The GPU lottery
+
+`job.constraint` asks SLURM for GPU features (`|` means OR). The full configs
+request `a100|l40s|a6000|a5000|geforce_rtx_3090` — every card on the cluster
+with CUDA capability ≥ 8.0, so the run gets native bf16 *and* `torch.compile`
+whichever one it lands on. Below that line the cluster's other cards
+(`tesla_v100`, `quadro_rtx_8000`, `geforce_rtx_2080`, `titan_xp`) have no native
+bf16, and `titan_xp` loses compile as well: measured at ~4K tokens/s, it turns
+one epoch into ~10 days instead of ~half a day to two days.
+
+Estimates for one epoch (3.6B tokens, ~109K steps), assuming ~30–35% of peak
+bf16 — typical for a 170M model at sequence length 2048:
+
+| feature | one epoch | notes |
+|---|---|---|
+| `a100` | ~9–12 h | may finish inside a single 1-day job |
+| `l40s` | ~19 h | |
+| `a6000` | ~22 h | |
+| `a5000` | ~31 h | ~2 submissions |
+| `geforce_rtx_3090` | ~2 days | GeForce halves tensor throughput at fp32 accumulate |
+| `titan_xp` | ~10 days | **measured**, not estimated: no bf16, no compile |
+
+**Does the card change the final model?** Yes, slightly, and not in a way that
+favours either twin. Nothing here changes the *math*: same data order, same step
+count, same global batch (gradient accumulation absorbs any microbatch change),
+same seed. What differs is floating-point *rounding* — kernel choice and
+reduction order differ per architecture, so two runs on different cards diverge
+after enough steps and never end bitwise identical. That divergence behaves like
+noise, on the order of a re-run with a different seed, and it is far smaller than
+the effect the ablation is measuring. The listed set keeps even the
+*configuration* identical (all get bf16 + compile), which is the part that would
+otherwise differ systematically. Every run also records what it actually got in
+`run_environment.json`, so the question is answerable after the fact rather than
+assumed. If you want the strictest version, set both full configs to a single
+feature (e.g. `constraint: "a100"`) and accept a longer queue.
 
 ### Inspecting the ablation before submitting
 

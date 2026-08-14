@@ -947,6 +947,67 @@ def test_training_logs_go_to_stdout_not_stderr():
 
 
 @suite.test
+def test_gpu_constraint_reaches_sbatch_only_when_asked_for():
+    """job.constraint becomes --constraint=; an empty one emits no directive"""
+    import tempfile
+
+    from framework.client.prepare import generate_job_slurm
+
+    job = {"name": "j", "partition": "studentkillable", "max_time_minutes": 60,
+           "nodes": 1, "ntasks": 1, "cpu_mem_mb": 1000, "cpus_per_task": 1,
+           "gpus": 1, "constraint": "a100|l40s"}
+    run_dir = tempfile.mkdtemp()
+
+    asked = generate_job_slurm(job, run_dir, "tester")
+    assert '#SBATCH --constraint="a100|l40s"' in asked, asked
+    # the OR list must survive verbatim -- SLURM parses the pipes, we don't
+    assert asked.count("--constraint") == 1
+
+    # An empty constraint means "any card": no directive at all, rather than an
+    # empty one, which SLURM would reject.
+    none_asked = generate_job_slurm({**job, "constraint": ""}, run_dir, "tester")
+    assert "--constraint" not in none_asked, none_asked
+    assert "\n\n\n" not in none_asked, "empty constraint left a hole in the file"
+    assert none_asked.count("#SBATCH") == asked.count("#SBATCH") - 1
+
+
+@suite.test
+def test_resume_treats_an_empty_constraint_as_compatible_with_any():
+    """two runs that demanded different cards are different experiments"""
+    _require_olmo()
+    from framework.node.train_untaught import _identity_differences, resume_identity
+
+    def identity(constraint):
+        return resume_identity({"job": {"name": "j", "constraint": constraint},
+                                "train": {"init_seed": 1}})
+
+    def differs(one, other):
+        return _identity_differences(identity(one), identity(other))
+
+    # Both demanded a card, and not the same one: not the same experiment.
+    assert differs("a100", "titan_xp") == ["job.constraint"]
+
+    # Either side demanding nothing is compatible with anything -- an
+    # unconstrained run may continue a constrained one, and the reverse.
+    assert differs("", "a100") == []
+    assert differs("a100", "") == []
+    assert differs("a100", "a100") == []
+
+    # A config written before job.constraint existed reads as "no preference",
+    # not as a difference, so old run folders stay resumable.
+    older = resume_identity({"job": {"name": "j"}, "train": {"init_seed": 1}})
+    assert _identity_differences(identity("a100"), older) == []
+
+    # The permissive rule is scoped to that one field: an empty value anywhere
+    # else is still a plain difference.
+    seeds = _identity_differences(
+        resume_identity({"train": {"init_seed": ""}}),
+        resume_identity({"train": {"init_seed": 12536}}),
+    )
+    assert seeds == ["train.init_seed"], seeds
+
+
+@suite.test
 def test_run_environment_records_the_machine_that_trained():
     """each run states the GPU and settings it actually got, for the comparison"""
     _require_olmo()

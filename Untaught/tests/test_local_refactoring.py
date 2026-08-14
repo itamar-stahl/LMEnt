@@ -286,7 +286,7 @@ def test_job_parameters_live_only_in_configs():
     # every #SBATCH line the generator emits must come from a config key
     prepare = read(CLIENT, "prepare.py")
     for key in ("name", "partition", "max_time_minutes", "nodes", "ntasks",
-                "cpu_mem_mb", "cpus_per_task", "gpus"):
+                "cpu_mem_mb", "cpus_per_task", "gpus", "constraint"):
         assert f'job["{key}"]' in prepare, f"generator ignores job.{key}"
 
 
@@ -444,7 +444,7 @@ def test_configs_and_code_agree_on_every_key():
         # and every train key must be consumed (job keys are also read by the
         # slurm generator, so they are checked separately)
         job_only = {"name", "partition", "max_time_minutes", "nodes", "ntasks",
-                    "cpu_mem_mb", "cpus_per_task", "gpus"}
+                    "cpu_mem_mb", "cpus_per_task", "gpus", "constraint"}
         unused = (set(cfg["train"]) - used)
         assert not unused, f"{name}: train keys nothing reads: {unused}"
         assert job_only <= set(cfg["job"]), f"{name}: job section incomplete"

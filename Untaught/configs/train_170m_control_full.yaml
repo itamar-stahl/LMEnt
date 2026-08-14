@@ -46,6 +46,18 @@ job:
   cpus_per_task: 8
   gpus: 1                         # students are limited to 1 GPU per job
 
+  # Which cards will do. Nodes carry GPU features and "|" means OR. Ranked by
+  # what they give this run, best first:
+  #   a100 > l40s > a6000 > a5000 > geforce_rtx_3090
+  # All five are CUDA capability >= 8.0, so all of them get native bf16 AND
+  # torch.compile -- the run is configured identically whichever one it lands
+  # on. The rest of the cluster's cards (tesla_v100 7.0, quadro_rtx_8000 7.5,
+  # geforce_rtx_2080 7.5, titan_xp 6.1) have no native bf16, and titan_xp also
+  # loses compile: measured at ~4K tokens/s, it turns this epoch into ~10 days.
+  # "" = any card. Listing five keeps the queue short; narrow it to one feature
+  # if you want both twins on identical silicon (see README, "the GPU lottery").
+  constraint: "a100|l40s|a6000|a5000|geforce_rtx_3090"
+
 # Everything the model and the optimizer see.
 train:
   model: "olmo2_170M"

@@ -57,6 +57,12 @@ def generate_job_slurm(job: Dict[str, Any], run_dir: str, user: str) -> str:
     Reading it back months later must tell you exactly what was asked of SLURM,
     with no indirection through whatever the environment happened to hold.
     """
+    # --constraint selects which GPU features a node must have. An empty
+    # constraint means "any card SLURM has free", and then the directive is
+    # simply left out rather than written as an empty one.
+    constraint = str(job["constraint"]).strip()
+    constraint_line = f'#SBATCH --constraint="{constraint}"\n' if constraint else ""
+
     return f"""#! /bin/sh
 #SBATCH --job-name={job["name"]}
 #SBATCH --output={run_dir}/log.out
@@ -69,7 +75,7 @@ def generate_job_slurm(job: Dict[str, Any], run_dir: str, user: str) -> str:
 #SBATCH --mem={job["cpu_mem_mb"]}
 #SBATCH --cpus-per-task={job["cpus_per_task"]}
 #SBATCH --gpus={job["gpus"]}
-
+{constraint_line}
 # Created by: {user}
 
 {run_dir}/{RUN_WRAPPER}
