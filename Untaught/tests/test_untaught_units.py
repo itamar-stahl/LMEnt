@@ -83,14 +83,14 @@ def _install_olmo_stubs_if_needed() -> str:
 
 SOURCE = _install_olmo_stubs_if_needed()
 
-from framework.gpu_node.config_env import (  # noqa: E402
+from framework.node.config_env import (  # noqa: E402
     ENV_SH,
     assert_paths_resolved,
     expand_env,
     load_config,
     load_env_sh,
 )
-from framework.client_node.es_blacklist import (  # noqa: E402
+from framework.client.es_blacklist import (  # noqa: E402
     DEFAULT_THRESHOLDS,
     build_artifact,
     build_entity_query,
@@ -99,8 +99,8 @@ from framework.client_node.es_blacklist import (  # noqa: E402
     normalize_thresholds,
     write_artifact,
 )
-from framework.gpu_node.artifact import ARTIFACT_NAME  # noqa: E402
-from framework.gpu_node.exclusion import (  # noqa: E402
+from framework.node.artifact import ARTIFACT_NAME  # noqa: E402
+from framework.node.exclusion import (  # noqa: E402
     EXCLUDED_METRIC,
     GUARD_LEAK_METRIC,
     ChunkExclusionCallback,
@@ -295,7 +295,7 @@ def test_missing_artifact_fails_at_pre_train():
         cb.pre_train()
         raise AssertionError("pre_train should have raised FileNotFoundError")
     except FileNotFoundError as e:
-        assert "client_node.prepare" in str(e), "the error must say how to produce it"
+        assert "framework.client.prepare" in str(e), "the error must say how to produce it"
         print("  ok  missing artifact fails fast at pre_train")
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)

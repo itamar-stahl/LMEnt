@@ -30,22 +30,22 @@ echo "  es index  : ${ES_INDEX} @ ${ES_HOST}:${ES_PORT}"
 echo
 
 if [ "${1:-}" = "--resolve" ]; then
-  exec python -m framework.client_node.es_blacklist resolve --name "Harry Potter"
+  exec python -m framework.client.es_blacklist resolve --name "Harry Potter"
 fi
 
 if [ "${1:-}" = "--count" ]; then
-  exec python -m framework.client_node.es_blacklist count --config "${CONFIG}" --preview 5
+  exec python -m framework.client.es_blacklist count --config "${CONFIG}" --preview 5
 fi
 
 if [ "${1:-}" = "--check" ]; then
-  exec python -m framework.gpu_node.train_untaught "${CONFIG}" --check
+  exec python -m framework.node.train_untaught "${CONFIG}" --check
 fi
 
 # Step 1, here on the login node: resolve the QIDs against Elasticsearch and
 # save the chunk ids into the run folder. The GPU node cannot reach ES, so this
 # artifact is how the blacklist gets there.
 echo "--- step 1/2: resolving the blacklist ------------------------"
-python -m framework.client_node.prepare --config "${CONFIG}"
+python -m framework.client.prepare --config "${CONFIG}"
 echo
 
 echo "--- step 2/2: training ---------------------------------------"
@@ -69,7 +69,7 @@ SBATCH_ARGS="
 
 # Unquoted on purpose: the newlines split SBATCH_ARGS into separate arguments.
 # shellcheck disable=SC2086
-sbatch ${SBATCH_ARGS} --wrap=". ${UNTAUGHT_ROOT}/framework/gpu_node/gpu_node.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 framework/gpu_node/train_untaught.py ${CONFIG}"
+sbatch ${SBATCH_ARGS} --wrap=". ${UNTAUGHT_ROOT}/framework/node/set_node_env.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 framework/node/train_untaught.py ${CONFIG}"
 
 echo
 echo "Track it with:  squeue --me"

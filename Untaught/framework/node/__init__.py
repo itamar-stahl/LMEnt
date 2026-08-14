@@ -2,7 +2,7 @@
 
 Deliberately free of any Elasticsearch dependency -- the GPU nodes cannot reach
 the index, so this side only ever *reads* the blacklist artifact that
-``client_node`` produced. Imports point one way: ``client_node`` may use these
+``client`` produced. Imports point one way: ``client`` may use these
 modules, never the reverse.
 """
 

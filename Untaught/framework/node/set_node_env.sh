@@ -1,7 +1,7 @@
 #!/bin/sh
 # COMPUTE NODE entry point, sourced by the sbatch --wrap command:
 #
-#     sbatch ... --wrap=". <root>/framework/gpu_node/gpu_node.sh && torchrun ..."
+#     sbatch ... --wrap=". <root>/framework/node/set_node_env.sh && torchrun ..."
 #
 # It cd's to Untaught/ and sets up the environment from scratch -- a batch job
 # starts in a fresh shell that never reads ~/.bashrc, and its cwd is wherever

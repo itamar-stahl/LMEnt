@@ -48,7 +48,7 @@ from olmo_core.train.common import ReduceType
 try:
     from .artifact import ARTIFACT_NAME, load_artifact
 except ImportError:  # pragma: no cover - file-path launch
-    from framework.gpu_node.artifact import ARTIFACT_NAME, load_artifact
+    from framework.node.artifact import ARTIFACT_NAME, load_artifact
 
 log = logging.getLogger(__name__)
 
@@ -67,7 +67,7 @@ class ChunkExclusionCallback(Callback):
         the control run wants.
     :param artifact_name: file inside the trainer's ``save_folder`` holding the
         resolved chunk ids, written before submission by
-        ``framework.client_node.prepare`` on the login node. Loaded into a
+        ``framework.client.prepare`` on the login node. Loaded into a
         ``{chunk_id: qid}`` dict at ``pre_train``.
     :param chunk_ids: chunk ids given directly, skipping the artifact. Takes
         precedence over ``blacklist``; mainly for tests.
@@ -202,7 +202,7 @@ class ChunkExclusionCallback(Callback):
             raise FileNotFoundError(
                 f"[untaught] blacklist artifact not found: {path}\n"
                 "Generate it where Elasticsearch is reachable, before submitting:\n"
-                f"  python -m framework.client_node.prepare --config <config>"
+                f"  python -m framework.client.prepare --config <config>"
             )
 
         blacklist = load_artifact(path)

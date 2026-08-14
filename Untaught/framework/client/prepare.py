@@ -4,7 +4,7 @@ Run this on the login node before submitting -- the GPU nodes cannot reach the
 index, so this is where the QIDs in ``untaught.blacklist`` become the concrete
 chunk ids the trainer will mask:
 
-    python -m framework.client_node.prepare --config configs/train_170m_no_harry_potter.json
+    python -m framework.client.prepare --config configs/train_170m_no_harry_potter.json
 
 The artifact lands in ``trainer.save_folder``, beside the checkpoints and
 config.json, so a run and the exact exclusion it was trained with stay
@@ -18,8 +18,8 @@ import os
 import sys
 from typing import Optional, Sequence
 
-from framework.gpu_node.artifact import ARTIFACT_NAME
-from framework.gpu_node.config_env import load_config, resolve_path
+from framework.node.artifact import ARTIFACT_NAME
+from framework.node.config_env import load_config, resolve_path
 
 from .es_blacklist import build_artifact, normalize_thresholds, write_artifact
 
@@ -66,7 +66,7 @@ def prepare(config_path: str) -> Optional[str]:
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
-    parser = argparse.ArgumentParser(prog="framework.client_node.prepare", description=__doc__)
+    parser = argparse.ArgumentParser(prog="framework.client.prepare", description=__doc__)
     parser.add_argument("--config", required=True, help="a training config JSON")
     args = parser.parse_args(argv)
 

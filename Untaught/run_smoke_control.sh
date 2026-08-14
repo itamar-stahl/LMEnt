@@ -26,7 +26,7 @@ echo "  runs dir : ${UNTAUGHT_RUNS_DIR}"
 echo
 
 if [ "${1:-}" = "--check" ]; then
-  exec python -m framework.gpu_node.train_untaught "${CONFIG}" --check
+  exec python -m framework.node.train_untaught "${CONFIG}" --check
 fi
 
 # One log pair per submission: untaught-control-170m-20260813-142230.out/.err
@@ -48,7 +48,7 @@ SBATCH_ARGS="
 
 # Unquoted on purpose: the newlines split SBATCH_ARGS into separate arguments.
 # shellcheck disable=SC2086
-sbatch ${SBATCH_ARGS} --wrap=". ${UNTAUGHT_ROOT}/framework/gpu_node/gpu_node.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 framework/gpu_node/train_untaught.py ${CONFIG}"
+sbatch ${SBATCH_ARGS} --wrap=". ${UNTAUGHT_ROOT}/framework/node/set_node_env.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 framework/node/train_untaught.py ${CONFIG}"
 
 echo
 echo "Track it with:  squeue --me"

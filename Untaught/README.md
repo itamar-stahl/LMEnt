@@ -63,11 +63,11 @@ Untaught/
 ├── framework/
 │   ├── env.sh               shared variables — the only place paths are named
 │   ├── conda.sh             shared conda activation
-│   ├── client_node/         needs Elasticsearch; never imported by a training job
+│   ├── client/              needs Elasticsearch; never imported by a training job
 │   │   ├── es_blacklist.py  entity QIDs -> chunk ids, via Elasticsearch
 │   │   └── prepare.py       writes the blacklist artifact into the run folder
-│   └── gpu_node/            no Elasticsearch dependency at all
-│       ├── gpu_node.sh      COMPUTE NODE: cd + vars + conda (sourced by --wrap)
+│   └── node/                no Elasticsearch dependency at all
+│       ├── set_node_env.sh  COMPUTE NODE: cd + vars + conda (sourced by --wrap)
 │       ├── train_untaught.py  wraps examples/kas/train.py, attaches the callback
 │       ├── exclusion.py     ChunkExclusionCallback — the ~15 lines that matter
 │       ├── artifact.py      reads the artifact into a {chunk_id: qid} dict
@@ -110,7 +110,7 @@ user. Adjust `framework/env.sh` only if your paths differ from
 
 Both entry points `cd` to `$LMENT_ROOT/Untaught` first, so the working directory
 and `UNTAUGHT_ROOT` are the same fixed path on every node. Batch jobs get the
-same environment from `framework/gpu_node/gpu_node.sh`, which the run scripts
+same environment from `framework/node/set_node_env.sh`, which the run scripts
 put in the `sbatch --wrap` command — minus Elasticsearch, which the GPU nodes cannot reach.
 
 Preflight, in order, all GPU-free:
@@ -173,21 +173,21 @@ login node                                   GPU node
 ──────────                                   ────────
 blacklists/harry_potter.json  (QIDs)
 config: thresholds, case_sensitive
-      │  framework.client_node.prepare   (step 1 of run_smoke_harry_potter.sh)
+      │  framework.client.prepare   (step 1 of run_smoke_harry_potter.sh)
       ▼
 <save_folder>/untaught_blacklist.json ─────► pre_train: load into {chunk_id: qid}
                                                      │
                                              pre_step: dict lookup per row → mask
 ```
 
-`framework.client_node.prepare` runs one ES query per entity and writes a readable JSON
+`framework.client.prepare` runs one ES query per entity and writes a readable JSON
 recording the ids, the index used, the thresholds and per-entity counts — so a
 run and the exact exclusion it was trained with stay together. The training job
 never talks to Elasticsearch; a missing artifact is a hard error, not a silent
 control run.
 
 **If you skip step 1**, the job fails at `pre_train` telling you to run
-`python -m framework.client_node.prepare --config <config>`.
+`python -m framework.client.prepare --config <config>`.
 
 **Verify the QIDs before trusting a run.** `--resolve` reports which QIDs the
 corpus actually attaches to that name, with mention counts; `--count` reports how

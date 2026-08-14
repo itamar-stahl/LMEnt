@@ -10,7 +10,7 @@ import subprocess
 import sys
 from typing import Any, Dict, List, Optional
 
-# Untaught/framework/gpu_node/config_env.py -> Untaught/
+# Untaught/framework/node/config_env.py -> Untaught/
 UNTAUGHT_ROOT = os.path.dirname(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 )

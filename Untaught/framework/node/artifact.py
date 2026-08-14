@@ -1,11 +1,11 @@
 """The blacklist artifact: the file that carries chunk ids across the fence.
 
 Elasticsearch runs on the login node and is unreachable from the GPU nodes, so
-``client_node`` resolves the entity QIDs into chunk ids there and writes them
+``client`` resolves the entity QIDs into chunk ids there and writes them
 into the run's ``save_folder``. This module is the *reading* half, and it is
 deliberately dependency-free: the compute node needs nothing but json.
 
-The writing half is ``client_node.es_blacklist.build_artifact``.
+The writing half is ``framework.client.es_blacklist.build_artifact``.
 """
 
 from __future__ import annotations

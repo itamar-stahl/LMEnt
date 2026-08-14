@@ -15,10 +15,10 @@ The commands here are for inspection only.
 Usage
 -----
     # what does the corpus think "Harry Potter" is?
-    python -m framework.client_node.es_blacklist resolve --name "Harry Potter"
+    python -m framework.client.es_blacklist resolve --name "Harry Potter"
 
     # how much would this run remove, and what does it look like?
-    python -m framework.client_node.es_blacklist count \
+    python -m framework.client.es_blacklist count \
         --config configs/train_170m_no_harry_potter.json --preview 5
 """
 
@@ -33,8 +33,8 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 
 # The artifact format is owned by the side that must never fail; this half only
-# writes it. Imports go client_node -> gpu_node, never the other way.
-from framework.gpu_node.artifact import ARTIFACT_NAME  # noqa: F401  (re-exported)
+# writes it. Imports go client -> node, never the other way.
+from framework.node.artifact import ARTIFACT_NAME  # noqa: F401  (re-exported)
 
 import numpy as np
 
@@ -347,7 +347,7 @@ def cmd_count(args: argparse.Namespace) -> int:
     Takes the config rather than the blacklist file so the count uses the same
     entities *and* the same thresholds the run will use.
     """
-    from framework.gpu_node.config_env import load_config, resolve_path
+    from framework.node.config_env import load_config, resolve_path
 
     untaught_cfg = load_config(args.config).get("untaught", {}) or {}
     blacklist = untaught_cfg.get("blacklist")
@@ -423,7 +423,7 @@ def _add_es_args(p: argparse.ArgumentParser) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="framework.client_node.es_blacklist",
+        prog="framework.client.es_blacklist",
         description="Build a chunk-id hold-out list from the LMEnt Elasticsearch index.",
     )
     sub = parser.add_subparsers(dest="command", required=True)
