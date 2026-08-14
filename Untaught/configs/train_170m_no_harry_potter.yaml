@@ -1,71 +1,48 @@
-# SMOKE ABLATED RUN: 170M, "Harry Potter" held out of the loss.
-#
-# Identical to train_170m_control.yaml in every field except job.name and
-# the untaught block. Same init_seed and same data_seed, so both runs see the
-# same chunks in the same order in the same batches -- the only difference is
-# that blacklisted chunks contribute no gradient.
-#
-# Submit from the login node with:
-#   . ./framework/client/sub_builder.sh configs/train_170m_no_harry_potter.yaml
+# SMOKE ABLATED RUN: 170M, 200 steps, "Harry Potter" held out of the loss.
+# Twin of train_170m_control.yaml: identical but for job.name and untaught.
+# Submit:  . ./framework/client/sub_builder.sh configs/train_170m_no_harry_potter.yaml
 
-# Everything about running this as a job: identity, data locations, and the
-# SLURM resources sub_builder.sh writes into job.slurm. No save folder here --
-# every submission gets its own runs/<name>_<date>_<time> folder.
 job:
   name: "untaught-no-hp-170m"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
 
-  # SLURM resources (see https://www.cs.tau.ac.il/system/slurm)
-  partition: "studentkillable"     # 1 day cap, preemptible -- what students get
+  # SLURM: https://www.cs.tau.ac.il/system/slurm
+  partition: "studentkillable"      # 1 day cap, preemptible
   max_time_minutes: 180
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 64000
   cpus_per_task: 8
   gpus: 1
+  constraint: ""                    # any free card: this is a plumbing check
 
-  # No GPU feature demanded: a smoke run is a plumbing check, so take whatever
-  # card is free first. The full runs ask for an Ampere-or-newer card instead.
-  constraint: ""
-
-# Everything the model and the optimizer see. Identical to the control.
 train:
   model: "olmo2_170M"
   init_seed: 12536
-
-  # 200 steps is a smoke test; a real 1-epoch run is ~109K steps
-  # (3.6B tokens / 32,768 tokens per step).
-  max_duration_value: 200
+  max_duration_value: 200           # smoke only; a real epoch is ~109K steps
   max_duration_unit: "steps"
 
-  # optimizer: AdamW, cosine schedule with warmup
+  # AdamW, cosine schedule with warmup (paper appendix B.4)
   optim_lr: 0.0005
   optim_weight_decay: 0.05
   optim_warmup_steps: 1000
   optim_max_grad_norm: 1.0
 
-  # batching, in tokens. rank_microbatch is a memory knob only -- gradient
-  # accumulation holds the global batch fixed, so untaught.adapt_to_gpu may
-  # lower it to fit a small card without changing the optimizer math.
-  data_global_batch_size: 32768
-  data_rank_microbatch_size: 8192
+  data_global_batch_size: 32768     # tokens per optimizer step
+  data_rank_microbatch_size: 8192   # memory knob only; adapt_to_gpu lowers it if needed
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8
 
-  # dataset construction. include_instance_metadata is false on purpose: chunk
-  # exclusion keys off batch["index"], never off the per-chunk entity metadata,
-  # so training never touches the 212GB dataset-metadata tree.
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
-  dataset_include_instance_metadata: false
+  dataset_include_instance_metadata: false   # exclusion reads batch["index"], not metadata
   vsl_curriculum: "grow_p2"
   vsl_num_cycles: 8
   vsl_balanced: false
 
-  # checkpoints and logging
   checkpoint_save_interval: 100
   checkpoint_ephemeral_save_interval: 50
   checkpoint_save_async: true
@@ -76,27 +53,14 @@ train:
   eval_tasks: ["arc_easy"]
   eval_interval: 100000
 
-# The ablation: hold "Harry Potter" out of the loss.
 untaught:
-  # A file of Wikidata QIDs, relative to Untaught/.
-  blacklist: "blacklists/harry_potter.json"
-
-  # Which index to retrieve from: true -> lment_cs (restored from
-  # enwiki_case_sensitive), false -> lment_ci (from enwiki). QID retrieval is
-  # case-agnostic, so true is the right default.
-  case_sensitive: true
-
-  # Per-source mention-confidence cutoffs; a mention counts if it clears at
-  # least one. These are the values the paper validated on a 60-entity dev set
-  # (section 5.2, Table 4). Lower them for higher recall and more collateral
-  # chunks; raise them to exclude only high-confidence mentions. Omit one and it
-  # keeps its default; an unknown threshold_* name is a hard error.
-  threshold_hyperlinks: 1.0
+  blacklist: "blacklists/harry_potter.json"  # QIDs; resolved against ES before submission
+  case_sensitive: true              # true -> lment_cs index, false -> lment_ci
+  threshold_hyperlinks: 1.0         # mention-confidence cutoffs (paper section 5.2, Table 4)
   threshold_entity_linking: 0.6
   threshold_coref: 0.6
   threshold_coref_cluster: 0.6
-
   enabled: true
-  adapt_to_gpu: true
+  adapt_to_gpu: true                # drop compile / shrink microbatch if the card needs it
   disable_wandb: true
   disable_downstream_eval: true

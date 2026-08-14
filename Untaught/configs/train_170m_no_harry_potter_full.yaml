@@ -1,109 +1,51 @@
 # FULL ABLATED RUN: 170M, one epoch, "Harry Potter" held out of the loss.
-#
-# Identical to train_170m_control_full.yaml in every field except job.name and
-# the untaught block. Same init_seed and same data_seed, so both runs see the
-# same chunks in the same order in the same batches -- the only difference is
-# that blacklisted chunks contribute no gradient.
-#
-# Hyperparameters follow the paper (appendix B.4). One epoch is ~109K steps
-# (3.6B tokens / 32,768 tokens per step).
-#
-# Submit BOTH runs with:
-#   ./submit_full_twins.sh
-# or this one alone with:
-#   . ./framework/client/sub_builder.sh configs/train_170m_no_harry_potter_full.yaml
-#
-# studentkillable caps a job at 1 day and is preemptible, so a full epoch takes
-# several submissions. Just run ./submit_full_twins.sh again: each new run folder resumes
-# from the newest checkpoint of the previous run of the same job (see
-# job.resume_from_previous_run).
+# Twin of train_170m_control_full.yaml: identical but for job.name and untaught.
+# Submit both:  ./submit_full_twins.sh      (re-run it after a preemption to continue)
 
-# Everything about running this as a job: identity, data locations, and the
-# SLURM resources sub_builder.sh writes into job.slurm. No save folder here --
-# every submission gets its own runs/<name>_<date>_<time> folder.
 job:
   name: "untaught-no-hp-170m-full"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  resume_from_previous_run: true    # continue the last run of this job if its config matches
 
-  # Pick up where the last run of this job stopped, if it left a checkpoint.
-  # A previous run qualifies only if its saved config.yaml matches this one
-  # field for field, ignoring the scheduling/checkpointing knobs below -- so a
-  # changed seed, curriculum or blacklist starts clean instead of silently
-  # continuing a different experiment. false = always start from a random init.
-  resume_from_previous_run: true
-
-  # SLURM resources (https://www.cs.tau.ac.il/system/slurm).
-  # studentkillable: 1 day maximum, low priority, preemptible.
-  # The page states one hard student cap -- "we limit 1 GPU per/job" -- and
-  # publishes no CPU/memory ceiling, so these are set generously but within
-  # what schedules quickly; asking for more mainly means queueing longer.
-  partition: "studentkillable"
-  max_time_minutes: 1440          # the partition maximum: 1 day
+  # SLURM: https://www.cs.tau.ac.il/system/slurm
+  partition: "studentkillable"      # 1 day cap, preemptible
+  max_time_minutes: 1440            # the partition maximum
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 64000
   cpus_per_task: 8
-  gpus: 1                         # students are limited to 1 GPU per job
-  # Which cards will do. studentkillable has exactly two features, so this is
-  # the whole menu: titan_xp (s-002/003/006, 23 GPUs) and geforce_rtx_2080
-  # (s-004/005, 16 GPUs). Neither has native bf16 -- that needs CUDA capability
-  # 8.0 -- so bf16 is emulated on the fp32 pipeline, where titan_xp's 12.1
-  # TFLOPS and 12 GiB beat the 2080's 10.1 TFLOPS and 8 GiB; the 2080's tensor
-  # cores stay idle because they only accelerate fp16. The 2080 does get
-  # torch.compile (capability 7.5 against 6.1), which roughly cancels the
-  # throughput gap, but 8 GiB is tight here and titan_xp is the card the smoke
-  # runs already proved. One feature also puts both twins on identical silicon.
-  # Measured on titan_xp: ~4K tokens/s, so one epoch takes ~10 days.
-  # "" = any card. (No a100-class card exists in this partition.)
-  constraint: "titan_xp"
+  gpus: 1                           # students are capped at 1 GPU per job
+  constraint: "titan_xp"            # best card in this partition; "" = any (see README)
 
-# Everything the model and the optimizer see.
 train:
   model: "olmo2_170M"
   init_seed: 12536
-
-  # One full epoch over the 3.6B-token corpus (~109K steps).
-  max_duration_value: 1
+  max_duration_value: 1             # one epoch = 3.6B tokens = ~109K steps = ~10 days
   max_duration_unit: "epochs"
 
-  # optimizer: AdamW, cosine schedule with warmup
+  # AdamW, cosine schedule with warmup (paper appendix B.4)
   optim_lr: 0.0005
   optim_weight_decay: 0.05
   optim_warmup_steps: 1000
   optim_max_grad_norm: 1.0
 
-  # batching, in tokens. rank_microbatch is a memory knob only -- gradient
-  # accumulation holds the global batch fixed (here 16 microbatches per step),
-  # so its value never changes the optimizer math, only memory and speed.
-  # 2,048 is what fits the pinned titan_xp: 8,192 OOMs on 12 GiB, and it is the
-  # value adapt_to_gpu picked and the smoke runs trained at. Stating it here
-  # rather than leaving adapt_to_gpu to discover it keeps the config equal to
-  # what actually runs. If a later, longer-sequence phase of the grow_p2
-  # curriculum ever OOMs, halve it -- the comparison is unaffected.
-  data_global_batch_size: 32768
-  data_rank_microbatch_size: 2048
+  data_global_batch_size: 32768     # tokens per optimizer step
+  data_rank_microbatch_size: 2048   # memory knob only; what fits the 12 GiB titan_xp
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8
 
-  # dataset construction. include_instance_metadata is false on purpose: chunk
-  # exclusion keys off batch["index"], never off the per-chunk entity metadata,
-  # so training never touches the 212GB dataset-metadata tree.
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
-  dataset_include_instance_metadata: false
+  dataset_include_instance_metadata: false   # exclusion reads batch["index"], not metadata
   vsl_curriculum: "grow_p2"
   vsl_num_cycles: 8
   vsl_balanced: false
 
-  # Checkpoints: permanent every 10,000 steps (~11 per epoch, all kept).
-  # The ephemeral one every 500 steps is preemption insurance -- only the
-  # newest is kept, and it is what a resubmitted run resumes from, so a kill
-  # costs at most ~500 steps instead of up to 10,000.
-  checkpoint_save_interval: 10000
-  checkpoint_ephemeral_save_interval: 500
+  checkpoint_save_interval: 10000            # permanent, all kept (~11 per epoch, ~2GB each)
+  checkpoint_ephemeral_save_interval: 500    # newest only; what a resubmission resumes from
   checkpoint_save_async: true
   checkpoint_save_overwrite: true
   metrics_collect_interval: 10
@@ -112,28 +54,14 @@ train:
   eval_tasks: ["arc_easy"]
   eval_interval: 100000
 
-# The ablation: hold "Harry Potter" out of the loss.
 untaught:
-  # A file of Wikidata QIDs, relative to Untaught/. framework.client.prepare
-  # resolves it against Elasticsearch before submission and writes the chunk
-  # ids into the run folder; the GPU node only ever reads that file.
-  blacklist: "blacklists/harry_potter.json"
-
-  # Which index to retrieve from: true -> lment_cs (restored from
-  # enwiki_case_sensitive), false -> lment_ci (from enwiki). QID retrieval is
-  # case-agnostic, so true is the right default.
-  case_sensitive: true
-
-  # Per-source mention-confidence cutoffs; a mention counts if it clears at
-  # least one. These are the values the paper validated on a 60-entity dev set
-  # (section 5.2, Table 4). Omit one and it keeps its default; an unknown
-  # threshold_* name is a hard error.
-  threshold_hyperlinks: 1.0
+  blacklist: "blacklists/harry_potter.json"  # QIDs; resolved against ES before submission
+  case_sensitive: true              # true -> lment_cs index, false -> lment_ci
+  threshold_hyperlinks: 1.0         # mention-confidence cutoffs (paper section 5.2, Table 4)
   threshold_entity_linking: 0.6
   threshold_coref: 0.6
   threshold_coref_cluster: 0.6
-
   enabled: true
-  adapt_to_gpu: true
+  adapt_to_gpu: true                # drop compile / shrink microbatch if the card needs it
   disable_wandb: true
   disable_downstream_eval: true
