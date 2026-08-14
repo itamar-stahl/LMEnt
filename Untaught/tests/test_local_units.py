@@ -51,6 +51,7 @@ suite = Suite(
 CONFIGS = os.path.join(UNTAUGHT_ROOT, "configs")
 CONTROL_CFG = os.path.join(CONFIGS, "train_170m_control.yaml")
 ABLATED_CFG = os.path.join(CONFIGS, "train_170m_no_harry_potter.yaml")
+CONTROL_FULL_CFG = os.path.join(CONFIGS, "train_170m_control_full.yaml")
 
 
 def _callback(**kwargs):
@@ -749,55 +750,130 @@ def test_the_node_half_never_needs_elasticsearch():
 
 
 @suite.test
-def test_resume_finds_the_previous_runs_checkpoint():
-    """a new run folder continues the last run of the same job"""
+def test_resume_matches_on_the_saved_config_not_a_folder_name():
+    """a run continues an earlier one only if their configs agree field by field
+
+    Matching on upstream's checkpoint-folder name would be wrong: it encodes
+    only model/lr/batch/wd/duration-value, so "1 epoch" and "1 step" collide and
+    a different seed, curriculum or blacklist is invisible.
+    """
     _require_olmo()
-    from framework.node.train_untaught import find_previous_checkpoint
+    import yaml
+
+    from framework.node.config_env import load_config
+    from framework.node.train_untaught import (
+        find_previous_checkpoint,
+        latest_checkpoint_dir,
+    )
 
     runs = tempfile.mkdtemp()
-    saved = os.environ.get("UNTAUGHT_RUNS_DIR")
+    saved_env = os.environ.get("UNTAUGHT_RUNS_DIR")
     os.environ["UNTAUGHT_RUNS_DIR"] = runs
-    leaf = "olmo2_170M_0.0005_32768_0.05_1"
+    # Expanded on both sides, exactly as main() and the candidate reader do.
+    base = load_config(CONTROL_FULL_CFG)
+
+    def make_run(folder, config, steps=(), leaf="olmo2_170M_0.0005_32768_0.05_1"):
+        run_dir = os.path.join(runs, folder)
+        ckpt = os.path.join(run_dir, "checkpoints", leaf)
+        os.makedirs(ckpt, exist_ok=True)
+        for step in steps:
+            os.makedirs(os.path.join(ckpt, f"step{step}"), exist_ok=True)
+        with open(os.path.join(run_dir, "config.yaml"), "w", encoding="utf-8") as f:
+            yaml.safe_dump(config, f)
+        return run_dir
+
+    def copy(**changes):
+        import copy as _copy
+
+        cfg = _copy.deepcopy(base)
+        for dotted, value in changes.items():
+            group, key = dotted.split("__", 1)
+            cfg[group][key] = value
+        return cfg
+
     try:
-        def make(folder, steps=()):
-            d = os.path.join(runs, folder, "checkpoints", leaf)
-            os.makedirs(d, exist_ok=True)
-            for step in steps:
-                os.makedirs(os.path.join(d, f"step{step}"), exist_ok=True)
-            return os.path.join(runs, folder)
+        name = base["job"]["name"]
+        older = make_run(f"{name}_20260101_000000", base, steps=(10000,))
+        newer = make_run(f"{name}_20260102_000000", base, steps=(20000, 30000))
+        current = make_run(f"{name}_20260103_000000", base)
 
-        older = make("untaught-control-170m-full_20260101_000000", steps=(10000,))
-        newer = make("untaught-control-170m-full_20260102_000000", steps=(20000,))
-        current = make("untaught-control-170m-full_20260103_000000")
+        found = find_previous_checkpoint(current, base)
+        assert found == os.path.join(newer, "checkpoints",
+                                     "olmo2_170M_0.0005_32768_0.05_1"), found
+        assert older not in (found or ""), "must take the NEWEST previous run"
+        print("      (newest matching run wins)")
 
-        found = find_previous_checkpoint(current, os.path.join(current, "checkpoints", leaf))
-        assert found == os.path.join(newer, "checkpoints", leaf), (
-            f"must continue the NEWEST previous run, got {found}"
-        )
-        assert older not in (found or ""), "must not reach past the newest"
+        # the checkpoint folder is the parent of stepN, newest step inside
+        assert latest_checkpoint_dir(newer) == found
 
-        # a different job must never be picked up
-        make("untaught-no-hp-170m-full_20260102_120000", steps=(50000,))
-        assert find_previous_checkpoint(
-            current, os.path.join(current, "checkpoints", leaf)
-        ) == os.path.join(newer, "checkpoints", leaf), "crossed job names"
+        # a run with no checkpoint yet is skipped, not treated as a match
+        make_run(f"{name}_20260102_120000", base, steps=())
+        assert find_previous_checkpoint(current, base) == found
 
-        # different hyperparameters => different leaf => start clean rather
-        # than silently continuing another experiment
-        other_leaf = os.path.join(current, "checkpoints", "olmo2_170M_0.0003_32768_0.05_1")
-        assert find_previous_checkpoint(current, other_leaf) is None
+        # scheduling and logging knobs may differ -- same experiment
+        for field, value in (("job__partition", "gpu-h100-killable"),
+                             ("job__max_time_minutes", 60),
+                             ("job__cpu_mem_mb", 128000),
+                             ("job__gpus", 1),
+                             ("train__checkpoint_save_interval", 5000),
+                             ("train__metrics_collect_interval", 1),
+                             ("train__eval_interval", 500)):
+            assert find_previous_checkpoint(current, copy(**{field: value})) == found, (
+                f"{field} must not disqualify a resume"
+            )
+        print("      (scheduling/logging differences are tolerated)")
 
-        # nothing to resume from at all
-        first = make("untaught-fresh-job_20260101_000000")
-        assert find_previous_checkpoint(
-            first, os.path.join(first, "checkpoints", leaf)
-        ) is None, "a first run must start from a random init"
+        # anything that defines the experiment must disqualify it
+        for field, value in (("train__optim_lr", 0.0003),
+                             ("train__init_seed", 999),
+                             ("train__data_seed", 7),
+                             ("train__max_duration_unit", "steps"),
+                             ("train__vsl_num_cycles", 4),
+                             ("train__dataset_max_sequence_length", 1024),
+                             ("job__dataset_paths", "/other/*.npy"),
+                             ("untaught__blacklist", "blacklists/other.json"),
+                             ("untaught__enabled", False)):
+            assert find_previous_checkpoint(current, copy(**{field: value})) is None, (
+                f"{field} differs -- this is a DIFFERENT experiment, must not resume"
+            )
+        print("      (any experiment-defining difference blocks it)")
+
+        # a different job never qualifies, however similar
+        other = copy(job__name="untaught-no-hp-170m-full")
+        make_run("untaught-no-hp-170m-full_20260102_235959", other, steps=(90000,))
+        assert find_previous_checkpoint(current, base) == found, "crossed job names"
+
+        # and a first run of a job starts from a random init
+        fresh = copy(job__name="untaught-brand-new")
+        first = make_run("untaught-brand-new_20260101_000000", fresh)
+        assert find_previous_checkpoint(first, fresh) is None
+        print("      (a first run starts from a random init)")
     finally:
-        if saved is None:
+        if saved_env is None:
             os.environ.pop("UNTAUGHT_RUNS_DIR", None)
         else:
-            os.environ["UNTAUGHT_RUNS_DIR"] = saved
+            os.environ["UNTAUGHT_RUNS_DIR"] = saved_env
         shutil.rmtree(runs, ignore_errors=True)
+
+
+@suite.test
+def test_resume_identity_ignores_exactly_the_intended_fields():
+    """the ignore list is the documented one -- nothing quietly added"""
+    _require_olmo()
+    from framework.node.train_untaught import RESUME_IGNORED_FIELDS
+
+    assert RESUME_IGNORED_FIELDS["job"] == {
+        "partition", "resume_from_previous_run", "max_time_minutes", "nodes",
+        "ntasks", "cpu_mem_mb", "cpus_per_task", "gpus",
+    }
+    assert RESUME_IGNORED_FIELDS["train"] == {
+        "checkpoint_save_interval", "checkpoint_ephemeral_save_interval",
+        "checkpoint_save_async", "checkpoint_save_overwrite",
+        "metrics_collect_interval", "cancel_check_interval",
+        "wandb_cancel_check_interval", "eval_tasks", "eval_interval",
+    }
+    # the untaught block is compared in full: the ablation IS the experiment
+    assert "untaught" not in RESUME_IGNORED_FIELDS
 
 
 @suite.test

@@ -205,11 +205,29 @@ says which:
   resuming from    : (nothing found) -- random init
 ```
 
-Only the *same job name* and the *same hyperparameters* qualify — upstream names
-the checkpoint folder after lr / batch size / weight decay / duration, so
-changing any of them starts clean instead of silently continuing a different
-experiment. Permanent checkpoints land every 10,000 steps; an ephemeral one
-every 500 steps caps what a preemption can cost.
+A candidate qualifies only if its folder name starts with this run's
+`job.name` **and** the `config.yaml` it actually trained on matches this one
+field for field — the whole `untaught` block included. Only the scheduling and
+logging knobs may differ, since those do not change the experiment:
+
+```
+job:    partition, max_time_minutes, nodes, ntasks, cpu_mem_mb,
+        cpus_per_task, gpus, resume_from_previous_run
+train:  checkpoint_save_interval, checkpoint_ephemeral_save_interval,
+        checkpoint_save_async, checkpoint_save_overwrite,
+        metrics_collect_interval, cancel_check_interval,
+        wandb_cancel_check_interval, eval_tasks, eval_interval
+```
+
+So a changed seed, curriculum, dataset path or blacklist starts a clean run
+instead of silently continuing a different experiment, and the rejected
+candidate is logged with the field that disqualified it. (Matching on
+upstream's checkpoint *folder name* would not do: it encodes only
+model/lr/batch/wd/duration-**value**, so it cannot even tell one epoch from one
+step, let alone a different seed or a different blacklist.)
+
+Permanent checkpoints land every 10,000 steps; an ephemeral one every 500 steps
+caps what a preemption can cost.
 
 ### Inspecting the ablation before submitting
 

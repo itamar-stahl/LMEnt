@@ -27,7 +27,10 @@ job:
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
 
   # Pick up where the last run of this job stopped, if it left a checkpoint.
-  # false = always start from a random init.
+  # A previous run qualifies only if its saved config.yaml matches this one
+  # field for field, ignoring the scheduling/checkpointing knobs below -- so a
+  # changed seed, curriculum or blacklist starts clean instead of silently
+  # continuing a different experiment. false = always start from a random init.
   resume_from_previous_run: true
 
   # SLURM resources (https://www.cs.tau.ac.il/system/slurm).

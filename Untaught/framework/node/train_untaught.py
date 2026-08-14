@@ -24,6 +24,7 @@ import argparse
 import glob
 import logging
 import os
+import re
 import sys
 from typing import Any, Dict, Optional, Sequence, cast
 
@@ -117,36 +118,145 @@ except ImportError:  # pragma: no cover
     )
 
 
-def find_previous_checkpoint(run_dir: str, save_folder: str) -> Optional[str]:
-    """The newest earlier run of this job that left a checkpoint to continue from.
+# Fields that may differ between two submissions of the *same* experiment:
+# how it was scheduled, how often it checkpoints, and how often it logs. Change
+# any of these between resubmissions and it is still the same training run.
+# Everything else -- the model, the optimizer, the data, the seeds, the whole
+# untaught block -- must match, or the runs are different experiments and
+# continuing one from the other would be silent corruption of both.
+RESUME_IGNORED_FIELDS: Dict[str, set] = {
+    "job": {
+        "partition",
+        "resume_from_previous_run",
+        "max_time_minutes",
+        "nodes",
+        "ntasks",
+        "cpu_mem_mb",
+        "cpus_per_task",
+        "gpus",
+    },
+    "train": {
+        "checkpoint_save_interval",
+        "checkpoint_ephemeral_save_interval",
+        "checkpoint_save_async",
+        "checkpoint_save_overwrite",
+        "metrics_collect_interval",
+        "cancel_check_interval",
+        "wandb_cancel_check_interval",
+        "eval_tasks",
+        "eval_interval",
+    },
+}
+
+
+def resume_identity(config_dict: Dict[str, Any]) -> Dict[str, Any]:
+    """The part of a config that defines *which experiment* this is.
+
+    Two runs may continue one another only if these are equal, field for field.
+    """
+    identity: Dict[str, Any] = {}
+    for group, values in config_dict.items():
+        if isinstance(values, dict):
+            ignored = RESUME_IGNORED_FIELDS.get(group, set())
+            identity[group] = {k: v for k, v in values.items() if k not in ignored}
+        else:
+            identity[group] = values
+    return identity
+
+
+def _identity_differences(ours: Dict[str, Any], theirs: Dict[str, Any]) -> list:
+    """Which fields disqualify a candidate -- so the log can say why."""
+    differences = []
+    for group in sorted(set(ours) | set(theirs)):
+        a, b = ours.get(group, {}), theirs.get(group, {})
+        if not isinstance(a, dict) or not isinstance(b, dict):
+            if a != b:
+                differences.append(group)
+            continue
+        for key in sorted(set(a) | set(b)):
+            if a.get(key, "<missing>") != b.get(key, "<missing>"):
+                differences.append(f"{group}.{key}")
+    return differences
+
+
+def latest_checkpoint_dir(run_dir: str) -> Optional[str]:
+    """The folder of ``stepN`` checkpoints in a run, if it has any.
+
+    Returns the *parent* of the step directories, which is what upstream's
+    ``maybe_load_checkpoint`` wants -- it picks the newest step inside.
+    """
+    best: Optional[str] = None
+    best_step = -1
+    patterns = (
+        os.path.join(run_dir, CHECKPOINTS_DIR, "*", "step*"),
+        os.path.join(run_dir, CHECKPOINTS_DIR, "step*"),
+    )
+    for pattern in patterns:
+        for step_dir in glob.glob(pattern):
+            if not os.path.isdir(step_dir):
+                continue
+            match = re.fullmatch(r"step(\d+)", os.path.basename(step_dir))
+            if match and int(match.group(1)) > best_step:
+                best_step = int(match.group(1))
+                best = os.path.dirname(step_dir)
+    return best
+
+
+def find_previous_checkpoint(
+    run_dir: str, config_dict: Dict[str, Any]
+) -> Optional[str]:
+    """The newest earlier run of this experiment that left a checkpoint.
 
     Upstream already resumes from the save folder if a checkpoint is there, but
     every submission gets a *fresh* run folder -- so after a preemption, or when
     the 1-day studentkillable limit ends a job mid-epoch, our own checkpoints/
     is empty and there is nothing for it to find. This looks one folder back.
 
-    Only a run of the same job name qualifies, and only through the same
-    hyperparameter-named subfolder upstream derives from lr / batch size /
-    weight decay / duration. Change any of those and nothing matches, so the run
-    starts clean instead of silently continuing a different experiment.
+    A candidate qualifies only if its folder name starts with this config's
+    ``job.name`` **and** its saved config.yaml matches ours field for field,
+    ignoring the scheduling and logging knobs in ``RESUME_IGNORED_FIELDS``. The
+    comparison is against the config each run actually trained on -- never
+    against a directory name, which encodes only a handful of hyperparameters
+    (upstream's is model/lr/batch/wd/duration-*value*, so it cannot even tell
+    "1 epoch" from "1 step", let alone a different seed or a different
+    blacklist).
     """
-    folder = os.path.basename(os.path.normpath(run_dir))
-    # run folders are <job_name>_<date>_<time>
-    job_name = folder.rsplit("_", 2)[0] if folder.count("_") >= 2 else folder
-    leaf = os.path.basename(os.path.normpath(save_folder))
+    job_name = config_dict["job"]["name"]
+    ours = resume_identity(config_dict)
 
     candidates = sorted(
         (
             d for d in glob.glob(os.path.join(runs_dir(), f"{job_name}_*"))
-            if os.path.isdir(d)
-            and os.path.normpath(d) != os.path.normpath(run_dir)
+            if os.path.isdir(d) and os.path.normpath(d) != os.path.normpath(run_dir)
         ),
         reverse=True,  # timestamps sort lexicographically: newest first
     )
+
     for candidate in candidates:
-        previous = os.path.join(candidate, CHECKPOINTS_DIR, leaf)
-        if glob.glob(os.path.join(previous, "step*")):
-            return previous
+        previous_config = config_path(candidate)
+        if not os.path.isfile(previous_config):
+            continue
+
+        checkpoints = latest_checkpoint_dir(candidate)
+        if checkpoints is None:
+            continue
+
+        try:
+            theirs = resume_identity(load_config(previous_config))
+        except Exception as e:  # a corrupt or half-written config is not a match
+            log.warning("[untaught] cannot read %s: %s", previous_config, e)
+            continue
+
+        differences = _identity_differences(ours, theirs)
+        if not differences:
+            return checkpoints
+
+        log.info(
+            "[untaught] not resuming from %s: config differs in %s",
+            os.path.basename(candidate),
+            ", ".join(differences[:5]) + ("..." if len(differences) > 5 else ""),
+        )
+
     return None
 
 
@@ -330,7 +440,7 @@ def main(target: str, check_only: bool) -> None:
     if config_dict["job"].get("resume_from_previous_run", True) and not glob.glob(
         os.path.join(str(config.trainer.save_folder), "step*")
     ):
-        resumed_from = find_previous_checkpoint(run_dir, str(config.trainer.save_folder))
+        resumed_from = find_previous_checkpoint(run_dir, config_dict)
         if resumed_from:
             config.trainer.load_path = resumed_from
     # build_config ignores init_seed (ExperimentConfig defaults it), so apply the
