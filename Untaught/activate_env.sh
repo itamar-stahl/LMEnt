@@ -16,6 +16,14 @@
 : "${LMENT_ROOT:=/home/morg/NLP_2526b/stahli/LMEnt}"
 cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
 
+# Already set up in this shell (or in a parent that exported it)? The cd above
+# still ran, but re-activating conda and re-probing Elasticsearch is pure waste
+# -- and run.sh submits two jobs through sub_builder.sh, each of which sources
+# this file. Set UNTAUGHT_ENV_READY= to force a fresh setup.
+if [ "${UNTAUGHT_ENV_READY:-}" = "1" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+
 # shellcheck disable=SC1091
 . ./framework/env.sh
 # shellcheck disable=SC1091
@@ -51,5 +59,8 @@ else
   fi
   unset untaught_waited
 fi
+
+UNTAUGHT_ENV_READY=1
+export UNTAUGHT_ENV_READY
 
 echo "[untaught] ready in $(pwd): ${CONDA_ENV} @ $(command -v python)"

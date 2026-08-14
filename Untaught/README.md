@@ -74,9 +74,12 @@ Untaught/
 │       ├── exclusion.py     ChunkExclusionCallback — the ~15 lines that matter
 │       ├── run_folder.py    the run-folder contract: layout + artifact reading
 │       └── config_env.py    ${VAR} expansion for configs; reads env.sh on miss
+├── run.sh                   submit the full training pair (both jobs)
 ├── configs/
-│   ├── train_170m_control.yaml       commented YAML, three flat groups
-│   └── train_170m_no_harry_potter.yaml
+│   ├── train_170m_control.yaml       200-step smoke pair
+│   ├── train_170m_no_harry_potter.yaml
+│   ├── train_170m_control_full.yaml  one-epoch training pair
+│   └── train_170m_no_harry_potter_full.yaml
 ├── blacklists/
 │   └── harry_potter.json    QIDs to hold out; named by the config above
 ├── runs/                    one self-contained folder per submission (see below)
@@ -141,7 +144,13 @@ snapshot, missing/renamed tokenized file).
 
 ## Submitting a run
 
-One command, whatever the config:
+The full training pair, both jobs at once:
+
+```sh
+./run.sh
+```
+
+Or any single config:
 
 ```sh
 . ./framework/client/sub_builder.sh configs/train_170m_control.yaml
@@ -181,6 +190,26 @@ The config is not named because it is implied: the trainer knows where run
 folders live (`framework/node/run_folder.py`) and that each holds its own
 `config.yaml`, artifact and `checkpoints/`. Tracing any run back is: open its
 folder.
+
+### Long runs on a preemptible partition
+
+`studentkillable` caps a job at **1 day** and can preempt it at any time, while
+one epoch is ~109K steps — so a full run takes several submissions. Just run
+`./run.sh` again. Each submission gets a fresh run folder, and the trainer looks
+one folder back: if the newest previous run of the same job left a checkpoint,
+it continues from it; otherwise it starts from a random init. The run header
+says which:
+
+```
+  resuming from    : …/untaught-control-170m-full_20260814_212936/checkpoints/…
+  resuming from    : (nothing found) -- random init
+```
+
+Only the *same job name* and the *same hyperparameters* qualify — upstream names
+the checkpoint folder after lr / batch size / weight decay / duration, so
+changing any of them starts clean instead of silently continuing a different
+experiment. Permanent checkpoints land every 10,000 steps; an ephemeral one
+every 500 steps caps what a preemption can cost.
 
 ### Inspecting the ablation before submitting
 

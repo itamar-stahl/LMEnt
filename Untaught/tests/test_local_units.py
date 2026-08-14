@@ -749,6 +749,85 @@ def test_the_node_half_never_needs_elasticsearch():
 
 
 @suite.test
+def test_resume_finds_the_previous_runs_checkpoint():
+    """a new run folder continues the last run of the same job"""
+    _require_olmo()
+    from framework.node.train_untaught import find_previous_checkpoint
+
+    runs = tempfile.mkdtemp()
+    saved = os.environ.get("UNTAUGHT_RUNS_DIR")
+    os.environ["UNTAUGHT_RUNS_DIR"] = runs
+    leaf = "olmo2_170M_0.0005_32768_0.05_1"
+    try:
+        def make(folder, steps=()):
+            d = os.path.join(runs, folder, "checkpoints", leaf)
+            os.makedirs(d, exist_ok=True)
+            for step in steps:
+                os.makedirs(os.path.join(d, f"step{step}"), exist_ok=True)
+            return os.path.join(runs, folder)
+
+        older = make("untaught-control-170m-full_20260101_000000", steps=(10000,))
+        newer = make("untaught-control-170m-full_20260102_000000", steps=(20000,))
+        current = make("untaught-control-170m-full_20260103_000000")
+
+        found = find_previous_checkpoint(current, os.path.join(current, "checkpoints", leaf))
+        assert found == os.path.join(newer, "checkpoints", leaf), (
+            f"must continue the NEWEST previous run, got {found}"
+        )
+        assert older not in (found or ""), "must not reach past the newest"
+
+        # a different job must never be picked up
+        make("untaught-no-hp-170m-full_20260102_120000", steps=(50000,))
+        assert find_previous_checkpoint(
+            current, os.path.join(current, "checkpoints", leaf)
+        ) == os.path.join(newer, "checkpoints", leaf), "crossed job names"
+
+        # different hyperparameters => different leaf => start clean rather
+        # than silently continuing another experiment
+        other_leaf = os.path.join(current, "checkpoints", "olmo2_170M_0.0003_32768_0.05_1")
+        assert find_previous_checkpoint(current, other_leaf) is None
+
+        # nothing to resume from at all
+        first = make("untaught-fresh-job_20260101_000000")
+        assert find_previous_checkpoint(
+            first, os.path.join(first, "checkpoints", leaf)
+        ) is None, "a first run must start from a random init"
+    finally:
+        if saved is None:
+            os.environ.pop("UNTAUGHT_RUNS_DIR", None)
+        else:
+            os.environ["UNTAUGHT_RUNS_DIR"] = saved
+        shutil.rmtree(runs, ignore_errors=True)
+
+
+@suite.test
+def test_full_configs_are_a_controlled_pair():
+    """the two full-training configs differ only in name and the ablation"""
+    from framework.node.config_env import load_config, to_upstream
+
+    ctl = load_config(os.path.join(CONFIGS, "train_170m_control_full.yaml"))
+    abl = load_config(os.path.join(CONFIGS, "train_170m_no_harry_potter_full.yaml"))
+
+    assert ctl["train"] == abl["train"], "train blocks differ -- not controlled"
+    assert {k: v for k, v in ctl["job"].items() if k != "name"} == {
+        k: v for k, v in abl["job"].items() if k != "name"
+    }, "job blocks differ beyond the name"
+    assert ctl["untaught"]["blacklist"] is None
+    assert abl["untaught"]["blacklist"] == "blacklists/harry_potter.json"
+
+    # what makes them "full" rather than smoke runs
+    for cfg in (ctl, abl):
+        assert cfg["train"]["max_duration_value"] == 1
+        assert cfg["train"]["max_duration_unit"] == "epochs"
+        assert cfg["train"]["checkpoint_save_interval"] == 10000
+        assert cfg["job"]["max_time_minutes"] == 1440, "studentkillable caps at 1 day"
+        assert cfg["job"]["gpus"] == 1, "students are limited to 1 GPU per job"
+        assert cfg["job"]["partition"] == "studentkillable"
+        assert cfg["job"]["resume_from_previous_run"] is True
+        to_upstream(cfg, save_folder="/tmp/x")  # must not raise
+
+
+@suite.test
 def test_training_logs_go_to_stdout_not_stderr():
     """INFO logging is routed to stdout so log.err holds only real problems"""
     _require_olmo()

@@ -21,6 +21,7 @@ nested dict ``build_config`` expects.
 from __future__ import annotations
 
 import argparse
+import glob
 import logging
 import os
 import sys
@@ -96,15 +97,57 @@ from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
 try:
     from .exclusion import ChunkExclusionCallback
-    from .run_folder import artifact_path, checkpoints_path, config_path, resolve_run_dir
-except ImportError:  # pragma: no cover
-    from framework.node.exclusion import ChunkExclusionCallback
-    from framework.node.run_folder import (
+    from .run_folder import (
+        CHECKPOINTS_DIR,
         artifact_path,
         checkpoints_path,
         config_path,
         resolve_run_dir,
+        runs_dir,
     )
+except ImportError:  # pragma: no cover
+    from framework.node.exclusion import ChunkExclusionCallback
+    from framework.node.run_folder import (
+        CHECKPOINTS_DIR,
+        artifact_path,
+        checkpoints_path,
+        config_path,
+        resolve_run_dir,
+        runs_dir,
+    )
+
+
+def find_previous_checkpoint(run_dir: str, save_folder: str) -> Optional[str]:
+    """The newest earlier run of this job that left a checkpoint to continue from.
+
+    Upstream already resumes from the save folder if a checkpoint is there, but
+    every submission gets a *fresh* run folder -- so after a preemption, or when
+    the 1-day studentkillable limit ends a job mid-epoch, our own checkpoints/
+    is empty and there is nothing for it to find. This looks one folder back.
+
+    Only a run of the same job name qualifies, and only through the same
+    hyperparameter-named subfolder upstream derives from lr / batch size /
+    weight decay / duration. Change any of those and nothing matches, so the run
+    starts clean instead of silently continuing a different experiment.
+    """
+    folder = os.path.basename(os.path.normpath(run_dir))
+    # run folders are <job_name>_<date>_<time>
+    job_name = folder.rsplit("_", 2)[0] if folder.count("_") >= 2 else folder
+    leaf = os.path.basename(os.path.normpath(save_folder))
+
+    candidates = sorted(
+        (
+            d for d in glob.glob(os.path.join(runs_dir(), f"{job_name}_*"))
+            if os.path.isdir(d)
+            and os.path.normpath(d) != os.path.normpath(run_dir)
+        ),
+        reverse=True,  # timestamps sort lexicographically: newest first
+    )
+    for candidate in candidates:
+        previous = os.path.join(candidate, CHECKPOINTS_DIR, leaf)
+        if glob.glob(os.path.join(previous, "step*")):
+            return previous
+    return None
 
 
 def apply_untaught_config(config, config_dict: Dict[str, Any], run_dir: str):
@@ -210,7 +253,11 @@ def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
 
 
 def _summarize(
-    config, config_dict: Dict[str, Any], run_dir: str, blacklist_path: Optional[str]
+    config,
+    config_dict: Dict[str, Any],
+    run_dir: str,
+    blacklist_path: Optional[str],
+    resumed_from: Optional[str] = None,
 ) -> None:
     train = config_dict["train"]
     print("\n" + "=" * 68)
@@ -228,6 +275,10 @@ def _summarize(
     print(f"  run folder       : {run_dir}")
     print(f"  checkpoints      : {config.trainer.save_folder}")
     print(f"  seed             : {config.init_seed}")
+    if resumed_from:
+        print(f"  resuming from    : {resumed_from}")
+    else:
+        print("  resuming from    : (nothing found) -- random init")
     if blacklist_path:
         # The entities and thresholds behind it are framework.client's business; this
         # side only consumes the artifact they were resolved into.
@@ -270,6 +321,18 @@ def main(target: str, check_only: bool) -> None:
     config = build_config(
         to_upstream(config_dict, save_folder=checkpoints_path(run_dir))
     )
+
+    # Resume. Upstream loads from the save folder when a checkpoint is there
+    # (load_strategy="if_available"), which covers a job restarted in place; the
+    # load_path below covers the usual case on a preemptible partition, where
+    # this is a new run folder continuing the last one.
+    resumed_from = None
+    if config_dict["job"].get("resume_from_previous_run", True) and not glob.glob(
+        os.path.join(str(config.trainer.save_folder), "step*")
+    ):
+        resumed_from = find_previous_checkpoint(run_dir, str(config.trainer.save_folder))
+        if resumed_from:
+            config.trainer.load_path = resumed_from
     # build_config ignores init_seed (ExperimentConfig defaults it), so apply the
     # config's value here -- the control and ablated runs must share it.
     config.init_seed = config_dict["train"]["init_seed"]
@@ -280,7 +343,7 @@ def main(target: str, check_only: bool) -> None:
     if blacklist_path and not os.path.isfile(blacklist_path):
         raise FileNotFoundError(f"[untaught] blacklist file not found: {blacklist_path}")
 
-    _summarize(config, config_dict, run_dir, blacklist_path)
+    _summarize(config, config_dict, run_dir, blacklist_path, resumed_from)
 
     if check_only:
         print("[untaught] --check passed: config builds and blacklist is readable.")
