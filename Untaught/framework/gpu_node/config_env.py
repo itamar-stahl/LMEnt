@@ -10,7 +10,10 @@ import subprocess
 import sys
 from typing import Any, Dict, List, Optional
 
-UNTAUGHT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Untaught/framework/gpu_node/config_env.py -> Untaught/
+UNTAUGHT_ROOT = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+)
 ENV_SH = os.path.join(UNTAUGHT_ROOT, "configs", "env.sh")
 
 

@@ -1,35 +1,25 @@
 #!/bin/sh
 # LOGIN NODE entry point. Source it, do not execute it:
 #
-#     cd .../Untaught && . ./activate_env.sh
+#     . /home/morg/NLP_2526b/stahli/LMEnt/Untaught/activate_env.sh
 #
-# Afterwards this shell has the lment conda env active, every UNTAUGHT_/LMENT_/
-# ES_ variable set, and a running Elasticsearch. That is everything the
-# run_smoke_*.sh scripts and the tests need -- no ~/.bashrc, no manual
-# `conda activate`, works for any user with read access to the paths.
+# It cd's to Untaught/ and leaves this shell there, with the lment conda env
+# active, every UNTAUGHT_/LMENT_/ES_ variable set, and Elasticsearch running.
+# That is everything the run_smoke_*.sh scripts, client_node.* and the tests
+# need -- no ~/.bashrc, no manual `conda activate`, same for any user.
 #
-# The compute-node counterpart is gpu_node.sh, which skips Elasticsearch
-# because the GPU nodes cannot reach it.
+# The compute-node counterpart is gpu_node/gpu_node.sh, which skips
+# Elasticsearch because the GPU nodes cannot reach it.
 
-# Locate this file. When sourced, $0 is the *shell*, not the script -- bash
-# exposes the real path as $BASH_SOURCE, and the cwd is the last resort.
-untaught_self="${BASH_SOURCE:-$0}"
-UNTAUGHT_ROOT="$(cd "$(dirname "${untaught_self}")" 2>/dev/null && pwd)"
-if [ ! -d "${UNTAUGHT_ROOT}/framework" ]; then
-  UNTAUGHT_ROOT="$(pwd)"
-fi
-unset untaught_self
-if [ ! -d "${UNTAUGHT_ROOT}/framework" ]; then
-  echo "[untaught] cannot locate Untaught/ -- source this from that folder:" >&2
-  echo "           cd <...>/Untaught && . ./activate_env.sh" >&2
-  return 1 2>/dev/null || exit 1
-fi
-export UNTAUGHT_ROOT
+# Fixed location on the shared filesystem: the same absolute path on the login
+# node and on every compute node, so nothing has to be discovered at runtime.
+: "${LMENT_ROOT:=/home/morg/NLP_2526b/stahli/LMEnt}"
+cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
 
 # shellcheck disable=SC1091
-. "${UNTAUGHT_ROOT}/configs/env.sh"
+. ./configs/env.sh
 # shellcheck disable=SC1091
-. "${UNTAUGHT_ROOT}/configs/conda.sh"
+. ./configs/conda.sh
 
 # --- Elasticsearch ------------------------------------------------------------
 # It runs on this node, and the GPU nodes cannot reach it, so everything that
@@ -62,4 +52,4 @@ else
   unset untaught_waited
 fi
 
-echo "[untaught] ready: ${CONDA_ENV} @ $(command -v python), root ${UNTAUGHT_ROOT}"
+echo "[untaught] ready in $(pwd): ${CONDA_ENV} @ $(command -v python)"

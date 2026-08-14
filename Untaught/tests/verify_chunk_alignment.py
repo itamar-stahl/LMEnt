@@ -40,7 +40,7 @@ REPO_ROOT = os.path.dirname(UNTAUGHT_ROOT)
 
 sys.path.insert(0, UNTAUGHT_ROOT)
 
-from framework.config_env import load_config, load_env_sh  # noqa: E402
+from framework.gpu_node.config_env import load_config, load_env_sh  # noqa: E402
 
 # OLMO_CORE_SRC is read before any olmo import, so fill the environment in first
 # for the case where the environment was not sourced.
@@ -50,7 +50,7 @@ sys.path.insert(
     0, os.environ.get("OLMO_CORE_SRC", os.path.join(REPO_ROOT, "OLMo-core", "src"))
 )
 
-from framework.es_blacklist import get_esclient  # noqa: E402
+from framework.client_node.es_blacklist import get_esclient  # noqa: E402
 
 
 def build_dataset(config_path: str):

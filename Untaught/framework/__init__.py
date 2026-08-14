@@ -1,16 +1,7 @@
-"""Untaught: train LMEnt models with specific concepts held out of the loss.
+"""Untaught framework, split by the machine each half runs on.
 
-See ``Untaught/README.md`` for the mechanism and how to run it.
+``client_node`` needs Elasticsearch and runs on the login node; ``gpu_node``
+runs inside the SLURM job and never touches the index. The blacklist artifact
+is the only thing that crosses between them, and imports only ever point
+client_node -> gpu_node.
 """
-
-__all__ = ["ChunkExclusionCallback"]
-
-
-def __getattr__(name):
-    # Lazy so that `python -m framework.es_blacklist` (an Elasticsearch-only
-    # tool) does not drag in olmo_core and its training dependencies.
-    if name == "ChunkExclusionCallback":
-        from .exclusion import ChunkExclusionCallback
-
-        return ChunkExclusionCallback
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

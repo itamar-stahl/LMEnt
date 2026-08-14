@@ -7,12 +7,14 @@ callback that masks blacklisted chunks.
 
 Run it exactly like the upstream trainer, with a config path:
 
-    torchrun --nproc-per-node=1 -m framework.train_untaught config.json
+    torchrun --nproc-per-node=1 -m framework.gpu_node.train_untaught config.json
 
 Config schema is the upstream one plus an optional top-level "untaught" block:
 
     "untaught": {
         "blacklist": "blacklists/harry_potter.json",     // null => control run
+        "thresholds": {...},        // client_node.prepare uses these
+        "case_sensitive": true,     // lment_cs vs lment_ci
         "enabled": true,
         "disable_wandb": true,
         "disable_downstream_eval": true
@@ -36,19 +38,21 @@ try:
     from .config_env import load_config, load_env_sh, resolve_path
 except ImportError:  # pragma: no cover
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from framework.config_env import load_config, load_env_sh, resolve_path
+    from framework.gpu_node.config_env import load_config, load_env_sh, resolve_path
 
 
 def _bootstrap_olmo_core() -> None:
     """Put ``OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports."""
     src = os.environ.get("OLMO_CORE_SRC")
     if not src:
-        # Nothing sourced configs/env.sh (a bare `python -m framework...`)? Do it here.
+        # Nothing sourced the environment (a bare `python -m framework.gpu_node...`)? Do it here.
         load_env_sh()
         src = os.environ.get("OLMO_CORE_SRC")
     if not src:
-        # Untaught/framework/train_untaught.py -> repo root -> OLMo-core/src
-        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+        # Untaught/framework/gpu_node/train_untaught.py -> repo root -> OLMo-core/src
+        repo_root = os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "..")
+        )
         src = os.path.join(repo_root, "OLMo-core", "src")
 
     src = os.path.abspath(src)
@@ -73,23 +77,9 @@ from olmo_core.train.callbacks import ConfigSaverCallback, WandBCallback  # noqa
 from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
 try:
-    from .es_blacklist import (
-        ARTIFACT_NAME,
-        build_artifact,
-        load_blacklist,
-        normalize_thresholds,
-        write_artifact,
-    )
     from .exclusion import ChunkExclusionCallback
 except ImportError:  # pragma: no cover
-    from framework.es_blacklist import (
-        ARTIFACT_NAME,
-        build_artifact,
-        load_blacklist,
-        normalize_thresholds,
-        write_artifact,
-    )
-    from framework.exclusion import ChunkExclusionCallback
+    from framework.gpu_node.exclusion import ChunkExclusionCallback
 
 
 def apply_untaught_config(
@@ -103,10 +93,6 @@ def apply_untaught_config(
     blacklist_path = blacklist_override or untaught_cfg.get("blacklist")
     if blacklist_path:
         blacklist_path = resolve_path(blacklist_path)
-
-    # Validated here, at config-build time, so a typo'd source name fails during
-    # --check or --prepare instead of after the queue wait.
-    normalize_thresholds(untaught_cfg.get("thresholds"))
 
     config.trainer.with_callback(
         "untaught_exclusion",
@@ -135,36 +121,6 @@ def apply_untaught_config(
         adapt_to_gpu(config, untaught_cfg)
 
     return config, blacklist_path
-
-
-def prepare_blacklist(config, config_dict: Dict[str, Any], blacklist_path: str) -> str:
-    """Resolve the blacklist against Elasticsearch and save it with the run.
-
-    Elasticsearch lives on the login node, the training runs on a GPU node that
-    cannot reach it, so the lookup happens once here and the result travels as a
-    file. It goes inside ``trainer.save_folder`` -- the same folder the
-    checkpoints and config.json land in -- so a run and the exact exclusion it
-    was trained with stay together.
-    """
-    untaught_cfg = config_dict.get("untaught", {}) or {}
-
-    artifact = build_artifact(
-        blacklist_path,
-        thresholds=untaught_cfg.get("thresholds"),
-        case_sensitive=bool(untaught_cfg.get("case_sensitive", True)),
-    )
-    path = write_artifact(artifact, os.path.join(config.trainer.save_folder, ARTIFACT_NAME))
-
-    print(f"[untaught] index      : {artifact['index']} "
-          f"(case_sensitive={artifact['case_sensitive']})")
-    print(f"[untaught] thresholds : {artifact['thresholds']}")
-    for entity in artifact["entities"]:
-        print(f"[untaught]   {entity['qid']:<12} {entity['num_chunks']:>9,} chunks  "
-              f"{entity['comment']}")
-    print(f"[untaught] total      : {artifact['num_chunks']:,} unique chunks "
-          f"({100.0 * artifact['num_chunks'] / 10_500_000:.4f}% of the corpus)")
-    print(f"[untaught] wrote      : {path}")
-    return path
 
 
 def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
@@ -245,23 +201,16 @@ def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str
     print(f"  save folder      : {tr['save_folder']}")
     print(f"  seed             : {config_dict.get('init_seed')}")
     if blacklist_path:
-        # Just the QIDs -- the chunk ids behind them are resolved by --prepare.
-        untaught_cfg = config_dict["untaught"]
+        # The entities and thresholds behind it are client_node's business; this
+        # side only consumes the artifact they were resolved into.
         print(f"  blacklist        : {blacklist_path}")
-        for entity in load_blacklist(blacklist_path):
-            print(f"    {entity['qid']:<12} {entity['comment']}")
-        print(f"  thresholds       : {untaught_cfg.get('thresholds') or 'defaults'}")
-        print(f"  case sensitive   : {bool(untaught_cfg.get('case_sensitive', True))}")
     else:
         print("  blacklist        : (none) -- CONTROL run")
     print("=" * 68 + "\n")
 
 
 def main(
-    config_filepath: str,
-    blacklist_override: Optional[str],
-    check_only: bool,
-    prepare_only: bool = False,
+    config_filepath: str, blacklist_override: Optional[str], check_only: bool
 ) -> None:
     config_dict = load_config(config_filepath)
 
@@ -274,13 +223,6 @@ def main(
         raise FileNotFoundError(f"[untaught] blacklist file not found: {blacklist_path}")
 
     _summarize(config, config_dict, blacklist_path)
-
-    if prepare_only:
-        if not blacklist_path:
-            print("[untaught] --prepare: control run, no blacklist to resolve.")
-            return
-        prepare_blacklist(config, config_dict, blacklist_path)
-        return
 
     if check_only:
         print("[untaught] --check passed: config builds and blacklist is readable.")
@@ -323,7 +265,7 @@ def main(
 
 
 def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(prog="framework.train_untaught")
+    parser = argparse.ArgumentParser(prog="framework.gpu_node.train_untaught")
     parser.add_argument("config", help="path to the training config JSON")
     parser.add_argument(
         "--blacklist",
@@ -335,12 +277,6 @@ def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
         action="store_true",
         help="build the config and validate the blacklist, then exit without training",
     )
-    parser.add_argument(
-        "--prepare",
-        action="store_true",
-        help="resolve the blacklist against Elasticsearch into the run folder, then exit "
-             "(run this where ES is reachable, before submitting the job)",
-    )
     return parser.parse_args(argv)
 
 
@@ -351,9 +287,7 @@ if __name__ == "__main__":
     # `--blacklist ""` is a deliberate way to force a control run from the CLI.
     override = args.blacklist if args.blacklist else None
 
-    if args.prepare:
-        main(args.config, override, check_only=False, prepare_only=True)
-    elif args.check:
+    if args.check:
         main(args.config, override, check_only=True)
     else:
         prepare_training_environment()
