@@ -72,7 +72,7 @@ def test_every_expected_file_exists():
         "framework/node/__init__.py",
         "framework/node/set_node_env.sh",
         "framework/node/config_env.py",
-        "framework/node/artifact.py",
+        "framework/node/run_folder.py",
         "framework/node/exclusion.py",
         "framework/node/train_untaught.py",
         "configs/train_170m_control.yaml",
@@ -117,7 +117,7 @@ def test_every_module_imports():
         "framework",
         "framework.node",
         "framework.node.config_env",
-        "framework.node.artifact",
+        "framework.node.run_folder",
         "framework.client",
         "framework.client.es_blacklist",
     ):
@@ -217,7 +217,7 @@ def test_node_never_imports_elasticsearch():
     with no_elasticsearch():
         import importlib
 
-        for module in ("framework.node.artifact", "framework.node.config_env",
+        for module in ("framework.node.run_folder", "framework.node.config_env",
                        "framework.node.exclusion"):
             importlib.reload(importlib.import_module(module))
 
@@ -226,13 +226,13 @@ def test_node_never_imports_elasticsearch():
 def test_client_uses_node_for_the_shared_contract():
     """the artifact format has one owner (node), which client imports"""
     prepare = read(CLIENT, "prepare.py")
-    assert "from framework.node.artifact import ARTIFACT_NAME" in prepare
+    assert "from framework.node.run_folder import" in prepare
     # and the name is defined exactly once, in node/artifact.py
     definitions = [
         os.path.relpath(p, UNTAUGHT_ROOT) for p in py_files()
         if re.search(r"^ARTIFACT_NAME\s*=", read(p), re.M)
     ]
-    assert definitions == ["framework" + os.sep + "node" + os.sep + "artifact.py"], (
+    assert definitions == ["framework" + os.sep + "node" + os.sep + "run_folder.py"], (
         f"ARTIFACT_NAME defined in {definitions}"
     )
 
@@ -244,7 +244,8 @@ def test_client_uses_node_for_the_shared_contract():
 def test_no_duplicated_definitions():
     """each key constant is defined in exactly one place"""
     for const in ("DEFAULT_THRESHOLDS", "THRESHOLD_PREFIX", "CASE_SENSITIVE_INDEX",
-                  "ARTIFACT_NAME", "UNTAUGHT_ROOT", "ENV_SH"):
+                  "ARTIFACT_NAME", "CONFIG_NAME", "CHECKPOINTS_DIR", "JOB_SLURM",
+                  "RUN_WRAPPER", "ENV_SH"):
         places = [
             os.path.relpath(p, UNTAUGHT_ROOT) for p in py_files()
             if re.search(rf"^{const}\s*(:|=)", read(p), re.M)
@@ -362,6 +363,12 @@ def test_generated_scripts_are_self_contained():
                       prepare.index("def prepare(")]
     assert "UNTAUGHT_ROOT" in wrapper, "wrapper must use absolute framework paths"
     assert "set_node_env.sh" in wrapper and "torchrun" in wrapper
+    # The wrapper is a record, not a program: no shell variables may stand in
+    # for the paths. (${...} in the template would survive into the output.)
+    emitted = wrapper[wrapper.index('return f"""'):]
+    assert "${" not in emitted.replace("{job[", "").replace("{run_dir}", ""), (
+        "run_wrapper.sh template introduces shell variables"
+    )
 
 
 # --------------------------------------------------------------------------- #

@@ -46,9 +46,9 @@ from olmo_core.train.callbacks import Callback
 from olmo_core.train.common import ReduceType
 
 try:
-    from .artifact import load_artifact
+    from .run_folder import load_artifact
 except ImportError:  # pragma: no cover - file-path launch
-    from framework.node.artifact import load_artifact
+    from framework.node.run_folder import load_artifact
 
 log = logging.getLogger(__name__)
 

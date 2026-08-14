@@ -82,7 +82,7 @@ runs/<job.name>_<date>_<time>/
 ├── config.yaml               the exact config this run trains on
 ├── untaught_blacklist.json   the exact exclusion (explicitly empty for control)
 ├── job.slurm                 what went to sbatch — pure strings, no env vars
-├── run_wrapper.sh            what the GPU node executes
+├── run_wrapper.sh            what the GPU node executed (literal paths)
 ├── client.log                this submission's log
 ├── log.out / log.err         the job's output (appear when it starts)
 └── checkpoints/              parameters by step (step100, step200 for smoke)

@@ -95,11 +95,16 @@ from olmo_core.train.callbacks import ConfigSaverCallback, WandBCallback  # noqa
 from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
 try:
-    from .artifact import ARTIFACT_NAME
     from .exclusion import ChunkExclusionCallback
+    from .run_folder import artifact_path, checkpoints_path, config_path, resolve_run_dir
 except ImportError:  # pragma: no cover
-    from framework.node.artifact import ARTIFACT_NAME
     from framework.node.exclusion import ChunkExclusionCallback
+    from framework.node.run_folder import (
+        artifact_path,
+        checkpoints_path,
+        config_path,
+        resolve_run_dir,
+    )
 
 
 def apply_untaught_config(config, config_dict: Dict[str, Any], run_dir: str):
@@ -116,9 +121,8 @@ def apply_untaught_config(config, config_dict: Dict[str, Any], run_dir: str):
         "untaught_exclusion",
         ChunkExclusionCallback(
             blacklist=blacklist_path,
-            # The resolved exclusion sits in the run folder, next to the config
-            # copy this process was launched with.
-            artifact_path=os.path.join(run_dir, ARTIFACT_NAME),
+            # The resolved exclusion sits in the run folder, beside the config.
+            artifact_path=artifact_path(run_dir),
             enabled=bool(untaught_cfg.get("enabled", True)),
             guard_all_masked=bool(untaught_cfg.get("guard_all_masked", True)),
             strict=bool(untaught_cfg.get("strict", True)),
@@ -233,24 +237,38 @@ def _summarize(
     print("=" * 68 + "\n")
 
 
-def main(config_filepath: str, check_only: bool) -> None:
-    config_dict = load_config(config_filepath)
+def main(target: str, check_only: bool) -> None:
+    """Train the run named by ``target``.
 
-    # The run folder is wherever this config copy lives -- sub_builder.sh made
-    # it, filled it, and the wrapper launched us on the copy inside it. The
-    # trainer saves parameters under its checkpoints/ subfolder (upstream adds
-    # one hyperparameter-named level below that; its business, not ours).
-    # --check runs on a raw config from configs/, so it gets a throwaway folder
-    # instead of littering the repo.
-    if check_only:
+    Normally that is a run folder -- its name, or its path -- holding the
+    config.yaml to train on and the blacklist artifact to mask by. For
+    ``--check`` a raw ``configs/*.yaml`` is also accepted, so a config can be
+    validated before any run folder exists; it gets a throwaway folder rather
+    than littering the repo.
+    """
+    if target.endswith((".yaml", ".yml")):
+        if not check_only:
+            raise SystemExit(
+                "[untaught] expected a run folder, not a config file. A run is "
+                "trained from its own folder, which sub_builder.sh creates:\n"
+                "  . ./framework/client/sub_builder.sh <config.yaml>"
+            )
         import tempfile
 
         run_dir = tempfile.mkdtemp(prefix="untaught-check-")
+        config_file = os.path.abspath(target)
     else:
-        run_dir = os.path.dirname(os.path.abspath(config_filepath))
+        run_dir = resolve_run_dir(target)
+        config_file = config_path(run_dir)
+        if not os.path.isfile(config_file):
+            raise FileNotFoundError(
+                f"[untaught] no config.yaml in {run_dir}. Run folders are built by:"
+                "\n  . ./framework/client/sub_builder.sh <config.yaml>"
+            )
 
+    config_dict = load_config(config_file)
     config = build_config(
-        to_upstream(config_dict, save_folder=os.path.join(run_dir, "checkpoints"))
+        to_upstream(config_dict, save_folder=checkpoints_path(run_dir))
     )
     # build_config ignores init_seed (ExperimentConfig defaults it), so apply the
     # config's value here -- the control and ablated runs must share it.
@@ -307,8 +325,9 @@ def main(config_filepath: str, check_only: bool) -> None:
 def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="framework.node.train_untaught")
     parser.add_argument(
-        "config",
-        help="the run folder's config.yaml (or a raw configs/*.yaml with --check)",
+        "run",
+        help="a run folder: its name under runs/, or a path "
+             "(with --check, a configs/*.yaml is also accepted)",
     )
     parser.add_argument(
         "--check",
@@ -354,12 +373,12 @@ if __name__ == "__main__":
     )
 
     if args.check:
-        main(args.config, check_only=True)
+        main(args.run, check_only=True)
     else:
         prepare_training_environment()
         # After olmo_core has configured logging, not before.
         route_logs_to_stdout()
         try:
-            main(args.config, check_only=False)
+            main(args.run, check_only=False)
         finally:
             teardown_training_environment()

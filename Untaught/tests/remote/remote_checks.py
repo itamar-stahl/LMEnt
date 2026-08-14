@@ -323,7 +323,7 @@ def phase_prepare() -> None:
     import tempfile
 
     from framework.client.prepare import prepare
-    from framework.node.artifact import ARTIFACT_NAME, load_artifact
+    from framework.node.run_folder import ARTIFACT_NAME, load_artifact
 
     made = {}
 
@@ -367,23 +367,35 @@ def phase_prepare() -> None:
             raise AssertionError("the config copy differs from the source")
         return "byte-identical"
 
-    def check_passes_on_the_copy():
-        """The trainer must accept the copy -- this is what the node will run."""
+    def check_passes_on_the_run_folder():
+        """The trainer must accept the run folder itself -- what the node runs."""
         r = subprocess.run(
             [sys.executable, os.path.join(UNTAUGHT_ROOT, "framework", "node",
                                           "train_untaught.py"),
-             os.path.join(made["ablated"], "config.yaml"), "--check"],
+             made["ablated"], "--check"],
             capture_output=True, text=True, cwd=UNTAUGHT_ROOT,
         )
         if r.returncode != 0:
             raise AssertionError(((r.stdout or "") + (r.stderr or "")).strip()[-300:])
-        return "--check passed on the run folder's config copy"
+        return "--check passed on the run folder"
+
+    def wrapper_is_literal():
+        """run_wrapper.sh must be a readable record: no shell variables."""
+        text = open(os.path.join(made["control"], "run_wrapper.sh"),
+                    encoding="utf-8").read()
+        if "${" in text:
+            raise AssertionError("run_wrapper.sh contains shell variables")
+        launch = next(l for l in text.splitlines() if "train_untaught.py" in l)
+        if not launch.strip().endswith(os.path.basename(made["control"])):
+            raise AssertionError(f"launch does not name the run folder: {launch.strip()}")
+        return launch.strip()[-70:]
 
     for name, fn in (("control_folder", control_folder),
                      ("ablated_folder", ablated_folder),
                      ("slurm_is_pure_strings", slurm_is_pure_strings),
                      ("config_copy_verbatim", config_copy_is_verbatim),
-                     ("check_on_copy", check_passes_on_the_copy)):
+                     ("wrapper_is_literal", wrapper_is_literal),
+                     ("check_on_run_folder", check_passes_on_the_run_folder)):
         run_check("prepare", name, fn)
 
     for run_dir in made.values():
@@ -394,7 +406,7 @@ def phase_prepare() -> None:
 # phase: submitted -- inspect a run folder produced by a real submission
 # --------------------------------------------------------------------------- #
 def phase_submitted(run_dir: str) -> None:
-    from framework.node.artifact import ARTIFACT_NAME
+    from framework.node.run_folder import ARTIFACT_NAME
 
     def folder_is_complete():
         required = ["config.yaml", ARTIFACT_NAME, "job.slurm", "run_wrapper.sh",

@@ -193,7 +193,7 @@ def test_empty_blacklist_is_a_no_op():
 def test_missing_artifact_fails_fast_with_instructions():
     """a configured ablation with no artifact fails at pre_train, not silently"""
     _require_olmo()
-    from framework.node.artifact import ARTIFACT_NAME
+    from framework.node.run_folder import ARTIFACT_NAME
     from framework.node.exclusion import ChunkExclusionCallback
 
     run_dir = tempfile.mkdtemp()
@@ -336,7 +336,7 @@ def test_fetch_chunk_ids_dedupes_and_sorts():
 def test_artifact_records_every_input_that_produced_it():
     """the artifact is self-describing: ids, index, thresholds, per-entity counts"""
     from framework.client.es_blacklist import build_artifact
-    from framework.node.artifact import load_artifact
+    from framework.node.run_folder import load_artifact
 
     blacklist = tempfile.mktemp(suffix=".json")
     with open(blacklist, "w", encoding="utf-8") as f:
@@ -380,7 +380,7 @@ def test_artifact_records_every_input_that_produced_it():
 def test_empty_artifact_is_explicit():
     """a control run's artifact says, in words, that it is deliberately empty"""
     from framework.client.es_blacklist import empty_artifact
-    from framework.node.artifact import load_artifact
+    from framework.node.run_folder import load_artifact
 
     artifact = empty_artifact()
     assert artifact["num_chunks"] == 0 and artifact["entities"] == []
@@ -619,29 +619,41 @@ def test_generated_run_wrapper():
         assert wrapper.startswith("#!/bin/sh")
         assert "set_node_env.sh" in wrapper, "must set up the node environment"
         assert "nvidia-smi" in wrapper, "must record which GPU it got"
-        assert f"RUN_DIR={run_dir}" in wrapper, "the run dir is named once, at the top"
-        assert "TRAINER=" in wrapper and "train_untaught.py" in wrapper
-        # It works from inside the run folder, so the launch line stays readable
-        # and the trainer resolves artifact + checkpoints relative to it.
-        assert 'cd "${RUN_DIR}"' in wrapper, "must work from inside the run folder"
-        launch = next(l for l in wrapper.splitlines() if l.startswith("torchrun"))
-        assert launch == (
-            'torchrun --standalone --nproc-per-node=1 "${TRAINER}" config.yaml'
-        ), f"launch line is not clean: {launch!r}"
+
+        # Literal strings only: the file IS the record of what ran, so no shell
+        # variable may stand in for a path.
+        assert "${" not in wrapper, "run_wrapper.sh must not use shell variables"
+        assert "RUN_DIR=" not in wrapper and "TRAINER=" not in wrapper
+        assert run_dir in wrapper, "the run dir must appear literally"
+
+        # The launch names the trainer and the run folder -- nothing else. The
+        # config is implied by the folder, so naming it would be redundant.
+        launch = " ".join(wrapper.split("torchrun", 1)[1].split("echo", 1)[0].split())
+        assert launch.startswith("--standalone --nproc-per-node=1 ")
+        assert launch.endswith(
+            f"framework/node/train_untaught.py {os.path.basename(run_dir)}"
+        ), f"launch does not end with the run folder name: {launch!r}"
+        assert "config.yaml" not in launch, "the config is implied by the run folder"
+
         if os.name != "nt":
             assert os.access(written["run_wrapper"], os.X_OK), "must be executable"
     finally:
         shutil.rmtree(run_dir, ignore_errors=True)
 
     # gpus drives torchrun's process count, from the same config key as #SBATCH
-    assert "--nproc-per-node=4" in generate_run_wrapper({"name": "j", "gpus": 4}, "/r")
+    four = generate_run_wrapper({"name": "j", "gpus": 4}, "/runs/j_20260101_000000")
+    assert "--nproc-per-node=4" in four
+    assert "train_untaught.py j_20260101_000000" in four, (
+        "the trainer must be given the run folder's name"
+    )
+    assert "${" not in four
 
 
 @suite.test
 def test_prepare_ablated_run_resolves_the_exclusion():
     """ablated: the artifact carries the resolved chunk ids and the job name"""
     from framework.client.prepare import prepare
-    from framework.node.artifact import load_artifact
+    from framework.node.run_folder import load_artifact
 
     run_dir = tempfile.mkdtemp()
     try:
@@ -712,7 +724,7 @@ def test_the_node_half_never_needs_elasticsearch():
     """with elasticsearch unimportable, the run folder still drives the masking"""
     _require_olmo()
     from framework.client.prepare import prepare
-    from framework.node.artifact import ARTIFACT_NAME
+    from framework.node.run_folder import ARTIFACT_NAME
     from framework.node.exclusion import ChunkExclusionCallback
 
     run_dir = tempfile.mkdtemp()

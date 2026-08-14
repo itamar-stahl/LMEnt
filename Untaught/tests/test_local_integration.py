@@ -289,7 +289,7 @@ def test_artifact_drives_real_get_labels():
     from olmo_core.data.utils import get_labels
 
     from framework.client.prepare import prepare
-    from framework.node.artifact import ARTIFACT_NAME
+    from framework.node.run_folder import ARTIFACT_NAME
     from framework.node.exclusion import ChunkExclusionCallback
 
     run_dir = tempfile.mkdtemp(prefix="untaught-int-")

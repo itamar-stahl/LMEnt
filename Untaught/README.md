@@ -72,7 +72,7 @@ Untaught/
 │       ├── set_node_env.sh  COMPUTE NODE: cd + vars + conda (sourced by run_wrapper.sh)
 │       ├── train_untaught.py  wraps examples/kas/train.py, attaches the callback
 │       ├── exclusion.py     ChunkExclusionCallback — the ~15 lines that matter
-│       ├── artifact.py      reads the artifact into a {chunk_id: qid} dict
+│       ├── run_folder.py    the run-folder contract: layout + artifact reading
 │       └── config_env.py    ${VAR} expansion for configs; reads env.sh on miss
 ├── configs/
 │   ├── train_170m_control.yaml       commented YAML, three flat groups
@@ -166,9 +166,21 @@ runs/untaught-no-hp-170m_20260814_153000/
 
 `sub_builder.sh` sets up the client environment, fills the folder via
 `framework.client.prepare`, validates every file exists (and that `job.slurm`
-contains no unresolved variables), then submits with `sbatch job.slurm`. The
-GPU node just executes `run_wrapper.sh`, which trains on the folder's own
-`config.yaml`. Tracing any run back is: open its folder.
+contains no unresolved variables), then submits with `sbatch job.slurm`.
+
+Both generated scripts are **literal strings, no shell variables** — reading
+either one tells you exactly what ran, with nothing to look up. The node just
+executes `run_wrapper.sh`, whose launch line names the trainer and the run
+folder and nothing else:
+
+```sh
+torchrun --standalone --nproc-per-node=1   /…/framework/node/train_untaught.py untaught-control-170m_20260814_212936
+```
+
+The config is not named because it is implied: the trainer knows where run
+folders live (`framework/node/run_folder.py`) and that each holds its own
+`config.yaml`, artifact and `checkpoints/`. Tracing any run back is: open its
+folder.
 
 ### Inspecting the ablation before submitting
 
