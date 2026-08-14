@@ -1,15 +1,15 @@
 #!/bin/sh
 # SMOKE RUN 2 of 2 -- ablated: a 170M model with "Harry Potter" held out.
 #
-#   ./run_smoke_harry_potter.sh              submit to SLURM
+#   ./run_smoke_harry_potter.sh              resolve blacklist + submit
 #   ./run_smoke_harry_potter.sh --check      validate the config locally, no GPU
 #   ./run_smoke_harry_potter.sh --resolve    which QIDs does the corpus use?
 #   ./run_smoke_harry_potter.sh --count      how many chunks would be held out?
 #
 # Which entities are held out is in blacklists/harry_potter.json, named by the
-# config. The training job turns those QIDs into chunk ids itself, so this
-# script only submits -- but that means Elasticsearch has to be reachable from
-# the compute node, not just from here.
+# config. Elasticsearch runs here on the login node and is unreachable from the
+# GPU nodes, so step 1 resolves the QIDs into chunk ids and writes them into the
+# run folder; step 2 submits a job that just reads that file.
 
 set -eu
 
@@ -45,6 +45,15 @@ fi
 if [ "${1:-}" = "--check" ]; then
   exec python -m untaught.train_untaught "${CONFIG}" --check
 fi
+
+# Step 1, here on the login node: resolve the QIDs against Elasticsearch and
+# save the chunk ids into the run folder. The GPU node cannot reach ES, so this
+# artifact is how the blacklist gets there.
+echo "--- step 1/2: resolving the blacklist ------------------------"
+python -m untaught.train_untaught "${CONFIG}" --prepare
+echo
+
+echo "--- step 2/2: training ---------------------------------------"
 
 # One log pair per submission: untaught-no-hp-170m-20260813-142230.out/.err
 LOG="${UNTAUGHT_RUNS_DIR}/${JOB_NAME}-$(date +%Y%m%d-%H%M%S)"

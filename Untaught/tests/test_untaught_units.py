@@ -13,12 +13,13 @@ against a minimal stub when olmo_core's dependencies are absent.
 
 from __future__ import annotations
 
+import json
 import os
+import shutil
 import sys
 import tempfile
 import types
 
-import numpy as np
 import torch
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -90,10 +91,14 @@ from untaught.config_env import (  # noqa: E402
     load_env_sh,
 )
 from untaught.es_blacklist import (  # noqa: E402
+    ARTIFACT_NAME,
     DEFAULT_THRESHOLDS,
+    build_artifact,
     build_entity_query,
+    index_for,
     load_blacklist,
     normalize_thresholds,
+    write_artifact,
 )
 from untaught.exclusion import (  # noqa: E402
     EXCLUDED_METRIC,
@@ -103,20 +108,75 @@ from untaught.exclusion import (  # noqa: E402
 
 
 class FakeTrainer:
-    def __init__(self):
+    def __init__(self, save_folder="."):
         self.global_step = 7
         self.metrics = []
+        # Where the callback looks for the blacklist artifact.
+        self.save_folder = save_folder
 
     def record_metric(self, name, value, reduce_type=None):
         self.metrics.append((name, float(value)))
+
+
+class fake_elasticsearch:
+    """Stand in for elasticsearch.helpers.scan, one id list per QID.
+
+    ``fetch_chunk_ids`` imports the module inside the function, so swapping
+    sys.modules for the duration of the call is enough.
+    """
+
+    def __init__(self, ids_by_qid):
+        self.ids_by_qid = ids_by_qid
+        self.queries = []
+
+    def _scan(self, es, index, query, size, preserve_order):
+        filters = query["query"]["nested"]["query"]["nested"]["query"]["bool"]["filter"]
+        qids = filters[0]["terms"]["entities.candidates.qid"]
+        self.queries.append(
+            {
+                "index": index,
+                "qids": qids,
+                "thresholds": {
+                    list(c["range"])[0].rsplit(".", 1)[-1]: list(c["range"].values())[0]["gte"]
+                    for c in filters[1]["bool"]["should"]
+                },
+            }
+        )
+        ids = [i for qid in qids for i in self.ids_by_qid.get(qid, [])]
+        return [{"_source": {"chunk_id": i}} for i in ids]
+
+    def __enter__(self):
+        helpers = types.ModuleType("elasticsearch.helpers")
+        helpers.scan = self._scan
+        root = types.ModuleType("elasticsearch")
+        root.helpers = helpers
+        self._saved = {k: sys.modules.get(k) for k in ("elasticsearch", "elasticsearch.helpers")}
+        sys.modules["elasticsearch"] = root
+        sys.modules["elasticsearch.helpers"] = helpers
+        return self
+
+    def __exit__(self, *exc):
+        for name, module in self._saved.items():
+            if module is None:
+                sys.modules.pop(name, None)
+            else:
+                sys.modules[name] = module
+        return False
+
+
+def write_json(text, suffix=".json"):
+    fd, path = tempfile.mkstemp(suffix=suffix)
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(text)
+    return path
 
 
 def make_callback(blacklist_ids=None, **kwargs) -> tuple:
     """Build a callback wired to a FakeTrainer, mirroring the trainer's real
     attach order: set trainer -> post_attach -> pre_train.
 
-    Chunk ids are passed directly so the tests never touch Elasticsearch; the
-    QID -> chunk-id lookup is covered by test_blacklist_file_and_lookup.
+    Chunk ids are passed directly so these tests never touch Elasticsearch or
+    an artifact file; that path is covered by test_artifact_roundtrip_and_masking.
     """
     path = None  # kept so existing cleanup(path) calls stay valid
     cb = ChunkExclusionCallback(chunk_ids=blacklist_ids, **kwargs)
@@ -225,84 +285,41 @@ def test_non_strict_warns_and_continues():
         cleanup(path)
 
 
-def test_missing_blacklist_file_fails_at_pre_train():
-    cb = ChunkExclusionCallback(blacklist="/nonexistent/hp.json")
-    cb.trainer = FakeTrainer()
+def test_missing_artifact_fails_at_pre_train():
+    """No artifact means the ablation would silently become a control run."""
+    tmpdir = tempfile.mkdtemp()
+    cb = ChunkExclusionCallback(blacklist="/some/blacklist.json")
+    cb.trainer = FakeTrainer(save_folder=tmpdir)
     cb.post_attach()
     try:
         cb.pre_train()
         raise AssertionError("pre_train should have raised FileNotFoundError")
-    except FileNotFoundError:
-        print("  ok  missing blacklist file fails fast at pre_train")
+    except FileNotFoundError as e:
+        assert "--prepare" in str(e), "the error must say how to produce it"
+        print("  ok  missing artifact fails fast at pre_train")
+    finally:
+        shutil.rmtree(tmpdir, ignore_errors=True)
 
 
-def test_blacklist_file_and_lookup():
-    """The QID file parses, and the ES lookup it drives is wired correctly."""
-    fd, path = tempfile.mkstemp(suffix=".json")
-    with os.fdopen(fd, "w", encoding="utf-8") as f:
-        f.write('{"entities": [{"qid": "Q8337", "comment": "franchise"}, "Q3244512"]}')
+def test_blacklist_file_parsing_and_thresholds():
+    path = write_json('{"entities": [{"qid": "Q8337", "comment": "franchise"}, "Q3244512"]}')
     try:
         entities = load_blacklist(path)
         assert [e["qid"] for e in entities] == ["Q8337", "Q3244512"], entities
         assert entities[0]["comment"] == "franchise"
         assert entities[1]["comment"] == "", "a bare QID string gets an empty comment"
         print("  ok  blacklist file parses objects and bare QID strings")
-
-        # Thresholds come from the run's config, not from the entity list.
-        thresholds = normalize_thresholds({"coref": 0.9})
-        assert thresholds["coref"] == 0.9, "the config's value must win"
-        assert thresholds["hyperlinks"] == DEFAULT_THRESHOLDS["hyperlinks"], (
-            "omitted sources keep the paper's default"
-        )
-        assert normalize_thresholds(None) == DEFAULT_THRESHOLDS
-        print("  ok  config thresholds merge per key over the defaults")
-
-        # A fake ES client: scan() is the only thing fetch_chunk_ids uses.
-        import untaught.es_blacklist as esb
-
-        captured = {}
-
-        def fake_scan(es, index, query, size, preserve_order):
-            captured["index"] = index
-            filters = query["query"]["nested"]["query"]["nested"]["query"]["bool"]["filter"]
-            captured["qids"] = filters[0]["terms"]["entities.candidates.qid"]
-            captured["ranges"] = {
-                list(c["range"])[0].rsplit(".", 1)[-1]: list(c["range"].values())[0]["gte"]
-                for c in filters[1]["bool"]["should"]
-            }
-            return [{"_source": {"chunk_id": c}} for c in (7, 3, 7, 11)]
-
-        helpers = types.ModuleType("elasticsearch.helpers")
-        helpers.scan = fake_scan
-        elasticsearch = types.ModuleType("elasticsearch")
-        elasticsearch.helpers = helpers
-        saved = {k: sys.modules.get(k) for k in ("elasticsearch", "elasticsearch.helpers")}
-        sys.modules["elasticsearch"] = elasticsearch
-        sys.modules["elasticsearch.helpers"] = helpers
-        os.environ["ES_INDEX"] = "lment_cs"
-        try:
-            ids = esb.fetch_chunk_ids(
-                [e["qid"] for e in entities], es=object(), thresholds=thresholds
-            )
-        finally:
-            for k, v in saved.items():
-                if v is None:
-                    sys.modules.pop(k, None)
-                else:
-                    sys.modules[k] = v
-
-        assert ids.tolist() == [3, 7, 11], f"sorted and deduped, got {ids.tolist()}"
-        assert ids.dtype == np.int64, ids.dtype
-        assert captured["qids"] == ["Q8337", "Q3244512"]
-        assert captured["index"] == "lment_cs"
-        print("  ok  fetch_chunk_ids queries the QIDs and returns unique sorted int64")
-
-        # The whole point of the field: the config's value reaches the ES query.
-        assert captured["ranges"]["coref"] == 0.9, captured["ranges"]
-        assert captured["ranges"]["hyperlinks"] == 1.0, captured["ranges"]
-        print("  ok  the config's thresholds land in the ES range clauses")
     finally:
         os.remove(path)
+
+    # Thresholds come from the run's config, not from the entity list.
+    thresholds = normalize_thresholds({"coref": 0.9})
+    assert thresholds["coref"] == 0.9, "the config's value must win"
+    assert thresholds["hyperlinks"] == DEFAULT_THRESHOLDS["hyperlinks"], (
+        "omitted sources keep the paper's default"
+    )
+    assert normalize_thresholds(None) == DEFAULT_THRESHOLDS
+    print("  ok  config thresholds merge per key over the defaults")
 
     # A typo must not silently fall back to the default and change the ablation.
     for bad, why in (
@@ -317,6 +334,64 @@ def test_blacklist_file_and_lookup():
         except ValueError:
             pass
     print("  ok  bad thresholds are rejected (unknown source, range, type)")
+
+    assert index_for(True) == "lment_cs" and index_for(False) == "lment_ci"
+    print("  ok  case_sensitive selects the cs / ci index")
+
+
+def test_artifact_roundtrip_and_masking():
+    """The whole hand-off: login node resolves -> file -> GPU node masks.
+
+    This is the path that matters, because Elasticsearch is unreachable from the
+    compute nodes: whatever --prepare writes is the only thing training sees.
+    """
+    blacklist = write_json(
+        '{"entities": [{"qid": "Q8337", "comment": "franchise"}, '
+        '{"qid": "Q3244512", "comment": "character"}]}'
+    )
+    run_folder = tempfile.mkdtemp()
+    try:
+        es = fake_elasticsearch({"Q8337": [7, 3, 7], "Q3244512": [11, 3]})
+        with es:
+            artifact = build_artifact(
+                blacklist,
+                thresholds={"coref": 0.9},
+                case_sensitive=False,
+                es=object(),
+            )
+
+        # One query per entity, so each one's contribution stays visible.
+        assert [q["qids"] for q in es.queries] == [["Q8337"], ["Q3244512"]], es.queries
+        assert all(q["index"] == "lment_ci" for q in es.queries), "case_sensitive=False"
+        assert all(q["thresholds"]["coref"] == 0.9 for q in es.queries)
+        assert artifact["num_chunks"] == 3, "3, 7, 11 -- deduped across entities"
+        assert artifact["entities"][0]["chunk_ids"] == [3, 7], "sorted and deduped"
+        assert artifact["thresholds"]["hyperlinks"] == 1.0, "defaults recorded too"
+        print("  ok  artifact records ids, index, thresholds and per-entity counts")
+
+        path = write_artifact(artifact, os.path.join(run_folder, ARTIFACT_NAME))
+        with open(path, "r", encoding="utf-8") as f:
+            text = f.read()
+        assert "\n" in text and '"qid": "Q8337"' in text, "must stay human-readable"
+        assert json.loads(text)["num_chunks"] == 3
+        print("  ok  artifact is written as readable JSON in the run folder")
+
+        # The GPU-node half: no Elasticsearch in sight.
+        cb = ChunkExclusionCallback(blacklist=blacklist)
+        cb.trainer = FakeTrainer(save_folder=run_folder)
+        cb.post_attach()
+        cb.pre_train()
+        assert cb._blacklist == {3: "Q8337", 7: "Q8337", 11: "Q3244512"}, cb._blacklist
+        print("  ok  artifact loads as a {chunk_id: qid} dict")
+
+        batch = make_batch([3, 4, 11, 5])
+        cb.pre_step(batch)
+        assert batch["instance_mask"].tolist() == [False, True, False, True]
+        assert dict(cb.trainer.metrics)[EXCLUDED_METRIC] == 2.0
+        print("  ok  the dict masks the blacklisted rows of a batch")
+    finally:
+        os.remove(blacklist)
+        shutil.rmtree(run_folder, ignore_errors=True)
 
 
 def test_empty_blacklist_is_noop():
@@ -413,8 +488,9 @@ if __name__ == "__main__":
         test_guard_disabled_masks_everything,
         test_strict_raises_on_missing_index,
         test_non_strict_warns_and_continues,
-        test_missing_blacklist_file_fails_at_pre_train,
-        test_blacklist_file_and_lookup,
+        test_missing_artifact_fails_at_pre_train,
+        test_blacklist_file_parsing_and_thresholds,
+        test_artifact_roundtrip_and_masking,
         test_empty_blacklist_is_noop,
         test_build_entity_query_structure,
         test_config_env,

@@ -102,6 +102,14 @@
       "coref_cluster": 0.6
     },
 
+    "_case_sensitive_comment": [
+      "Which index the retrieval runs against: true -> lment_cs (restored from",
+      "enwiki_case_sensitive), false -> lment_ci (from enwiki). QID retrieval is",
+      "case-agnostic, so true is the right default; flip it only if you know the",
+      "case-folded index is the one you want."
+    ],
+    "case_sensitive": true,
+
     "enabled": true,
     "disable_wandb": true,
     "disable_downstream_eval": true

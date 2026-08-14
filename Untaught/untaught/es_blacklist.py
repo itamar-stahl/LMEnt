@@ -29,6 +29,7 @@ import json
 import os
 import sys
 import warnings
+from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 
 import numpy as np
@@ -42,6 +43,19 @@ DEFAULT_THRESHOLDS: Dict[str, float] = {
 }
 
 DEFAULT_INDEX = "lment_cs"
+
+# The two indexes the suite's README restores:
+#   enwiki_case_sensitive -> lment_cs      enwiki -> lment_ci
+CASE_SENSITIVE_INDEX = "lment_cs"
+CASE_INSENSITIVE_INDEX = "lment_ci"
+
+# Written next to the checkpoints, read back by the exclusion callback.
+ARTIFACT_NAME = "untaught_blacklist.json"
+
+
+def index_for(case_sensitive: bool) -> str:
+    """Which ES index a run should retrieve from."""
+    return CASE_SENSITIVE_INDEX if case_sensitive else CASE_INSENSITIVE_INDEX
 
 
 # --------------------------------------------------------------------------- #
@@ -201,6 +215,78 @@ def build_entity_query(qids: Sequence[str], thresholds: Dict[str, float]) -> Dic
     }
 
 
+def build_artifact(
+    blacklist_path: str,
+    thresholds: Optional[Dict[str, Any]] = None,
+    case_sensitive: bool = True,
+    es=None,
+) -> Dict[str, Any]:
+    """Resolve a blacklist against Elasticsearch into a self-describing dict.
+
+    Written on a machine that can reach ES (the login node) and read back on
+    one that cannot (the GPU node), so it records not just the chunk ids but
+    every input that produced them -- index, thresholds, per-entity counts --
+    and stays readable in a text editor.
+
+    Queries one QID at a time so each entity's contribution is visible, which
+    is also what makes the loaded dict able to say *why* a chunk was excluded.
+    """
+    entities = load_blacklist(blacklist_path)
+    thresholds = normalize_thresholds(thresholds)
+    index = index_for(case_sensitive)
+    es = es if es is not None else get_esclient()
+
+    resolved: List[Dict[str, Any]] = []
+    total: Dict[int, str] = {}
+    for entity in entities:
+        ids = fetch_chunk_ids([entity["qid"]], es=es, index=index, thresholds=thresholds)
+        resolved.append(
+            {
+                "qid": entity["qid"],
+                "comment": entity["comment"],
+                "num_chunks": int(ids.size),
+                "chunk_ids": [int(i) for i in ids],
+            }
+        )
+        for chunk_id in ids:
+            total.setdefault(int(chunk_id), entity["qid"])
+
+    return {
+        "generated": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "blacklist": blacklist_path,
+        "index": index,
+        "case_sensitive": case_sensitive,
+        "thresholds": thresholds,
+        "num_chunks": len(total),
+        "entities": resolved,
+    }
+
+
+def write_artifact(artifact: Dict[str, Any], path: str) -> str:
+    """Save the artifact as indented JSON, creating its folder if needed."""
+    os.makedirs(os.path.dirname(os.path.abspath(path)) or ".", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(artifact, f, indent=2)
+        f.write("\n")
+    return path
+
+
+def load_artifact(path: str) -> Dict[int, str]:
+    """Read an artifact back as the ``{chunk_id: qid}`` lookup used per batch.
+
+    A chunk mentioning several blacklisted entities is credited to the first
+    one that matched -- it is excluded either way.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        artifact = json.load(f)
+
+    blacklist: Dict[int, str] = {}
+    for entity in artifact.get("entities", []):
+        for chunk_id in entity.get("chunk_ids", []):
+            blacklist.setdefault(int(chunk_id), entity["qid"])
+    return blacklist
+
+
 # --------------------------------------------------------------------------- #
 # commands
 # --------------------------------------------------------------------------- #
@@ -291,6 +377,7 @@ def cmd_count(args: argparse.Namespace) -> int:
     blacklist = resolve_path(blacklist)
     entities = load_blacklist(blacklist)
     thresholds = normalize_thresholds(untaught_cfg.get("thresholds"))
+    index = index_for(bool(untaught_cfg.get("case_sensitive", True)))
     qids = [e["qid"] for e in entities]
 
     es = get_esclient(args.es_scheme, args.es_host, args.es_port, args.es_password)
@@ -301,9 +388,9 @@ def cmd_count(args: argparse.Namespace) -> int:
     for entity in entities:
         print(f"[untaught]   {entity['qid']:<12} {entity['comment']}")
     print(f"[untaught] scores  : {thresholds}")
-    print(f"[untaught] index   : {args.es_index}")
+    print(f"[untaught] index   : {index}")
 
-    total = es.count(index=args.es_index, body={"query": query})["count"]
+    total = es.count(index=index, body={"query": query})["count"]
     print(f"[untaught] matched : {total:,} chunks")
 
     # Masked chunks still occupy batch slots (compute waste) and slightly reduce
@@ -320,7 +407,7 @@ def cmd_count(args: argparse.Namespace) -> int:
         )
 
     if args.preview:
-        _preview(es, args.es_index, query, args.preview)
+        _preview(es, index, query, args.preview)
 
     print("[untaught] training resolves these ids itself; nothing was written.")
     return 0
