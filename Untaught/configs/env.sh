@@ -35,6 +35,8 @@
 # Never hard-code the password here -- this file is tracked by git.
 # Export ES_PASSWORD in your shell before running the ablated experiment.
 : "${ES_PASSWORD:='LR+0v909l6uLwmBTx2qT'}"
+# The server itself, for the health check at the bottom of this file.
+: "${ES_HOME:=${STAHLI_ROOT}/elasticsearch-8.13.4}"
 
 # --- python -------------------------------------------------------------------
 : "${CONDA_ENV:=lment}"
@@ -47,7 +49,7 @@ PYTHONPATH="${UNTAUGHT_ROOT}:${OLMO_CORE_SRC}:${PYTHONPATH:-}"
 
 export STAHLI_ROOT LMENT_ROOT LMENT_DATASET LMENT_INDEX UNTAUGHT_ROOT
 export OLMO_CORE_SRC UNTAUGHT_BLACKLIST_DIR UNTAUGHT_RUNS_DIR
-export ES_SCHEME ES_HOST ES_PORT ES_INDEX ES_PASSWORD
+export ES_SCHEME ES_HOST ES_PORT ES_INDEX ES_PASSWORD ES_HOME
 export CONDA_ENV WANDB_MODE PYTHONPATH
 
 mkdir -p "${UNTAUGHT_BLACKLIST_DIR}" "${UNTAUGHT_RUNS_DIR}"
@@ -62,4 +64,44 @@ if [ "${CONDA_DEFAULT_ENV:-}" != "${CONDA_ENV}" ] && command -v conda >/dev/null
   . "$(conda info --base)/etc/profile.d/conda.sh"
   conda activate "${CONDA_ENV}"
   set -u
+fi
+
+# --- Elasticsearch: is it up? start it if not ---------------------------------
+# Only where it makes sense to run the server:
+#   - not inside a SLURM job     the GPU nodes cannot reach it anyway
+#   - only for a local ES_HOST   a remote one is not ours to start
+#   - UNTAUGHT_ES_AUTOSTART=0    to opt out entirely
+# A response of any kind (401 without credentials counts) means it is serving.
+if [ -z "${SLURM_JOB_ID:-}" ] &&
+   [ "${UNTAUGHT_ES_AUTOSTART:-1}" = "1" ] &&
+   { [ "${ES_HOST}" = "localhost" ] || [ "${ES_HOST}" = "127.0.0.1" ]; } &&
+   command -v curl >/dev/null 2>&1; then
+
+  if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
+    : # already serving
+  elif [ ! -x "${ES_HOME}/bin/elasticsearch" ]; then
+    echo "[untaught] Elasticsearch is down and ${ES_HOME}/bin/elasticsearch is missing." >&2
+  else
+    echo "[untaught] Elasticsearch not responding on ${ES_HOST}:${ES_PORT} -- starting it" >&2
+    # Detached: it has to outlive this shell, and it prints its own startup noise.
+    ( cd "${ES_HOME}" && nohup ./bin/elasticsearch >"${UNTAUGHT_RUNS_DIR}/elasticsearch.log" 2>&1 & )
+
+    # A cold start takes ~30-60s before the port answers.
+    untaught_es_waited=0
+    while [ "${untaught_es_waited}" -lt 120 ]; do
+      sleep 3
+      untaught_es_waited=$((untaught_es_waited + 3))
+      if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
+        break
+      fi
+    done
+
+    if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
+      echo "[untaught] Elasticsearch up after ${untaught_es_waited}s" >&2
+    else
+      echo "[untaught] Elasticsearch still down after ${untaught_es_waited}s -- see" \
+           "${UNTAUGHT_RUNS_DIR}/elasticsearch.log" >&2
+    fi
+    unset untaught_es_waited
+  fi
 fi

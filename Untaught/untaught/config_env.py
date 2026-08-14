@@ -122,6 +122,9 @@ def load_env_sh(path: Optional[str] = None, verbose: bool = True) -> List[str]:
     # env.sh guesses UNTAUGHT_ROOT from $0, which points at the helper shell
     # here; we know the real answer, so hand it over.
     child_env.setdefault("UNTAUGHT_ROOT", UNTAUGHT_ROOT)
+    # We only want the variables. env.sh's Elasticsearch autostart would block
+    # this helper shell for up to two minutes and blow the timeout below.
+    child_env["UNTAUGHT_ES_AUTOSTART"] = "0"
 
     try:
         proc = subprocess.run(
