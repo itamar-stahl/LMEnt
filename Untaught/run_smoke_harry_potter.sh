@@ -39,7 +39,7 @@ if [ "${1:-}" = "--resolve" ]; then
 fi
 
 if [ "${1:-}" = "--count" ]; then
-  exec python -m untaught.es_blacklist count --blacklist "${BLACKLIST}" --preview 5
+  exec python -m untaught.es_blacklist count --config "${CONFIG}" --preview 5
 fi
 
 if [ "${1:-}" = "--check" ]; then

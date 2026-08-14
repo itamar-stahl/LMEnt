@@ -73,8 +73,10 @@ from olmo_core.train.callbacks import ConfigSaverCallback, WandBCallback  # noqa
 from olmo_core.utils import get_default_device, seed_all  # noqa: E402
 
 try:
+    from .es_blacklist import load_blacklist, normalize_thresholds
     from .exclusion import ChunkExclusionCallback
 except ImportError:  # pragma: no cover
+    from untaught.es_blacklist import load_blacklist, normalize_thresholds
     from untaught.exclusion import ChunkExclusionCallback
 
 
@@ -90,10 +92,15 @@ def apply_untaught_config(
     if blacklist_path:
         blacklist_path = resolve_path(blacklist_path)
 
+    # Validated here, at config-build time, so a typo'd source name fails during
+    # --check instead of after the queue wait.
+    thresholds = normalize_thresholds(untaught_cfg.get("thresholds"))
+
     config.trainer.with_callback(
         "untaught_exclusion",
         ChunkExclusionCallback(
             blacklist=blacklist_path,
+            thresholds=thresholds,
             enabled=bool(untaught_cfg.get("enabled", True)),
             guard_all_masked=bool(untaught_cfg.get("guard_all_masked", True)),
             strict=bool(untaught_cfg.get("strict", True)),
@@ -199,11 +206,10 @@ def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str
     if blacklist_path:
         # Just the QIDs -- the chunk ids behind them are resolved from
         # Elasticsearch at pre_train, and this runs before the trainer exists.
-        from .es_blacklist import load_blacklist
-
         print(f"  blacklist        : {blacklist_path}")
         for entity in load_blacklist(blacklist_path):
             print(f"    {entity['qid']:<12} {entity['comment']}")
+        print(f"  thresholds       : {config_dict['untaught'].get('thresholds') or 'defaults'}")
     else:
         print("  blacklist        : (none) -- CONTROL run")
     print("=" * 68 + "\n")

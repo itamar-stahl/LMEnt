@@ -17,9 +17,9 @@ Usage
     # what does the corpus think "Harry Potter" is?
     python -m untaught.es_blacklist resolve --name "Harry Potter"
 
-    # how much would this blacklist remove, and what does it look like?
+    # how much would this run remove, and what does it look like?
     python -m untaught.es_blacklist count \
-        --blacklist blacklists/harry_potter.json --preview 5
+        --config configs/train_170m_no_harry_potter.json --preview 5
 """
 
 from __future__ import annotations
@@ -80,12 +80,15 @@ def get_esclient(
 
 
 def load_blacklist(path: str) -> List[Dict[str, str]]:
-    """Read a blacklist file: a list of entities to hold out of the loss.
+    """Read a blacklist file: the static list of entities to hold out.
 
         {"entities": [{"qid": "Q8337", "comment": "the franchise"}, ...]}
 
-    A bare ``"Q8337"`` in place of the object is accepted too. Returns the
-    normalised entity list; ``[e["qid"] for e in ...]`` gives the QIDs.
+    A bare ``"Q8337"`` in place of the entity object is accepted too. Returns
+    the normalised entity list; ``[e["qid"] for e in ...]`` gives the QIDs.
+
+    Retrieval *confidence* is not here -- that is a property of the training
+    run, so it lives in the run's config under ``untaught.thresholds``.
     """
     with open(path, "r", encoding="utf-8") as f:
         spec = json.load(f)
@@ -100,6 +103,32 @@ def load_blacklist(path: str) -> List[Dict[str, str]]:
     if not entities:
         raise ValueError(f"[untaught] no 'entities' in blacklist file: {path}")
     return entities
+
+
+def normalize_thresholds(thresholds: Optional[Dict[str, Any]]) -> Dict[str, float]:
+    """Validate a config's ``untaught.thresholds`` and fill in the defaults.
+
+    Merged **per key**, so naming one source leaves the other three at the
+    paper's values. Raises on an unknown source name, a non-number or a value
+    outside [0, 1]: a typo that silently fell back to the default would quietly
+    change which chunks the run holds out.
+    """
+    merged = dict(DEFAULT_THRESHOLDS)
+    for source, value in (thresholds or {}).items():
+        if source not in DEFAULT_THRESHOLDS:
+            raise ValueError(
+                f"[untaught] unknown threshold source '{source}' in untaught.thresholds. "
+                f"Known sources: {', '.join(sorted(DEFAULT_THRESHOLDS))}"
+            )
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"[untaught] threshold '{source}' must be a number, got {value!r}")
+        if not 0.0 <= float(value) <= 1.0:
+            raise ValueError(
+                f"[untaught] threshold '{source}' = {value} is outside [0, 1]; "
+                "mention scores are confidences"
+            )
+        merged[source] = float(value)
+    return merged
 
 
 def fetch_chunk_ids(
@@ -243,17 +272,35 @@ def cmd_resolve(args: argparse.Namespace) -> int:
 
 
 def cmd_count(args: argparse.Namespace) -> int:
-    """Report what a blacklist file would hold out, without training anything."""
-    entities = load_blacklist(args.blacklist)
+    """Report what a training config would hold out, without training anything.
+
+    Takes the config rather than the blacklist file so the count uses the same
+    entities *and* the same thresholds the run will use.
+    """
+    try:
+        from .config_env import load_config, resolve_path
+    except ImportError:  # pragma: no cover - file-path launch
+        from untaught.config_env import load_config, resolve_path
+
+    untaught_cfg = load_config(args.config).get("untaught", {}) or {}
+    blacklist = untaught_cfg.get("blacklist")
+    if not blacklist:
+        print(f"[untaught] {args.config} has no blacklist -- it is a control run.")
+        return 0
+
+    blacklist = resolve_path(blacklist)
+    entities = load_blacklist(blacklist)
+    thresholds = normalize_thresholds(untaught_cfg.get("thresholds"))
     qids = [e["qid"] for e in entities]
 
     es = get_esclient(args.es_scheme, args.es_host, args.es_port, args.es_password)
-    query = build_entity_query(qids, DEFAULT_THRESHOLDS)
+    query = build_entity_query(qids, thresholds)
 
-    print(f"[untaught] file    : {args.blacklist}")
+    print(f"[untaught] config  : {args.config}")
+    print(f"[untaught] file    : {blacklist}")
     for entity in entities:
         print(f"[untaught]   {entity['qid']:<12} {entity['comment']}")
-    print(f"[untaught] scores  : {DEFAULT_THRESHOLDS}")
+    print(f"[untaught] scores  : {thresholds}")
     print(f"[untaught] index   : {args.es_index}")
 
     total = es.count(index=args.es_index, body={"query": query})["count"]
@@ -319,8 +366,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     _add_es_args(p_resolve)
     p_resolve.set_defaults(func=cmd_resolve)
 
-    p_count = sub.add_parser("count", help="how many chunks a blacklist file holds out")
-    p_count.add_argument("--blacklist", required=True, help="blacklists/<name>.json")
+    p_count = sub.add_parser("count", help="how many chunks a training config holds out")
+    p_count.add_argument("--config", required=True, help="a training config JSON")
     p_count.add_argument("--preview", type=int, default=0, help="print N sample chunks")
     _add_es_args(p_count)
     p_count.set_defaults(func=cmd_count)

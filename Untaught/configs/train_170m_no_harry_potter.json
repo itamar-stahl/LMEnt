@@ -85,6 +85,23 @@
 
   "untaught": {
     "blacklist": "blacklists/harry_potter.json",
+
+    "_thresholds_comment": [
+      "Per-source mention-confidence cutoffs for the retrieval. A mention",
+      "counts if it clears AT LEAST ONE of them, so this is how aggressively",
+      "this run excludes -- a property of the run, not of the entity list.",
+      "These are the values the paper validated on a 60-entity dev set",
+      "(section 5.2, Table 4). Lower them for higher recall and more collateral",
+      "chunks; raise them to exclude only high-confidence mentions. Any source",
+      "you omit keeps its default; an unknown name is a hard error."
+    ],
+    "thresholds": {
+      "hyperlinks": 1.0,
+      "entity_linking": 0.6,
+      "coref": 0.6,
+      "coref_cluster": 0.6
+    },
+
     "enabled": true,
     "disable_wandb": true,
     "disable_downstream_eval": true

@@ -93,6 +93,7 @@ from untaught.es_blacklist import (  # noqa: E402
     DEFAULT_THRESHOLDS,
     build_entity_query,
     load_blacklist,
+    normalize_thresholds,
 )
 from untaught.exclusion import (  # noqa: E402
     EXCLUDED_METRIC,
@@ -239,15 +240,22 @@ def test_blacklist_file_and_lookup():
     """The QID file parses, and the ES lookup it drives is wired correctly."""
     fd, path = tempfile.mkstemp(suffix=".json")
     with os.fdopen(fd, "w", encoding="utf-8") as f:
-        f.write(
-            '{"entities": [{"qid": "Q8337", "comment": "franchise"}, "Q3244512"]}'
-        )
+        f.write('{"entities": [{"qid": "Q8337", "comment": "franchise"}, "Q3244512"]}')
     try:
         entities = load_blacklist(path)
         assert [e["qid"] for e in entities] == ["Q8337", "Q3244512"], entities
         assert entities[0]["comment"] == "franchise"
         assert entities[1]["comment"] == "", "a bare QID string gets an empty comment"
         print("  ok  blacklist file parses objects and bare QID strings")
+
+        # Thresholds come from the run's config, not from the entity list.
+        thresholds = normalize_thresholds({"coref": 0.9})
+        assert thresholds["coref"] == 0.9, "the config's value must win"
+        assert thresholds["hyperlinks"] == DEFAULT_THRESHOLDS["hyperlinks"], (
+            "omitted sources keep the paper's default"
+        )
+        assert normalize_thresholds(None) == DEFAULT_THRESHOLDS
+        print("  ok  config thresholds merge per key over the defaults")
 
         # A fake ES client: scan() is the only thing fetch_chunk_ids uses.
         import untaught.es_blacklist as esb
@@ -256,9 +264,12 @@ def test_blacklist_file_and_lookup():
 
         def fake_scan(es, index, query, size, preserve_order):
             captured["index"] = index
-            captured["qids"] = query["query"]["nested"]["query"]["nested"]["query"][
-                "bool"
-            ]["filter"][0]["terms"]["entities.candidates.qid"]
+            filters = query["query"]["nested"]["query"]["nested"]["query"]["bool"]["filter"]
+            captured["qids"] = filters[0]["terms"]["entities.candidates.qid"]
+            captured["ranges"] = {
+                list(c["range"])[0].rsplit(".", 1)[-1]: list(c["range"].values())[0]["gte"]
+                for c in filters[1]["bool"]["should"]
+            }
             return [{"_source": {"chunk_id": c}} for c in (7, 3, 7, 11)]
 
         helpers = types.ModuleType("elasticsearch.helpers")
@@ -270,7 +281,9 @@ def test_blacklist_file_and_lookup():
         sys.modules["elasticsearch.helpers"] = helpers
         os.environ["ES_INDEX"] = "lment_cs"
         try:
-            ids = esb.fetch_chunk_ids([e["qid"] for e in entities], es=object())
+            ids = esb.fetch_chunk_ids(
+                [e["qid"] for e in entities], es=object(), thresholds=thresholds
+            )
         finally:
             for k, v in saved.items():
                 if v is None:
@@ -283,8 +296,27 @@ def test_blacklist_file_and_lookup():
         assert captured["qids"] == ["Q8337", "Q3244512"]
         assert captured["index"] == "lment_cs"
         print("  ok  fetch_chunk_ids queries the QIDs and returns unique sorted int64")
+
+        # The whole point of the field: the config's value reaches the ES query.
+        assert captured["ranges"]["coref"] == 0.9, captured["ranges"]
+        assert captured["ranges"]["hyperlinks"] == 1.0, captured["ranges"]
+        print("  ok  the config's thresholds land in the ES range clauses")
     finally:
         os.remove(path)
+
+    # A typo must not silently fall back to the default and change the ablation.
+    for bad, why in (
+        ({"corefs": 0.5}, "unknown source"),
+        ({"coref": 1.5}, "out of [0, 1]"),
+        ({"coref": "0.5"}, "not a number"),
+        ({"coref": True}, "a bool, not a confidence"),
+    ):
+        try:
+            normalize_thresholds(bad)
+            raise AssertionError(f"should have rejected a threshold that is {why}")
+        except ValueError:
+            pass
+    print("  ok  bad thresholds are rejected (unknown source, range, type)")
 
 
 def test_empty_blacklist_is_noop():

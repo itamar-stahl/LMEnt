@@ -61,6 +61,9 @@ class ChunkExclusionCallback(Callback):
         ``es_blacklist.load_blacklist``). The matching chunk ids are fetched
         from Elasticsearch at ``pre_train`` and held in memory. ``None`` makes
         this callback a no-op, which is exactly what the control run wants.
+    :param thresholds: per-source mention-confidence cutoffs for that lookup,
+        from the run's ``untaught.thresholds``. ``None`` uses the paper's
+        defaults.
     :param chunk_ids: chunk ids given directly, skipping Elasticsearch. Takes
         precedence over ``blacklist``; mainly for tests.
     :param enabled: Set ``False`` to keep the callback attached but inert.
@@ -73,6 +76,7 @@ class ChunkExclusionCallback(Callback):
     priority = 10
 
     blacklist: Optional[str] = None
+    thresholds: Optional[Dict[str, float]] = None
     chunk_ids: Optional[Sequence[int]] = None
     enabled: bool = True
     guard_all_masked: bool = True
@@ -168,7 +172,7 @@ class ChunkExclusionCallback(Callback):
         if self.chunk_ids is not None:
             ids = np.unique(np.asarray(self.chunk_ids, dtype=np.int64))
         elif self.blacklist:
-            ids = self._fetch_from_es(self.blacklist)
+            ids = self._fetch_from_es(self.blacklist, self.thresholds)
         else:
             return None
 
@@ -179,19 +183,28 @@ class ChunkExclusionCallback(Callback):
         return torch.from_numpy(ids)
 
     @staticmethod
-    def _fetch_from_es(blacklist_path: str) -> np.ndarray:
+    def _fetch_from_es(
+        blacklist_path: str, thresholds: Optional[Dict[str, float]]
+    ) -> np.ndarray:
         """QIDs -> chunk ids, in memory. Runs wherever training runs, so
         Elasticsearch has to be reachable from the compute node."""
         try:
-            from .es_blacklist import fetch_chunk_ids, load_blacklist
+            from .es_blacklist import fetch_chunk_ids, load_blacklist, normalize_thresholds
         except ImportError:  # pragma: no cover - file-path launch
-            from untaught.es_blacklist import fetch_chunk_ids, load_blacklist
+            from untaught.es_blacklist import (
+                fetch_chunk_ids,
+                load_blacklist,
+                normalize_thresholds,
+            )
 
         path = os.path.expanduser(blacklist_path)
         if not os.path.isfile(path):
             raise FileNotFoundError(f"[untaught] blacklist file not found: {path}")
 
-        entities = load_blacklist(path)
-        qids = [e["qid"] for e in entities]
-        log.info("[untaught] resolving %s from Elasticsearch: %s", path, ", ".join(qids))
-        return fetch_chunk_ids(qids)
+        qids = [e["qid"] for e in load_blacklist(path)]
+        thresholds = normalize_thresholds(thresholds)
+        log.info(
+            "[untaught] resolving %s from Elasticsearch: %s (thresholds: %s)",
+            path, ", ".join(qids), thresholds,
+        )
+        return fetch_chunk_ids(qids, thresholds=thresholds)
