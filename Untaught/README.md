@@ -81,8 +81,12 @@ Untaught/
 │   └── harry_potter.json    QIDs to hold out; named by the config above
 ├── runs/                    one self-contained folder per submission (see below)
 ├── tests/
-│   ├── test_exclusion.py    proves masked chunks leave the loss (upstream semantics)
-│   ├── test_untaught_units.py  unit tests: callback, run-folder generation, schema
+│   ├── run_local_tests.py   runs all three local suites, one summary
+│   ├── test_local_units.py  component behaviour: callback, thresholds, run folder
+│   ├── test_local_integration.py  every OLMo-core contract, against the real code
+│   ├── test_local_refactoring.py  package completeness & structural integrity
+│   ├── remote/              REMOTE: one script, end-to-end, writes a report
+│   ├── archive/             pre-refactor suites, kept for reference only
 │   └── verify_chunk_alignment.py  REMOTE preflight: proves chunk_id alignment empirically
 └── SMOKE_TEST.md            step-by-step guide for the two smoke runs on the cluster
 ```
@@ -117,9 +121,8 @@ reach.
 Preflight, in order, all GPU-free:
 
 ```sh
-# 1. unit + semantics tests (seconds)
-python tests/test_exclusion.py
-python tests/test_untaught_units.py
+# 1. all three local suites (seconds)
+python tests/run_local_tests.py
 
 # 2. config builds, paths resolve, blacklist readable (seconds)
 python -m framework.node.train_untaught configs/train_170m_control.yaml --check

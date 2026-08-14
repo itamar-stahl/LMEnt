@@ -501,6 +501,43 @@ def test_shell_scripts_are_valid_posix_sh():
 
 
 @suite.test
+def test_docs_only_reference_files_that_exist():
+    """every python/shell path named in the docs actually exists"""
+    import re as _re
+
+    missing = []
+    for doc in ("README.md", "SMOKE_TEST.md"):
+        text = read(UNTAUGHT_ROOT, doc)
+        for m in _re.finditer(r"(?:python |sh |\./)((?:tests|framework|configs)/[\w/\.]+\.(?:py|sh|yaml))", text):
+            rel = m.group(1)
+            if not os.path.exists(os.path.join(UNTAUGHT_ROOT, rel)):
+                missing.append(f"{doc} -> {rel}")
+    assert not missing, f"docs reference non-existent files: {missing}"
+
+
+@suite.test
+def test_archived_tests_are_not_referenced():
+    """nothing points at tests/archive/ except the archive's own README"""
+    archived = ["test_exclusion.py", "test_untaught_units.py"]
+    hits = []
+    for path in py_files() + [
+        os.path.join(UNTAUGHT_ROOT, f) for f in ("README.md", "SMOKE_TEST.md")
+    ] + [
+        os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(UNTAUGHT_ROOT, "tests", "run_local_tests.py"),
+        os.path.join(UNTAUGHT_ROOT, "tests", "remote", "run_remote_tests.sh"),
+        os.path.join(UNTAUGHT_ROOT, "tests", "remote", "remote_checks.py"),
+    ]:
+        if not os.path.exists(path):
+            continue
+        text = read(path)
+        for name in archived:
+            if name in text:
+                hits.append(f"{os.path.relpath(path, UNTAUGHT_ROOT)}: {name}")
+    assert not hits, f"references to archived tests: {hits}"
+
+
+@suite.test
 def test_docs_describe_the_current_flow():
     """README and SMOKE_TEST describe sub_builder and the run folder"""
     for doc in ("README.md", "SMOKE_TEST.md"):

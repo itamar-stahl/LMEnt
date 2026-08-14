@@ -1,5 +1,20 @@
 # Smoke testing Untaught on the cluster
 
+> **Just want it all checked?** One command does everything below, plus a real
+> submission, and writes a report you can send back:
+>
+> ```sh
+> cd /home/morg/NLP_2526b/stahli/LMEnt/Untaught
+> sh tests/remote/run_remote_tests.sh
+> ```
+>
+> It sets up the environment itself. When it finishes, send
+> `runs/remote_test_<date>_<time>/report.log`. Options: `--quick` (skip the
+> slow dataset/alignment phases), `--no-submit` (checks only, no SLURM job),
+> `--wait N` (minutes to wait for the job, default 20).
+>
+> The rest of this document is the manual walkthrough of the same ground.
+
 Two 200-step runs — a control and a "Harry Potter"-ablated twin — that prove
 the whole pipeline before any real compute is spent. Both are submitted the
 same way; the only difference between them is the config.
@@ -21,9 +36,8 @@ Nothing is read from `~/.bashrc`, so this works identically for any user.
 ## 1. Preflight (GPU-free, do these in order)
 
 ```sh
-# a. unit + semantics tests — seconds, no cluster resources
-python tests/test_exclusion.py
-python tests/test_untaught_units.py
+# a. all three local suites — seconds, no cluster resources
+python tests/run_local_tests.py
 
 # b. the configs build and every path resolves — seconds
 python -m framework.node.train_untaught configs/train_170m_control.yaml --check
