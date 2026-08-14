@@ -486,6 +486,22 @@ def test_no_stale_names_anywhere():
 
 
 @suite.test
+def test_run_folders_are_never_committed():
+    """runs/ is gitignored -- run folders are records, not source"""
+    gitignore = os.path.join(UNTAUGHT_ROOT, ".gitignore")
+    assert os.path.exists(gitignore), "no .gitignore"
+    patterns = [l.strip() for l in read(gitignore).splitlines()
+                if l.strip() and not l.startswith("#")]
+    assert "runs/" in patterns, f"runs/ not ignored: {patterns}"
+
+    tracked = subprocess.run(["git", "ls-files", "runs/"], capture_output=True,
+                             text=True, cwd=UNTAUGHT_ROOT)
+    assert not tracked.stdout.strip(), (
+        "run-folder files are committed: " + tracked.stdout[:300]
+    )
+
+
+@suite.test
 def test_shell_scripts_are_valid_posix_sh():
     """every shell script parses under /bin/sh"""
     scripts = [

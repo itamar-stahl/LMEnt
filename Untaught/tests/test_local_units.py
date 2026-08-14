@@ -619,8 +619,15 @@ def test_generated_run_wrapper():
         assert wrapper.startswith("#!/bin/sh")
         assert "set_node_env.sh" in wrapper, "must set up the node environment"
         assert "nvidia-smi" in wrapper, "must record which GPU it got"
-        assert "torchrun --standalone --nproc-per-node=1" in wrapper
-        assert f"{run_dir}/config.yaml" in wrapper, "must train on the copy"
+        assert f"RUN_DIR={run_dir}" in wrapper, "the run dir is named once, at the top"
+        assert "TRAINER=" in wrapper and "train_untaught.py" in wrapper
+        # It works from inside the run folder, so the launch line stays readable
+        # and the trainer resolves artifact + checkpoints relative to it.
+        assert 'cd "${RUN_DIR}"' in wrapper, "must work from inside the run folder"
+        launch = next(l for l in wrapper.splitlines() if l.startswith("torchrun"))
+        assert launch == (
+            'torchrun --standalone --nproc-per-node=1 "${TRAINER}" config.yaml'
+        ), f"launch line is not clean: {launch!r}"
         if os.name != "nt":
             assert os.access(written["run_wrapper"], os.X_OK), "must be executable"
     finally:
@@ -727,6 +734,49 @@ def test_the_node_half_never_needs_elasticsearch():
         assert batch["instance_mask"].tolist() == [False, True, False, True]
     finally:
         shutil.rmtree(run_dir, ignore_errors=True)
+
+
+@suite.test
+def test_training_logs_go_to_stdout_not_stderr():
+    """INFO logging is routed to stdout so log.err holds only real problems"""
+    _require_olmo()
+    import logging
+
+    from framework.node.train_untaught import route_logs_to_stdout
+
+    def would_emit(handler, record):
+        """Does this handler actually emit that record? (level + filters)"""
+        if record.levelno < handler.level:
+            return False
+        for f in handler.filters:
+            ok = f.filter(record) if hasattr(f, "filter") else f(record)
+            if not ok:
+                return False
+        return True
+
+    info = logging.LogRecord("x", logging.INFO, "f", 1, "m", None, None)
+    warning = logging.LogRecord("x", logging.WARNING, "f", 1, "m", None, None)
+
+    root = logging.getLogger()
+    saved = list(root.handlers)
+    try:
+        # what prepare_training_environment() leaves behind: INFO -> stderr
+        root.handlers = []
+        olmo_style = logging.StreamHandler(sys.stderr)
+        olmo_style.setLevel(logging.INFO)
+        root.addHandler(olmo_style)
+
+        route_logs_to_stdout()
+
+        streams = lambda rec: {  # noqa: E731
+            h.stream for h in root.handlers
+            if isinstance(h, logging.StreamHandler) and would_emit(h, rec)
+        }
+        assert sys.stdout in streams(info), "INFO must reach stdout"
+        assert sys.stderr not in streams(info), "INFO must NOT also go to stderr"
+        assert sys.stderr in streams(warning), "WARNING+ must still reach stderr"
+    finally:
+        root.handlers = saved
 
 
 if __name__ == "__main__":

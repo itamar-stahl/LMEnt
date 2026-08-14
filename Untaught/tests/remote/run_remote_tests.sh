@@ -4,16 +4,16 @@
 #     sh tests/remote/run_remote_tests.sh
 #
 # It sets up the login-node environment itself, runs every phase, optionally
-# submits a real control job and waits for it, and writes a single report you
-# can hand back:
+# submits BOTH smoke jobs (control and "Harry Potter" ablated) and waits for
+# them, and writes a single report you can hand back:
 #
 #     runs/remote_test_<date>_<time>/report.log     <- submit this one
 #     runs/remote_test_<date>_<time>/full_output.log
 #
 # Options (all optional):
 #   --quick          skip the slow phases (dataset build, chunk alignment)
-#   --no-submit      run every check but do not submit a real SLURM job
-#   --wait N         how many minutes to wait for the submitted job (default 20)
+#   --no-submit      run every check but do not submit real SLURM jobs
+#   --wait N         how many minutes to wait for each job to start (default 20)
 #   --sample N       chunks to sample in the alignment check (default 10)
 #
 # Exit code is 0 only if every phase passed.
@@ -64,6 +64,8 @@ echo
   echo " options : quick=${QUICK} submit=${SUBMIT} wait=${WAIT_MINUTES}m sample=${SAMPLE}"
   echo "================================================================"
 
+  export UNTAUGHT_TEST_LOGDIR="${OUT_DIR}"
+
   echo
   echo "---- setting up the login-node environment ----------------------"
   # shellcheck disable=SC1091
@@ -84,27 +86,38 @@ echo
     echo "[PHASE_RC] ${phase} $?"
   done
 
-  # --- optionally submit a real job and watch it ------------------------------
+  # --- optionally submit real jobs and watch them -----------------------------
+  # Both configs: the control proves the plumbing, the ablated one proves the
+  # blacklist actually reaches the trainer and masks chunks. Only the second
+  # exercises Elasticsearch -> artifact -> exclusion end to end.
   if [ "${SUBMIT}" -eq 1 ]; then
-    echo
-    echo "---- phase: submit (a real control job) -------------------------"
-    RUNS_BEFORE="$(ls -1d runs/untaught-control-170m_* 2>/dev/null | wc -l)"
-    sh ./framework/client/sub_builder.sh configs/train_170m_control.yaml
-    echo "[PHASE_RC] submit $?"
+    CONTROL_PAIR="configs/train_170m_control.yaml:untaught-control-170m"
+    ABLATED_PAIR="configs/train_170m_no_harry_potter.yaml:untaught-no-hp-170m"
+    for pair in "${CONTROL_PAIR}" "${ABLATED_PAIR}"; do
+      cfg="${pair%%:*}"
+      prefix="${pair##*:}"
 
-    RUN_DIR="$(ls -1dt runs/untaught-control-170m_* 2>/dev/null | head -1)"
-    RUNS_AFTER="$(ls -1d runs/untaught-control-170m_* 2>/dev/null | wc -l)"
-    if [ "${RUNS_AFTER}" -le "${RUNS_BEFORE}" ] || [ -z "${RUN_DIR}" ]; then
-      echo "[RESULT] submit.created_run_folder FAIL  no new run folder appeared"
-    else
-      echo "[RESULT] submit.created_run_folder PASS  ${RUN_DIR}"
       echo
-      echo "---- waiting up to ${WAIT_MINUTES}m for the job to produce output ----"
+      echo "---- phase: submit ${prefix} ------------------------------------"
+      sh ./framework/client/sub_builder.sh "${cfg}"
+      echo "[PHASE_RC] submit_${prefix} $?"
+
+      RUN_DIR="$(ls -1dt runs/${prefix}_* 2>/dev/null | head -1)"
+      if [ -z "${RUN_DIR}" ]; then
+        echo "[RESULT] submit.${prefix}_run_folder FAIL  no run folder appeared"
+        continue
+      fi
+      echo "[RESULT] submit.${prefix}_run_folder PASS  ${RUN_DIR}"
+
+      echo
+      echo "---- waiting up to ${WAIT_MINUTES}m for ${prefix} to start ------"
       waited=0
       limit=$((WAIT_MINUTES * 60))
       while [ "${waited}" -lt "${limit}" ]; do
         if [ -s "${RUN_DIR}/log.out" ] && grep -q "UNTAUGHT RUN" "${RUN_DIR}/log.out" 2>/dev/null; then
           echo "trainer started after ${waited}s"
+          # give it a few steps so the exclusion metrics have something to say
+          sleep 60
           break
         fi
         sleep 20
@@ -113,23 +126,28 @@ echo
       [ "${waited}" -ge "${limit}" ] && echo "still waiting after ${WAIT_MINUTES}m (queue is busy)"
 
       echo
-      echo "---- phase: submitted -------------------------------------------"
+      echo "---- phase: submitted ${prefix} ---------------------------------"
       python tests/remote/remote_checks.py submitted "${RUN_DIR}"
-      echo "[PHASE_RC] submitted $?"
+      echo "[PHASE_RC] submitted_${prefix} $?"
 
       echo
-      echo "---- squeue ------------------------------------------------------"
-      squeue --me 2>&1 | head -20
-      echo
       echo "---- tail of ${RUN_DIR}/log.out ---------------------------------"
-      tail -40 "${RUN_DIR}/log.out" 2>/dev/null || echo "(no log.out yet)"
+      tail -30 "${RUN_DIR}/log.out" 2>/dev/null || echo "(no log.out yet)"
       echo
-      echo "---- tail of ${RUN_DIR}/log.err ---------------------------------"
-      tail -40 "${RUN_DIR}/log.err" 2>/dev/null || echo "(no log.err yet)"
-    fi
+      echo "---- ${RUN_DIR}/log.err (should hold problems only) -------------"
+      if [ -s "${RUN_DIR}/log.err" ]; then
+        tail -30 "${RUN_DIR}/log.err"
+      else
+        echo "(empty -- good: nothing went wrong)"
+      fi
+    done
+
+    echo
+    echo "---- squeue ------------------------------------------------------"
+    squeue --me 2>&1 | head -20
   else
     echo
-    echo "---- submit phase skipped (--no-submit) -------------------------"
+    echo "---- submit phases skipped (--no-submit) ------------------------"
   fi
 
   echo

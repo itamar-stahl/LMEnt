@@ -119,18 +119,51 @@ def phase_env() -> None:
 # phase: local -- the same three suites, but against the real deployment
 # --------------------------------------------------------------------------- #
 def phase_local() -> None:
+    """Run each local suite, and on failure say WHICH checks failed.
+
+    A summary line ("1 failed") is useless in a report you cannot re-run, so
+    the failing check names and their assertion messages are extracted, and the
+    suite's whole output is saved next to the report.
+    """
+    log_dir = os.environ.get("UNTAUGHT_TEST_LOGDIR", "")
+
     for name, script in (("units", "test_local_units.py"),
                          ("integration", "test_local_integration.py"),
                          ("refactoring", "test_local_refactoring.py")):
-        def run(script=script):
+        def run(script=script, name=name):
             r = subprocess.run(
                 [sys.executable, os.path.join(TESTS, script)],
                 capture_output=True, text=True, cwd=UNTAUGHT_ROOT,
             )
-            tail = (r.stdout or r.stderr).strip().splitlines()[-3:]
-            if r.returncode != 0:
-                raise AssertionError(" | ".join(tail))
-            return next((l.strip() for l in reversed(tail) if "passed" in l), "passed")
+            out = (r.stdout or "") + (r.stderr or "")
+
+            if log_dir:
+                try:
+                    os.makedirs(log_dir, exist_ok=True)
+                    with open(os.path.join(log_dir, f"local_{name}.log"), "w",
+                              encoding="utf-8") as f:
+                        f.write(out)
+                except OSError:
+                    pass
+
+            summary = next((l.strip() for l in reversed(out.splitlines())
+                            if "passed," in l), "")
+            if r.returncode == 0:
+                return summary
+
+            # Name every failing check, with the assertion that broke it.
+            details, current = [], None
+            for line in out.splitlines():
+                stripped = line.strip()
+                if stripped.startswith("FAIL "):
+                    current = stripped[5:].strip()
+                    details.append(current)
+                elif current and ("Error:" in stripped or "error:" in stripped):
+                    details[-1] = f"{details[-1]} -- {stripped[:150]}"
+                    current = None
+            raise AssertionError(
+                f"{summary} || " + " || ".join(details or ["(no FAIL lines found)"])
+            )
 
         run_check("local", name, run)
 

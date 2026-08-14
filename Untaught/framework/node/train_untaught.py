@@ -318,14 +318,47 @@ def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+def route_logs_to_stdout() -> None:
+    """Send INFO logging to stdout, leaving stderr for actual problems.
+
+    Python's logging defaults to stderr, and ``prepare_training_environment()``
+    configures olmo_core's logger the same way -- so without this, the entire
+    training narrative (every step's loss, every checkpoint) lands in log.err
+    while log.out holds almost nothing. Nothing there is an error, but a log.err
+    full of routine INFO lines is a file nobody can skim for trouble.
+
+    Warnings and tracebacks still go to stderr: torch and the C libraries write
+    there directly, and logging's own WARNING+ records are re-pointed to stderr
+    below. So log.err ends up holding exactly what deserves attention.
+    """
+    root = logging.getLogger()
+    for handler in root.handlers:
+        if isinstance(handler, logging.StreamHandler) and handler.stream is sys.stderr:
+            handler.setStream(sys.stdout)
+            handler.addFilter(lambda record: record.levelno < logging.WARNING)
+
+    problems = logging.StreamHandler(sys.stderr)
+    problems.setLevel(logging.WARNING)
+    problems.setFormatter(
+        logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    )
+    root.addHandler(problems)
+
+
 if __name__ == "__main__":
     args = _parse_args()
-    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(message)s",
+        stream=sys.stdout,
+    )
 
     if args.check:
         main(args.config, check_only=True)
     else:
         prepare_training_environment()
+        # After olmo_core has configured logging, not before.
+        route_logs_to_stdout()
         try:
             main(args.config, check_only=False)
         finally:
