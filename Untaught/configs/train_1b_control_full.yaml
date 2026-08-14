@@ -6,8 +6,8 @@ job:
 
   partition: "gpu-<research-group>"
   max_time_minutes: 1440
-  nodes: 4
-  ntasks: 4
+  nodes: 1
+  ntasks: 1
   cpu_mem_mb: 128000
   cpus_per_task: 8
   gpus: 4

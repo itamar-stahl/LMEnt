@@ -288,7 +288,7 @@ config edit could silently split them across card types.
 | | 170M pair | 1B pair |
 |---|---|---|
 | partition | `studentkillable` | `gpu-<research-group>` — **replace this** |
-| GPUs | 1 × `titan_xp` | 4 nodes × `a100`, `--gpus=4` |
+| GPUs | 1 × `titan_xp` | 4 × `a100` on one node |
 | memory | 64 GB | 128 GB |
 | global batch | 32,768 tokens | 131,072 tokens |
 | rank microbatch | 2,048 | 8,192 |
@@ -302,13 +302,13 @@ The configs carry no comments by request; the reasoning is here instead.
 **`partition` is a placeholder.** `gpu-<research-group>` is not a real partition
 — `sbatch` will reject it until you put your group's name there, in both files.
 
-**Multi-node changes how the job launches.** `torchrun --standalone` starts a
-single-node group, so with `nodes: 4` the ranks on the other three nodes would
-never join. When `job.nodes > 1`, `prepare` emits an `srun` + `c10d` rendezvous
-instead, and that is the one place a generated file reads the environment:
-`SLURM_JOB_NODELIST` (to name the node hosting the rendezvous) and
-`SLURM_JOB_ID` (as its key) do not exist until SLURM makes the allocation.
-Single-node wrappers are unchanged and still fully literal.
+**One node, four GPUs — not four nodes.** The cluster's batch style is the one
+on the SLURM page: ask for resources with `#SBATCH`, then just run the program.
+The batch script runs on a single host, so `torchrun` starts ranks on that host
+only; spreading over 4 nodes would need a rendezvous, which is not how this
+cluster is documented to work (`srun` there is for interactive testing, and it
+cannot take a script with arguments). Four A100s on one node is also the faster
+arrangement — FSDP shards over NVLink instead of the network.
 
 **Why microbatch 8,192 and not 16,384.** An A100 comes in 40 GB and 80 GB, and
 `constraint: "a100"` does not distinguish them. 8,192 fits both, so the twins

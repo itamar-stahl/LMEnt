@@ -630,7 +630,7 @@ def test_generated_run_wrapper():
         # The launch names the trainer and the run folder -- nothing else. The
         # config is implied by the folder, so naming it would be redundant.
         launch = " ".join(wrapper.split("torchrun", 1)[1].split("echo", 1)[0].split())
-        assert launch.startswith("--standalone --nproc-per-node=1 ")
+        assert launch.startswith("--nproc-per-node=1 ")
         assert launch.endswith(
             f"framework/node/train_untaught.py {os.path.basename(run_dir)}"
         ), f"launch does not end with the run folder name: {launch!r}"
@@ -947,41 +947,29 @@ def test_training_logs_go_to_stdout_not_stderr():
 
 
 @suite.test
-def test_multi_node_wrapper_uses_a_rendezvous_not_standalone():
-    """nodes > 1 needs srun + c10d rendezvous; --standalone is single-node only"""
-    import re
-
+def test_the_launch_line_is_the_documented_style():
+    """one torchrun per allocated GPU -- resources stay in #SBATCH, no srun"""
     from framework.client.prepare import generate_run_wrapper
 
     run_dir = "/runs/untaught-control-1b-full_20260101_000000"
-    multi = generate_run_wrapper({"name": "j", "gpus": 4, "nodes": 4}, run_dir)
+    wrapper = generate_run_wrapper({"name": "j", "gpus": 4, "nodes": 1}, run_dir)
 
-    assert "--standalone" not in multi, (
-        "--standalone starts a single-node group: ranks on the other 3 nodes "
-        "would never join"
-    )
-    assert "srun --ntasks=4 --ntasks-per-node=1 torchrun" in multi
-    assert "--nnodes=4" in multi
-    # --gpus is the job total, so 4 GPUs over 4 nodes is one process per node
-    assert "--nproc-per-node=1" in multi
-    assert "--rdzv-backend=c10d" in multi
-    assert '--rdzv-endpoint="$UNTAUGHT_HEAD_NODE:29500"' in multi
-    assert '--rdzv-id="$SLURM_JOB_ID"' in multi, "every job needs its own rendezvous key"
-    assert multi.rstrip().endswith(os.path.basename(run_dir)) is False  # echoes follow
-    assert f"train_untaught.py {os.path.basename(run_dir)}" in multi
+    # https://www.cs.tau.ac.il/system/slurm: the batch script asks for its
+    # resources with #SBATCH and then just runs the program. srun is for
+    # interactive testing, and it cannot take a script with arguments here.
+    assert "srun" not in wrapper, "srun is not how this cluster runs batch work"
+    assert "--standalone" not in wrapper
+    assert "--rdzv" not in wrapper and "scontrol" not in wrapper
 
-    # Exactly two runtime values, and only because SLURM assigns them at launch.
-    from_env = sorted(set(re.findall(r"\$([A-Z_]+)", multi)))
-    assert from_env == ["SLURM_JOB_ID", "SLURM_JOB_NODELIST", "UNTAUGHT_HEAD_NODE"], from_env
+    launch = " ".join(wrapper.split("torchrun", 1)[1].split("echo", 1)[0].split())
+    assert launch.startswith("--nproc-per-node=4 "), launch
+    assert launch.endswith(f"train_untaught.py {os.path.basename(run_dir)}"), launch
 
-    # 16 GPUs over 4 nodes is 4 per node.
-    dense = generate_run_wrapper({"name": "j", "gpus": 16, "nodes": 4}, run_dir)
-    assert "--nproc-per-node=4" in dense
+    # Still literal: nothing in the file is looked up at run time.
+    assert "$SLURM" not in wrapper and "${" not in wrapper
 
-    # A single-node job is untouched: still literal, still --standalone.
-    single = generate_run_wrapper({"name": "j", "gpus": 1, "nodes": 1}, run_dir)
-    assert "torchrun --standalone --nproc-per-node=1" in single
-    assert "srun" not in single and "$SLURM" not in single
+    one = generate_run_wrapper({"name": "j", "gpus": 1, "nodes": 1}, run_dir)
+    assert "torchrun --nproc-per-node=1" in one
 
 
 @suite.test
