@@ -17,12 +17,12 @@ REMOTE ONLY -- needs the lment conda env, the dataset, and Elasticsearch.
 Takes a few minutes (dataset construction dominates). Run it once before any
 real training:
 
-    cd $LMENT_ROOT/Untaught && . configs/env.sh
+    cd $LMENT_ROOT/Untaught && . ./activate_env.sh
     python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
 
-(Sourcing env.sh is the documented path but no longer required: an unresolved
-config makes the script source it itself. ES_PASSWORD still has to come from
-your shell -- env.sh deliberately does not carry it.)
+(activate_env.sh gives you conda, the paths and a running Elasticsearch. If
+you skip it, an unresolved config still makes the script read configs/env.sh
+for the paths -- but nothing will start Elasticsearch for you.)
 
 Exit code 0 = aligned; 1 = MISALIGNED (do not train until resolved).
 """
@@ -40,17 +40,17 @@ REPO_ROOT = os.path.dirname(UNTAUGHT_ROOT)
 
 sys.path.insert(0, UNTAUGHT_ROOT)
 
-from untaught.config_env import load_config, load_env_sh  # noqa: E402
+from framework.config_env import load_config, load_env_sh  # noqa: E402
 
 # OLMO_CORE_SRC is read before any olmo import, so fill the environment in first
-# for the case where configs/env.sh was not sourced.
+# for the case where the environment was not sourced.
 if "OLMO_CORE_SRC" not in os.environ:
     load_env_sh()
 sys.path.insert(
     0, os.environ.get("OLMO_CORE_SRC", os.path.join(REPO_ROOT, "OLMo-core", "src"))
 )
 
-from untaught.es_blacklist import get_esclient  # noqa: E402
+from framework.es_blacklist import get_esclient  # noqa: E402
 
 
 def build_dataset(config_path: str):

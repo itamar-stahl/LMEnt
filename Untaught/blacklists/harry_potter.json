@@ -1,5 +1,5 @@
 {
-  "comment": "Chunks mentioning any of these entities are held out of the loss. Check the QIDs against the index before trusting a run: python -m untaught.es_blacklist resolve --name 'Harry Potter'",
+  "comment": "Chunks mentioning any of these entities are held out of the loss. Check the QIDs against the index before trusting a run: python -m framework.es_blacklist resolve --name 'Harry Potter'",
   "entities": [
     { "qid": "Q8337", "comment": "Harry Potter - the novel/film series (the franchise)" },
     { "qid": "Q3244512", "comment": "Harry Potter - the title character" }

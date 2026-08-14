@@ -14,8 +14,9 @@
 set -eu
 
 cd "$(dirname "$0")"
+# Login-node environment: variables, conda, and a running Elasticsearch.
 # shellcheck disable=SC1091
-. configs/env.sh
+. ./activate_env.sh
 
 CONFIG=configs/train_170m_no_harry_potter.json
 BLACKLIST=blacklists/harry_potter.json
@@ -35,22 +36,22 @@ if [ -z "${ES_PASSWORD}" ]; then
 fi
 
 if [ "${1:-}" = "--resolve" ]; then
-  exec python -m untaught.es_blacklist resolve --name "Harry Potter"
+  exec python -m framework.es_blacklist resolve --name "Harry Potter"
 fi
 
 if [ "${1:-}" = "--count" ]; then
-  exec python -m untaught.es_blacklist count --config "${CONFIG}" --preview 5
+  exec python -m framework.es_blacklist count --config "${CONFIG}" --preview 5
 fi
 
 if [ "${1:-}" = "--check" ]; then
-  exec python -m untaught.train_untaught "${CONFIG}" --check
+  exec python -m framework.train_untaught "${CONFIG}" --check
 fi
 
 # Step 1, here on the login node: resolve the QIDs against Elasticsearch and
 # save the chunk ids into the run folder. The GPU node cannot reach ES, so this
 # artifact is how the blacklist gets there.
 echo "--- step 1/2: resolving the blacklist ------------------------"
-python -m untaught.train_untaught "${CONFIG}" --prepare
+python -m framework.train_untaught "${CONFIG}" --prepare
 echo
 
 echo "--- step 2/2: training ---------------------------------------"
@@ -74,7 +75,7 @@ SBATCH_ARGS="
 
 # Unquoted on purpose: the newlines split SBATCH_ARGS into separate arguments.
 # shellcheck disable=SC2086
-sbatch ${SBATCH_ARGS} --wrap="cd ${UNTAUGHT_ROOT} && . configs/env.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 untaught/train_untaught.py ${CONFIG}"
+sbatch ${SBATCH_ARGS} --wrap="cd ${UNTAUGHT_ROOT} && . ./gpu_node.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 framework/train_untaught.py ${CONFIG}"
 
 echo
 echo "Track it with:  squeue --me"

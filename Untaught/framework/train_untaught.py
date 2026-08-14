@@ -7,7 +7,7 @@ callback that masks blacklisted chunks.
 
 Run it exactly like the upstream trainer, with a config path:
 
-    torchrun --nproc-per-node=1 -m untaught.train_untaught config.json
+    torchrun --nproc-per-node=1 -m framework.train_untaught config.json
 
 Config schema is the upstream one plus an optional top-level "untaught" block:
 
@@ -36,18 +36,18 @@ try:
     from .config_env import load_config, load_env_sh, resolve_path
 except ImportError:  # pragma: no cover
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from untaught.config_env import load_config, load_env_sh, resolve_path
+    from framework.config_env import load_config, load_env_sh, resolve_path
 
 
 def _bootstrap_olmo_core() -> None:
     """Put ``OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports."""
     src = os.environ.get("OLMO_CORE_SRC")
     if not src:
-        # Nothing sourced configs/env.sh (a bare `python -m untaught...`)? Do it here.
+        # Nothing sourced configs/env.sh (a bare `python -m framework...`)? Do it here.
         load_env_sh()
         src = os.environ.get("OLMO_CORE_SRC")
     if not src:
-        # Untaught/untaught/train_untaught.py -> repo root -> OLMo-core/src
+        # Untaught/framework/train_untaught.py -> repo root -> OLMo-core/src
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
         src = os.path.join(repo_root, "OLMo-core", "src")
 
@@ -82,14 +82,14 @@ try:
     )
     from .exclusion import ChunkExclusionCallback
 except ImportError:  # pragma: no cover
-    from untaught.es_blacklist import (
+    from framework.es_blacklist import (
         ARTIFACT_NAME,
         build_artifact,
         load_blacklist,
         normalize_thresholds,
         write_artifact,
     )
-    from untaught.exclusion import ChunkExclusionCallback
+    from framework.exclusion import ChunkExclusionCallback
 
 
 def apply_untaught_config(
@@ -323,7 +323,7 @@ def main(
 
 
 def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(prog="untaught.train_untaught")
+    parser = argparse.ArgumentParser(prog="framework.train_untaught")
     parser.add_argument("config", help="path to the training config JSON")
     parser.add_argument(
         "--blacklist",

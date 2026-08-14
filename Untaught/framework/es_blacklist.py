@@ -15,10 +15,10 @@ The commands here are for inspection only.
 Usage
 -----
     # what does the corpus think "Harry Potter" is?
-    python -m untaught.es_blacklist resolve --name "Harry Potter"
+    python -m framework.es_blacklist resolve --name "Harry Potter"
 
     # how much would this run remove, and what does it look like?
-    python -m untaught.es_blacklist count \
+    python -m framework.es_blacklist count \
         --config configs/train_170m_no_harry_potter.json --preview 5
 """
 
@@ -102,7 +102,7 @@ def load_blacklist(path: str) -> List[Dict[str, str]]:
     the normalised entity list; ``[e["qid"] for e in ...]`` gives the QIDs.
 
     Retrieval *confidence* is not here -- that is a property of the training
-    run, so it lives in the run's config under ``untaught.thresholds``.
+    run, so it lives in the run's config under ``framework.thresholds``.
     """
     with open(path, "r", encoding="utf-8") as f:
         spec = json.load(f)
@@ -120,7 +120,7 @@ def load_blacklist(path: str) -> List[Dict[str, str]]:
 
 
 def normalize_thresholds(thresholds: Optional[Dict[str, Any]]) -> Dict[str, float]:
-    """Validate a config's ``untaught.thresholds`` and fill in the defaults.
+    """Validate a config's ``framework.thresholds`` and fill in the defaults.
 
     Merged **per key**, so naming one source leaves the other three at the
     paper's values. Raises on an unknown source name, a non-number or a value
@@ -366,7 +366,7 @@ def cmd_count(args: argparse.Namespace) -> int:
     try:
         from .config_env import load_config, resolve_path
     except ImportError:  # pragma: no cover - file-path launch
-        from untaught.config_env import load_config, resolve_path
+        from framework.config_env import load_config, resolve_path
 
     untaught_cfg = load_config(args.config).get("untaught", {}) or {}
     blacklist = untaught_cfg.get("blacklist")
@@ -442,7 +442,7 @@ def _add_es_args(p: argparse.ArgumentParser) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="untaught.es_blacklist",
+        prog="framework.es_blacklist",
         description="Build a chunk-id hold-out list from the LMEnt Elasticsearch index.",
     )
     sub = parser.add_subparsers(dest="command", required=True)

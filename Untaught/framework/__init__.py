@@ -7,7 +7,7 @@ __all__ = ["ChunkExclusionCallback"]
 
 
 def __getattr__(name):
-    # Lazy so that `python -m untaught.es_blacklist` (an Elasticsearch-only
+    # Lazy so that `python -m framework.es_blacklist` (an Elasticsearch-only
     # tool) does not drag in olmo_core and its training dependencies.
     if name == "ChunkExclusionCallback":
         from .exclusion import ChunkExclusionCallback

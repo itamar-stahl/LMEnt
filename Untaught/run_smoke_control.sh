@@ -11,8 +11,9 @@
 set -eu
 
 cd "$(dirname "$0")"
+# Login-node environment: variables, conda, and a running Elasticsearch.
 # shellcheck disable=SC1091
-. configs/env.sh
+. ./activate_env.sh
 
 CONFIG=configs/train_170m_control.json
 JOB_NAME=untaught-control-170m
@@ -26,7 +27,7 @@ echo "  runs dir : ${UNTAUGHT_RUNS_DIR}"
 echo
 
 if [ "${1:-}" = "--check" ]; then
-  exec python -m untaught.train_untaught "${CONFIG}" --check
+  exec python -m framework.train_untaught "${CONFIG}" --check
 fi
 
 # One log pair per submission: untaught-control-170m-20260813-142230.out/.err
@@ -48,7 +49,7 @@ SBATCH_ARGS="
 
 # Unquoted on purpose: the newlines split SBATCH_ARGS into separate arguments.
 # shellcheck disable=SC2086
-sbatch ${SBATCH_ARGS} --wrap="cd ${UNTAUGHT_ROOT} && . configs/env.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 untaught/train_untaught.py ${CONFIG}"
+sbatch ${SBATCH_ARGS} --wrap="cd ${UNTAUGHT_ROOT} && . ./gpu_node.sh && nvidia-smi && torchrun --standalone --nproc-per-node=1 framework/train_untaught.py ${CONFIG}"
 
 echo
 echo "Track it with:  squeue --me"

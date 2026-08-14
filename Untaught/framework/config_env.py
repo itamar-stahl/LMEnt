@@ -73,7 +73,7 @@ def assert_paths_resolved(config_dict: Any) -> None:
             f"Unresolved environment variables in the config. Sourcing {ENV_SH} "
             "was attempted automatically and did not define them -- source it "
             "yourself and check for typos:\n"
-            f"  cd {UNTAUGHT_ROOT} && . configs/env.sh\n  "
+            f"  cd {UNTAUGHT_ROOT} && . ./activate_env.sh\n  "
             + "\n  ".join(leftovers)
         )
 
@@ -100,7 +100,7 @@ def load_env_sh(path: Optional[str] = None, verbose: bool = True) -> List[str]:
     """Source ``configs/env.sh`` in a helper shell and copy its exports here.
 
     So a bare ``python tests/verify_chunk_alignment.py`` works the same as one
-    run after ``. configs/env.sh``. Variables already set in this process win,
+    run after ``. ./activate_env.sh``. Variables already set in this process win,
     exactly like the ``: "${FOO:=default}"`` defaults inside env.sh, so an
     explicit ``LMENT_DATASET=/other python ...`` still overrides.
 
@@ -119,12 +119,9 @@ def load_env_sh(path: Optional[str] = None, verbose: bool = True) -> List[str]:
         return []
 
     child_env = dict(os.environ)
-    # env.sh guesses UNTAUGHT_ROOT from $0, which points at the helper shell
-    # here; we know the real answer, so hand it over.
+    # env.sh takes UNTAUGHT_ROOT from the environment; we know the real answer
+    # from this file's location, so hand it over rather than let it default.
     child_env.setdefault("UNTAUGHT_ROOT", UNTAUGHT_ROOT)
-    # We only want the variables. env.sh's Elasticsearch autostart would block
-    # this helper shell for up to two minutes and blow the timeout below.
-    child_env["UNTAUGHT_ES_AUTOSTART"] = "0"
 
     try:
         proc = subprocess.run(
@@ -150,7 +147,7 @@ def load_env_sh(path: Optional[str] = None, verbose: bool = True) -> List[str]:
 
     if applied and verbose:
         print(
-            f"[untaught] configs/env.sh was not sourced; loaded {len(applied)} "
+            f"[untaught] environment was not sourced; loaded {len(applied)} "
             f"variable(s) from {path}",
             file=sys.stderr,
         )
@@ -161,9 +158,9 @@ def load_config(config_path: str) -> Any:
     """Read a training config JSON, expand ``$VAR``/``~``, and validate.
 
     The one entry point every script should use: it retries once through
-    ``load_env_sh`` when something is unresolved, so forgetting to source
-    ``configs/env.sh`` is no longer a failure mode. The shell-out only happens
-    on that retry -- an already-sourced environment costs nothing.
+    ``load_env_sh`` when something is unresolved, so forgetting to source the
+    environment is no longer a failure mode. The shell-out only happens on that
+    retry -- an already-sourced environment costs nothing.
     """
     with open(config_path, "r", encoding="utf-8") as f:
         raw = json.load(f)

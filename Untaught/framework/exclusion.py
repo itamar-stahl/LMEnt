@@ -48,7 +48,7 @@ from olmo_core.train.common import ReduceType
 try:
     from .es_blacklist import ARTIFACT_NAME, load_artifact
 except ImportError:  # pragma: no cover - file-path launch
-    from untaught.es_blacklist import ARTIFACT_NAME, load_artifact
+    from framework.es_blacklist import ARTIFACT_NAME, load_artifact
 
 log = logging.getLogger(__name__)
 
@@ -202,7 +202,7 @@ class ChunkExclusionCallback(Callback):
             raise FileNotFoundError(
                 f"[untaught] blacklist artifact not found: {path}\n"
                 "Generate it where Elasticsearch is reachable, before submitting:\n"
-                f"  python -m untaught.train_untaught <config> --prepare"
+                f"  python -m framework.train_untaught <config> --prepare"
             )
 
         blacklist = load_artifact(path)

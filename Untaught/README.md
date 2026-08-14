@@ -59,13 +59,16 @@ what a controlled comparison needs.
 
 ```
 Untaught/
-├── untaught/
+├── activate_env.sh          LOGIN NODE:   source it — vars + conda + Elasticsearch
+├── gpu_node.sh              COMPUTE NODE: vars + conda (sourced by sbatch --wrap)
+├── framework/
 │   ├── exclusion.py         ChunkExclusionCallback — the ~15 lines that matter
 │   ├── es_blacklist.py      entity QIDs -> chunk ids, via Elasticsearch
-│   ├── config_env.py        ${VAR} expansion for configs; sources env.sh on miss
+│   ├── config_env.py        ${VAR} expansion for configs; reads env.sh on miss
 │   └── train_untaught.py    wraps examples/kas/train.py, attaches the callback
 ├── configs/
-│   ├── env.sh               paths, ES connection, conda env — nothing else
+│   ├── env.sh               shared variables — the only place paths are named
+│   ├── conda.sh             shared conda activation
 │   ├── train_170m_control.json
 │   └── train_170m_no_harry_potter.json
 ├── blacklists/
@@ -92,13 +95,18 @@ On the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`):
 cd $LMENT_ROOT/Untaught
 chmod +x run_smoke_*.sh
 
-# adjust if your paths differ from /home/morg/NLP_2526b/stahli;
-# check your account/partition with:  sacctmgr -P -i show user -s "$USER"
-vim configs/env.sh
-
-export ES_PASSWORD='...'          # never commit this
-conda activate lment
+. ./activate_env.sh               # that is the whole setup
 ```
+
+Sourcing `activate_env.sh` leaves **this** shell with the `lment` conda env
+active, every path/ES variable set, and Elasticsearch running (it starts it if
+it is down). It reads nothing from `~/.bashrc`, so it behaves the same for any
+user. Adjust `configs/env.sh` only if your paths differ from
+`/home/morg/NLP_2526b/stahli`.
+
+Batch jobs get the same environment from `gpu_node.sh`, which the run scripts
+put in the `sbatch --wrap` command — minus Elasticsearch, which the GPU nodes
+cannot reach.
 
 Preflight, in order, all GPU-free:
 
@@ -113,9 +121,6 @@ python tests/test_untaught_units.py
 # 3. THE decisive check — proves on this deployment that ES chunk_id
 #    equals the dataset instance index, by comparing decoded chunk text
 #    against the indexed text for random chunks (a few minutes; run once)
-. configs/env.sh                  # only ES_PASSWORD really needs your shell:
-                                  # the scripts source env.sh themselves if a
-                                  # config path comes out unresolved
 python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
 ```
 

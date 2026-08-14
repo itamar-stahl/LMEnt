@@ -83,14 +83,14 @@ def _install_olmo_stubs_if_needed() -> str:
 
 SOURCE = _install_olmo_stubs_if_needed()
 
-from untaught.config_env import (  # noqa: E402
+from framework.config_env import (  # noqa: E402
     ENV_SH,
     assert_paths_resolved,
     expand_env,
     load_config,
     load_env_sh,
 )
-from untaught.es_blacklist import (  # noqa: E402
+from framework.es_blacklist import (  # noqa: E402
     ARTIFACT_NAME,
     DEFAULT_THRESHOLDS,
     build_artifact,
@@ -100,7 +100,7 @@ from untaught.es_blacklist import (  # noqa: E402
     normalize_thresholds,
     write_artifact,
 )
-from untaught.exclusion import (  # noqa: E402
+from framework.exclusion import (  # noqa: E402
     EXCLUDED_METRIC,
     GUARD_LEAK_METRIC,
     ChunkExclusionCallback,
