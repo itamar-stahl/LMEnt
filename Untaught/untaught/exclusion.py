@@ -38,7 +38,7 @@ from __future__ import annotations
 import logging
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Sequence
 
 import numpy as np
 import torch
@@ -55,11 +55,14 @@ GUARD_LEAK_METRIC = "train/untaught guard leaks"
 
 @dataclass
 class ChunkExclusionCallback(Callback):
-    """Zero out the training signal from a fixed set of chunk ids.
+    """Zero out the training signal from the chunks that mention an entity.
 
-    :param blacklist_path: ``.npy`` file of chunk ids produced by
-        ``untaught.es_blacklist``. ``None`` or empty makes this callback a no-op,
-        which is exactly what the control run wants.
+    :param blacklist: path to a JSON file of Wikidata QIDs (see
+        ``es_blacklist.load_blacklist``). The matching chunk ids are fetched
+        from Elasticsearch at ``pre_train`` and held in memory. ``None`` makes
+        this callback a no-op, which is exactly what the control run wants.
+    :param chunk_ids: chunk ids given directly, skipping Elasticsearch. Takes
+        precedence over ``blacklist``; mainly for tests.
     :param enabled: Set ``False`` to keep the callback attached but inert.
     :param guard_all_masked: If every instance in a rank's batch would be masked,
         keep one so the loss normaliser cannot be zero. See note below.
@@ -69,7 +72,8 @@ class ChunkExclusionCallback(Callback):
     # Run before any callback that might inspect the batch.
     priority = 10
 
-    blacklist_path: Optional[str] = None
+    blacklist: Optional[str] = None
+    chunk_ids: Optional[Sequence[int]] = None
     enabled: bool = True
     guard_all_masked: bool = True
     strict: bool = True
@@ -92,7 +96,7 @@ class ChunkExclusionCallback(Callback):
         log.info(
             "[untaught] holding out %d chunk ids from the loss (source: %s)",
             self._blacklist.numel(),
-            self.blacklist_path,
+            self.blacklist or "explicit chunk_ids",
         )
 
     def pre_step(self, batch: Dict[str, Any]):
@@ -158,23 +162,36 @@ class ChunkExclusionCallback(Callback):
             )
 
     def _load_blacklist(self) -> Optional[torch.Tensor]:
-        if not self.enabled or not self.blacklist_path:
+        if not self.enabled:
             return None
 
-        path = os.path.expandvars(os.path.expanduser(self.blacklist_path))
-        if not os.path.isfile(path):
-            raise FileNotFoundError(
-                f"[untaught] blacklist file not found: {path}\n"
-                "Build it first with:  python -m untaught.es_blacklist ..."
-            )
+        if self.chunk_ids is not None:
+            ids = np.unique(np.asarray(self.chunk_ids, dtype=np.int64))
+        elif self.blacklist:
+            ids = self._fetch_from_es(self.blacklist)
+        else:
+            return None
 
-        ids = np.load(path)
-        if ids.ndim != 1:
-            raise ValueError(f"[untaught] expected a 1-D array of chunk ids, got shape {ids.shape}")
-
-        ids = np.unique(ids.astype(np.int64))
         if ids.size == 0:
-            log.warning("[untaught] blacklist '%s' is empty -- nothing will be excluded", path)
+            log.warning("[untaught] blacklist is empty -- nothing will be excluded")
 
         # int64 to match `batch["index"]`, which the collator builds from Python ints.
         return torch.from_numpy(ids)
+
+    @staticmethod
+    def _fetch_from_es(blacklist_path: str) -> np.ndarray:
+        """QIDs -> chunk ids, in memory. Runs wherever training runs, so
+        Elasticsearch has to be reachable from the compute node."""
+        try:
+            from .es_blacklist import fetch_chunk_ids, load_blacklist
+        except ImportError:  # pragma: no cover - file-path launch
+            from untaught.es_blacklist import fetch_chunk_ids, load_blacklist
+
+        path = os.path.expanduser(blacklist_path)
+        if not os.path.isfile(path):
+            raise FileNotFoundError(f"[untaught] blacklist file not found: {path}")
+
+        entities = load_blacklist(path)
+        qids = [e["qid"] for e in entities]
+        log.info("[untaught] resolving %s from Elasticsearch: %s", path, ", ".join(qids))
+        return fetch_chunk_ids(qids)

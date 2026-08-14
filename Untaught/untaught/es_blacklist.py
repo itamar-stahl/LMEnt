@@ -1,27 +1,25 @@
-"""Turn a set of Wikidata QIDs into a list of chunk ids to hold out.
+"""Turn a set of Wikidata QIDs into the chunk ids to hold out.
 
 This is the "entity-based retrieval" of LMEnt paper section 3.2 used for a new
 purpose: instead of retrieving chunks that mention an entity so we can read
 them, we retrieve them so we can refuse to train on them.
 
-The output is a ``.npy`` array of ``chunk_id`` values.  Because ``chunk_id`` is
-the dataset instance index (see ``exclusion.py``), that file is all the trainer
-needs -- the tokenized dataset and its caches are never touched.
+``fetch_chunk_ids`` returns those ids as a numpy array and nothing is written to
+disk -- the trainer calls it once at ``pre_train`` and keeps the array in
+memory. Because ``chunk_id`` is the dataset instance index (see
+``exclusion.py``), that array is all the trainer needs; the tokenized dataset
+and its caches are never touched.
+
+The commands here are for inspection only.
 
 Usage
 -----
     # what does the corpus think "Harry Potter" is?
     python -m untaught.es_blacklist resolve --name "Harry Potter"
 
-    # build the hold-out list
-    python -m untaught.es_blacklist build \
-        --entities ../configs/entities/harry_potter.json \
-        --out ../blacklists/harry_potter.npy
-
-    # look at what you are about to remove
-    python -m untaught.es_blacklist build \
-        --entities ../configs/entities/harry_potter.json \
-        --out /tmp/hp.npy --preview 5
+    # how much would this blacklist remove, and what does it look like?
+    python -m untaught.es_blacklist count \
+        --blacklist blacklists/harry_potter.json --preview 5
 """
 
 from __future__ import annotations
@@ -79,6 +77,65 @@ def get_esclient(
         verify_certs=False,
         ssl_show_warn=False,
     )
+
+
+def load_blacklist(path: str) -> List[Dict[str, str]]:
+    """Read a blacklist file: a list of entities to hold out of the loss.
+
+        {"entities": [{"qid": "Q8337", "comment": "the franchise"}, ...]}
+
+    A bare ``"Q8337"`` in place of the object is accepted too. Returns the
+    normalised entity list; ``[e["qid"] for e in ...]`` gives the QIDs.
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        spec = json.load(f)
+
+    entities: List[Dict[str, str]] = []
+    for entry in spec.get("entities", []):
+        if isinstance(entry, str):
+            entities.append({"qid": entry, "comment": ""})
+        else:
+            entities.append({"qid": str(entry["qid"]), "comment": entry.get("comment", "")})
+
+    if not entities:
+        raise ValueError(f"[untaught] no 'entities' in blacklist file: {path}")
+    return entities
+
+
+def fetch_chunk_ids(
+    qids: Sequence[str],
+    es=None,
+    index: Optional[str] = None,
+    thresholds: Optional[Dict[str, float]] = None,
+    scroll_size: int = 5000,
+) -> np.ndarray:
+    """Every chunk id that mentions one of ``qids``, as a sorted unique array.
+
+    This is the whole blacklist: a few thousand int64s for a single entity, so
+    the trainer calls it at ``pre_train`` and keeps the result in memory rather
+    than staging a file. Needs Elasticsearch to be reachable from wherever the
+    caller runs -- on a cluster that means the compute node, not just the login
+    node.
+    """
+    from elasticsearch.helpers import scan
+
+    es = es if es is not None else get_esclient()
+    index = index or os.environ.get("ES_INDEX", DEFAULT_INDEX)
+    query = build_entity_query(qids, thresholds or DEFAULT_THRESHOLDS)
+
+    chunk_ids: List[int] = []
+    for hit in scan(
+        es,
+        index=index,
+        query={"query": query, "_source": ["chunk_id"]},
+        size=scroll_size,
+        preserve_order=False,
+    ):
+        cid = hit["_source"].get("chunk_id")
+        if cid is not None:
+            chunk_ids.append(int(cid))
+
+    return np.unique(np.asarray(chunk_ids, dtype=np.int64))
 
 
 def build_entity_query(qids: Sequence[str], thresholds: Dict[str, float]) -> Dict[str, Any]:
@@ -185,27 +242,18 @@ def cmd_resolve(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_build(args: argparse.Namespace) -> int:
-    from elasticsearch.helpers import scan
-
-    with open(args.entities, "r", encoding="utf-8") as f:
-        spec = json.load(f)
-
-    qids: List[str] = spec.get("qids", [])
-    if not qids:
-        print(f"No 'qids' in {args.entities}", file=sys.stderr)
-        return 1
-
-    thresholds = dict(DEFAULT_THRESHOLDS)
-    thresholds.update(spec.get("thresholds", {}))
+def cmd_count(args: argparse.Namespace) -> int:
+    """Report what a blacklist file would hold out, without training anything."""
+    entities = load_blacklist(args.blacklist)
+    qids = [e["qid"] for e in entities]
 
     es = get_esclient(args.es_scheme, args.es_host, args.es_port, args.es_password)
-    query = build_entity_query(qids, thresholds)
+    query = build_entity_query(qids, DEFAULT_THRESHOLDS)
 
-    label = spec.get("name", os.path.basename(args.entities))
-    print(f"[untaught] concept : {label}")
-    print(f"[untaught] qids    : {', '.join(qids)}")
-    print(f"[untaught] scores  : {thresholds}")
+    print(f"[untaught] file    : {args.blacklist}")
+    for entity in entities:
+        print(f"[untaught]   {entity['qid']:<12} {entity['comment']}")
+    print(f"[untaught] scores  : {DEFAULT_THRESHOLDS}")
     print(f"[untaught] index   : {args.es_index}")
 
     total = es.count(index=args.es_index, body={"query": query})["count"]
@@ -227,36 +275,7 @@ def cmd_build(args: argparse.Namespace) -> int:
     if args.preview:
         _preview(es, args.es_index, query, args.preview)
 
-    if args.count_only:
-        return 0
-
-    chunk_ids: List[int] = []
-    for hit in scan(
-        es,
-        index=args.es_index,
-        query={"query": query, "_source": ["chunk_id"]},
-        size=args.scroll_size,
-        preserve_order=False,
-    ):
-        cid = hit["_source"].get("chunk_id")
-        if cid is not None:
-            chunk_ids.append(int(cid))
-
-    ids = np.unique(np.asarray(chunk_ids, dtype=np.int64))
-    if ids.size != total:
-        # Not necessarily an error (duplicates, concurrent writes), but you want to know.
-        print(
-            f"[untaught] note: collected {ids.size:,} unique ids vs count() of {total:,}",
-            file=sys.stderr,
-        )
-
-    os.makedirs(os.path.dirname(os.path.abspath(args.out)) or ".", exist_ok=True)
-    np.save(args.out, ids)
-
-    print(f"[untaught] wrote   : {args.out}  ({ids.size:,} unique chunk ids)")
-    if ids.size:
-        print(f"[untaught] id range: {ids.min():,} .. {ids.max():,}")
-        print(f"[untaught] corpus  : {100.0 * ids.size / 10_500_000:.4f}% of ~10.5M chunks")
+    print("[untaught] training resolves these ids itself; nothing was written.")
     return 0
 
 
@@ -300,14 +319,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     _add_es_args(p_resolve)
     p_resolve.set_defaults(func=cmd_resolve)
 
-    p_build = sub.add_parser("build", help="write the chunk-id blacklist")
-    p_build.add_argument("--entities", required=True, help="entities JSON with a 'qids' list")
-    p_build.add_argument("--out", required=True, help="output .npy path")
-    p_build.add_argument("--preview", type=int, default=0, help="print N sample chunks")
-    p_build.add_argument("--count-only", action="store_true", help="report the count and stop")
-    p_build.add_argument("--scroll-size", type=int, default=5000)
-    _add_es_args(p_build)
-    p_build.set_defaults(func=cmd_build)
+    p_count = sub.add_parser("count", help="how many chunks a blacklist file holds out")
+    p_count.add_argument("--blacklist", required=True, help="blacklists/<name>.json")
+    p_count.add_argument("--preview", type=int, default=0, help="print N sample chunks")
+    _add_es_args(p_count)
+    p_count.set_defaults(func=cmd_count)
 
     args = parser.parse_args(argv)
     return args.func(args)

@@ -7,8 +7,9 @@
     "runs see the same chunks in the same order in the same batches -- the only",
     "difference is that blacklisted chunks contribute no gradient.",
     "",
-    "blacklist_path names the file that run_smoke_harry_potter.sh writes in its",
-    "step 1. Build it before submitting; training fails fast if it is missing."
+    "'blacklist' names a file of Wikidata QIDs, relative to Untaught/. The",
+    "chunk ids are resolved from Elasticsearch when training starts -- nothing",
+    "is precomputed and nothing is written to disk."
   ],
 
   "model": "olmo2_170M",
@@ -83,7 +84,7 @@
   },
 
   "untaught": {
-    "blacklist_path": "${UNTAUGHT_BLACKLIST_DIR}/harry_potter.npy",
+    "blacklist": "blacklists/harry_potter.json",
     "enabled": true,
     "disable_wandb": true,
     "disable_downstream_eval": true

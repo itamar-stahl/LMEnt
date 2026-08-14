@@ -94,7 +94,7 @@
   },
 
   "untaught": {
-    "blacklist_path": null,
+    "blacklist": null,
     "enabled": true,
     "disable_wandb": true,
     "disable_downstream_eval": true

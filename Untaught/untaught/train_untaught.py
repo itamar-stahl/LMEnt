@@ -12,7 +12,7 @@ Run it exactly like the upstream trainer, with a config path:
 Config schema is the upstream one plus an optional top-level "untaught" block:
 
     "untaught": {
-        "blacklist_path": "/path/to/harry_potter.npy",   // null => control run
+        "blacklist": "blacklists/harry_potter.json",     // null => control run
         "enabled": true,
         "disable_wandb": true,
         "disable_downstream_eval": true
@@ -33,10 +33,10 @@ log = logging.getLogger(__name__)
 # config_env is deliberately dependency-free, so it can come before the
 # OLMo-core bootstrap that everything else here needs.
 try:
-    from .config_env import load_config, load_env_sh
+    from .config_env import load_config, load_env_sh, resolve_path
 except ImportError:  # pragma: no cover
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from untaught.config_env import load_config, load_env_sh
+    from untaught.config_env import load_config, load_env_sh, resolve_path
 
 
 def _bootstrap_olmo_core() -> None:
@@ -84,14 +84,16 @@ def apply_untaught_config(
     """Attach the exclusion callback and apply the smoke-run conveniences."""
     untaught_cfg: Dict[str, Any] = config_dict.get("untaught", {}) or {}
 
-    blacklist_path = blacklist_override or untaught_cfg.get("blacklist_path")
+    # Paths in the config are relative to Untaught/, so a run works the same
+    # from any cwd without an environment variable standing in for the root.
+    blacklist_path = blacklist_override or untaught_cfg.get("blacklist")
     if blacklist_path:
-        blacklist_path = os.path.expandvars(os.path.expanduser(str(blacklist_path)))
+        blacklist_path = resolve_path(blacklist_path)
 
     config.trainer.with_callback(
         "untaught_exclusion",
         ChunkExclusionCallback(
-            blacklist_path=blacklist_path,
+            blacklist=blacklist_path,
             enabled=bool(untaught_cfg.get("enabled", True)),
             guard_all_masked=bool(untaught_cfg.get("guard_all_masked", True)),
             strict=bool(untaught_cfg.get("strict", True)),
@@ -179,8 +181,6 @@ def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
 
 
 def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str]) -> None:
-    import numpy as np
-
     tr = config_dict["trainer"]
     md = tr["max_duration"]
     print("\n" + "=" * 68)
@@ -197,10 +197,13 @@ def _summarize(config, config_dict: Dict[str, Any], blacklist_path: Optional[str
     print(f"  save folder      : {tr['save_folder']}")
     print(f"  seed             : {config_dict.get('init_seed')}")
     if blacklist_path:
-        ids = np.load(blacklist_path)
+        # Just the QIDs -- the chunk ids behind them are resolved from
+        # Elasticsearch at pre_train, and this runs before the trainer exists.
+        from .es_blacklist import load_blacklist
+
         print(f"  blacklist        : {blacklist_path}")
-        print(f"  chunks held out  : {len(np.unique(ids)):,}  "
-              f"({100.0 * len(np.unique(ids)) / 10_500_000:.4f}% of corpus)")
+        for entity in load_blacklist(blacklist_path):
+            print(f"    {entity['qid']:<12} {entity['comment']}")
     else:
         print("  blacklist        : (none) -- CONTROL run")
     print("=" * 68 + "\n")
@@ -212,13 +215,10 @@ def main(config_filepath: str, blacklist_override: Optional[str], check_only: bo
     config = build_config(config_dict)
     config, blacklist_path = apply_untaught_config(config, config_dict, blacklist_override)
 
-    # Fail fast on a bad blacklist -- before _summarize np.load()s it, and long
-    # before a SLURM job burns queue time to discover it.
+    # Fail fast on a missing blacklist, long before a SLURM job burns queue time
+    # to discover it (the Elasticsearch lookup itself happens at pre_train).
     if blacklist_path and not os.path.isfile(blacklist_path):
-        raise FileNotFoundError(
-            f"[untaught] blacklist file not found: {blacklist_path}\n"
-            "Build it first with:  python -m untaught.es_blacklist build ..."
-        )
+        raise FileNotFoundError(f"[untaught] blacklist file not found: {blacklist_path}")
 
     _summarize(config, config_dict, blacklist_path)
 
@@ -268,7 +268,7 @@ def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser.add_argument(
         "--blacklist",
         default=None,
-        help="override untaught.blacklist_path (empty string forces a control run)",
+        help="override untaught.blacklist (empty string forces a control run)",
     )
     parser.add_argument(
         "--check",

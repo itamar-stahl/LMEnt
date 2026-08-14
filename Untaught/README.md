@@ -61,14 +61,15 @@ what a controlled comparison needs.
 Untaught/
 ├── untaught/
 │   ├── exclusion.py         ChunkExclusionCallback — the ~15 lines that matter
-│   ├── es_blacklist.py      entity QIDs -> chunk-id .npy, via Elasticsearch
+│   ├── es_blacklist.py      entity QIDs -> chunk ids, via Elasticsearch
 │   ├── config_env.py        ${VAR} expansion for configs; sources env.sh on miss
 │   └── train_untaught.py    wraps examples/kas/train.py, attaches the callback
 ├── configs/
 │   ├── env.sh               paths, ES connection, conda env — nothing else
-│   ├── entities/harry_potter.json
 │   ├── train_170m_control.json
 │   └── train_170m_no_harry_potter.json
+├── blacklists/
+│   └── harry_potter.json    QIDs to hold out; named by the config above
 ├── tests/
 │   ├── test_exclusion.py    proves masked chunks leave the loss (upstream semantics)
 │   ├── test_untaught_units.py  unit tests: callback, ES query, config expansion
@@ -140,23 +141,36 @@ plumbing works before Elasticsearch is involved at all.
 ```sh
 ./run_smoke_harry_potter.sh --resolve   # which QIDs does the corpus use?
 ./run_smoke_harry_potter.sh --count     # how many chunks would go?
-./run_smoke_harry_potter.sh             # build blacklist + submit
+./run_smoke_harry_potter.sh             # submit
 ```
 
-Step 1 queries the index and writes `blacklists/harry_potter.npy`. Step 2 trains
-with those chunks masked.
+Which entities are held out is one file — `blacklists/harry_potter.json`, a list
+of QIDs with comments — and the training config names it:
+
+```json
+"untaught": { "blacklist": "blacklists/harry_potter.json" }
+```
+
+The path is relative to `Untaught/`. Nothing is precomputed: the trainer queries
+Elasticsearch at `pre_train`, keeps the chunk ids in memory and masks on the
+fly. To hold out something else, write another file in `blacklists/` and point a
+config at it.
+
+**This means the compute node needs to reach Elasticsearch.** If ES only listens
+on the login node's localhost, export `ES_HOST` to a name the node can resolve,
+or the job dies at `pre_train`.
 
 **Verify the QIDs before trusting a run.** `--resolve` reports which QIDs the
-corpus actually attaches to that name, with mention counts. The defaults in
-`configs/entities/harry_potter.json` are `Q8337` (the series) and `Q3244512`
-(the character); a franchise, its characters and its individual books are all
-separate Wikidata entities, so decide how wide your concept is.
+corpus actually attaches to that name, with mention counts; `--count` reports how
+many chunks the file would remove. The defaults are `Q8337` (the series) and
+`Q3244512` (the character); a franchise, its characters and its individual books
+are all separate Wikidata entities, so decide how wide your concept is.
 
 ### What to look for
 
 | Signal | Control | Ablated |
 |---|---|---|
-| `blacklist` line in the header | `(none) -- CONTROL run` | path + chunk count |
+| `blacklist` line in the header | `(none) -- CONTROL run` | path + the QIDs |
 | `train/untaught excluded instances` | absent | non-zero on some steps |
 | `train/masked instances` (OLMo-core's own) | absent | matches the above |
 | `train/untaught guard leaks` | absent | **must stay absent** (see caveats) |

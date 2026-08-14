@@ -29,6 +29,19 @@ def expand_env(obj: Any) -> Any:
     return obj
 
 
+def resolve_path(path: str) -> str:
+    """Absolute path for a config entry, taking relative ones from ``Untaught/``.
+
+    Lets a config say ``"blacklists/harry_potter.json"`` and mean the same file
+    whatever directory the job was launched from -- no environment variable
+    needed to name the project root.
+    """
+    expanded = os.path.expanduser(os.path.expandvars(str(path)))
+    if os.path.isabs(expanded):
+        return expanded
+    return os.path.normpath(os.path.join(UNTAUGHT_ROOT, expanded))
+
+
 def unresolved_vars(config_dict: Any) -> List[str]:
     """Return ``path = value`` strings for every config entry still holding a
     ``$VAR`` reference. ``os.path.expandvars`` leaves ``${FOO}`` untouched when

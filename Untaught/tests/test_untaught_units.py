@@ -89,7 +89,11 @@ from untaught.config_env import (  # noqa: E402
     load_config,
     load_env_sh,
 )
-from untaught.es_blacklist import DEFAULT_THRESHOLDS, build_entity_query  # noqa: E402
+from untaught.es_blacklist import (  # noqa: E402
+    DEFAULT_THRESHOLDS,
+    build_entity_query,
+    load_blacklist,
+)
 from untaught.exclusion import (  # noqa: E402
     EXCLUDED_METRIC,
     GUARD_LEAK_METRIC,
@@ -108,14 +112,13 @@ class FakeTrainer:
 
 def make_callback(blacklist_ids=None, **kwargs) -> tuple:
     """Build a callback wired to a FakeTrainer, mirroring the trainer's real
-    attach order: set trainer -> post_attach -> pre_train."""
-    path = None
-    if blacklist_ids is not None:
-        fd, path = tempfile.mkstemp(suffix=".npy")
-        os.close(fd)
-        np.save(path, np.asarray(blacklist_ids, dtype=np.int64))
+    attach order: set trainer -> post_attach -> pre_train.
 
-    cb = ChunkExclusionCallback(blacklist_path=path, **kwargs)
+    Chunk ids are passed directly so the tests never touch Elasticsearch; the
+    QID -> chunk-id lookup is covered by test_blacklist_file_and_lookup.
+    """
+    path = None  # kept so existing cleanup(path) calls stay valid
+    cb = ChunkExclusionCallback(chunk_ids=blacklist_ids, **kwargs)
     trainer = FakeTrainer()
     cb.trainer = trainer
     cb.post_attach()
@@ -222,7 +225,7 @@ def test_non_strict_warns_and_continues():
 
 
 def test_missing_blacklist_file_fails_at_pre_train():
-    cb = ChunkExclusionCallback(blacklist_path="/nonexistent/hp.npy")
+    cb = ChunkExclusionCallback(blacklist="/nonexistent/hp.json")
     cb.trainer = FakeTrainer()
     cb.post_attach()
     try:
@@ -230,6 +233,58 @@ def test_missing_blacklist_file_fails_at_pre_train():
         raise AssertionError("pre_train should have raised FileNotFoundError")
     except FileNotFoundError:
         print("  ok  missing blacklist file fails fast at pre_train")
+
+
+def test_blacklist_file_and_lookup():
+    """The QID file parses, and the ES lookup it drives is wired correctly."""
+    fd, path = tempfile.mkstemp(suffix=".json")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(
+            '{"entities": [{"qid": "Q8337", "comment": "franchise"}, "Q3244512"]}'
+        )
+    try:
+        entities = load_blacklist(path)
+        assert [e["qid"] for e in entities] == ["Q8337", "Q3244512"], entities
+        assert entities[0]["comment"] == "franchise"
+        assert entities[1]["comment"] == "", "a bare QID string gets an empty comment"
+        print("  ok  blacklist file parses objects and bare QID strings")
+
+        # A fake ES client: scan() is the only thing fetch_chunk_ids uses.
+        import untaught.es_blacklist as esb
+
+        captured = {}
+
+        def fake_scan(es, index, query, size, preserve_order):
+            captured["index"] = index
+            captured["qids"] = query["query"]["nested"]["query"]["nested"]["query"][
+                "bool"
+            ]["filter"][0]["terms"]["entities.candidates.qid"]
+            return [{"_source": {"chunk_id": c}} for c in (7, 3, 7, 11)]
+
+        helpers = types.ModuleType("elasticsearch.helpers")
+        helpers.scan = fake_scan
+        elasticsearch = types.ModuleType("elasticsearch")
+        elasticsearch.helpers = helpers
+        saved = {k: sys.modules.get(k) for k in ("elasticsearch", "elasticsearch.helpers")}
+        sys.modules["elasticsearch"] = elasticsearch
+        sys.modules["elasticsearch.helpers"] = helpers
+        os.environ["ES_INDEX"] = "lment_cs"
+        try:
+            ids = esb.fetch_chunk_ids([e["qid"] for e in entities], es=object())
+        finally:
+            for k, v in saved.items():
+                if v is None:
+                    sys.modules.pop(k, None)
+                else:
+                    sys.modules[k] = v
+
+        assert ids.tolist() == [3, 7, 11], f"sorted and deduped, got {ids.tolist()}"
+        assert ids.dtype == np.int64, ids.dtype
+        assert captured["qids"] == ["Q8337", "Q3244512"]
+        assert captured["index"] == "lment_cs"
+        print("  ok  fetch_chunk_ids queries the QIDs and returns unique sorted int64")
+    finally:
+        os.remove(path)
 
 
 def test_empty_blacklist_is_noop():
@@ -327,6 +382,7 @@ if __name__ == "__main__":
         test_strict_raises_on_missing_index,
         test_non_strict_warns_and_continues,
         test_missing_blacklist_file_fails_at_pre_train,
+        test_blacklist_file_and_lookup,
         test_empty_blacklist_is_noop,
         test_build_entity_query_structure,
         test_config_env,

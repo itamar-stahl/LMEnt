@@ -1,13 +1,15 @@
 #!/bin/sh
 # SMOKE RUN 2 of 2 -- ablated: a 170M model with "Harry Potter" held out.
 #
-#   ./run_smoke_harry_potter.sh              build blacklist + submit
-#   ./run_smoke_harry_potter.sh --check      build blacklist, validate, no GPU
-#   ./run_smoke_harry_potter.sh --resolve    just show the QIDs for the name
-#   ./run_smoke_harry_potter.sh --count      just report how many chunks match
+#   ./run_smoke_harry_potter.sh              submit to SLURM
+#   ./run_smoke_harry_potter.sh --check      validate the config locally, no GPU
+#   ./run_smoke_harry_potter.sh --resolve    which QIDs does the corpus use?
+#   ./run_smoke_harry_potter.sh --count      how many chunks would be held out?
 #
-# Step 1 (the Elasticsearch query) runs here on the login node. Step 2 submits
-# the training job, whose config already points at the blacklist step 1 writes.
+# Which entities are held out is in blacklists/harry_potter.json, named by the
+# config. The training job turns those QIDs into chunk ids itself, so this
+# script only submits -- but that means Elasticsearch has to be reachable from
+# the compute node, not just from here.
 
 set -eu
 
@@ -16,15 +18,13 @@ cd "$(dirname "$0")"
 . configs/env.sh
 
 CONFIG=configs/train_170m_no_harry_potter.json
-ENTITIES=configs/entities/harry_potter.json
-BLACKLIST="${UNTAUGHT_BLACKLIST_DIR}/harry_potter.npy"
+BLACKLIST=blacklists/harry_potter.json
 JOB_NAME=untaught-no-hp-170m
 
 echo "=============================================================="
 echo "  UNTAUGHT smoke 2/2 -- HOLD OUT 'Harry Potter'"
 echo "=============================================================="
 echo "  config    : ${CONFIG}"
-echo "  entities  : ${ENTITIES}"
 echo "  blacklist : ${BLACKLIST}"
 echo "  es index  : ${ES_INDEX} @ ${ES_HOST}:${ES_PORT}"
 echo
@@ -39,18 +39,9 @@ if [ "${1:-}" = "--resolve" ]; then
 fi
 
 if [ "${1:-}" = "--count" ]; then
-  exec python -m untaught.es_blacklist build \
-    --entities "${ENTITIES}" --out "${BLACKLIST}" --count-only --preview 5
+  exec python -m untaught.es_blacklist count --blacklist "${BLACKLIST}" --preview 5
 fi
 
-echo "--- step 1/2: querying the index -----------------------------"
-python -m untaught.es_blacklist build \
-  --entities "${ENTITIES}" \
-  --out "${BLACKLIST}" \
-  --preview 3
-echo
-
-echo "--- step 2/2: training ---------------------------------------"
 if [ "${1:-}" = "--check" ]; then
   exec python -m untaught.train_untaught "${CONFIG}" --check
 fi
