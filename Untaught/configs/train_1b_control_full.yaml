@@ -11,7 +11,7 @@ job:
   cpu_mem_mb: 128000
   cpus_per_task: 8
   gpus: 4
-  constraint: "a100"
+  constraint: "h100"
 
 train:
   model: "olmo2_1B"
@@ -25,7 +25,7 @@ train:
   optim_max_grad_norm: 1.0
 
   data_global_batch_size: 131072
-  data_rank_microbatch_size: 8192
+  data_rank_microbatch_size: 16384
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8

@@ -288,14 +288,15 @@ config edit could silently split them across card types.
 | | 170M pair | 1B pair |
 |---|---|---|
 | partition | `studentkillable` | `gpu-<research-group>` — **replace this** |
-| GPUs | 1 × `titan_xp` | 4 × `a100` on one node |
+| GPUs | 1 × `titan_xp` | 4 × `h100` on one node |
 | memory | 64 GB | 128 GB |
 | global batch | 32,768 tokens | 131,072 tokens |
-| rank microbatch | 2,048 | 8,192 |
+| rank microbatch | 2,048 | 16,384 |
 | steps per epoch | ~109K | ~27.5K |
 | peak lr / warmup | 5e-4 / 1000 | 4e-4 / 2000 |
-| `torch.compile` | off (capability 6.1) | **on** (8.0) |
+| `torch.compile` | off (capability 6.1) | **on** (9.0) |
 | bf16 | emulated | **native** |
+| one epoch | ~10 days | **~10–15 h** |
 
 The configs carry no comments by request; the reasoning is here instead.
 
@@ -310,12 +311,18 @@ cluster is documented to work (`srun` there is for interactive testing, and it
 cannot take a script with arguments). Four A100s on one node is also the faster
 arrangement — FSDP shards over NVLink instead of the network.
 
-**Why microbatch 8,192 and not 16,384.** An A100 comes in 40 GB and 80 GB, and
-`constraint: "a100"` does not distinguish them. 8,192 fits both, so the twins
-train identically whichever they land on; 16,384 would be faster on an 80 GB
-card but `adapt_to_gpu` would silently halve it on a 40 GB one, leaving the
-control and ablated halves with different accumulation. If you know every a100
-node has 80 GB, raise it in both configs.
+**Why microbatch 16,384.** Every H100 is 80 GB — unlike the A100, there is no
+40 GB variant to hedge against, so both twins get the same value whichever node
+they land on. At 16,384 tokens a rank holds roughly 5 GB of sharded model and
+optimizer state, ~21 GB of activations and ~10 GB of logits: about 36 GB of 80,
+with room for fragmentation. 131,072 ÷ 4 ranks ÷ 16,384 is exactly 2
+micro-batches per step. Doubling again would need ~67 GB and is not worth the
+risk.
+
+**Timing.** ~10–15 h for one epoch, so a run should finish inside a single
+1-day job. That is 2.9e19 FLOPs (6ND at 1.34B parameters and 3.6B tokens)
+against 4 H100s at 35–40% of peak bf16 — SXM at the fast end, PCIe at the slow
+one. Both twins run in parallel.
 
 **Checkpoints are much bigger here** — roughly 16 GB each (1.3B params plus
 AdamW moments in fp32) against ~2 GB for the 170M. At

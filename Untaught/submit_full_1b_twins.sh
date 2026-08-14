@@ -6,10 +6,11 @@
 # Two independent SLURM jobs, so they train in parallel. Everything else --
 # resources, hyperparameters, the ablation -- is in the two configs.
 #
-# These ask for 4 a100 nodes on a research-group partition, so unlike the 170M
-# pair they are not preemptible by design. Run this again to continue after the
-# 1-day limit: each new run folder resumes from the newest checkpoint left by
-# the previous run of the same job (job.resume_from_previous_run).
+# These ask for 4 h100 GPUs on one node of a research-group partition, so unlike
+# the 170M pair they are not preemptible by design. One epoch should fit inside
+# the 1-day limit; if it does not, run this again to continue -- each new run
+# folder resumes from the newest checkpoint left by the previous run of the same
+# job (job.resume_from_previous_run).
 
 set -eu
 
