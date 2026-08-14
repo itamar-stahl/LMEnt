@@ -85,6 +85,7 @@ runs/<job.name>_<date>_<time>/
 ├── run_wrapper.sh            what the GPU node executed (literal paths)
 ├── client.log                this submission's log
 ├── log.out / log.err         the job's output (appear when it starts)
+├── run_environment.json      the GPU it got — check the pair landed on one kind
 └── checkpoints/              parameters by step (step100, step200 for smoke)
 ```
 

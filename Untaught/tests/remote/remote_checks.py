@@ -15,6 +15,7 @@ Phases, cheapest first -- each assumes the previous one passed:
     identity   THE check: ES chunk_id == dataset instance index, empirically
     prepare    a real run folder builds, against the real index
     submitted  a submitted job's run folder is complete and its log is sane
+    resume     a resubmission continues the last run, on real checkpoints
 
 Everything prints a machine-greppable line so the shell driver can summarize:
 
@@ -403,6 +404,121 @@ def phase_prepare() -> None:
 
 
 # --------------------------------------------------------------------------- #
+# phase: resume -- a resubmission continues the last run's real checkpoint
+# --------------------------------------------------------------------------- #
+def phase_resume() -> None:
+    """Checkpoint recovery, against checkpoints a real job wrote.
+
+    This is the mechanism the full runs depend on: studentkillable caps a job
+    at 1 day and preempts it, so a 109K-step epoch is many submissions, and
+    every one of them is a NEW run folder that has to find the previous one's
+    checkpoint. The local suites cover the matching rules on synthetic folders;
+    only here are the checkpoints real.
+    """
+    import shutil
+
+    import yaml
+
+    from framework.client.prepare import prepare
+    from framework.node.config_env import load_config
+    from framework.node.run_folder import runs_dir
+    from framework.node.train_untaught import (
+        find_previous_checkpoint,
+        latest_checkpoint_dir,
+    )
+
+    found = {}
+
+    def a_previous_run_left_a_checkpoint():
+        """some run folder on this filesystem has actually saved a step"""
+        for candidate in sorted(glob.glob(os.path.join(runs_dir(), "*_*")),
+                                reverse=True):
+            if not os.path.isfile(os.path.join(candidate, "config.yaml")):
+                continue
+            checkpoints = latest_checkpoint_dir(candidate)
+            if checkpoints:
+                found["previous"] = candidate
+                found["checkpoint"] = checkpoints
+                return f"{os.path.basename(candidate)} -> {os.path.basename(checkpoints)}"
+        raise SkipCheck("no run folder has saved a checkpoint yet")
+
+    def a_new_run_of_the_same_job_finds_it():
+        """a fresh run folder, built from the same config, resumes from it"""
+        if "previous" not in found:
+            raise SkipCheck("nothing to resume from")
+        source_config = os.path.join(found["previous"], "config.yaml")
+        job_name = load_config(source_config)["job"]["name"]
+        probe = os.path.join(runs_dir(),
+                             f"{job_name}_{time.strftime('%Y%m%d_%H%M%S')}_resumecheck")
+        found["probe"] = probe
+        prepare(source_config, probe)           # exactly what a submission does
+
+        resumed = find_previous_checkpoint(probe, load_config(config_of(probe)))
+        if resumed is None:
+            raise AssertionError(f"a new {job_name} run did not find "
+                                 f"{found['checkpoint']}")
+        if os.path.normpath(resumed) != os.path.normpath(found["checkpoint"]):
+            raise AssertionError(f"resumed from {resumed}, expected "
+                                 f"{found['checkpoint']}")
+        return f"-> {os.path.relpath(resumed, runs_dir())}"
+
+    def the_trainer_announces_the_resume():
+        """--check on that folder reports the checkpoint it will load"""
+        line = resume_line(found.get("probe"))
+        if "(nothing found)" in line:
+            raise AssertionError(f"trainer reported no resume: {line!r}")
+        return line[-70:]
+
+    def a_changed_experiment_starts_clean():
+        """change one experiment-defining field: it must NOT resume"""
+        if "probe" not in found:
+            raise SkipCheck("no probe run folder")
+        config_file = config_of(found["probe"])
+        config = yaml.safe_load(open(config_file, encoding="utf-8"))
+        config["train"]["init_seed"] = int(config["train"]["init_seed"]) + 1
+        with open(config_file, "w", encoding="utf-8") as f:
+            yaml.safe_dump(config, f)
+
+        line = resume_line(found["probe"])
+        if "(nothing found)" not in line:
+            raise AssertionError("a different init_seed still resumed -- that "
+                                 f"silently continues another experiment: {line!r}")
+        return "different init_seed -> random init, as it must"
+
+    def config_of(run_dir):
+        return os.path.join(run_dir, "config.yaml")
+
+    def resume_line(run_dir):
+        if not run_dir:
+            raise SkipCheck("no probe run folder")
+        r = subprocess.run(
+            [sys.executable, os.path.join(UNTAUGHT_ROOT, "framework", "node",
+                                          "train_untaught.py"), run_dir, "--check"],
+            capture_output=True, text=True, cwd=UNTAUGHT_ROOT,
+        )
+        out = (r.stdout or "") + (r.stderr or "")
+        if r.returncode != 0:
+            raise AssertionError(out.strip()[-300:])
+        # The header line, not the "not resuming from <folder>: config differs"
+        # log line that also contains those words.
+        for line in out.splitlines():
+            if line.strip().startswith("resuming from"):
+                return line.strip()
+        raise AssertionError("--check printed no resume line")
+
+    for name, fn in (("previous_left_checkpoint", a_previous_run_left_a_checkpoint),
+                     ("new_run_finds_it", a_new_run_of_the_same_job_finds_it),
+                     ("trainer_announces_resume", the_trainer_announces_the_resume),
+                     ("changed_experiment_starts_clean", a_changed_experiment_starts_clean)):
+        run_check("resume", name, fn)
+
+    # The probe was never submitted. Remove it, so no later run can resume from
+    # a folder that never trained.
+    if "probe" in found:
+        shutil.rmtree(found["probe"], ignore_errors=True)
+
+
+# --------------------------------------------------------------------------- #
 # phase: submitted -- inspect a run folder produced by a real submission
 # --------------------------------------------------------------------------- #
 def phase_submitted(run_dir: str) -> None:
@@ -519,6 +635,8 @@ def main(argv) -> int:
         phase_identity(int(argv[2]) if len(argv) > 2 else 10)
     elif phase == "prepare":
         phase_prepare()
+    elif phase == "resume":
+        phase_resume()
     elif phase == "submitted":
         phase_submitted(argv[2])
     else:

@@ -946,5 +946,47 @@ def test_training_logs_go_to_stdout_not_stderr():
         root.handlers = saved
 
 
+@suite.test
+def test_run_environment_records_the_machine_that_trained():
+    """each run states the GPU and settings it actually got, for the comparison"""
+    _require_olmo()
+    import json
+    import tempfile
+
+    from framework.node.run_folder import RUN_ENVIRONMENT
+    from framework.node.train_untaught import write_run_environment
+
+    class FakeConfig:
+        class model:
+            compile = False
+            dp_config = type("dp", (), {"param_dtype": "bfloat16"})()
+
+        class trainer:
+            rank_microbatch_size = 4096
+
+        class data_loader:
+            global_batch_size = 32768
+
+    run_dir = tempfile.mkdtemp()
+    path = write_run_environment(run_dir, FakeConfig, resumed_from=None)
+    assert os.path.basename(path) == RUN_ENVIRONMENT, path
+
+    recorded = json.load(open(path, encoding="utf-8"))
+
+    # The confound this file exists to expose: adapt_to_gpu silently reacts to
+    # whatever card SLURM hands out, so control and ablated can differ. Anything
+    # it can change must be visible here.
+    for field in ("gpu", "compile", "rank_microbatch_size", "param_dtype",
+                  "global_batch_size", "torch", "host", "slurm_job_id",
+                  "resumed_from", "recorded"):
+        assert field in recorded, f"{field} is not recorded"
+
+    # The one thing adapt_to_gpu must never touch is still stated, so a reader
+    # can confirm the optimizer math was identical across the pair.
+    assert recorded["global_batch_size"] == 32768
+    assert recorded["rank_microbatch_size"] == 4096
+    assert recorded["resumed_from"] is None
+
+
 if __name__ == "__main__":
     sys.exit(suite.run())

@@ -105,7 +105,24 @@ def test_no_vestigial_files():
         "configs/train_170m_no_harry_potter.json",
     ]
     present = [p for p in forbidden if os.path.exists(os.path.join(UNTAUGHT_ROOT, p))]
-    assert not present, f"vestigial, should be removed: {present}"
+    if present:
+        # Say what is actually in there and how to remove it: a `git mv` moves
+        # only tracked files, so an untracked __pycache__ keeps the old
+        # directory alive on a machine that has run the pre-rename code.
+        details = []
+        for rel in present:
+            full = os.path.join(UNTAUGHT_ROOT, rel)
+            if os.path.isdir(full):
+                contents = sorted(os.listdir(full))[:6] or ["(empty)"]
+                details.append(f"{rel}/ contains {contents}")
+            else:
+                details.append(rel)
+        raise AssertionError(
+            "vestigial, should be removed: "
+            + ", ".join(details)
+            + " -- remove with:  rm -rf "
+            + " ".join(present)
+        )
 
 
 # --------------------------------------------------------------------------- #

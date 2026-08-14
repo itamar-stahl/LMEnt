@@ -142,6 +142,13 @@ echo
       fi
     done
 
+    # The jobs above have now written real checkpoints, so this is the moment
+    # to prove a resubmission picks them up -- what every multi-day run needs.
+    echo
+    echo "---- phase: resume -----------------------------------------------"
+    python tests/remote/remote_checks.py resume
+    echo "[PHASE_RC] resume $?"
+
     echo
     echo "---- squeue ------------------------------------------------------"
     squeue --me 2>&1 | head -20

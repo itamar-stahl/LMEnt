@@ -22,10 +22,12 @@ from __future__ import annotations
 
 import argparse
 import glob
+import json
 import logging
 import os
 import re
 import sys
+from datetime import datetime
 from typing import Any, Dict, Optional, Sequence, cast
 
 log = logging.getLogger(__name__)
@@ -103,6 +105,7 @@ try:
         artifact_path,
         checkpoints_path,
         config_path,
+        environment_path,
         resolve_run_dir,
         runs_dir,
     )
@@ -113,6 +116,7 @@ except ImportError:  # pragma: no cover
         artifact_path,
         checkpoints_path,
         config_path,
+        environment_path,
         resolve_run_dir,
         runs_dir,
     )
@@ -258,6 +262,54 @@ def find_previous_checkpoint(
         )
 
     return None
+
+
+def write_run_environment(run_dir: str, config, resumed_from: Optional[str]) -> str:
+    """Record the machine this run actually trained on.
+
+    adapt_to_gpu quietly adjusts to whatever card SLURM hands out -- eager
+    instead of compiled below capability 7.0, a smaller microbatch on a small
+    card, emulated bf16 on pre-Ampere. None of that changes the optimizer math,
+    but the control and ablated halves of a pair can land on *different* GPU
+    types, and comparing two runs is only sound if you can see that they did.
+    So each run states its own conditions, next to its config and its
+    checkpoints.
+    """
+    import platform
+
+    import torch
+
+    environment: Dict[str, Any] = {
+        "recorded": datetime.now().astimezone().isoformat(timespec="seconds"),
+        "host": platform.node(),
+        "slurm_job_id": os.environ.get("SLURM_JOB_ID"),
+        "python": platform.python_version(),
+        "torch": torch.__version__,
+        "gpu": None,
+        "compile": bool(getattr(config.model, "compile", False)),
+        "rank_microbatch_size": config.trainer.rank_microbatch_size,
+        "global_batch_size": config.data_loader.global_batch_size,
+        "param_dtype": str(getattr(config.model.dp_config, "param_dtype", None)),
+        "resumed_from": resumed_from,
+    }
+    if torch.cuda.is_available():
+        major, minor = torch.cuda.get_device_capability()
+        environment["gpu"] = {
+            "name": torch.cuda.get_device_name(),
+            "capability": f"{major}.{minor}",
+            "memory_gib": round(
+                torch.cuda.get_device_properties(0).total_memory / (1024 ** 3), 1
+            ),
+            "native_bf16": major >= 8,
+            "triton_compilable": major >= 7,
+        }
+
+    path = environment_path(run_dir)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(environment, f, indent=2)
+        f.write("\n")
+    log.info("[untaught] recorded run environment in %s", path)
+    return path
 
 
 def apply_untaught_config(config, config_dict: Dict[str, Any], run_dir: str):
@@ -458,6 +510,8 @@ def main(target: str, check_only: bool) -> None:
     if check_only:
         print("[untaught] --check passed: config builds and blacklist is readable.")
         return
+
+    write_run_environment(run_dir, config, resumed_from)
 
     print(config, flush=True)
 

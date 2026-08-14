@@ -9,6 +9,7 @@ everything that run used and produced:
     run_wrapper.sh            what the node executed
     client.log                the submission log
     log.out / log.err         the job's output
+    run_environment.json      the machine it actually trained on
     checkpoints/              saved parameters, by step
 
 The names live here, on the node side, because both halves need them and
@@ -31,6 +32,7 @@ JOB_SLURM = "job.slurm"
 RUN_WRAPPER = "run_wrapper.sh"
 CHECKPOINTS_DIR = "checkpoints"
 CLIENT_LOG = "client.log"
+RUN_ENVIRONMENT = "run_environment.json"
 
 # Untaught/framework/node/run_folder.py -> Untaught/
 UNTAUGHT_ROOT = os.path.dirname(
@@ -68,6 +70,11 @@ def artifact_path(run_dir: str) -> str:
 def checkpoints_path(run_dir: str) -> str:
     """Where the trainer saves parameters, by step."""
     return os.path.join(run_dir, CHECKPOINTS_DIR)
+
+
+def environment_path(run_dir: str) -> str:
+    """Where the node records what it actually ran on."""
+    return os.path.join(run_dir, RUN_ENVIRONMENT)
 
 
 def load_artifact(path: str) -> Dict[int, str]:

@@ -170,6 +170,7 @@ runs/untaught-no-hp-170m_20260814_153000/
 ├── run_wrapper.sh            what the GPU node executed
 ├── client.log                the submission-side log
 ├── log.out / log.err         the job's stdout / stderr
+├── run_environment.json      the GPU it actually got, and what that changed
 └── checkpoints/              saved parameters, by step
 ```
 
