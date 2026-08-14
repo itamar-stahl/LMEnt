@@ -74,12 +74,15 @@ Untaught/
 │       ├── exclusion.py     ChunkExclusionCallback — the ~15 lines that matter
 │       ├── run_folder.py    the run-folder contract: layout + artifact reading
 │       └── config_env.py    ${VAR} expansion for configs; reads env.sh on miss
-├── submit_full_twins.sh     submit the full training pair (both jobs)
+├── submit_full_170m_twins.sh  submit the 170M pair (both jobs)
+├── submit_full_1b_twins.sh    submit the 1B pair (both jobs)
 ├── configs/
 │   ├── train_170m_control.yaml       200-step smoke pair
 │   ├── train_170m_no_harry_potter.yaml
-│   ├── train_170m_control_full.yaml  one-epoch training pair
-│   └── train_170m_no_harry_potter_full.yaml
+│   ├── train_170m_control_full.yaml  170M one-epoch pair, studentkillable
+│   ├── train_170m_no_harry_potter_full.yaml
+│   ├── train_1b_control_full.yaml    1B one-epoch pair, 4x a100
+│   └── train_1b_no_harry_potter_full.yaml
 ├── blacklists/
 │   └── harry_potter.json    QIDs to hold out; named by the config above
 ├── runs/                    one self-contained folder per submission (see below)
@@ -144,10 +147,11 @@ snapshot, missing/renamed tokenized file).
 
 ## Submitting a run
 
-The full training pair, both jobs at once:
+A full training pair, both jobs at once:
 
 ```sh
-./submit_full_twins.sh
+./submit_full_170m_twins.sh     # 170M, 1 titan_xp each, studentkillable
+./submit_full_1b_twins.sh       # 1B, 4 a100 nodes each, research partition
 ```
 
 Or any single config:
@@ -196,7 +200,7 @@ folder.
 
 `studentkillable` caps a job at **1 day** and can preempt it at any time, while
 one epoch is ~109K steps — so a full run takes several submissions. Just run
-`./submit_full_twins.sh` again. Each submission gets a fresh run folder, and the trainer looks
+`./submit_full_170m_twins.sh` again. Each submission gets a fresh run folder, and the trainer looks
 one folder back: if the newest previous run of the same job left a checkpoint,
 it continues from it; otherwise it starts from a random init. The run header
 says which:
@@ -275,6 +279,48 @@ even that: same architecture, same kernels, same rounding. Every run also record
 what it actually got in `run_environment.json`, so the pair can be checked after
 the fact rather than assumed — worth doing, since a widened constraint or a
 config edit could silently split them across card types.
+
+### The 1B pair
+
+`configs/train_1b_*_full.yaml` is the same experiment at `olmo2_1B` (d_model
+2048, 18 layers, ~1.3B parameters) on a research-group partition:
+
+| | 170M pair | 1B pair |
+|---|---|---|
+| partition | `studentkillable` | `gpu-<research-group>` — **replace this** |
+| GPUs | 1 × `titan_xp` | 4 nodes × `a100`, `--gpus=4` |
+| memory | 64 GB | 128 GB |
+| global batch | 32,768 tokens | 131,072 tokens |
+| rank microbatch | 2,048 | 8,192 |
+| steps per epoch | ~109K | ~27.5K |
+| peak lr / warmup | 5e-4 / 1000 | 4e-4 / 2000 |
+| `torch.compile` | off (capability 6.1) | **on** (8.0) |
+| bf16 | emulated | **native** |
+
+The configs carry no comments by request; the reasoning is here instead.
+
+**`partition` is a placeholder.** `gpu-<research-group>` is not a real partition
+— `sbatch` will reject it until you put your group's name there, in both files.
+
+**Multi-node changes how the job launches.** `torchrun --standalone` starts a
+single-node group, so with `nodes: 4` the ranks on the other three nodes would
+never join. When `job.nodes > 1`, `prepare` emits an `srun` + `c10d` rendezvous
+instead, and that is the one place a generated file reads the environment:
+`SLURM_JOB_NODELIST` (to name the node hosting the rendezvous) and
+`SLURM_JOB_ID` (as its key) do not exist until SLURM makes the allocation.
+Single-node wrappers are unchanged and still fully literal.
+
+**Why microbatch 8,192 and not 16,384.** An A100 comes in 40 GB and 80 GB, and
+`constraint: "a100"` does not distinguish them. 8,192 fits both, so the twins
+train identically whichever they land on; 16,384 would be faster on an 80 GB
+card but `adapt_to_gpu` would silently halve it on a 40 GB one, leaving the
+control and ablated halves with different accumulation. If you know every a100
+node has 80 GB, raise it in both configs.
+
+**Checkpoints are much bigger here** — roughly 16 GB each (1.3B params plus
+AdamW moments in fp32) against ~2 GB for the 170M. At
+`checkpoint_save_interval: 5000` that is ~6 per run, ~100 GB per run, ~200 GB
+for the pair. Check your quota before submitting.
 
 ### Inspecting the ablation before submitting
 

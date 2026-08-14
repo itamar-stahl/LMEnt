@@ -1,6 +1,6 @@
 # FULL ABLATED RUN: 170M, one epoch, "Harry Potter" held out of the loss.
 # Twin of train_170m_control_full.yaml: identical but for job.name and untaught.
-# Submit both:  ./submit_full_twins.sh      (re-run it after a preemption to continue)
+# Submit both:  ./submit_full_170m_twins.sh      (re-run it after a preemption to continue)
 
 job:
   # identity and data

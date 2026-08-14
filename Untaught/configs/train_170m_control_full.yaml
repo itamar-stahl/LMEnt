@@ -1,6 +1,6 @@
 # FULL CONTROL RUN: 170M, one epoch, nothing held out.
 # Twin of train_170m_no_harry_potter_full.yaml: identical but for job.name and untaught.
-# Submit both:  ./submit_full_twins.sh      (re-run it after a preemption to continue)
+# Submit both:  ./submit_full_170m_twins.sh      (re-run it after a preemption to continue)
 
 job:
   # identity and data

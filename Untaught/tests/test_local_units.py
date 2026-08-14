@@ -947,6 +947,44 @@ def test_training_logs_go_to_stdout_not_stderr():
 
 
 @suite.test
+def test_multi_node_wrapper_uses_a_rendezvous_not_standalone():
+    """nodes > 1 needs srun + c10d rendezvous; --standalone is single-node only"""
+    import re
+
+    from framework.client.prepare import generate_run_wrapper
+
+    run_dir = "/runs/untaught-control-1b-full_20260101_000000"
+    multi = generate_run_wrapper({"name": "j", "gpus": 4, "nodes": 4}, run_dir)
+
+    assert "--standalone" not in multi, (
+        "--standalone starts a single-node group: ranks on the other 3 nodes "
+        "would never join"
+    )
+    assert "srun --ntasks=4 --ntasks-per-node=1 torchrun" in multi
+    assert "--nnodes=4" in multi
+    # --gpus is the job total, so 4 GPUs over 4 nodes is one process per node
+    assert "--nproc-per-node=1" in multi
+    assert "--rdzv-backend=c10d" in multi
+    assert '--rdzv-endpoint="$UNTAUGHT_HEAD_NODE:29500"' in multi
+    assert '--rdzv-id="$SLURM_JOB_ID"' in multi, "every job needs its own rendezvous key"
+    assert multi.rstrip().endswith(os.path.basename(run_dir)) is False  # echoes follow
+    assert f"train_untaught.py {os.path.basename(run_dir)}" in multi
+
+    # Exactly two runtime values, and only because SLURM assigns them at launch.
+    from_env = sorted(set(re.findall(r"\$([A-Z_]+)", multi)))
+    assert from_env == ["SLURM_JOB_ID", "SLURM_JOB_NODELIST", "UNTAUGHT_HEAD_NODE"], from_env
+
+    # 16 GPUs over 4 nodes is 4 per node.
+    dense = generate_run_wrapper({"name": "j", "gpus": 16, "nodes": 4}, run_dir)
+    assert "--nproc-per-node=4" in dense
+
+    # A single-node job is untouched: still literal, still --standalone.
+    single = generate_run_wrapper({"name": "j", "gpus": 1, "nodes": 1}, run_dir)
+    assert "torchrun --standalone --nproc-per-node=1" in single
+    assert "srun" not in single and "$SLURM" not in single
+
+
+@suite.test
 def test_gpu_constraint_reaches_sbatch_only_when_asked_for():
     """job.constraint becomes --constraint=; an empty one emits no directive"""
     import tempfile

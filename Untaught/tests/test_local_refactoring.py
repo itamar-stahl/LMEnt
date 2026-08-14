@@ -75,11 +75,14 @@ def test_every_expected_file_exists():
         "framework/node/run_folder.py",
         "framework/node/exclusion.py",
         "framework/node/train_untaught.py",
-        "submit_full_twins.sh",
+        "submit_full_170m_twins.sh",
+        "submit_full_1b_twins.sh",
         "configs/train_170m_control.yaml",
         "configs/train_170m_no_harry_potter.yaml",
         "configs/train_170m_control_full.yaml",
         "configs/train_170m_no_harry_potter_full.yaml",
+        "configs/train_1b_control_full.yaml",
+        "configs/train_1b_no_harry_potter_full.yaml",
         "blacklists/harry_potter.json",
     ]
     missing = [p for p in expected if not os.path.exists(os.path.join(UNTAUGHT_ROOT, p))]
@@ -371,21 +374,31 @@ def test_sub_builder_flow_is_complete():
 
 @suite.test
 def test_run_sh_submits_the_full_pair_once_activated():
-    """submit_full_twins.sh submits both full configs, activating the env exactly once"""
-    run_sh = read(UNTAUGHT_ROOT, "submit_full_twins.sh")
-    for config in ("configs/train_170m_control_full.yaml",
-                   "configs/train_170m_no_harry_potter_full.yaml"):
-        assert config in run_sh, f"submit_full_twins.sh does not submit {config}"
-    assert "sub_builder.sh" in run_sh, "run.sh must go through sub_builder.sh"
-    # Count sourcing, not prose: comments may well mention the file.
-    sourced = [
-        l for l in run_sh.splitlines()
-        if re.match(r"\s*(\.|source)\s", l) and "activate_env.sh" in l
-    ]
-    assert len(sourced) == 1, (
-        f"submit_full_twins.sh should source the environment exactly once, found {len(sourced)}: "
-        f"{sourced}"
-    )
+    """each submit script submits its own pair, activating the env exactly once"""
+    pairs = {
+        "submit_full_170m_twins.sh": ("configs/train_170m_control_full.yaml",
+                                      "configs/train_170m_no_harry_potter_full.yaml"),
+        "submit_full_1b_twins.sh": ("configs/train_1b_control_full.yaml",
+                                    "configs/train_1b_no_harry_potter_full.yaml"),
+    }
+    for script, configs in pairs.items():
+        run_sh = read(UNTAUGHT_ROOT, script)
+        for config in configs:
+            assert config in run_sh, f"{script} does not submit {config}"
+        # ... and only its own: submitting the wrong size is a costly mistake
+        for other in set(sum(pairs.values(), ())) - set(configs):
+            assert other not in run_sh, f"{script} also submits {other}"
+        assert "sub_builder.sh" in run_sh, f"{script} must go through sub_builder.sh"
+        # Count sourcing, not prose: comments may well mention the file.
+        sourced = [
+            l for l in run_sh.splitlines()
+            if re.match(r"\s*(\.|source)\s", l) and "activate_env.sh" in l
+        ]
+        assert len(sourced) == 1, (
+            f"{script} should source the environment exactly once, found "
+            f"{len(sourced)}: {sourced}"
+        )
+    run_sh = read(UNTAUGHT_ROOT, "submit_full_170m_twins.sh")
 
     # ... and the guard is what makes that safe, since sub_builder.sh sources
     # activate_env.sh again for each job.
@@ -433,7 +446,8 @@ def test_configs_and_code_agree_on_every_key():
         re.findall(r'job\["(\w+)"\]', mapper))
 
     for name in ("train_170m_control", "train_170m_no_harry_potter",
-                 "train_170m_control_full", "train_170m_no_harry_potter_full"):
+                 "train_170m_control_full", "train_170m_no_harry_potter_full",
+                 "train_1b_control_full", "train_1b_no_harry_potter_full"):
         cfg = load_config(os.path.join(CONFIGS, f"{name}.yaml"))
         defined = set(cfg["train"]) | set(cfg["job"])
 
@@ -459,7 +473,8 @@ def test_untaught_block_keys_are_all_honoured():
 
     all_code = "".join(read(p) for p in py_files())
     for name in ("train_170m_control", "train_170m_no_harry_potter",
-                 "train_170m_control_full", "train_170m_no_harry_potter_full"):
+                 "train_170m_control_full", "train_170m_no_harry_potter_full",
+                 "train_1b_control_full", "train_1b_no_harry_potter_full"):
         cfg = load_config(os.path.join(CONFIGS, f"{name}.yaml"))
         for key in cfg.get("untaught", {}):
             if key.startswith("threshold_"):
@@ -474,31 +489,40 @@ def test_configs_have_no_pseudo_comment_fields():
     from framework.node.config_env import load_config
 
     for name in ("train_170m_control", "train_170m_no_harry_potter",
-                 "train_170m_control_full", "train_170m_no_harry_potter_full"):
+                 "train_170m_control_full", "train_170m_no_harry_potter_full",
+                 "train_1b_control_full", "train_1b_no_harry_potter_full"):
         cfg = load_config(os.path.join(CONFIGS, f"{name}.yaml"))
         assert list(cfg) == ["job", "train", "untaught"], f"{name}: groups {list(cfg)}"
         for group_name, group in cfg.items():
             bad = [k for k in group if k.startswith("_")]
             assert not bad, f"{name}.{group_name} has pseudo-comment fields: {bad}"
-        # and the file really does carry '#' comments
-        assert "#" in read(CONFIGS, f"{name}.yaml")
+        # The 170M configs document themselves in '#' comments; the 1B pair is
+        # deliberately bare.
+        if name.startswith("train_170m"):
+            assert "#" in read(CONFIGS, f"{name}.yaml")
 
 
 @suite.test
 def test_the_pair_differs_only_where_intended():
-    """control and ablated configs differ only in job.name and untaught"""
+    """every control/ablated pair differs only in job.name and untaught"""
     from framework.node.config_env import load_config
 
-    ctl = load_config(os.path.join(CONFIGS, "train_170m_control.yaml"))
-    abl = load_config(os.path.join(CONFIGS, "train_170m_no_harry_potter.yaml"))
+    pairs = [
+        ("train_170m_control", "train_170m_no_harry_potter"),
+        ("train_170m_control_full", "train_170m_no_harry_potter_full"),
+        ("train_1b_control_full", "train_1b_no_harry_potter_full"),
+    ]
+    for control_name, ablated_name in pairs:
+        ctl = load_config(os.path.join(CONFIGS, f"{control_name}.yaml"))
+        abl = load_config(os.path.join(CONFIGS, f"{ablated_name}.yaml"))
 
-    assert ctl["train"] == abl["train"], "train blocks differ -- not a controlled pair"
-    ctl_job = {k: v for k, v in ctl["job"].items() if k != "name"}
-    abl_job = {k: v for k, v in abl["job"].items() if k != "name"}
-    assert ctl_job == abl_job, "job blocks differ beyond the name"
-    assert ctl["job"]["name"] != abl["job"]["name"], "both runs share a job name"
-    assert ctl["untaught"].get("blacklist") is None
-    assert abl["untaught"].get("blacklist")
+        assert ctl["train"] == abl["train"], f"{control_name}: train blocks differ"
+        ctl_job = {k: v for k, v in ctl["job"].items() if k != "name"}
+        abl_job = {k: v for k, v in abl["job"].items() if k != "name"}
+        assert ctl_job == abl_job, f"{control_name}: job blocks differ beyond the name"
+        assert ctl["job"]["name"] != abl["job"]["name"], "both runs share a job name"
+        assert ctl["untaught"].get("blacklist") is None
+        assert abl["untaught"].get("blacklist")
 
 
 # --------------------------------------------------------------------------- #
@@ -564,7 +588,7 @@ def test_shell_scripts_are_valid_posix_sh():
     """every shell script parses under /bin/sh"""
     scripts = [
         os.path.join(UNTAUGHT_ROOT, "activate_env.sh"),
-        os.path.join(UNTAUGHT_ROOT, "submit_full_twins.sh"),
+        os.path.join(UNTAUGHT_ROOT, "submit_full_170m_twins.sh"),
         os.path.join(FRAMEWORK, "env.sh"),
         os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
