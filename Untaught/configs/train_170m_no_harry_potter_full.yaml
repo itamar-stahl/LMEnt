@@ -3,12 +3,13 @@
 # Submit both:  ./submit_full_twins.sh      (re-run it after a preemption to continue)
 
 job:
+  # identity and data
   name: "untaught-no-hp-170m-full"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true    # continue the last run of this job if its config matches
 
-  # SLURM: https://www.cs.tau.ac.il/system/slurm
+  # SLURM resources: https://www.cs.tau.ac.il/system/slurm
   partition: "studentkillable"      # 1 day cap, preemptible
   max_time_minutes: 1440            # the partition maximum
   nodes: 1
@@ -19,23 +20,26 @@ job:
   constraint: "titan_xp"            # best card in this partition; "" = any (see README)
 
 train:
+  # model and duration
   model: "olmo2_170M"
   init_seed: 12536
   max_duration_value: 1             # one epoch = 3.6B tokens = ~109K steps = ~10 days
   max_duration_unit: "epochs"
 
-  # AdamW, cosine schedule with warmup (paper appendix B.4)
+  # optimizer: AdamW, cosine schedule with warmup (paper appendix B.4)
   optim_lr: 0.0005
   optim_weight_decay: 0.05
   optim_warmup_steps: 1000
   optim_max_grad_norm: 1.0
 
+  # batching, in tokens
   data_global_batch_size: 32768     # tokens per optimizer step
   data_rank_microbatch_size: 2048   # memory knob only; what fits the 12 GiB titan_xp
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8
 
+  # dataset construction and VSL curriculum
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
@@ -44,6 +48,7 @@ train:
   vsl_num_cycles: 8
   vsl_balanced: false
 
+  # checkpoints, metrics and evaluation
   checkpoint_save_interval: 10000            # permanent, all kept (~11 per epoch, ~2GB each)
   checkpoint_ephemeral_save_interval: 500    # newest only; what a resubmission resumes from
   checkpoint_save_async: true
@@ -55,12 +60,15 @@ train:
   eval_interval: 100000
 
 untaught:
+  # the ablation: which entities, from which index, at what confidence
   blacklist: "blacklists/harry_potter.json"  # QIDs; resolved against ES before submission
   case_sensitive: true              # true -> lment_cs index, false -> lment_ci
   threshold_hyperlinks: 1.0         # mention-confidence cutoffs (paper section 5.2, Table 4)
   threshold_entity_linking: 0.6
   threshold_coref: 0.6
   threshold_coref_cluster: 0.6
+
+  # framework behaviour
   enabled: true
   adapt_to_gpu: true                # drop compile / shrink microbatch if the card needs it
   disable_wandb: true

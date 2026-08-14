@@ -3,11 +3,12 @@
 # Submit:  . ./framework/client/sub_builder.sh configs/train_170m_control.yaml
 
 job:
+  # identity and data
   name: "untaught-control-170m"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
 
-  # SLURM: https://www.cs.tau.ac.il/system/slurm
+  # SLURM resources: https://www.cs.tau.ac.il/system/slurm
   partition: "studentkillable"      # 1 day cap, preemptible
   max_time_minutes: 180
   nodes: 1
@@ -18,23 +19,26 @@ job:
   constraint: ""                    # any free card: this is a plumbing check
 
 train:
+  # model and duration
   model: "olmo2_170M"
   init_seed: 12536
   max_duration_value: 200           # smoke only; a real epoch is ~109K steps
   max_duration_unit: "steps"
 
-  # AdamW, cosine schedule with warmup (paper appendix B.4)
+  # optimizer: AdamW, cosine schedule with warmup (paper appendix B.4)
   optim_lr: 0.0005
   optim_weight_decay: 0.05
   optim_warmup_steps: 1000
   optim_max_grad_norm: 1.0
 
+  # batching, in tokens
   data_global_batch_size: 32768     # tokens per optimizer step
   data_rank_microbatch_size: 8192   # memory knob only; adapt_to_gpu lowers it if needed
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8
 
+  # dataset construction and VSL curriculum
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
@@ -43,6 +47,7 @@ train:
   vsl_num_cycles: 8
   vsl_balanced: false
 
+  # checkpoints, metrics and evaluation
   checkpoint_save_interval: 100
   checkpoint_ephemeral_save_interval: 50
   checkpoint_save_async: true
@@ -54,7 +59,10 @@ train:
   eval_interval: 100000
 
 untaught:
+  # the ablation
   blacklist: null                   # nothing held out -- this is the control
+
+  # framework behaviour
   enabled: true
   adapt_to_gpu: true                # drop compile / shrink microbatch if the card needs it
   disable_wandb: true
