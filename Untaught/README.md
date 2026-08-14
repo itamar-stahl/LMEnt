@@ -73,8 +73,8 @@ Untaught/
 │       ├── artifact.py      reads the artifact into a {chunk_id: qid} dict
 │       └── config_env.py    ${VAR} expansion for configs; reads env.sh on miss
 ├── configs/
-│   ├── train_170m_control.json
-│   └── train_170m_no_harry_potter.json
+│   ├── train_170m_control.yaml       commented YAML, three flat groups
+│   └── train_170m_no_harry_potter.yaml
 ├── blacklists/
 │   └── harry_potter.json    QIDs to hold out; named by the config above
 ├── tests/
@@ -126,7 +126,7 @@ python tests/test_untaught_units.py
 # 3. THE decisive check — proves on this deployment that ES chunk_id
 #    equals the dataset instance index, by comparing decoded chunk text
 #    against the indexed text for random chunks (a few minutes; run once)
-python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
+python tests/verify_chunk_alignment.py --config configs/train_170m_control.yaml -n 25
 ```
 
 If step 3 fails, **do not train** — the blacklist would exclude the wrong
@@ -157,8 +157,9 @@ plumbing works before Elasticsearch is involved at all.
 Which entities are held out is one file — `blacklists/harry_potter.json`, a list
 of QIDs with comments — and the training config names it:
 
-```json
-"untaught": { "blacklist": "blacklists/harry_potter.json" }
+```yaml
+untaught:
+  blacklist: "blacklists/harry_potter.json"
 ```
 
 The path is relative to `Untaught/`. To hold out something else, write another

@@ -18,7 +18,7 @@ Takes a few minutes (dataset construction dominates). Run it once before any
 real training:
 
     cd $LMENT_ROOT/Untaught && . ./activate_env.sh
-    python tests/verify_chunk_alignment.py --config configs/train_170m_control.json -n 25
+    python tests/verify_chunk_alignment.py --config configs/train_170m_control.yaml -n 25
 
 (activate_env.sh gives you conda, the paths and a running Elasticsearch. If
 you skip it, an unresolved config still makes the script read framework/env.sh
@@ -81,7 +81,7 @@ def make_tokenizer():
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    parser.add_argument("--config", required=True, help="a training config JSON")
+    parser.add_argument("--config", required=True, help="a training run config (YAML)")
     parser.add_argument("-n", type=int, default=25, help="chunks to sample")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument(

@@ -4,7 +4,7 @@
 #   ./run_smoke_control.sh              submit to SLURM
 #   ./run_smoke_control.sh --check      validate the config locally, no GPU
 #
-# Hyperparameters are in configs/train_170m_control.json.
+# Hyperparameters are in configs/train_170m_control.yaml.
 # Paths and the conda env are in framework/env.sh.
 # The SLURM resources are right here, hard-coded.
 
@@ -14,7 +14,7 @@ set -eu
 # shellcheck disable=SC1091
 . "$(dirname "$0")/activate_env.sh"
 
-CONFIG=configs/train_170m_control.json
+CONFIG=configs/train_170m_control.yaml
 JOB_NAME=untaught-control-170m
 
 echo "=============================================================="

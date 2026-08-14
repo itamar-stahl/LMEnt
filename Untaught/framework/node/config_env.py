@@ -4,7 +4,6 @@ these run on the login node, inside SLURM jobs, and in local unit tests.
 
 from __future__ import annotations
 
-import json
 import os
 import subprocess
 import sys
@@ -17,42 +16,26 @@ UNTAUGHT_ROOT = os.path.dirname(
 ENV_SH = os.path.join(UNTAUGHT_ROOT, "framework", "env.sh")
 
 
-def strip_json_comments(text: str) -> str:
-    """Drop ``//`` line comments so the configs can be commented like code.
+def read_config_file(path: str) -> Dict[str, Any]:
+    """Parse a run config. YAML, so the file can carry real ``#`` comments.
 
-    Strings are respected, so a ``"https://..."`` value survives. Replacing the
-    comment with spaces rather than deleting it keeps json's error line/column
-    numbers pointing at the real file.
+    YAML is a superset of JSON, so a ``.json`` config still parses -- handy
+    while both formats are around.
     """
-    out = []
-    in_string = False
-    escaped = False
-    i = 0
-    while i < len(text):
-        ch = text[i]
-        if in_string:
-            out.append(ch)
-            if escaped:
-                escaped = False
-            elif ch == "\\":
-                escaped = True
-            elif ch == '"':
-                in_string = False
-            i += 1
-            continue
-        if ch == '"':
-            in_string = True
-            out.append(ch)
-            i += 1
-            continue
-        if ch == "/" and text[i + 1 : i + 2] == "/":
-            while i < len(text) and text[i] != "\n":
-                out.append(" ")
-                i += 1
-            continue
-        out.append(ch)
-        i += 1
-    return "".join(out)
+    try:
+        import yaml
+    except ImportError as e:  # pragma: no cover - PyYAML ships with transformers
+        raise RuntimeError(
+            "[untaught] PyYAML is required to read run configs. "
+            "It is part of the lment env: `. ./activate_env.sh` first."
+        ) from e
+
+    with open(path, "r", encoding="utf-8") as f:
+        config = yaml.safe_load(f)
+
+    if not isinstance(config, dict):
+        raise ValueError(f"[untaught] {path} did not parse to a mapping")
+    return config
 
 
 def to_upstream(config: Dict[str, Any]) -> Dict[str, Any]:
@@ -265,15 +248,14 @@ def load_env_sh(path: Optional[str] = None, verbose: bool = True) -> List[str]:
 
 
 def load_config(config_path: str) -> Any:
-    """Read a training config JSON, expand ``$VAR``/``~``, and validate.
+    """Read a run config, expand ``$VAR``/``~`` in it, and validate.
 
     The one entry point every script should use: it retries once through
     ``load_env_sh`` when something is unresolved, so forgetting to source the
     environment is no longer a failure mode. The shell-out only happens on that
     retry -- an already-sourced environment costs nothing.
     """
-    with open(config_path, "r", encoding="utf-8") as f:
-        raw = json.loads(strip_json_comments(f.read()))
+    raw = read_config_file(config_path)
 
     config_dict = expand_env(raw)
     if unresolved_vars(config_dict) and load_env_sh():

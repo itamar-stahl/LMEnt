@@ -1,0 +1,87 @@
+# SMOKE ABLATED RUN: 170M, "Harry Potter" held out of the loss.
+#
+# Identical to train_170m_control.yaml in every field except job.save_folder and
+# the untaught block. Same init_seed and same data_seed, so both runs see the
+# same chunks in the same order in the same batches -- the only difference is
+# that blacklisted chunks contribute no gradient.
+#
+# Run this first, on the login node, to resolve the QIDs into chunk ids:
+#   python -m framework.client.prepare --config configs/train_170m_no_harry_potter.yaml
+
+# Where this run reads and writes. Paths only.
+job:
+  dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
+  dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  save_folder: "${UNTAUGHT_RUNS_DIR}/no_harry_potter_170m"
+
+# Everything the model and the optimizer see. Identical to the control.
+train:
+  model: "olmo2_170M"
+  init_seed: 12536
+
+  # 200 steps is a smoke test; a real 1-epoch run is ~109K steps
+  # (3.6B tokens / 32,768 tokens per step).
+  max_duration_value: 200
+  max_duration_unit: "steps"
+
+  # optimizer: AdamW, cosine schedule with warmup
+  optim_lr: 0.0005
+  optim_weight_decay: 0.05
+  optim_warmup_steps: 1000
+  optim_max_grad_norm: 1.0
+
+  # batching, in tokens. rank_microbatch is a memory knob only -- gradient
+  # accumulation holds the global batch fixed, so untaught.adapt_to_gpu may
+  # lower it to fit a small card without changing the optimizer math.
+  data_global_batch_size: 32768
+  data_rank_microbatch_size: 8192
+  data_seed: 0
+  data_num_workers: 4
+  data_prefetch_factor: 8
+
+  # dataset construction. include_instance_metadata is false on purpose: chunk
+  # exclusion keys off batch["index"], never off the per-chunk entity metadata,
+  # so training never touches the 212GB dataset-metadata tree.
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: false
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+
+  # checkpoints and logging
+  checkpoint_save_interval: 100
+  checkpoint_ephemeral_save_interval: 50
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 1
+  cancel_check_interval: 5
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+
+# The ablation: hold "Harry Potter" out of the loss.
+untaught:
+  # A file of Wikidata QIDs, relative to Untaught/.
+  blacklist: "blacklists/harry_potter.json"
+
+  # Which index to retrieve from: true -> lment_cs (restored from
+  # enwiki_case_sensitive), false -> lment_ci (from enwiki). QID retrieval is
+  # case-agnostic, so true is the right default.
+  case_sensitive: true
+
+  # Per-source mention-confidence cutoffs; a mention counts if it clears at
+  # least one. These are the values the paper validated on a 60-entity dev set
+  # (section 5.2, Table 4). Lower them for higher recall and more collateral
+  # chunks; raise them to exclude only high-confidence mentions. Omit one and it
+  # keeps its default; an unknown threshold_* name is a hard error.
+  threshold_hyperlinks: 1.0
+  threshold_entity_linking: 0.6
+  threshold_coref: 0.6
+  threshold_coref_cluster: 0.6
+
+  enabled: true
+  adapt_to_gpu: true
+  disable_wandb: true
+  disable_downstream_eval: true

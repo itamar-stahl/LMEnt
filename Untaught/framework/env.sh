@@ -9,7 +9,7 @@
 #
 # Everything is an override-able default: `export FOO=...` before sourcing and
 # that value wins. Only per-deployment facts belong here -- SLURM resources live
-# in the run scripts, hyperparameters in configs/*.json.
+# in the run scripts, hyperparameters in configs/*.yaml.
 
 # --- where things live --------------------------------------------------------
 : "${STAHLI_ROOT:=/home/morg/NLP_2526b/stahli}"

@@ -20,7 +20,7 @@ Usage
 
     # how much would this run remove, and what does it look like?
     python -m framework.client.es_blacklist count \
-        --config configs/train_170m_no_harry_potter.json --preview 5
+        --config configs/train_170m_no_harry_potter.yaml --preview 5
 """
 
 from __future__ import annotations
@@ -440,7 +440,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_resolve.set_defaults(func=cmd_resolve)
 
     p_count = sub.add_parser("count", help="how many chunks a training config holds out")
-    p_count.add_argument("--config", required=True, help="a training config JSON")
+    p_count.add_argument("--config", required=True, help="a training run config (YAML)")
     p_count.add_argument("--preview", type=int, default=0, help="print N sample chunks")
     _add_es_args(p_count)
     p_count.set_defaults(func=cmd_count)

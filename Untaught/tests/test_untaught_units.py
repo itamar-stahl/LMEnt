@@ -89,7 +89,7 @@ from framework.node.config_env import (  # noqa: E402
     expand_env,
     load_config,
     load_env_sh,
-    strip_json_comments,
+    read_config_file,
     to_upstream,
 )
 from framework.client.es_blacklist import (  # noqa: E402
@@ -481,39 +481,62 @@ def test_load_config_sources_env_sh():
 
 
 def test_config_comments_and_schema():
-    """Configs are commented JSON in three flat groups; upstream gets nested."""
-    text = '''{
-      // a comment
-      "job": {"dataset_paths": "a//b", "dataset_cache": "c", "save_folder": "d"},
-      "train": {"model": "olmo2_170M", "init_seed": 1,
-                "max_duration_value": 200, "max_duration_unit": "steps",
-                "optim_lr": 0.0005, "optim_weight_decay": 0.05,
-                "optim_warmup_steps": 1000, "optim_max_grad_norm": 1.0,
-                "data_global_batch_size": 32768, "data_rank_microbatch_size": 8192,
-                "data_seed": 0, "data_num_workers": 4, "data_prefetch_factor": 8,
-                "dataset_name": "kas_vsl", "dataset_max_sequence_length": 2048,
-                "dataset_min_sequence_length": 64,
-                "dataset_include_instance_metadata": false,
-                "vsl_curriculum": "grow_p2", "vsl_num_cycles": 8, "vsl_balanced": false,
-                "checkpoint_save_interval": 100, "checkpoint_ephemeral_save_interval": 50,
-                "checkpoint_save_async": true, "checkpoint_save_overwrite": true,
-                "metrics_collect_interval": 1, "cancel_check_interval": 5,
-                "wandb_cancel_check_interval": 10,
-                "eval_tasks": ["arc_easy"], "eval_interval": 100000},
-      "untaught": {"blacklist": null}   // trailing comment
-    }
-    // notes after the object
-    '''
-    cfg = json.loads(strip_json_comments(text))
+    """Configs are commented YAML in three flat groups; upstream gets nested."""
+    text = """
+# a comment
+job:
+  dataset_paths: "a#b"          # a '#' inside a quoted string is not a comment
+  dataset_cache: "c"
+  save_folder: "d"
+train:
+  model: "olmo2_170M"
+  init_seed: 1
+  max_duration_value: 200
+  max_duration_unit: "steps"
+  optim_lr: 0.0005
+  optim_weight_decay: 0.05
+  optim_warmup_steps: 1000
+  optim_max_grad_norm: 1.0
+  data_global_batch_size: 32768
+  data_rank_microbatch_size: 8192
+  data_seed: 0
+  data_num_workers: 4
+  data_prefetch_factor: 8
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: false
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+  checkpoint_save_interval: 100
+  checkpoint_ephemeral_save_interval: 50
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 1
+  cancel_check_interval: 5
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+untaught:
+  blacklist: null
+"""
+    path = write_json(text, suffix=".yaml")
+    try:
+        cfg = read_config_file(path)
+    finally:
+        os.remove(path)
     assert list(cfg) == ["job", "train", "untaught"], "exactly three groups"
-    assert cfg["job"]["dataset_paths"] == "a//b", "a // inside a string must survive"
-    print("  ok  // comments stripped, strings left alone")
+    assert cfg["job"]["dataset_paths"] == "a#b", "a # inside a string must survive"
+    assert cfg["train"]["dataset_include_instance_metadata"] is False, "real bool"
+    assert cfg["untaught"]["blacklist"] is None, "null -> None"
+    print("  ok  YAML config parses, comments and quoted '#' handled")
 
     up = to_upstream(cfg)
     assert up["dataset"]["vsl_curriculum"] == {
         "name": "grow_p2", "num_cycles": 8, "balanced": False
     }
-    assert up["dataset"]["paths"] == ["a//b"], "a lone path becomes a one-item list"
+    assert up["dataset"]["paths"] == ["a#b"], "a lone path becomes a one-item list"
     assert up["dataset"]["work_dir"] == "c"
     assert up["trainer"]["save_folder"] == "d"
     assert up["trainer"]["rank_microbatch_size"] == 8192
@@ -531,15 +554,18 @@ def test_config_comments_and_schema():
 
 def test_shipped_configs_are_valid():
     """The real configs parse, translate, and stay identical where it matters."""
-    control = load_config("configs/train_170m_control.json")
-    ablated = load_config("configs/train_170m_no_harry_potter.json")
+    control = load_config("configs/train_170m_control.yaml")
+    ablated = load_config("configs/train_170m_no_harry_potter.yaml")
 
     for name, cfg in (("control", control), ("ablated", ablated)):
         assert list(cfg) == ["job", "train", "untaught"], f"{name}: {list(cfg)}"
         to_upstream(cfg)  # must not raise: every key present
         assert not [k for k in cfg if k.startswith("_")], f"{name} has _comment fields"
         for group in cfg.values():
-            assert not [k for k in group if k.startswith("_")], f"{name} has _comment fields"
+            if isinstance(group, dict):
+                assert not [k for k in group if k.startswith("_")], (
+                    f"{name} has _comment fields"
+                )
 
     assert control["train"] == ablated["train"], (
         "the two runs must differ only in save_folder and the untaught block"

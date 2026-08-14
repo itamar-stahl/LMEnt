@@ -7,10 +7,10 @@ callback that masks blacklisted chunks.
 
 Run it exactly like the upstream trainer, with a config path:
 
-    torchrun --nproc-per-node=1 -m framework.node.train_untaught config.json
+    torchrun --nproc-per-node=1 -m framework.node.train_untaught config.yaml
 
 Config schema is three flat groups -- "job" (paths), "train" (hyperparameters)
-and "untaught" (the ablation); see configs/*.json. ``config_env.to_upstream``
+and "untaught" (the ablation); see configs/*.yaml. ``config_env.to_upstream``
 maps the first two onto the nested dict ``build_config`` expects.
 """
 
@@ -267,7 +267,7 @@ def main(
 
 def _parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(prog="framework.node.train_untaught")
-    parser.add_argument("config", help="path to the training config JSON")
+    parser.add_argument("config", help="path to the training run config (YAML)")
     parser.add_argument(
         "--blacklist",
         default=None,

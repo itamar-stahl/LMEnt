@@ -17,7 +17,7 @@ set -eu
 # shellcheck disable=SC1091
 . "$(dirname "$0")/activate_env.sh"
 
-CONFIG=configs/train_170m_no_harry_potter.json
+CONFIG=configs/train_170m_no_harry_potter.yaml
 BLACKLIST=blacklists/harry_potter.json
 JOB_NAME=untaught-no-hp-170m
 
