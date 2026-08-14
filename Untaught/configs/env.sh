@@ -32,14 +32,23 @@
 : "${ES_HOST:=localhost}"
 : "${ES_PORT:=9200}"
 : "${ES_INDEX:=lment_cs}"
-# Never hard-code the password here -- this file is tracked by git.
-# Export ES_PASSWORD in your shell before running the ablated experiment.
-: "${ES_PASSWORD:='LR+0v909l6uLwmBTx2qT'}"
+# Cluster-internal deployment, so the password lives here rather than in every
+# shell. ELASTIC_PASSWORD is the name the server uses, ES_PASSWORD the one our
+# code reads; keep them the same.
+: "${ELASTIC_PASSWORD:=LR+0v909l6uLwmBTx2qT}"
+: "${ES_PASSWORD:=${ELASTIC_PASSWORD}}"
 # The server itself, for the health check at the bottom of this file.
 : "${ES_HOME:=${STAHLI_ROOT}/elasticsearch-8.13.4}"
 
-# --- python -------------------------------------------------------------------
+# --- python / conda -----------------------------------------------------------
+# Anaconda is on NetApp, so the compute nodes mount the same install as the
+# login node -- no per-node setup, and the job gets the identical interpreter.
+# These four mirror ~/.bashrc so a job behaves the same as your shell.
+: "${ANACONDA_ROOT:=${STAHLI_ROOT}/anaconda3}"
 : "${CONDA_ENV:=lment}"
+: "${CONDA_ENVS_PATH:=${ANACONDA_ROOT}/envs}"
+: "${CONDA_PKGS_DIRS:=${ANACONDA_ROOT}/pkgs}"
+: "${CONDARC:=${STAHLI_ROOT}/.condarc}"
 
 # untaught/ for our package, OLMo-core/src for examples.kas.train
 PYTHONPATH="${UNTAUGHT_ROOT}:${OLMO_CORE_SRC}:${PYTHONPATH:-}"
@@ -49,21 +58,43 @@ PYTHONPATH="${UNTAUGHT_ROOT}:${OLMO_CORE_SRC}:${PYTHONPATH:-}"
 
 export STAHLI_ROOT LMENT_ROOT LMENT_DATASET LMENT_INDEX UNTAUGHT_ROOT
 export OLMO_CORE_SRC UNTAUGHT_BLACKLIST_DIR UNTAUGHT_RUNS_DIR
-export ES_SCHEME ES_HOST ES_PORT ES_INDEX ES_PASSWORD ES_HOME
-export CONDA_ENV WANDB_MODE PYTHONPATH
+export ES_SCHEME ES_HOST ES_PORT ES_INDEX ES_HOME
+export ELASTIC_PASSWORD ES_PASSWORD
+export ANACONDA_ROOT CONDA_ENV CONDA_ENVS_PATH CONDA_PKGS_DIRS CONDARC
+export WANDB_MODE PYTHONPATH
 
 mkdir -p "${UNTAUGHT_BLACKLIST_DIR}" "${UNTAUGHT_RUNS_DIR}"
 
-# Activate the conda env, unless it is already the active one. This is what lets
-# the sbatch --wrap command be a single line: the job sources this file and is
-# ready to run python. conda's own scripts reference unbound variables, so `set
-# -u` has to come off around the activation.
-if [ "${CONDA_DEFAULT_ENV:-}" != "${CONDA_ENV}" ] && command -v conda >/dev/null 2>&1; then
+# Activate the conda env, unless it is already the active one -- on the login
+# node you are typically already in it, on a compute node never. This is what
+# lets the sbatch --wrap command be a single line: the job sources this file and
+# is ready to run python.
+#
+# ~/.bashrc is NOT read by a batch job's shell, so none of its conda setup
+# exists there; that is why this file repeats it instead of assuming it.
+# .bashrc's `conda shell.bash hook` branch is deliberately skipped: this file is
+# sourced by /bin/sh, and conda.sh is the POSIX entry point conda ships for it.
+if [ "${CONDA_DEFAULT_ENV:-}" != "${CONDA_ENV}" ]; then
+  # conda's own scripts read unbound variables ($PS1, $_CE_M, ...), which is
+  # fatal under `set -u`. Turn it off, and back on only if it was on.
+  case $- in *u*) untaught_had_u=1 ;; *) untaught_had_u=0 ;; esac
   set +u
-  # shellcheck disable=SC1091
-  . "$(conda info --base)/etc/profile.d/conda.sh"
-  conda activate "${CONDA_ENV}"
-  set -u
+
+  if [ -f "${ANACONDA_ROOT}/etc/profile.d/conda.sh" ]; then
+    # shellcheck disable=SC1091
+    . "${ANACONDA_ROOT}/etc/profile.d/conda.sh"
+    conda activate "${CONDA_ENV}"
+  else
+    # No conda.sh: fall back to putting the env's bin first, like ~/.bashrc's
+    # last resort. Enough to run python, not enough for `conda` subcommands.
+    echo "[untaught] ${ANACONDA_ROOT}/etc/profile.d/conda.sh missing;" \
+         "falling back to PATH" >&2
+    PATH="${CONDA_ENVS_PATH}/${CONDA_ENV}/bin:${PATH}"
+    export PATH
+  fi
+
+  [ "${untaught_had_u}" = 1 ] && set -u
+  unset untaught_had_u
 fi
 
 # --- Elasticsearch: is it up? start it if not ---------------------------------
