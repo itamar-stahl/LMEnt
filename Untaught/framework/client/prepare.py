@@ -150,7 +150,7 @@ def prepare(config_path: str, run_dir: str) -> Dict[str, str]:
     slurm_path = os.path.join(run_dir, JOB_SLURM)
     with open(slurm_path, "w", encoding="utf-8", newline="\n") as f:
         f.write(generate_job_slurm(job, run_dir, getpass.getuser()))
-    written["job.slurm"] = slurm_path
+    written["job_slurm"] = slurm_path
     print(f"[prepare] job.slurm   : {slurm_path}")
 
     # 4. The node-side wrapper, executable.

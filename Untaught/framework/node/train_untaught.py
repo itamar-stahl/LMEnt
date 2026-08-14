@@ -28,13 +28,18 @@ from typing import Any, Dict, Optional, Sequence, cast
 
 log = logging.getLogger(__name__)
 
-# `untaught` may not be importable as a package when launched via a file path.
-# config_env is deliberately dependency-free, so it can come before the
-# OLMo-core bootstrap that everything else here needs.
+# Launched via a file path (run_wrapper.sh does), relative imports fail and
+# `framework` must be found on sys.path. config_env is deliberately free of
+# heavy dependencies, so it can come before the OLMo-core bootstrap that
+# everything else here needs.
 try:
     from .config_env import load_config, load_env_sh, resolve_path, to_upstream
 except ImportError:  # pragma: no cover
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    # Untaught/framework/node/train_untaught.py -> Untaught/ (framework's parent)
+    sys.path.insert(
+        0,
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    )
     from framework.node.config_env import (
         load_config,
         load_env_sh,
@@ -44,27 +49,38 @@ except ImportError:  # pragma: no cover
 
 
 def _bootstrap_olmo_core() -> None:
-    """Put ``OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports."""
-    src = os.environ.get("OLMO_CORE_SRC")
-    if not src:
+    """Put ``OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports.
+
+    Tries the environment first, then this checkout's own sibling directory, and
+    takes the first that actually exists -- an ``OLMO_CORE_SRC`` pointing at
+    another machine's layout must not stop a working local checkout from
+    importing.
+    """
+    if not os.environ.get("OLMO_CORE_SRC"):
         # Nothing sourced the environment (a bare `python -m framework.node...`)? Do it here.
         load_env_sh()
-        src = os.environ.get("OLMO_CORE_SRC")
-    if not src:
-        # Untaught/framework/node/train_untaught.py -> repo root -> OLMo-core/src
-        repo_root = os.path.abspath(
-            os.path.join(os.path.dirname(__file__), "..", "..", "..")
-        )
-        src = os.path.join(repo_root, "OLMo-core", "src")
 
-    src = os.path.abspath(src)
-    if not os.path.isdir(src):
-        raise RuntimeError(
-            f"Could not find OLMo-core sources at '{src}'. "
-            "Set OLMO_CORE_SRC to <LMEnt>/OLMo-core/src."
-        )
-    if src not in sys.path:
-        sys.path.insert(0, src)
+    # Untaught/framework/node/train_untaught.py -> repo root -> OLMo-core/src
+    repo_root = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "..", "..")
+    )
+    candidates = [
+        os.environ.get("OLMO_CORE_SRC"),
+        os.path.join(repo_root, "OLMo-core", "src"),
+    ]
+
+    for candidate in candidates:
+        if candidate and os.path.isdir(candidate):
+            src = os.path.abspath(candidate)
+            if src not in sys.path:
+                sys.path.insert(0, src)
+            return
+
+    raise RuntimeError(
+        "Could not find OLMo-core sources. Tried: "
+        + ", ".join(repr(c) for c in candidates if c)
+        + ". Set OLMO_CORE_SRC to <LMEnt>/OLMo-core/src."
+    )
 
 
 _bootstrap_olmo_core()

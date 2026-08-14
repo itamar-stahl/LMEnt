@@ -33,10 +33,6 @@ import warnings
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Sequence
 
-# The artifact format is owned by the side that must never fail; this half only
-# writes it. Imports go client -> node, never the other way.
-from framework.node.artifact import ARTIFACT_NAME  # noqa: F401  (re-exported)
-
 import numpy as np
 
 # Paper section 5.2 / Table 4: the thresholds validated on a 60-entity dev set.
@@ -47,15 +43,16 @@ DEFAULT_THRESHOLDS: Dict[str, float] = {
     "coref_cluster": 0.6,
 }
 
-DEFAULT_INDEX = "lment_cs"
-
 # Config keys carrying per-source cutoffs: untaught.threshold_<source>
 THRESHOLD_PREFIX = "threshold_"
 
 # The two indexes the suite's README restores:
 #   enwiki_case_sensitive -> lment_cs      enwiki -> lment_ci
+# QID retrieval is case-agnostic, so the case-sensitive one is the default.
 CASE_SENSITIVE_INDEX = "lment_cs"
 CASE_INSENSITIVE_INDEX = "lment_ci"
+DEFAULT_INDEX = CASE_SENSITIVE_INDEX
+
 
 def index_for(case_sensitive: bool) -> str:
     """Which ES index a run should retrieve from."""
@@ -436,15 +433,13 @@ def _preview(es, index: str, query: Dict[str, Any], n: int) -> None:
 
 # --------------------------------------------------------------------------- #
 def _add_es_args(p: argparse.ArgumentParser) -> None:
+    """Connection arguments only. Which *index* to hit is not among them:
+    ``count`` derives it from the config's ``case_sensitive`` (so its answer is
+    the run's answer), and only ``resolve`` takes an explicit ``--es-index``."""
     p.add_argument("--es-scheme", default=None, help="default: $ES_SCHEME or https")
     p.add_argument("--es-host", default=None, help="default: $ES_HOST or localhost")
     p.add_argument("--es-port", default=None, type=int, help="default: $ES_PORT or 9200")
     p.add_argument("--es-password", default=None, help="default: $ES_PASSWORD")
-    p.add_argument(
-        "--es-index",
-        default=os.environ.get("ES_INDEX", DEFAULT_INDEX),
-        help=f"default: $ES_INDEX or {DEFAULT_INDEX}",
-    )
 
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
@@ -457,6 +452,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     p_resolve = sub.add_parser("resolve", help="find QIDs by entity name")
     p_resolve.add_argument("--name", required=True, help='e.g. "Harry Potter"')
     p_resolve.add_argument("--top", type=int, default=20)
+    p_resolve.add_argument(
+        "--es-index",
+        default=os.environ.get("ES_INDEX", DEFAULT_INDEX),
+        help=f"default: $ES_INDEX or {DEFAULT_INDEX}",
+    )
     _add_es_args(p_resolve)
     p_resolve.set_defaults(func=cmd_resolve)
 

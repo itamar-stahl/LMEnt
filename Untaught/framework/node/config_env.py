@@ -1,5 +1,12 @@
-"""Config-tree environment expansion. No heavy imports on purpose --
-these run on the login node, inside SLURM jobs, and in local unit tests.
+"""Everything about reading a run config: YAML parsing, ``${VAR}`` expansion,
+translation to upstream's nested schema, and path resolution.
+
+No heavy imports on purpose -- these run on the login node, inside SLURM jobs,
+and in local unit tests, before torch or olmo_core are anywhere in sight.
+
+Also a tiny CLI, so shell scripts can read one value without parsing YAML:
+
+    python -m framework.node.config_env <config> <dotted.key>
 """
 
 from __future__ import annotations
