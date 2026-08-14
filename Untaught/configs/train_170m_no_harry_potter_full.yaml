@@ -46,17 +46,17 @@ job:
   cpus_per_task: 8
   gpus: 1                         # students are limited to 1 GPU per job
 
-  # Which cards will do. Nodes carry GPU features and "|" means OR. Ranked by
-  # what they give this run, best first:
-  #   a100 > l40s > a6000 > a5000 > geforce_rtx_3090
-  # All five are CUDA capability >= 8.0, so all of them get native bf16 AND
-  # torch.compile -- the run is configured identically whichever one it lands
-  # on. The rest of the cluster's cards (tesla_v100 7.0, quadro_rtx_8000 7.5,
-  # geforce_rtx_2080 7.5, titan_xp 6.1) have no native bf16, and titan_xp also
-  # loses compile: measured at ~4K tokens/s, it turns this epoch into ~10 days.
-  # "" = any card. Listing five keeps the queue short; narrow it to one feature
-  # if you want both twins on identical silicon (see README, "the GPU lottery").
-  constraint: "a100|l40s|a6000|a5000|geforce_rtx_3090"
+  # Which cards will do. Nodes carry GPU features and "|" would mean OR, but
+  # this asks for exactly one: the a100 is the cluster's fastest card (~9-12h
+  # for this epoch, against ~10 days measured on a titan_xp), and pinning both
+  # twins to a single feature means they train on identical silicon -- no
+  # difference in kernels, precision or speed to confound the comparison.
+  # The cost is queue time: a100 nodes are the ones everyone wants. Widening to
+  # "a100|l40s|a6000|a5000|geforce_rtx_3090" (every card at CUDA capability
+  # >= 8.0, so every card with native bf16 and torch.compile) schedules sooner
+  # at the price of the twins possibly landing on different models.
+  # "" = any card at all, including the ones that make this a 10-day run.
+  constraint: "a100"
 
 # Everything the model and the optimizer see.
 train:

@@ -238,19 +238,26 @@ caps what a preemption can cost.
 ### The GPU lottery
 
 `job.constraint` asks SLURM for GPU features (`|` means OR). The full configs
-request `a100|l40s|a6000|a5000|geforce_rtx_3090` — every card on the cluster
-with CUDA capability ≥ 8.0, so the run gets native bf16 *and* `torch.compile`
-whichever one it lands on. Below that line the cluster's other cards
+request **`a100`** and nothing else: it is the cluster's fastest card, and
+pinning both twins to one feature means they train on identical silicon — same
+kernels, same precision, same speed — so nothing about the hardware can be
+mistaken for an effect of the ablation. The cost is queue time; a100 nodes are
+the ones everyone wants.
+
+To schedule sooner, widen it to `a100|l40s|a6000|a5000|geforce_rtx_3090` — every
+card on the cluster at CUDA capability ≥ 8.0, so the run still gets native bf16
+*and* `torch.compile` whichever one it lands on, at the price of the twins
+possibly landing on different models. Below that line the cluster's other cards
 (`tesla_v100`, `quadro_rtx_8000`, `geforce_rtx_2080`, `titan_xp`) have no native
 bf16, and `titan_xp` loses compile as well: measured at ~4K tokens/s, it turns
-one epoch into ~10 days instead of ~half a day to two days.
+one epoch into ~10 days instead of ~half a day.
 
 Estimates for one epoch (3.6B tokens, ~109K steps), assuming ~30–35% of peak
 bf16 — typical for a 170M model at sequence length 2048:
 
 | feature | one epoch | notes |
 |---|---|---|
-| `a100` | ~9–12 h | may finish inside a single 1-day job |
+| `a100` | ~9–12 h | **what the full configs request** — may fit one 1-day job |
 | `l40s` | ~19 h | |
 | `a6000` | ~22 h | |
 | `a5000` | ~31 h | ~2 submissions |
@@ -264,12 +271,11 @@ same seed. What differs is floating-point *rounding* — kernel choice and
 reduction order differ per architecture, so two runs on different cards diverge
 after enough steps and never end bitwise identical. That divergence behaves like
 noise, on the order of a re-run with a different seed, and it is far smaller than
-the effect the ablation is measuring. The listed set keeps even the
-*configuration* identical (all get bf16 + compile), which is the part that would
-otherwise differ systematically. Every run also records what it actually got in
-`run_environment.json`, so the question is answerable after the fact rather than
-assumed. If you want the strictest version, set both full configs to a single
-feature (e.g. `constraint: "a100"`) and accept a longer queue.
+the effect the ablation is measuring. Pinning both twins to `a100` removes even
+that: same architecture, same kernels, same rounding. Every run also records what
+it actually got in `run_environment.json`, so the pair can be checked after the
+fact rather than assumed — worth doing, since a widened constraint or a config
+edit could silently split them across card types.
 
 ### Inspecting the ablation before submitting
 
