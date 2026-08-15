@@ -4,14 +4,15 @@ job:
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true
 
-  partition: "gpu-<research-group>"
-  max_time_minutes: 1440
+  account: "gpu-research"           # gpu-h200-killable is gated on the research association
+  partition: "gpu-h200-killable"    # 1 day cap; one epoch is ~77h, so it runs as a chain
+  max_time_minutes: 1440            # the partition maximum; ~4 windows cover one epoch
   nodes: 1
   ntasks: 1
-  cpu_mem_mb: 128000
+  cpu_mem_mb: 64000
   cpus_per_task: 8
-  gpus: 4
-  constraint: "h100"
+  gpus: 1                           # one card per twin, so the pair holds 2 of the node's 8
+  constraint: "h200"                # 139.8 GiB, native bf16; leaves the 16,384 microbatch alone
 
 train:
   model: "olmo2_1B"
