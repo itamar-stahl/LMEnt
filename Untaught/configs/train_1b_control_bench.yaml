@@ -22,8 +22,9 @@ job:
   resume_from_previous_run: false   # a benchmark continues nothing and is continued by nothing
 
   # SLURM resources: https://www.cs.tau.ac.il/system/slurm
-  account: "gpu-research"           # gpu-h200 is gated on the research association
-  partition: "gpu-h200"             # not preemptible, so the measurement is not cut short
+  account: "gpu-research"           # gpu-h200-killable is gated on the research association
+  partition: "gpu-h200-killable"    # gpu-h200's gpu4 QOS caps it at 4 GPUs and 2 are taken,
+                                    # so a 4-GPU job only fits here; preemption is REQUEUE
   max_time_minutes: 60              # 200 steps + compile + the step0 checkpoint, with room
   nodes: 1
   ntasks: 1
