@@ -4,7 +4,7 @@
 #SBATCH --error=/home/dcor/galbarak2/LMEnt-ember/ember_eval/results/%x_%j.err
 #SBATCH --account=gpu-research
 #SBATCH --partition=killable
-#SBATCH --time=30
+#SBATCH --time=240
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --mem=32000
@@ -22,8 +22,16 @@ export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader || echo "no nvidia-smi"
 
-"$PY" "$EVAL/score_ember_mc.py" \
-  --concepts "$UNTAUGHT_EVAL_CONCEPT" \
+# An empty UNTAUGHT_EVAL_CONCEPT means every concept: --concepts is omitted
+# entirely rather than passed as "", which would filter to a concept named ""
+# and silently evaluate nothing.
+if [ -n "${UNTAUGHT_EVAL_CONCEPT:-}" ]; then
+  set -- --concepts "$UNTAUGHT_EVAL_CONCEPT"
+else
+  set --
+fi
+
+"$PY" "$EVAL/score_ember_mc.py" "$@" \
   --sets qa_test simdom_test \
   --dtype float32 \
   --out "$EVAL/results/${SLURM_JOB_NAME}_${SLURM_JOB_ID}.json"
