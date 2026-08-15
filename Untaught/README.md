@@ -142,11 +142,27 @@ read from one shared copy that nobody duplicates. Every variable is an
 override-able default, so `export LMENT_SHARED_ROOT=...` before sourcing if
 your data lives somewhere else.
 
-**Elasticsearch is one service for the group.** It runs on the login node as
-stahli's process and everyone reaches it on `localhost:9200`; you need no read
-access to the install itself. `activate_env.sh` starts it only if `ES_HOME` is
-writable by you — otherwise it tells you to ask its owner, rather than failing
-halfway through a start.
+**Elasticsearch is one service for the group.** It runs on `c-003` as stahli's
+process and everyone reaches it on `localhost:9200`; you need no read access to
+the install itself. `activate_env.sh` starts it only if `ES_HOME` is writable by
+you, because Elasticsearch writes to its data, logs and config directories and
+therefore only runs for the install's owner. Making those writable by others
+would let any account on the cluster corrupt the index, and would leave segment
+files owned by whoever started the server, breaking the next start.
+
+So instead of handing out write access, the owner schedules
+[`framework/client/es_keepalive.sh`](framework/client/es_keepalive.sh) and the
+server restarts itself within five minutes:
+
+```sh
+crontab -e
+*/5 * * * * $LMENT_ROOT/Untaught/framework/client/es_keepalive.sh >> $LMENT_USER_ROOT/es_keepalive.log 2>&1
+@reboot     $LMENT_ROOT/Untaught/framework/client/es_keepalive.sh >> $LMENT_USER_ROOT/es_keepalive.log 2>&1
+```
+
+(Write the paths out in full — cron expands no variables.) The script exits
+immediately when the server is already answering, while one is still booting,
+or when run by someone who does not own the install.
 
 **Regenerating `environment.yml`** (only when dependencies change):
 

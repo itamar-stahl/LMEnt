@@ -111,9 +111,13 @@ export UNTAUGHT_RUNS_DIR=/somewhere/else
 One server for the group, owned by stahli, running on `c-003`. You reach it at
 `localhost:9200`; you don't need read access to the install.
 
-`activate_env.sh` prints `Elasticsearch is up` when it's fine. If it says it is
-not yours to start — it's down, **ask stahli**. Don't start your own: it would
-fail on the shared data directory.
+`activate_env.sh` prints `Elasticsearch is up` when it's fine.
+
+If it says it is not yours to start, it's down — a keepalive cron restarts it
+within ~5 minutes, so wait and re-source. Still down after that, ping stahli.
+
+Don't try to start your own: Elasticsearch writes to its data, logs and config
+directories, so it only runs for the owner of the install.
 
 Only the *client* half needs it (turning blacklist QIDs into chunk ids, before
 submission). GPU nodes never touch it — the resolved chunk ids travel in the
@@ -124,8 +128,8 @@ run folder.
 | Symptom | Fix |
 |---|---|
 | `cannot cd to .../LMEnt/Untaught` | clone is missing or in the wrong place — step 2 |
-| `conda.sh missing; falling back to PATH` | miniconda not at `$(whoami)/anaconda3` — step 1 |
-| `Elasticsearch is down` | ask stahli; don't start one |
+| `conda.sh missing; falling back to PATH` | Anaconda not at `$(whoami)/anaconda3` — step 1 |
+| `Elasticsearch is down` | keepalive restarts it in ~5 min; still down, ping stahli |
 | `blacklist artifact not found` at pre_train | you ran `sbatch` directly; always go through `sub_builder.sh` |
 | `Permission denied` under `stahli/LMEnt` | expected — that clone is private, use your own |
 | job vanishes from `squeue` | `studentkillable` preempted it; resubmit, it resumes from the last checkpoint |

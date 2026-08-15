@@ -70,6 +70,7 @@ def test_every_expected_file_exists():
         "framework/conda.sh",
         "framework/client/__init__.py",
         "framework/client/sub_builder.sh",
+        "framework/client/es_keepalive.sh",
         "framework/client/es_blacklist.py",
         "framework/client/prepare.py",
         "framework/node/__init__.py",
@@ -409,6 +410,7 @@ def test_shell_scripts_reference_real_paths():
         os.path.join(FRAMEWORK, "env.sh"),
         os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(NODE, "set_node_env.sh"),
     ]
     missing = []
@@ -635,6 +637,7 @@ def test_no_stale_names_anywhere():
     ] + [
         os.path.join(FRAMEWORK, "env.sh"), os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(NODE, "set_node_env.sh"),
     ]
     configs = [os.path.join(CONFIGS, f"{n}.yaml") for n in
@@ -680,6 +683,7 @@ def test_shell_scripts_are_valid_posix_sh():
         os.path.join(FRAMEWORK, "env.sh"),
         os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(NODE, "set_node_env.sh"),
     ]
     for script in scripts:
@@ -711,6 +715,7 @@ def test_archived_tests_are_not_referenced():
         os.path.join(UNTAUGHT_ROOT, f) for f in ("README.md", "SMOKE_TEST.md")
     ] + [
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(UNTAUGHT_ROOT, "tests", "run_local_tests.py"),
         os.path.join(UNTAUGHT_ROOT, "tests", "remote", "run_remote_tests.sh"),
         os.path.join(UNTAUGHT_ROOT, "tests", "remote", "remote_checks.py"),
