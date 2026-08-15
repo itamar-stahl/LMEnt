@@ -4,7 +4,7 @@
 > submission, and writes a report you can send back:
 >
 > ```sh
-> cd /home/morg/NLP_2526b/stahli/LMEnt/Untaught
+> cd /home/morg/NLP_2526b/<you>/LMEnt/Untaught
 > sh tests/remote/run_remote_tests.sh
 > ```
 >
@@ -24,7 +24,7 @@ Everything below runs on the login node (`ssh <user>@slurm-client.cs.tau.ac.il`)
 ## 0. Environment (once per shell)
 
 ```sh
-cd /home/morg/NLP_2526b/stahli/LMEnt/Untaught
+cd /home/morg/NLP_2526b/<you>/LMEnt/Untaught
 . ./activate_env.sh
 ```
 

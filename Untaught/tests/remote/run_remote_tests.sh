@@ -38,7 +38,7 @@ while [ $# -gt 0 ]; do
 done
 
 # --- environment (the same one a real submission uses) ------------------------
-: "${LMENT_ROOT:=/home/morg/NLP_2526b/stahli/LMEnt}"
+: "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
 cd "${LMENT_ROOT}/Untaught" 2>/dev/null || {
   echo "FATAL: cannot cd to ${LMENT_ROOT}/Untaught" >&2; exit 1; }
 

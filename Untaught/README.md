@@ -105,18 +105,53 @@ curriculum and data order stay exactly upstream.
 
 ## Setup
 
-On the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`):
+Once per person, on the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`).
+Every member of the group does exactly the same thing — there is nothing to
+edit and no per-user configuration:
 
 ```sh
-cd $LMENT_ROOT/Untaught
-. ./activate_env.sh               # that is the whole setup
+# 1. your own conda, under your own directory
+cd /home/morg/NLP_2526b/$(whoami)
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+sh Miniconda3-latest-Linux-x86_64.sh -b -p /home/morg/NLP_2526b/$(whoami)/anaconda3
+
+# 2. your own clone (no submodules -- OLMo-core is committed into the repo)
+git clone <github-url> /home/morg/NLP_2526b/$(whoami)/LMEnt
+
+# 3. your own env, from the file in the repo
+. /home/morg/NLP_2526b/$(whoami)/anaconda3/etc/profile.d/conda.sh
+conda env create -f /home/morg/NLP_2526b/$(whoami)/LMEnt/lment-env.yml -n lment
+
+# 4. from now on, this is the only command
+cd /home/morg/NLP_2526b/$(whoami)/LMEnt/Untaught
+. ./activate_env.sh
 ```
 
-Sourcing `activate_env.sh` leaves **this** shell with the `lment` conda env
-active, every path/ES variable set, and Elasticsearch running (it starts it if
-it is down). It reads nothing from `~/.bashrc`, so it behaves the same for any
-user. Adjust `framework/env.sh` only if your paths differ from
-`/home/morg/NLP_2526b/stahli`.
+**Why it needs no configuration.** [`framework/env.sh`](framework/env.sh) keeps
+two roots apart:
+
+| | resolves to | holds |
+|---|---|---|
+| `LMENT_USER_ROOT` | `/home/morg/NLP_2526b/$(whoami)` | your clone, your conda, your run folders |
+| `LMENT_SHARED_ROOT` | `/home/morg/NLP_2526b/stahli` | the dataset, the index, Elasticsearch |
+
+`whoami` answers the same on the login node and on a compute node, so the same
+checkout works for everyone: code and outputs are yours, the ~1 TB of data is
+read from one shared copy that nobody duplicates. Every variable is an
+override-able default, so `export LMENT_SHARED_ROOT=...` before sourcing if
+your data lives somewhere else.
+
+**Elasticsearch is one service for the group.** It runs on the login node as
+stahli's process and everyone reaches it on `localhost:9200`; you need no read
+access to the install itself. `activate_env.sh` starts it only if `ES_HOME` is
+writable by you — otherwise it tells you to ask its owner, rather than failing
+halfway through a start.
+
+**Regenerating `lment-env.yml`** (only when dependencies change):
+
+```sh
+conda env export > $LMENT_ROOT/lment-env.yml
+```
 
 Both entry points `cd` to `$LMENT_ROOT/Untaught` first, so the working directory
 and `UNTAUGHT_ROOT` are the same fixed path on every node. Batch jobs get the

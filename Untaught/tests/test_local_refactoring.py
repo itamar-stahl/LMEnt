@@ -294,11 +294,33 @@ def test_job_parameters_live_only_in_configs():
 
 
 @suite.test
+def test_entry_points_follow_whoever_runs():
+    """bootstrap paths derive from the user, so one checkout serves the group"""
+    for name in ("activate_env.sh", "framework/client/sub_builder.sh",
+                 "framework/node/set_node_env.sh", "tests/remote/run_remote_tests.sh"):
+        for line in read(UNTAUGHT_ROOT, name).splitlines():
+            if "/home/morg/NLP_2526b/" in line and not line.lstrip().startswith("#"):
+                assert "$(whoami)" in line, (
+                    f"{name} hard-codes one user's directory, so nobody else can "
+                    f"run this checkout: {line.strip()}"
+                )
+
+    # env.sh may name one user's directory, once, and only as the *shared data*
+    # root -- the dataset and index everyone reads and nobody duplicates.
+    env_sh = read(FRAMEWORK, "env.sh")
+    literal = [l.strip() for l in env_sh.splitlines()
+               if "NLP_2526b/stahli" in l and not l.lstrip().startswith("#")]
+    assert len(literal) == 1 and "LMENT_SHARED_ROOT" in literal[0], literal
+    assert '"${LMENT_USER_ROOT:=/home/morg/NLP_2526b/$(whoami)}"' in env_sh
+
+
+@suite.test
 def test_paths_are_named_once_in_env_sh():
     """cluster paths appear in framework/env.sh, not scattered in the code"""
     env_sh = read(FRAMEWORK, "env.sh")
-    for var in ("STAHLI_ROOT", "LMENT_ROOT", "LMENT_DATASET", "OLMO_CORE_SRC",
-                "UNTAUGHT_RUNS_DIR", "ANACONDA_ROOT", "ES_HOME"):
+    for var in ("LMENT_USER_ROOT", "LMENT_SHARED_ROOT", "LMENT_ROOT",
+                "LMENT_DATASET", "OLMO_CORE_SRC", "UNTAUGHT_RUNS_DIR",
+                "ANACONDA_ROOT", "ES_HOME"):
         assert re.search(rf'^: "\$\{{{var}:=', env_sh, re.M), f"{var} not defaulted in env.sh"
 
     # The one absolute path allowed outside env.sh is the bootstrap LMENT_ROOT

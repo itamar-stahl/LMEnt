@@ -12,7 +12,7 @@
 # ids) ran before submission and arrives as the artifact in the run folder.
 
 # Same absolute path as on the login node -- shared filesystem, fixed location.
-: "${LMENT_ROOT:=/home/morg/NLP_2526b/stahli/LMEnt}"
+: "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
 cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
 
 # shellcheck disable=SC1091
