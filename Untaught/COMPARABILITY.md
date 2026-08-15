@@ -75,39 +75,8 @@ therefore **four times the optimizer steps** — 109,672 rather than ~27,500.
 Matching their setup is more expensive than training your own pair *and* leaves a
 weaker claim. Train both.
 
-# Verifying a subject is in the corpus before training
+# Picking the subject, and auditing the run
 
-Separate question, same index. Before committing GPU time to a twin pair, you can
-confirm the corpus actually teaches the subject, and how much.
-
-**1. Find the QIDs.** Names are ambiguous and the tool will not guess for you:
-
-    python -m framework.client.es_blacklist resolve --name "Ancient Rome"
-
-It returns the top matching QIDs by mention count. Disambiguation is manual and
-matters — a franchise, its characters and its individual works are separate QIDs,
-and the mention counts separate the real entity from its namesakes. The spread
-across subjects is large and informative: `Q7310` (Nazism) has 212,054 mentions,
-`Q1163715` (baseball) 193,146, while `Q1098` (uranium, the element) has 196.
-
-**2. Count the chunks the ablation would hold out.** Put the chosen QIDs in
-`blacklists/<subject>.json` and ask what a run would actually exclude:
-
-    python -m framework.client.es_blacklist count \
-        --config configs/train_170m_no_harry_potter.yaml --preview 5
-
-This applies the config's own index and thresholds, so its number is the run's
-number, and `--preview` prints sample chunk text so you can see the exclusion is
-hitting the right material. Harry Potter resolves to 2,643 unique chunks, 0.0252%
-of the corpus, from 22,036 + 13,004 mentions — mentions are always far more
-numerous than chunks, since one chunk holds many.
-
-A count of zero means the QIDs are wrong, not that the subject is absent.
-
-**3. Confirm a model actually learns it.** Steps 1 and 2 prove the *corpus*
-contains the subject. Whether a model trained on that corpus ends up knowing it is
-an empirical question, and the cheapest way to answer it before spending days of
-training is to evaluate one of the released LMEnt checkpoints — they were trained
-on this same corpus — on questions about the subject. A subject that a released
-1B cannot answer is a poor ablation target, because there is no knowledge there to
-remove and nothing for the twin comparison to detect.
+A separate question with its own document: which subject is worth holding out, how
+to confirm before training that the corpus teaches it, and how to prove afterwards
+that the model met it. See `CHOOSING_A_SUBJECT.md`.
