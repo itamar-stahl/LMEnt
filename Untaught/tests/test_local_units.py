@@ -588,7 +588,7 @@ def test_generated_job_slurm_matches_the_required_format():
             f"#SBATCH --output={run_dir}/log.out",
             f"#SBATCH --error={run_dir}/log.err",
             "#SBATCH --account=gpu-research",
-            "#SBATCH --partition=gpu-h100-killable",
+            "#SBATCH --partition=gpu-h200",
             "#SBATCH --time=180",
             "#SBATCH --signal=USR1@120",
             "#SBATCH --nodes=1",
@@ -596,7 +596,7 @@ def test_generated_job_slurm_matches_the_required_format():
             "#SBATCH --mem=64000",
             "#SBATCH --cpus-per-task=8",
             "#SBATCH --gpus=1",
-            '#SBATCH --constraint="h100"',
+            '#SBATCH --constraint="h200"',
             "",
         ]
         assert lines[:15] == expected, f"got:\n{chr(10).join(lines[:15])}"
