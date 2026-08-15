@@ -26,7 +26,7 @@ CONFIG_ARG="${1:-}"
 [ -n "${CONFIG_ARG}" ] || ub_fail "usage: . ./framework/client/sub_builder.sh <config.yaml>"
 
 # --- 1. login-node environment ------------------------------------------------
-: "${LMENT_ROOT:=/home/morg/NLP_2526b/stahli/LMEnt}"
+: "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
 cd "${LMENT_ROOT}/Untaught" || ub_fail "cannot cd to ${LMENT_ROOT}/Untaught"
 # shellcheck disable=SC1091
 . ./activate_env.sh

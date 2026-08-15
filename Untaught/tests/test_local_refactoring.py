@@ -23,8 +23,10 @@ from __future__ import annotations
 import ast
 import os
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
 
 from testlib import Suite, UNTAUGHT_ROOT  # noqa: E402
 
@@ -62,11 +64,13 @@ def test_every_expected_file_exists():
         "activate_env.sh",
         "README.md",
         "SMOKE_TEST.md",
+        "SETUP.md",
         "framework/__init__.py",
         "framework/env.sh",
         "framework/conda.sh",
         "framework/client/__init__.py",
         "framework/client/sub_builder.sh",
+        "framework/client/es_keepalive.sh",
         "framework/client/es_blacklist.py",
         "framework/client/prepare.py",
         "framework/node/__init__.py",
@@ -294,11 +298,95 @@ def test_job_parameters_live_only_in_configs():
 
 
 @suite.test
+def test_entry_points_follow_whoever_runs():
+    """bootstrap paths derive from the user, so one checkout serves the group"""
+    for name in ("activate_env.sh", "framework/client/sub_builder.sh",
+                 "framework/node/set_node_env.sh", "tests/remote/run_remote_tests.sh"):
+        for line in read(UNTAUGHT_ROOT, name).splitlines():
+            if "/home/morg/NLP_2526b/" in line and not line.lstrip().startswith("#"):
+                assert "$(whoami)" in line, (
+                    f"{name} hard-codes one user's directory, so nobody else can "
+                    f"run this checkout: {line.strip()}"
+                )
+
+    # env.sh may name one user's directory, once, and only as the *shared data*
+    # root -- the dataset and index everyone reads and nobody duplicates.
+    env_sh = read(FRAMEWORK, "env.sh")
+    literal = [l.strip() for l in env_sh.splitlines()
+               if "NLP_2526b/stahli" in l and not l.lstrip().startswith("#")]
+    assert len(literal) == 1 and "LMENT_SHARED_ROOT" in literal[0], literal
+    assert '"${LMENT_USER_ROOT:=/home/morg/NLP_2526b/$(whoami)}"' in env_sh
+
+
+@suite.test
+def test_env_sh_scopes_each_path_to_the_right_root():
+    """what you own derives from the user root, shared data from the shared one"""
+    env_sh = read(FRAMEWORK, "env.sh")
+    expected = {
+        "LMENT_ROOT": "LMENT_USER_ROOT",       # your clone
+        "ANACONDA_ROOT": "LMENT_USER_ROOT",    # your conda
+        "LMENT_DATASET": "LMENT_SHARED_ROOT",  # stahli's, ~1TB, never duplicated
+        "LMENT_INDEX": "LMENT_SHARED_ROOT",
+        "ES_HOME": "LMENT_SHARED_ROOT",
+    }
+    for var, root in expected.items():
+        m = re.search(rf'^: "\$\{{{var}:=\$\{{(\w+)\}}', env_sh, re.M)
+        assert m, f"{var} is not defaulted from a root in env.sh"
+        assert m.group(1) == root, (
+            f"{var} derives from {m.group(1)}, not {root}: that either writes into "
+            f"someone else's directory or looks for the dataset in yours"
+        )
+
+    # run folders live inside your own checkout, so nobody writes into another
+    assert '"${UNTAUGHT_RUNS_DIR:=${UNTAUGHT_ROOT}/runs}"' in env_sh
+
+
+@suite.test
+def test_env_sh_resolves_the_roots_for_whoever_sources_it():
+    """sourced for real: code follows the user, data stays on the shared copy"""
+    who = subprocess.run(["sh", "-c", "whoami"], capture_output=True,
+                         text=True).stdout.strip()
+    if not who:
+        raise Suite.Skip("whoami produced nothing")
+
+    probe = tempfile.mkdtemp()
+    try:
+        # Keep env.sh's mkdir out of the real tree; everything else is default.
+        script = (
+            f'UNTAUGHT_RUNS_DIR="{probe}/runs"; UNTAUGHT_BLACKLIST_DIR="{probe}/bl"; '
+            "export UNTAUGHT_RUNS_DIR UNTAUGHT_BLACKLIST_DIR; "
+            ". ./framework/env.sh; "
+            'echo "RESULT|$LMENT_USER_ROOT|$LMENT_ROOT|$ANACONDA_ROOT'
+            '|$LMENT_DATASET|$LMENT_INDEX|$ES_HOME"'
+        )
+        r = subprocess.run(["sh", "-c", script], capture_output=True, text=True,
+                           cwd=UNTAUGHT_ROOT)
+        line = next((l for l in r.stdout.splitlines() if l.startswith("RESULT|")), None)
+        assert line, f"env.sh produced no result: {(r.stdout + r.stderr)[-300:]}"
+        _, user_root, lment_root, conda, dataset, index, es_home = line.split("|")
+
+        assert user_root.endswith(f"/{who}"), f"{user_root} is not {who}'s"
+        assert lment_root == f"{user_root}/LMEnt", lment_root
+        assert conda == f"{user_root}/anaconda3", conda
+
+        for shared in (dataset, index, es_home):
+            assert "/stahli/" in f"{shared}/", f"{shared} is not on the shared root"
+            if who != "stahli":
+                assert who not in shared, (
+                    f"{shared} points at your own directory -- the dataset is not "
+                    f"there and never will be"
+                )
+    finally:
+        shutil.rmtree(probe, ignore_errors=True)
+
+
+@suite.test
 def test_paths_are_named_once_in_env_sh():
     """cluster paths appear in framework/env.sh, not scattered in the code"""
     env_sh = read(FRAMEWORK, "env.sh")
-    for var in ("STAHLI_ROOT", "LMENT_ROOT", "LMENT_DATASET", "OLMO_CORE_SRC",
-                "UNTAUGHT_RUNS_DIR", "ANACONDA_ROOT", "ES_HOME"):
+    for var in ("LMENT_USER_ROOT", "LMENT_SHARED_ROOT", "LMENT_ROOT",
+                "LMENT_DATASET", "OLMO_CORE_SRC", "UNTAUGHT_RUNS_DIR",
+                "ANACONDA_ROOT", "ES_HOME"):
         assert re.search(rf'^: "\$\{{{var}:=', env_sh, re.M), f"{var} not defaulted in env.sh"
 
     # The one absolute path allowed outside env.sh is the bootstrap LMENT_ROOT
@@ -322,6 +410,7 @@ def test_shell_scripts_reference_real_paths():
         os.path.join(FRAMEWORK, "env.sh"),
         os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(NODE, "set_node_env.sh"),
     ]
     missing = []
@@ -548,6 +637,7 @@ def test_no_stale_names_anywhere():
     ] + [
         os.path.join(FRAMEWORK, "env.sh"), os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(NODE, "set_node_env.sh"),
     ]
     configs = [os.path.join(CONFIGS, f"{n}.yaml") for n in
@@ -589,9 +679,11 @@ def test_shell_scripts_are_valid_posix_sh():
     scripts = [
         os.path.join(UNTAUGHT_ROOT, "activate_env.sh"),
         os.path.join(UNTAUGHT_ROOT, "submit_full_170m_twins.sh"),
+        os.path.join(UNTAUGHT_ROOT, "submit_full_1b_twins.sh"),
         os.path.join(FRAMEWORK, "env.sh"),
         os.path.join(FRAMEWORK, "conda.sh"),
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(NODE, "set_node_env.sh"),
     ]
     for script in scripts:
@@ -623,6 +715,7 @@ def test_archived_tests_are_not_referenced():
         os.path.join(UNTAUGHT_ROOT, f) for f in ("README.md", "SMOKE_TEST.md")
     ] + [
         os.path.join(CLIENT, "sub_builder.sh"),
+        os.path.join(CLIENT, "es_keepalive.sh"),
         os.path.join(UNTAUGHT_ROOT, "tests", "run_local_tests.py"),
         os.path.join(UNTAUGHT_ROOT, "tests", "remote", "run_remote_tests.sh"),
         os.path.join(UNTAUGHT_ROOT, "tests", "remote", "remote_checks.py"),

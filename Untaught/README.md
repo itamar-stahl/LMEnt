@@ -105,18 +105,79 @@ curriculum and data order stay exactly upstream.
 
 ## Setup
 
-On the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`):
+Once per person, on the TAU cluster (`ssh user@slurm-client.cs.tau.ac.il`).
+Every member of the group does exactly the same thing — there is nothing to
+edit and no per-user configuration:
 
 ```sh
-cd $LMENT_ROOT/Untaught
-. ./activate_env.sh               # that is the whole setup
+# 1. your own Anaconda, under your own directory -- never in $HOME (quota).
+#    Answer the prefix prompt with .../$(whoami)/anaconda3, and conda init: yes.
+cd /home/morg/NLP_2526b/$(whoami)
+wget repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh
+bash Anaconda3-2020.11-Linux-x86_64.sh
+conda config --add pkgs_dirs /home/morg/NLP_2526b/$(whoami)/anaconda3/pkgs
+
+# 2. your own clone (no submodules -- OLMo-core is committed into the repo)
+git clone <github-url> /home/morg/NLP_2526b/$(whoami)/LMEnt
+
+# 3. your own env, from the file in the repo
+conda env create -f /home/morg/NLP_2526b/$(whoami)/LMEnt/environment.yml
+
+# 4. from now on, this is the only command
+cd /home/morg/NLP_2526b/$(whoami)/LMEnt/Untaught
+. ./activate_env.sh
 ```
 
-Sourcing `activate_env.sh` leaves **this** shell with the `lment` conda env
-active, every path/ES variable set, and Elasticsearch running (it starts it if
-it is down). It reads nothing from `~/.bashrc`, so it behaves the same for any
-user. Adjust `framework/env.sh` only if your paths differ from
-`/home/morg/NLP_2526b/stahli`.
+**Why it needs no configuration.** [`framework/env.sh`](framework/env.sh) keeps
+two roots apart:
+
+| | resolves to | holds |
+|---|---|---|
+| `LMENT_USER_ROOT` | `/home/morg/NLP_2526b/$(whoami)` | your clone, your conda, your run folders |
+| `LMENT_SHARED_ROOT` | `/home/morg/NLP_2526b/stahli` | the dataset, the index, Elasticsearch |
+
+`whoami` answers the same on the login node and on a compute node, so the same
+checkout works for everyone: code and outputs are yours, the ~1 TB of data is
+read from one shared copy that nobody duplicates. Every variable is an
+override-able default, so `export LMENT_SHARED_ROOT=...` before sourcing if
+your data lives somewhere else.
+
+**Elasticsearch is one service for the group.** It runs on `c-003` as stahli's
+process and everyone reaches it on `localhost:9200`; you need no read access to
+the install itself. `activate_env.sh` starts it only if `ES_HOME` is writable by
+you, because Elasticsearch writes to its data, logs and config directories and
+therefore only runs for the install's owner. Making those writable by others
+would let any account on the cluster corrupt the index, and would leave segment
+files owned by whoever started the server, breaking the next start.
+
+So instead of handing out write access, the owner schedules
+[`framework/client/es_keepalive.sh`](framework/client/es_keepalive.sh) and the
+server restarts itself within five minutes:
+
+```sh
+crontab -e
+*/5 * * * * $LMENT_ROOT/Untaught/framework/client/es_keepalive.sh >> $LMENT_USER_ROOT/es_keepalive.log 2>&1
+@reboot     $LMENT_ROOT/Untaught/framework/client/es_keepalive.sh >> $LMENT_USER_ROOT/es_keepalive.log 2>&1
+```
+
+(Write the paths out in full — cron expands no variables.) The script exits
+immediately when the server is already answering, while one is still booting,
+or when run by someone who does not own the install.
+
+Every tick it also writes `$LMENT_SHARED_ROOT/es_keepalive.stamp`, before any
+early exit, so the watchdog is observable to people who cannot read the
+crontab: a stamp older than ~10 minutes means cron itself stopped and
+Elasticsearch has nobody watching it. Nothing watches the watchdog — that is
+the residual single point of failure, and the stamp is what makes it visible
+in one command instead of a mystery.
+
+**Regenerating `environment.yml`** (only when dependencies change):
+
+```sh
+conda env export > $LMENT_ROOT/environment.yml
+```
+
+Step-by-step version for a new group member: [SETUP.md](SETUP.md).
 
 Both entry points `cd` to `$LMENT_ROOT/Untaught` first, so the working directory
 and `UNTAUGHT_ROOT` are the same fixed path on every node. Batch jobs get the

@@ -1,7 +1,7 @@
 #!/bin/sh
 # LOGIN NODE entry point. Source it, do not execute it:
 #
-#     . /home/morg/NLP_2526b/stahli/LMEnt/Untaught/activate_env.sh
+#     . /home/morg/NLP_2526b/<you>/LMEnt/Untaught/activate_env.sh
 #
 # It cd's to Untaught/ and leaves this shell there, with the lment conda env
 # active, every UNTAUGHT_/LMENT_/ES_ variable set, and Elasticsearch running.
@@ -13,7 +13,7 @@
 
 # Fixed location on the shared filesystem: the same absolute path on the login
 # node and on every compute node, so nothing has to be discovered at runtime.
-: "${LMENT_ROOT:=/home/morg/NLP_2526b/stahli/LMEnt}"
+: "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
 cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
 
 # Already set up in this shell (or in a parent that exported it)? The cd above
@@ -35,8 +35,10 @@ fi
 # request without credentials answers 401, which still proves it is up).
 if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
   echo "[untaught] Elasticsearch is up on ${ES_HOST}:${ES_PORT}"
-elif [ ! -x "${ES_HOME}/bin/elasticsearch" ]; then
-  echo "[untaught] Elasticsearch is down and ${ES_HOME}/bin/elasticsearch is missing" >&2
+elif [ ! -w "${ES_HOME}" ]; then
+  # Someone else's install: one server serves the whole group, and only its
+  # owner can start it. Say so instead of failing halfway through a start.
+  echo "[untaught] Elasticsearch is down and ${ES_HOME} is not yours to start;"        "ask its owner to bring it up" >&2
 else
   echo "[untaught] Elasticsearch not responding -- starting it"
   # Detached, so it outlives this shell.
