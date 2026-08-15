@@ -9,16 +9,32 @@ client half of the framework needs it. Other hosts will fail at submit time.
 ssh <user>@c-003
 ```
 
-## 1. Conda (once)
+## 1. Anaconda (once)
+
+Per the cluster docs (*User packages → Example using Anaconda*):
 
 ```sh
 cd /home/morg/NLP_2526b/$(whoami)
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-sh Miniconda3-latest-Linux-x86_64.sh -b -p /home/morg/NLP_2526b/$(whoami)/anaconda3
+wget repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh
+bash Anaconda3-2020.11-Linux-x86_64.sh
 ```
 
-Install it **under your own directory**, not in your home — the compute nodes
-mount `/home/morg`, and a batch job never reads your `~/.bashrc`.
+The installer is interactive. Two answers matter:
+
+| prompt | answer |
+|---|---|
+| install prefix | `/home/morg/NLP_2526b/<you>/anaconda3` — **never your home**, the quota is too small |
+| `conda init?` | `yes` |
+
+Re-login (or `. ~/.bashrc`) so `conda` is on your PATH, then move the package
+cache off your home, or `conda env create` will fill it:
+
+```sh
+conda config --add pkgs_dirs /home/morg/NLP_2526b/$(whoami)/anaconda3/pkgs
+```
+
+A newer `Anaconda3-*-Linux-x86_64.sh` from the same archive works too, and
+solves faster — `environment.yml` pins python 3.12.
 
 ## 2. Clone (once)
 
@@ -31,11 +47,13 @@ No `--recurse-submodules`: OLMo-core is committed into the repo.
 ## 3. Environment (once)
 
 ```sh
-. /home/morg/NLP_2526b/$(whoami)/anaconda3/etc/profile.d/conda.sh
 conda env create -f /home/morg/NLP_2526b/$(whoami)/LMEnt/environment.yml
+conda activate lment
 ```
 
-Creates env `lment`. ~10 min.
+Creates env `lment` with everything pinned. ~10 min. If `conda` isn't found,
+you skipped `conda init` — run
+`. /home/morg/NLP_2526b/$(whoami)/anaconda3/etc/profile.d/conda.sh` first.
 
 ## 4. Every session
 

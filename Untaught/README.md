@@ -110,16 +110,17 @@ Every member of the group does exactly the same thing — there is nothing to
 edit and no per-user configuration:
 
 ```sh
-# 1. your own conda, under your own directory
+# 1. your own Anaconda, under your own directory -- never in $HOME (quota).
+#    Answer the prefix prompt with .../$(whoami)/anaconda3, and conda init: yes.
 cd /home/morg/NLP_2526b/$(whoami)
-wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-sh Miniconda3-latest-Linux-x86_64.sh -b -p /home/morg/NLP_2526b/$(whoami)/anaconda3
+wget repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh
+bash Anaconda3-2020.11-Linux-x86_64.sh
+conda config --add pkgs_dirs /home/morg/NLP_2526b/$(whoami)/anaconda3/pkgs
 
 # 2. your own clone (no submodules -- OLMo-core is committed into the repo)
 git clone <github-url> /home/morg/NLP_2526b/$(whoami)/LMEnt
 
 # 3. your own env, from the file in the repo
-. /home/morg/NLP_2526b/$(whoami)/anaconda3/etc/profile.d/conda.sh
 conda env create -f /home/morg/NLP_2526b/$(whoami)/LMEnt/environment.yml
 
 # 4. from now on, this is the only command
