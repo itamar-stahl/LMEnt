@@ -864,9 +864,11 @@ def test_resume_identity_ignores_exactly_the_intended_fields():
     _require_olmo()
     from framework.node.train_untaught import RESUME_IGNORED_FIELDS
 
+    # account sits here for the same reason partition does: it says who pays and
+    # which associations SLURM will schedule against, never what is trained.
     assert RESUME_IGNORED_FIELDS["job"] == {
-        "partition", "resume_from_previous_run", "max_time_minutes", "nodes",
-        "ntasks", "cpu_mem_mb", "cpus_per_task", "gpus",
+        "account", "partition", "resume_from_previous_run", "max_time_minutes",
+        "nodes", "ntasks", "cpu_mem_mb", "cpus_per_task", "gpus",
     }
     assert RESUME_IGNORED_FIELDS["train"] == {
         "checkpoint_save_interval", "checkpoint_ephemeral_save_interval",

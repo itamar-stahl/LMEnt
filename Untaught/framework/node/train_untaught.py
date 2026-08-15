@@ -130,6 +130,7 @@ except ImportError:  # pragma: no cover
 # continuing one from the other would be silent corruption of both.
 RESUME_IGNORED_FIELDS: Dict[str, set] = {
     "job": {
+        "account",
         "partition",
         "resume_from_previous_run",
         "max_time_minutes",

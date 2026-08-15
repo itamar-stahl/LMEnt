@@ -1,0 +1,83 @@
+# THROUGHPUT BENCHMARK: 1B, 200 steps, nothing held out.
+#
+# Not an experiment. Its only job is to turn the estimate for a full 1B epoch
+# into a measured seconds-per-step, so the real run can ask SLURM for a time
+# limit close to what it needs instead of padding it. Everything that decides
+# throughput -- model, global batch, rank microbatch, workers, dataset -- is
+# copied verbatim from train_1b_control_full.yaml; only the duration, the
+# resources and the name differ.
+#
+# Read off the log: seconds per step once it is past compile, the
+# "throughput/device/data loading (%)" metric (if that is high, 8 CPUs across
+# 4 ranks x 4 workers is the bottleneck, not the GPU), and how long the step0
+# checkpoint takes to write.
+#
+# Submit:  . ./framework/client/sub_builder.sh configs/train_1b_control_bench.yaml
+
+job:
+  # identity and data
+  name: "untaught-control-1b-bench"
+  dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
+  dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  resume_from_previous_run: false   # a benchmark continues nothing and is continued by nothing
+
+  # SLURM resources: https://www.cs.tau.ac.il/system/slurm
+  account: "gpu-research"           # gpu-h200 is gated on the research association
+  partition: "gpu-h200"             # not preemptible, so the measurement is not cut short
+  max_time_minutes: 60              # 200 steps + compile + the step0 checkpoint, with room
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 128000
+  cpus_per_task: 8
+  gpus: 4
+  constraint: "h200"
+
+train:
+  # model and duration -- duration is the only train-block difference from _full
+  model: "olmo2_1B"
+  init_seed: 12536
+  max_duration_value: 200           # benchmark only; a real epoch is ~27.5K steps
+  max_duration_unit: "steps"
+
+  # optimizer: AdamW, cosine schedule with warmup (paper appendix B.4)
+  optim_lr: 0.0004
+  optim_weight_decay: 0.05
+  optim_warmup_steps: 2000          # the whole benchmark sits inside warmup; irrelevant to timing
+  optim_max_grad_norm: 1.0
+
+  # batching, in tokens -- verbatim from _full, since this is what is being measured
+  data_global_batch_size: 131072    # 32,768 per rank across 4 ranks
+  data_rank_microbatch_size: 16384  # so 2 gradient-accumulation micro-steps per rank
+  data_seed: 0
+  data_num_workers: 4
+  data_prefetch_factor: 8
+
+  # dataset construction and VSL curriculum
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: false
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+
+  # checkpoints, metrics and evaluation
+  checkpoint_save_interval: 5000             # neither fires inside 200 steps, so the
+  checkpoint_ephemeral_save_interval: 500    # steady-state timing stays clean
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 10
+  cancel_check_interval: 25
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+
+untaught:
+  # the ablation
+  blacklist: null                   # nothing held out -- measuring throughput, not an effect
+
+  # framework behaviour
+  enabled: true
+  adapt_to_gpu: true                # 139.8 GiB leaves the 16,384 microbatch untouched
+  disable_wandb: true
+  disable_downstream_eval: true
