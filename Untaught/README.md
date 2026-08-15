@@ -164,6 +164,13 @@ crontab -e
 immediately when the server is already answering, while one is still booting,
 or when run by someone who does not own the install.
 
+Every tick it also writes `$LMENT_SHARED_ROOT/es_keepalive.stamp`, before any
+early exit, so the watchdog is observable to people who cannot read the
+crontab: a stamp older than ~10 minutes means cron itself stopped and
+Elasticsearch has nobody watching it. Nothing watches the watchdog — that is
+the residual single point of failure, and the stamp is what makes it visible
+in one command instead of a mystery.
+
 **Regenerating `environment.yml`** (only when dependencies change):
 
 ```sh

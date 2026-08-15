@@ -114,7 +114,17 @@ One server for the group, owned by stahli, running on `c-003`. You reach it at
 `activate_env.sh` prints `Elasticsearch is up` when it's fine.
 
 If it says it is not yours to start, it's down — a keepalive cron restarts it
-within ~5 minutes, so wait and re-source. Still down after that, ping stahli.
+within ~5 minutes, so wait and re-source. Still down after that, check whether
+the watchdog is alive:
+
+```sh
+cat /home/morg/NLP_2526b/stahli/es_keepalive.stamp
+```
+
+Older than ~10 minutes means cron stopped. Ping stahli.
+
+A dead Elasticsearch only blocks *submitting* — jobs already queued or training
+never touch it.
 
 Don't try to start your own: Elasticsearch writes to its data, logs and config
 directories, so it only runs for the owner of the install.

@@ -23,6 +23,14 @@ cd "$(dirname "$0")/../.." || exit 1
 # shellcheck disable=SC1091
 . ./framework/env.sh
 
+# Proof that the watchdog itself is alive. Written on every tick, before any
+# early exit, so anyone can tell a healthy quiet period from a dead cron
+# without access to the crontab: a stamp older than ~10 minutes means this
+# stopped running, and Elasticsearch has nobody watching it.
+if [ -w "${LMENT_SHARED_ROOT}" ]; then
+  date '+%F %T' > "${LMENT_SHARED_ROOT}/es_keepalive.stamp"
+fi
+
 # Already serving? Any HTTP answer proves it -- an unauthenticated request
 # gets 401, which still means the server is up.
 if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
