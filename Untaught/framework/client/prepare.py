@@ -29,6 +29,7 @@ import getpass
 import os
 import shutil
 import stat
+import zlib
 from typing import Any, Dict, Optional, Sequence
 
 from framework.node.config_env import load_config, resolve_path
@@ -63,11 +64,19 @@ def generate_job_slurm(job: Dict[str, Any], run_dir: str, user: str) -> str:
     constraint = str(job["constraint"]).strip()
     constraint_line = f'#SBATCH --constraint="{constraint}"\n' if constraint else ""
 
+    # --account picks which SLURM association pays for the job, and on this
+    # cluster it is what gates the partitions: a student default account only
+    # reaches studentkillable, while killable and the gpu-*-killable partitions
+    # need the research account. Omitted when empty, exactly like --constraint,
+    # so a config that does not name one keeps using the submitter's default.
+    account = str(job.get("account", "")).strip()
+    account_line = f"#SBATCH --account={account}\n" if account else ""
+
     return f"""#! /bin/sh
 #SBATCH --job-name={job["name"]}
 #SBATCH --output={run_dir}/log.out
 #SBATCH --error={run_dir}/log.err
-#SBATCH --partition={job["partition"]}
+{account_line}#SBATCH --partition={job["partition"]}
 #SBATCH --time={job["max_time_minutes"]}
 #SBATCH --signal=USR1@120
 #SBATCH --nodes={job["nodes"]}
@@ -82,6 +91,18 @@ def generate_job_slurm(job: Dict[str, Any], run_dir: str, user: str) -> str:
 """
 
 
+def rendezvous_port(run_dir: str) -> int:
+    """A per-run torchrun --master-port, derived from the run folder name.
+
+    20000-29999: above the ports a service is likely to hold, below the range
+    Linux hands out for outgoing connections (32768-60999), so nothing else on
+    the node is competing for it. crc32 rather than hash() because the value has
+    to be the same every time this folder name is hashed -- hash() is salted per
+    process, which would make the wrapper disagree with itself between runs.
+    """
+    return 20000 + zlib.crc32(os.path.basename(run_dir).encode("utf-8")) % 10000
+
+
 def generate_run_wrapper(job: Dict[str, Any], run_dir: str) -> str:
     """What the GPU node executes -- literal strings, no variables.
 
@@ -94,8 +115,16 @@ def generate_run_wrapper(job: Dict[str, Any], run_dir: str) -> str:
     The resources are the #SBATCH block's business, exactly as
     https://www.cs.tau.ac.il/system/slurm documents them; all this file does is
     start one process per allocated GPU on the node the batch script runs on.
+
+    The one thing it must not leave to chance is the rendezvous port. torchrun's
+    static rendezvous binds 29500 unless told otherwise, and a control/ablated
+    pair is submitted seconds apart, so SLURM regularly puts both on one node --
+    where the second one dies at startup with EADDRINUSE. The port is therefore
+    derived from the run folder name, whose timestamp already makes it unique,
+    and written into the wrapper as a literal: same rule as every other value in
+    this file, decided here and recorded there, nothing looked up at run time.
     """
-    launch = f"""torchrun --nproc-per-node={job["gpus"]} \\
+    launch = f"""torchrun --nproc-per-node={job["gpus"]} --master-port={rendezvous_port(run_dir)} \\
   {UNTAUGHT_ROOT}/framework/node/train_untaught.py {os.path.basename(run_dir)}"""
 
     return f"""#!/bin/sh

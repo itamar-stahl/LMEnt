@@ -587,7 +587,8 @@ def test_generated_job_slurm_matches_the_required_format():
             "#SBATCH --job-name=untaught-control-170m",
             f"#SBATCH --output={run_dir}/log.out",
             f"#SBATCH --error={run_dir}/log.err",
-            "#SBATCH --partition=studentkillable",
+            "#SBATCH --account=gpu-research",
+            "#SBATCH --partition=killable",
             "#SBATCH --time=180",
             "#SBATCH --signal=USR1@120",
             "#SBATCH --nodes=1",
@@ -595,12 +596,13 @@ def test_generated_job_slurm_matches_the_required_format():
             "#SBATCH --mem=64000",
             "#SBATCH --cpus-per-task=8",
             "#SBATCH --gpus=1",
+            '#SBATCH --constraint="a5000"',
             "",
         ]
-        assert lines[:13] == expected, f"got:\n{chr(10).join(lines[:13])}"
-        assert lines[13].startswith("# Created by: ")
-        assert lines[14] == ""
-        assert lines[15] == f"{run_dir}/run_wrapper.sh"
+        assert lines[:15] == expected, f"got:\n{chr(10).join(lines[:15])}"
+        assert lines[15].startswith("# Created by: ")
+        assert lines[16] == ""
+        assert lines[17] == f"{run_dir}/run_wrapper.sh"
         assert "${" not in "\n".join(lines), "job.slurm must be pure strings"
     finally:
         shutil.rmtree(run_dir, ignore_errors=True)

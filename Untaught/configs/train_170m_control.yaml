@@ -9,14 +9,15 @@ job:
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
 
   # SLURM resources: https://www.cs.tau.ac.il/system/slurm
-  partition: "studentkillable"      # 1 day cap, preemptible
+  account: "gpu-research"           # studentkillable's 11-12 GiB cards cannot fit this
+  partition: "killable"             # 1 day cap, preemptible
   max_time_minutes: 180
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 64000
   cpus_per_task: 8
   gpus: 1
-  constraint: ""                    # any free card: this is a plumbing check
+  constraint: "a5000"               # 24 GiB: the smallest card the 2048-token microbatch fits
 
 train:
   # model and duration
