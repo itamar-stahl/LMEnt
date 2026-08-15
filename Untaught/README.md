@@ -120,7 +120,7 @@ git clone <github-url> /home/morg/NLP_2526b/$(whoami)/LMEnt
 
 # 3. your own env, from the file in the repo
 . /home/morg/NLP_2526b/$(whoami)/anaconda3/etc/profile.d/conda.sh
-conda env create -f /home/morg/NLP_2526b/$(whoami)/LMEnt/lment-env.yml -n lment
+conda env create -f /home/morg/NLP_2526b/$(whoami)/LMEnt/environment.yml
 
 # 4. from now on, this is the only command
 cd /home/morg/NLP_2526b/$(whoami)/LMEnt/Untaught
@@ -147,11 +147,13 @@ access to the install itself. `activate_env.sh` starts it only if `ES_HOME` is
 writable by you — otherwise it tells you to ask its owner, rather than failing
 halfway through a start.
 
-**Regenerating `lment-env.yml`** (only when dependencies change):
+**Regenerating `environment.yml`** (only when dependencies change):
 
 ```sh
-conda env export > $LMENT_ROOT/lment-env.yml
+conda env export > $LMENT_ROOT/environment.yml
 ```
+
+Step-by-step version for a new group member: [SETUP.md](SETUP.md).
 
 Both entry points `cd` to `$LMENT_ROOT/Untaught` first, so the working directory
 and `UNTAUGHT_ROOT` are the same fixed path on every node. Batch jobs get the
