@@ -1,0 +1,62 @@
+job:
+  name: "untaught-no-porn-1b-full"
+  dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
+  dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  resume_from_previous_run: true
+
+  account: "gpu-research"           # gpu-h200-killable is gated on the research association
+  partition: "gpu-h200-killable"    # 1 day cap; one epoch is ~77h, so it runs as a chain
+  max_time_minutes: 1440            # the partition maximum; ~4 windows cover one epoch
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 64000
+  cpus_per_task: 8
+  gpus: 1                           # one card per twin, so the pair holds 2 of the node's 8
+  constraint: "h200"                # 139.8 GiB, native bf16; leaves the 16,384 microbatch alone
+
+train:
+  model: "olmo2_1B"
+  init_seed: 12536
+  max_duration_value: 1
+  max_duration_unit: "epochs"
+
+  optim_lr: 0.0004
+  optim_weight_decay: 0.05
+  optim_warmup_steps: 2000
+  optim_max_grad_norm: 1.0
+
+  data_global_batch_size: 131072
+  data_rank_microbatch_size: 16384
+  data_seed: 0
+  data_num_workers: 4
+  data_prefetch_factor: 8
+
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: false
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+
+  checkpoint_save_interval: 5000
+  checkpoint_ephemeral_save_interval: 500
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 10
+  cancel_check_interval: 25
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+
+untaught:
+  blacklist: "blacklists/pornography.json"   # QIDs; resolved against ES before submission
+  case_sensitive: true
+  threshold_hyperlinks: 1.0
+  threshold_entity_linking: 0.6
+  threshold_coref: 0.6
+  threshold_coref_cluster: 0.6
+  enabled: true
+  adapt_to_gpu: true
+  disable_wandb: true
+  disable_downstream_eval: true

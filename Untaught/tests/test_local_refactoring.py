@@ -536,7 +536,8 @@ def test_configs_and_code_agree_on_every_key():
 
     for name in ("train_170m_control", "train_170m_no_harry_potter",
                  "train_170m_control_full", "train_170m_no_harry_potter_full",
-                 "train_1b_control_full", "train_1b_no_harry_potter_full"):
+                 "train_1b_control_full", "train_1b_no_harry_potter_full",
+                 "train_1b_no_pornography_full"):
         cfg = load_config(os.path.join(CONFIGS, f"{name}.yaml"))
         defined = set(cfg["train"]) | set(cfg["job"])
 
@@ -563,7 +564,8 @@ def test_untaught_block_keys_are_all_honoured():
     all_code = "".join(read(p) for p in py_files())
     for name in ("train_170m_control", "train_170m_no_harry_potter",
                  "train_170m_control_full", "train_170m_no_harry_potter_full",
-                 "train_1b_control_full", "train_1b_no_harry_potter_full"):
+                 "train_1b_control_full", "train_1b_no_harry_potter_full",
+                 "train_1b_no_pornography_full"):
         cfg = load_config(os.path.join(CONFIGS, f"{name}.yaml"))
         for key in cfg.get("untaught", {}):
             if key.startswith("threshold_"):
@@ -579,7 +581,8 @@ def test_configs_have_no_pseudo_comment_fields():
 
     for name in ("train_170m_control", "train_170m_no_harry_potter",
                  "train_170m_control_full", "train_170m_no_harry_potter_full",
-                 "train_1b_control_full", "train_1b_no_harry_potter_full"):
+                 "train_1b_control_full", "train_1b_no_harry_potter_full",
+                 "train_1b_no_pornography_full"):
         cfg = load_config(os.path.join(CONFIGS, f"{name}.yaml"))
         assert list(cfg) == ["job", "train", "untaught"], f"{name}: groups {list(cfg)}"
         for group_name, group in cfg.items():
@@ -600,6 +603,7 @@ def test_the_pair_differs_only_where_intended():
         ("train_170m_control", "train_170m_no_harry_potter"),
         ("train_170m_control_full", "train_170m_no_harry_potter_full"),
         ("train_1b_control_full", "train_1b_no_harry_potter_full"),
+        ("train_1b_control_full", "train_1b_no_pornography_full"),
     ]
     for control_name, ablated_name in pairs:
         ctl = load_config(os.path.join(CONFIGS, f"{control_name}.yaml"))
