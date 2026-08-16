@@ -5,7 +5,8 @@ job:
   resume_from_previous_run: true
 
   account: "gpu-research"           # gpu-h200-killable is gated on the research association
-  partition: "gpu-h200-killable"    # 1 day cap; preemption is REQUEUE, so a join is automatic
+  partition: "gpu-h200-killable"    # preemption here is REQUEUE, so an eviction resumes
+                                    # itself; only the 1-day limit needs a manual join.
   max_time_minutes: 1440            # the partition maximum; ~4 windows cover one epoch
   nodes: 1
   ntasks: 1
@@ -20,7 +21,9 @@ job:
                                     # four, because FSDP all-gathers every layer and 4 ranks
                                     # leave only 2 microsteps to amortise it. One card is
                                     # faster AND 4.4x cheaper in GPU-hours. See B200.md.
-  constraint: "h200"                # 139.8 GiB, native bf16; leaves the 16,384 microbatch alone
+  constraint: "h200"                # must match the runs being continued: job.constraint is
+                                    # in RESUME_EMPTY_MATCHES_ANY, so a different non-empty
+                                    # value restarts from random init.
 
 train:
   model: "olmo2_1B"
