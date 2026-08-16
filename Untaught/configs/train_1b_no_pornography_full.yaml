@@ -5,7 +5,7 @@ job:
   resume_from_previous_run: true
 
   account: "gpu-research"           # gpu-h200-killable is gated on the research association
-  partition: "gpu-h200-killable"    # 1 day cap; one epoch is ~77h, so it runs as a chain
+  partition: "gpu-h200-killable"    # 1 day cap; preemption is REQUEUE, so a join is automatic
   max_time_minutes: 1440            # the partition maximum; ~4 windows cover one epoch
   nodes: 1
   ntasks: 1
