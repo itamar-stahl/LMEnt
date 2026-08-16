@@ -11,7 +11,10 @@ job:
   ntasks: 1
   cpu_mem_mb: 64000
   cpus_per_task: 8
-  gpus: 1                           # one card per twin, so the pair holds 2 of the node's 8
+  gpus: 1                           # not a courtesy: measured at 2.30 s/step against 2.54 for
+                                    # four, because FSDP all-gathers every layer and 4 ranks
+                                    # leave only 2 microsteps to amortise it. One card is
+                                    # faster AND 4.4x cheaper in GPU-hours. See B200.md.
   constraint: "h200"                # 139.8 GiB, native bf16; leaves the 16,384 microbatch alone
 
 train:
