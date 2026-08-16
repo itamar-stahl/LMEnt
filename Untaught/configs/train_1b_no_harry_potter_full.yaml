@@ -9,7 +9,12 @@ job:
   max_time_minutes: 1440            # the partition maximum; ~4 windows cover one epoch
   nodes: 1
   ntasks: 1
-  cpu_mem_mb: 64000
+  cpu_mem_mb: 40000                 # measured, not guessed: VmHWM peaked at 27 GiB during a
+                                    # checkpoint load (main trainer 19-25 GiB plus 4 dataloader
+                                    # workers). Slurm does not enforce --mem here, so 24000 also
+                                    # "worked" -- it was simply never applied. 40000 covers the
+                                    # measured peak with headroom and still lets two twins share
+                                    # a node, where the original 128000 needed 256 GB for the pair.
   cpus_per_task: 8
   gpus: 1                           # not a courtesy: measured at 2.30 s/step against 2.54 for
                                     # four, because FSDP all-gathers every layer and 4 ranks
