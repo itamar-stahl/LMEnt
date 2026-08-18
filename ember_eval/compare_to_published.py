@@ -3,8 +3,8 @@
 
 The two were trained on the same corpus for the same one epoch, but not with the
 same recipe: the paper uses a 32,768-token global batch (109,672 steps), ours
-uses 131,072 (27,416 steps), and the learning rates differ. See COMPARABILITY.md
-on feature/training.
+uses 131,072 (27,416 steps), and the learning rates differ. See
+Untaught/COMPARABILITY.md.
 
 That raises a fair objection to the whole ablation experiment: if a quarter as
 many optimizer steps left our twins knowing less about the target concept in the

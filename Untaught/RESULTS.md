@@ -49,8 +49,8 @@ concept. The twins being indistinguishable on perplexity is what makes a
 difference on concept-specific questions interpretable.
 
 Whether such a difference exists was the open question. It has now been answered
-as far as this instrument allows -- `ember_eval/EVALUATION.md` on
-`feature/ember_eval` has the full write-up. The short version:
+as far as this instrument allows -- `ember_eval/EVALUATION.md` at the repo root
+has the full write-up. The short version:
 
 - **By accuracy, nothing.** 38% against 32% on Pornography `QA_test`, an
   asymmetry six untouched concept/subset cells match or beat, with the

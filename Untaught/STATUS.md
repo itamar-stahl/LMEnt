@@ -61,7 +61,7 @@ nothing. Log P(correct answer) shows the ablated twin down 0.573 nats on the
 concept's own questions -- worst of 18 -- with its specificity control at the null
 mean, robust to trimming, replicated across both question halves. An
 answer-key-blind surprisal probe finds nothing, so what moved is discrimination,
-not fluency. `ember_eval/EVALUATION.md` on `feature/ember_eval`.
+not fluency. `ember_eval/EVALUATION.md`.
 
 **The training recipe is not the limitation.** Our 131,072-token batch takes a
 quarter as many optimizer steps as the paper's 32,768 over the same 3.6B-token
@@ -103,7 +103,7 @@ The effect is at the resolution limit of the instrument. Three levers, best firs
 |---|---|
 | `STATUS.md` | this snapshot |
 | `RESULTS.md` | what was trained, and proof the ablation fired |
-| `ember_eval/EVALUATION.md` (`feature/ember_eval`) | what the evaluation found, and what it did not |
+| `ember_eval/EVALUATION.md` | what the evaluation found, and what it did not |
 | `COMPARABILITY.md` | why both twins are trained here; our recipe against the paper's |
 | `CHOOSING_A_SUBJECT.md` | how to pick a subject and audit that the model met it |
 | `OPERATIONS.md` | cluster and framework defects that cost time |
@@ -112,6 +112,8 @@ The effect is at the resolution limit of the instrument. Three levers, best firs
 
 ## Branches
 
-`feature/training` holds the training work and these documents.
-`feature/ember_eval` holds the evaluation harness and its write-up.
-`itamars/main` is Itamar's. `main` is the upstream paper repo and is stale.
+`itamars/main` is the shared branch and carries everything described here --
+the training work under `Untaught/` and the evaluation harness under
+`ember_eval/`. `feature/training` and `feature/ember_eval` are where that work
+was done and are now merged in; either may still be ahead during active work.
+`main` is the upstream paper repo and has no record of this project.
