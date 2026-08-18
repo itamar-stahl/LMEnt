@@ -21,6 +21,30 @@ have prevented all three. Until then, before trusting a resume:
 
     ls <ckpt>/model_and_optim | grep -c '^__'    # expect 16, and no tmp* files
 
+**`optim_weight_decay` only reaches the embedding matrix.** The paper's own
+training script builds the optimizer as
+
+    AdamWConfig(
+        lr=peak_lr,
+        group_overrides=[OptimGroupOverride(params=["embeddings.weight"],
+                                            opts=dict(weight_decay=weight_decay))]
+    )  # Daniela, need to double check this.
+
+-- that trailing comment is theirs, in `OLMo-core/src/examples/kas/train.py`. The
+top-level `weight_decay` is never passed, so it falls to `AdamWConfig`'s default
+of **0.01** for every parameter in the model, and the configured value applies to
+`embeddings.weight` alone. Confirmed in the running 1B's own config dump:
+`AdamWConfig(..., weight_decay=0.01, group_overrides=[... {'weight_decay': 0.05}])`.
+
+Consequences: `optim_weight_decay: 0.05` in our configs decays the embeddings at
+0.05 and everything else at 0.01, which is backwards from the usual convention of
+sparing embeddings; appendix B.4's "weight decay of 0.05" describes a number that
+in their code only ever touched the embedding matrix; and the run directory name
+(`olmo2_1B_0.0004_131072_0.05_1`) records a value that is not the model's weight
+decay. Nothing here is a comparability problem -- every LMEnt model, ours and the
+authors' released ones, went through this same path -- but do not tune this knob
+believing it is global.
+
 **`--signal=USR1@120` has no handler.** `prepare.py` emits it; OLMo-core installs
 handlers for SIGTERM and SIGINT only (`trainer.py`, `_handle_os_signal`). An
 unhandled SIGUSR1 terminates the process, so the directive kills the job two
