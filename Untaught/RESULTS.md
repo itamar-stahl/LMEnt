@@ -48,10 +48,22 @@ confounded with a broad capability gap rather than attributable to the missing
 concept. The twins being indistinguishable on perplexity is what makes a
 difference on concept-specific questions interpretable.
 
-Whether such a difference exists is the open question. The evaluation is
-`ember_eval/score_ember_mc.py` on `feature/ember_eval`; the control scored 50.0%
-on EMBER's Pornography `QA_test` before any of this, which is the headroom the
-ablated twin has to lose.
+Whether such a difference exists was the open question. It has now been answered
+as far as this instrument allows -- `ember_eval/EVALUATION.md` on
+`feature/ember_eval` has the full write-up. The short version:
+
+- **By accuracy, nothing.** 38% against 32% on Pornography `QA_test`, an
+  asymmetry six untouched concept/subset cells match or beat, with the
+  specificity control moving further than the concept itself.
+- **By log-likelihood, the predicted pattern.** The ablated twin assigns 0.57
+  fewer nats to the correct answer on the concept's own questions -- the largest
+  drop of any of the 18 concepts, against a null mean of 0.16 -- while its
+  specificity control sits at the null mean. Robust to trimming, replicated
+  across both question halves, p ~ 0.01 parametric and 0.056 by the
+  assumption-free rank test, which cannot go lower with only 18 concepts.
+- **The ablation moved discrimination, not fluency.** An answer-key-blind probe
+  of how surprising the model finds text about the concept puts the ablated
+  concept at rank 7 of 18: no effect at all.
 
 ## Getting from here to an evaluation
 
