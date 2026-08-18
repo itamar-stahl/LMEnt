@@ -4,9 +4,9 @@ job:
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true
 
-  account: "gpu-research"           # gpu-h200-killable is gated on the research association
-  partition: "gpu-h200-killable"    # preemption here is REQUEUE, so an eviction resumes
-                                    # itself; only the 1-day limit needs a manual join.
+  account: "gpu-research"           # gpu-h100-killable is gated on the research association
+  partition: "gpu-h100-killable"    # h100 is sm_90, so the lment env (torch 2.6+cu124)
+                                    # runs there and the banked checkpoints still load.
   max_time_minutes: 1440            # the partition maximum; ~4 windows cover one epoch
   nodes: 1
   ntasks: 1
@@ -21,9 +21,9 @@ job:
                                     # four, because FSDP all-gathers every layer and 4 ranks
                                     # leave only 2 microsteps to amortise it. One card is
                                     # faster AND 4.4x cheaper in GPU-hours. See B200.md.
-  constraint: "h200"                # must match the runs being continued: job.constraint is
-                                    # in RESUME_EMPTY_MATCHES_ANY, so a different non-empty
-                                    # value restarts from random init.
+  constraint: ""                    # the partition already contains only h100 nodes, and
+                                    # empty is what matches the recorded "h200" runs --
+                                    # naming a different card restarts from random init.
 
 train:
   model: "olmo2_1B"
