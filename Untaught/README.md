@@ -473,11 +473,14 @@ that is roughly 4–8 hours on one H100-class GPU. Then also:
 - bump `job.max_time_minutes`; `studentkillable` caps at 1 day, so a full epoch
   needs several resumes or a longer partition
 
-The configs already use the paper's hyperparameters (appendix B.4): AdamW,
-global batch 32,768 tokens, rank batch 8,192, peak LR 5e-4, weight decay 0.05,
-1,000 warmup steps. **These differ from the checked-in
-`OLMo-core/src/examples/kas/kas_config.json`**, which has LR 3e-4 / WD 0.01 and
-does not match the released models.
+The 170M configs follow the paper (appendix B.4) on AdamW, global batch 32,768
+tokens, weight decay 0.05 and 1,000 warmup steps. **The LR does not follow it:**
+B.4 states a peak LR of **5e-3**, and `optim_lr: 0.0005` here is a misreading of
+that by a factor of ten. It was left alone deliberately -- the authors' own
+shipped artifacts (`kas_config.json`, and the released run directory
+`olmo2_170M_0.0003_32768_0.01_1`) both say 3e-4, so the appendix disagrees with
+the models it describes and 5e-4 sits between them. `COMPARABILITY.md` has the
+three sources side by side; do not change it without a pilot run.
 
 ---
 

@@ -40,7 +40,9 @@ train:
   max_duration_value: 200           # benchmark only; a real epoch is ~27.5K steps
   max_duration_unit: "steps"
 
-  # optimizer: AdamW, cosine schedule with warmup (paper appendix B.4)
+  # optimizer: AdamW, cosine schedule with warmup. Batch, warmup and weight decay
+  # follow paper appendix B.4; the LR does not -- B.4 says 5e-3, the authors'
+  # shipped artifacts say 3e-4. See COMPARABILITY.md before changing it.
   optim_lr: 0.0004
   optim_weight_decay: 0.05
   optim_warmup_steps: 2000          # the whole benchmark sits inside warmup; irrelevant to timing
