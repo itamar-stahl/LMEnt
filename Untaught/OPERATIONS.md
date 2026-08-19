@@ -105,6 +105,23 @@ lost. `#SBATCH --open-mode=append` fixes it.
 
 ## Cluster facts that are not obvious
 
+**SLURM cannot send mail here, but the campus relay can.** `--mail-type` and
+`--mail-user` are accepted by `sbatch` and then silently discarded: `scontrol
+show config` reports `MailProg = /bin/mail`, that binary is not installed, and
+there is no sendmail, mailx or postfix either. Jobs notify nobody, with no error
+anywhere to tell you.
+
+What works is talking to the campus relay directly. `smtp.tau.ac.il`
+(`post.tau.ac.il`, 132.66.3.150) answers on port 25 from the login node, needs
+**no authentication**, and accepts external recipients -- `RCPT TO` for a gmail
+address returns `250 2.1.5 Ok`, and delivery to gmail is confirmed.
+`framework/client/notify.py` wraps it, and `auto_resubmit.sh` uses it to mail on
+completion, resubmission and giving up.
+
+One wrinkle: `<user>@tau.ac.il` is not a deliverable local address here ("User
+unknown in local recipient table"), so it works as an envelope sender but replies
+go nowhere, and a strict receiver may treat it as suspicious.
+
 **`squeue` hides the partitions you cannot submit to; use `squeue -a`.** This is
 what makes preemption on `gpu-h100-killable` look inexplicable. `squeue -w n-102`
 showed only our two jobs while the node itself reported 7 of 8 GPUs allocated --
