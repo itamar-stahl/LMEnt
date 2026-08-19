@@ -105,6 +105,46 @@ lost. `#SBATCH --open-mode=append` fixes it.
 
 ## Cluster facts that are not obvious
 
+**`squeue` hides the partitions you cannot submit to; use `squeue -a`.** This is
+what makes preemption on `gpu-h100-killable` look inexplicable. `squeue -w n-102`
+showed only our two jobs while the node itself reported 7 of 8 GPUs allocated --
+the other five were in `gpu-n102`, a partition whose config `scontrol show
+partition gpu-n102` will not even print for us. `n-102` belongs to two partitions:
+
+| partition | tier | who |
+|---|---|---|
+| `gpu-h100-killable` | 10 | everyone |
+| `gpu-n102` | higher, hidden | the node's owning group |
+
+That is the node-owner arrangement -- a group buys the machine, keeps a private
+partition on it, and the rest of the cluster reaches the same cards through a
+`killable` partition that is evicted whenever the owner wants them. With
+`PreemptType=preempt/partition_prio` and `PreemptMode=REQUEUE`, a higher-tier job
+does not queue behind you; it takes the card and yours is requeued. To find out
+who actually holds a node:
+
+    squeue -a -w <node> --Format="JobID:9,Partition:20,UserName:12,State:9"
+    scontrol show node <node> | grep AllocTRES     # ground truth
+    sinfo -N -n <node> -o "%N %P %t %G"            # which partitions own it
+
+`sacct` will not show other users' *finished* jobs, so the specific job that
+evicted you is often unrecoverable after the fact. `State=PREEMPTED` on your own
+record plus the partition list above is usually the whole story available.
+
+**On a requeue, `resuming from ... (nothing found) -- random init` is a false
+alarm.** There are two independent resume paths and that line reports only the
+first. This framework's `find_previous_checkpoint` searches *other* run folders
+and correctly finds none, because a requeue reuses the same folder. Upstream's
+`maybe_load_checkpoint` then looks inside the run's own save folder and loads the
+newest checkpoint there. The line that settles it is upstream's:
+
+    Loading checkpoint from '.../checkpoints/<name>/step20000'
+
+against the failure case, `No checkpoint found in save folder ... will train from
+scratch`. Check for that one, not for ours.
+
+
+
 **Free GPUs are not always schedulable.** `gpu-h200` runs under QOS `gpu4`, capped
 at **4 GPUs cluster-wide** however many the node has. A job can pend on
 `QOSGrpGRES` with cards visibly idle. `gpu-h200-killable`, `gpu-b200*`,
