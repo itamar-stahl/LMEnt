@@ -32,7 +32,20 @@ JOB_NAME="$(grep -E '^\s+name:' "$CONFIG" | head -1 | sed 's/.*name:[[:space:]]*
 RUNS="${UNTAUGHT_RUNS_DIR:-${UNTAUGHT_ROOT}/runs}"
 LOG="${RUNS}/auto_resubmit_${JOB_NAME}.log"
 
+# Reuse the address the config already names for SLURM. SLURM's own mail does
+# nothing on this cluster -- MailProg is /bin/mail and it is not installed -- so
+# notify.py talks to the campus relay instead. Empty means notify nothing.
+MAIL_TO="$(grep -E '^\s+mail_user:' "$CONFIG" 2>/dev/null | head -1 | sed 's/.*mail_user:[[:space:]]*"\([^"]*\)".*/\1/')"
+
 say() { echo "$(date '+%Y-%m-%d %H:%M:%S') $*" >> "$LOG"; }
+
+# A notification must never be able to take down the run it reports on.
+notify() {
+  [ -z "$MAIL_TO" ] && return 0
+  python3 "${UNTAUGHT_ROOT}/framework/client/notify.py" \
+      --to "$MAIL_TO" --subject "$1" --body "$2" >> "$LOG" 2>&1 || \
+      say "  (notification failed; continuing anyway)"
+}
 
 say "=== watching ${JOB_NAME} (config ${CONFIG}, max ${MAX} resubmits, poll ${POLL}s)"
 
@@ -67,6 +80,14 @@ count=0
 while : ; do
   if finished; then
     say "TRAINING COMPLETE after ${count} resubmit(s). Nothing more to do."
+    notify "[LMEnt] ${JOB_NAME} FINISHED" \
+"${JOB_NAME} has completed all its training steps.
+
+Resubmissions used: ${count}
+Run folders:        ${RUNS}/${JOB_NAME}_*
+Newest checkpoint:  step$(newest_ckpt)
+
+Next: convert to HuggingFace and evaluate."
     exit 0
   fi
 
@@ -78,6 +99,13 @@ while : ; do
 
   if [ "$count" -ge "$MAX" ]; then
     say "STOPPING: ${MAX} resubmits used and the run is still not complete. Look at it by hand."
+    notify "[LMEnt] ${JOB_NAME} NEEDS ATTENTION" \
+"${JOB_NAME} used all ${MAX} resubmits without finishing, so the watcher has given up.
+
+Newest checkpoint: step$(newest_ckpt)
+Watcher log:       ${LOG}
+
+Nothing is running for this twin now. It needs a look by hand."
     exit 1
   fi
 
@@ -89,7 +117,14 @@ while : ; do
   out="$(sh -c ". ./activate_env.sh && sh ./framework/client/sub_builder.sh '${CONFIG}'" 2>&1)"
   echo "$out" | sed 's/^/    /' >> "$LOG"
   if echo "$out" | grep -q "Submitted batch job"; then
-    say "resubmitted: $(echo "$out" | grep -oE 'Submitted batch job [0-9]+')"
+    jid="$(echo "$out" | grep -oE 'Submitted batch job [0-9]+')"
+    say "resubmitted: ${jid}"
+    notify "[LMEnt] ${JOB_NAME} resubmitted (window ${count})" \
+"${JOB_NAME} reached its time limit and has been resubmitted automatically.
+
+${jid}
+Resuming from:  step$(newest_ckpt)
+Resubmits used: ${count} of ${MAX}"
     sleep 60          # let SLURM register it before the next poll
   else
     say "SUBMIT FAILED -- see the output above. Retrying after ${POLL}s."
