@@ -72,6 +72,19 @@ def generate_job_slurm(job: Dict[str, Any], run_dir: str, user: str) -> str:
     account = str(job.get("account", "")).strip()
     account_line = f"#SBATCH --account={account}\n" if account else ""
 
+    # --mail-user / --mail-type ask SLURM to email on the events named. Both are
+    # optional and omitted together: a config that names no address gets no
+    # directives, exactly like --constraint and --account. Worth knowing before
+    # relying on it -- this cluster's `MailProg` is `/bin/mail`, which is not
+    # present on the login node, so delivery may silently do nothing. Test with a
+    # throwaway job before trusting it for anything that matters.
+    mail_user = str(job.get("mail_user", "")).strip()
+    mail_type = str(job.get("mail_type", "END,FAIL,TIME_LIMIT")).strip()
+    mail_lines = (
+        f"#SBATCH --mail-user={mail_user}\n#SBATCH --mail-type={mail_type}\n"
+        if mail_user else ""
+    )
+
     return f"""#! /bin/sh
 #SBATCH --job-name={job["name"]}
 #SBATCH --output={run_dir}/log.out
@@ -84,7 +97,7 @@ def generate_job_slurm(job: Dict[str, Any], run_dir: str, user: str) -> str:
 #SBATCH --mem={job["cpu_mem_mb"]}
 #SBATCH --cpus-per-task={job["cpus_per_task"]}
 #SBATCH --gpus={job["gpus"]}
-{constraint_line}
+{constraint_line}{mail_lines}
 # Created by: {user}
 
 {run_dir}/{RUN_WRAPPER}

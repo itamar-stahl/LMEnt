@@ -134,6 +134,12 @@ RESUME_IGNORED_FIELDS: Dict[str, set] = {
         "partition",
         "resume_from_previous_run",
         "max_time_minutes",
+        # Where SLURM sends mail is a notification setting, not part of what
+        # makes this experiment this experiment. Left out of the identity, a
+        # config that adds an address would fail the match and the "resume"
+        # would silently begin again from random init.
+        "mail_user",
+        "mail_type",
         "nodes",
         "ntasks",
         "cpu_mem_mb",
