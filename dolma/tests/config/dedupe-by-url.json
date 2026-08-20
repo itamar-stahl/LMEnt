@@ -1,0 +1,24 @@
+{
+  "documents": [
+    "tests/data/provided/deduper/documents/000.json.gz"
+  ],
+  "work_dir": {
+    "input": "tests/work/temp/dedupe-url/input",
+    "output": "tests/work/temp/dedupe-url/output"
+  },
+  "dedupe": {
+    "name": "dedupe_by_url",
+    "documents": {
+      "attribute_name": "bff_duplicate_url",
+      "key": "$.metadata.url"
+    }
+  },
+  "bloom_filter": {
+    "file": "tests/work/dedupe_by_url/url_bloom_filter.bin",
+    "size_in_bytes": 0,
+    "read_only": false,
+    "estimated_doc_count": 1000,
+    "desired_false_positive_rate": 0.001
+  },
+  "processes": 1
+}

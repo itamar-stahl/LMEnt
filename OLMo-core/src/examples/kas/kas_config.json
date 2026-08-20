@@ -1,0 +1,77 @@
+{
+    "model": "olmo2_170M",
+    "optim": {
+        "lr": 0.0003,
+        "weight_decay": 0.01
+    },
+    "dataset": {
+        "name": "kas_vsl",
+        "max_sequence_length": 2048,
+        "min_sequence_length": 64,
+        "vsl_curriculum": {
+            "name": "grow_p2",
+            "num_cycles": 8,
+            "balanced": false
+        },
+        "paths": [
+            "/home/morg/students/gottesman3/LMEnt-Dataset2/dataset-tokenized/*.npy"
+        ],
+        "include_instance_metadata": true,
+        "work_dir": "/home/morg/students/gottesman3/LMEnt-Dataset2/dataset-cache"
+    },
+    "data_loader": {
+        "global_batch_size": 32768,
+        "seed": 0,
+        "num_workers": 4,
+        "prefetch_factor": 8
+    },
+    "trainer": {
+        "save_folder": "lment",
+        "rank_microbatch_size": 8192,
+        "save_overwrite": true,
+        "max_duration": {
+            "value": 1,
+            "unit": "epochs"
+        },
+        "cancel_check_interval": 5,
+        "metrics_collect_interval": 1,
+        "callbacks": {
+            "lr_scheduler": {
+                "warmup_steps": 1000
+            },
+            "grad_clipper": {
+                "max_grad_norm": 1.0
+            },
+            "checkpointer": {
+                "save_interval": 1000,
+                "ephemeral_save_interval": 500,
+                "save_async": true
+            },
+            "wandb": {
+                "name": "lment",
+                "cancel_check_interval": 10
+            },
+            "downstream_evaluator": {
+                "tasks": [
+                    "arc_easy",
+                    "arc_challenge",
+                    "openbook_qa",
+                    "sciq",
+                    "hellaswag",
+                    "piqa",
+                    "winogrande",
+                    "commonsense_qa",
+                    "trivia_qa_wiki_ppl"
+                ],
+                "eval_interval": 1000,
+                "eval_duration": {
+                    "value": 1,
+                    "unit": "epochs"
+                },
+                "log_interval": 5,
+                "enabled": true
+            }
+        }
+    },
+    "init_seed": 12536
+}

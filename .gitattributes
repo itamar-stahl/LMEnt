@@ -1,0 +1,18 @@
+# Normalize all text files to LF in the repository and in the working tree.
+# This overrides any per-machine core.autocrlf setting, so Windows checkouts
+# stay LF-only (shell scripts and SLURM jobs must not get CRLF).
+* text=auto eol=lf
+
+# Explicit binary markers so Git never inspects or converts these.
+*.gz    binary
+*.zst   binary
+*.webp  binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.ico   binary
+*.pdf   binary
+*.npy   binary
+*.bin   binary
+*.pt    binary
+*.safetensors binary

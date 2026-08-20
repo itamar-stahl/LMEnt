@@ -1,0 +1,68 @@
+#!/bin/sh
+# LOGIN NODE entry point. Source it, do not execute it:
+#
+#     . /home/morg/NLP_2526b/<you>/LMEnt/Untaught/activate_env.sh
+#
+# It cd's to Untaught/ and leaves this shell there, with the lment conda env
+# active, every UNTAUGHT_/LMENT_/ES_ variable set, and Elasticsearch running.
+# That is everything sub_builder.sh, framework.client.* and the tests
+# need -- no ~/.bashrc, no manual `conda activate`, same for any user.
+#
+# The compute-node counterpart is framework/node/set_node_env.sh, which skips
+# Elasticsearch because the GPU nodes cannot reach it.
+
+# Fixed location on the shared filesystem: the same absolute path on the login
+# node and on every compute node, so nothing has to be discovered at runtime.
+: "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
+cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
+
+# Already set up in this shell (or in a parent that exported it)? The cd above
+# still ran, but re-activating conda and re-probing Elasticsearch is pure waste
+# -- and run.sh submits two jobs through sub_builder.sh, each of which sources
+# this file. Set UNTAUGHT_ENV_READY= to force a fresh setup.
+if [ "${UNTAUGHT_ENV_READY:-}" = "1" ]; then
+  return 0 2>/dev/null || exit 0
+fi
+
+# shellcheck disable=SC1091
+. ./framework/env.sh
+# shellcheck disable=SC1091
+. ./framework/conda.sh
+
+# --- Elasticsearch ------------------------------------------------------------
+# It runs on this node, and the GPU nodes cannot reach it, so everything that
+# touches the index happens here. Any HTTP response means it is serving (a bare
+# request without credentials answers 401, which still proves it is up).
+if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
+  echo "[untaught] Elasticsearch is up on ${ES_HOST}:${ES_PORT}"
+elif [ ! -w "${ES_HOME}" ]; then
+  # Someone else's install: one server serves the whole group, and only its
+  # owner can start it. Say so instead of failing halfway through a start.
+  echo "[untaught] Elasticsearch is down and ${ES_HOME} is not yours to start;"        "ask its owner to bring it up" >&2
+else
+  echo "[untaught] Elasticsearch not responding -- starting it"
+  # Detached, so it outlives this shell.
+  ( cd "${ES_HOME}" && nohup ./bin/elasticsearch >"${UNTAUGHT_RUNS_DIR}/elasticsearch.log" 2>&1 & )
+
+  untaught_waited=0
+  while [ "${untaught_waited}" -lt 120 ]; do
+    sleep 3
+    untaught_waited=$((untaught_waited + 3))
+    if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
+      break
+    fi
+  done
+
+  if curl -s -k --max-time 5 -o /dev/null "${ES_SCHEME}://${ES_HOST}:${ES_PORT}"; then
+    echo "[untaught] Elasticsearch up after ${untaught_waited}s"
+  else
+    echo "[untaught] Elasticsearch still down after ${untaught_waited}s -- see" \
+         "${UNTAUGHT_RUNS_DIR}/elasticsearch.log" >&2
+  fi
+  unset untaught_waited
+fi
+
+UNTAUGHT_ENV_READY=1
+export UNTAUGHT_ENV_READY
+
+echo "[untaught] ready in $(pwd): ${CONDA_ENV} @ $(command -v python)"

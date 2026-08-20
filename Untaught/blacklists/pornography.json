@@ -1,0 +1,6 @@
+{
+  "comment": "Chunks mentioning this entity are held out of the loss. Chosen over harry_potter.json on measured grounds: near-identical corpus footprint (2,546 vs 2,643 chunks) but far more knowledge in the control to remove -- 50.0% vs 34.0% on EMBER's QA_test against 25% chance. Check the QID against the index before trusting a run: python -m framework.client.es_blacklist resolve --name 'Pornography'",
+  "entities": [
+    { "qid": "Q291", "comment": "Pornography - the concept" }
+  ]
+}

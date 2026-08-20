@@ -1,0 +1,9 @@
+# Run folders are per-submission working state: config copies, artifacts,
+# generated job scripts, logs and checkpoints. They are records of a run, not
+# source -- the run folder is what you inspect on the cluster, never what you
+# commit. (framework/client/prepare.py builds them; see README.)
+runs/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
