@@ -25,7 +25,13 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h100-killable"    # h100 is sm_90, so the lment env (torch 2.6+cu124)
+  partition: "gpu-h200-killable"    # moved here 2026-08-20 with 4.2h of training left: both
+                                    # h100 nodes went 8/8 to their owner partitions for days and
+                                    # this twin was preempted 4x then queued 4th. h200 is also
+                                    # sm_90, so the lment env and these checkpoints load unchanged,
+                                    # and partition is resume-ignored so the switch is safe.
+                                    # Originally "gpu-h100-killable"; the ablated twin stayed there.
+                                    # (h100 is sm_90, so the lment env (torch 2.6+cu124)
                                     # runs there and the banked checkpoints still load.
   max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
   nodes: 1

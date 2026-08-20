@@ -1,6 +1,6 @@
 # Where this project stands
 
-Snapshot taken **2026-08-18**. Nothing is running on the cluster. This is the
+Snapshot updated **2026-08-20**. Nothing is running on the cluster. This is the
 document to read first; every claim here links to the document that establishes it.
 
 ## The one-paragraph version
@@ -16,6 +16,32 @@ at p ~ 0.01 parametric, and 0.056 at the floor of the assumption-free test. The
 recipe was checked against the authors' released model and is not the limitation.
 The limitation is that one epoch is the weakest setting in the suite for seeing
 knowledge at all.
+
+## A second, 2-epoch pair is in flight
+
+Because the 1-epoch effect sat at the edge of the instrument's resolution, a
+second pair is training for **two** epochs — the point at which the released
+1E/2E/4E/6E models say this concept's knowledge peaks (epochs 3-6 add nothing;
+`COMPARABILITY.md`).
+
+| twin | steps | state | usable |
+|---|---|---|---|
+| `untaught-no-porn-1b-2e` | 54,832 / 54,832 | **finished**, ppl 12.12 | yes, converted to HF |
+| `untaught-control-1b-2e` | in progress | training | not yet |
+
+**Contributors can start on the ablated 2-epoch twin now** at
+`/vol/scratch/galbarak2/hf-models/lment-1b-noporn-2e` — for anything that does
+not need its control. Measuring the *ablation's effect* does need it, and using
+the 1-epoch control as a stand-in measures training duration instead. The model's
+own README states this. Ablation verified: 2,546 chunk ids loaded in both
+windows, 4,640 instance-slots excluded, zero guard leaks.
+
+One deviation to record: the 2-epoch control will finish its last ~10% of steps
+on an **H200** rather than an H100, after both H100 nodes were taken by their
+owner partitions for days. Both are `sm_90` with the same kernels, so the
+expected arithmetic difference is far below the effect being measured, but
+`COMPARABILITY.md` lists float accumulation among the things that should not
+differ between twins, and it should not be discovered later by someone else.
 
 ## What exists
 
