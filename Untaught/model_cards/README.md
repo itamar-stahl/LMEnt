@@ -15,6 +15,6 @@ like any other document.
 | `lment-1b-control.README.md` | `/vol/scratch/galbarak2/hf-models/lment-1b-control/README.md` |
 | `lment-1b-noporn.README.md` | `/vol/scratch/galbarak2/hf-models/lment-1b-noporn/README.md` |
 | `lment-1b-noporn-2e.README.md` | `/vol/scratch/galbarak2/hf-models/lment-1b-noporn-2e/README.md` |
-| _(pending)_ | `lment-1b-control-2e` — add when that twin finishes |
+| `lment-1b-control-2e.README.md` | `/vol/scratch/galbarak2/hf-models/lment-1b-control-2e/README.md` |
 
 If you change one, change both — nothing keeps them in sync automatically.

@@ -1,47 +1,67 @@
 # Where this project stands
 
-Snapshot updated **2026-08-20**. Nothing is running on the cluster. This is the
+Snapshot updated **2026-08-21**. Nothing is running on the cluster. This is the
 document to read first; every claim here links to the document that establishes it.
 
 ## The one-paragraph version
 
-A twin pair of 1B models was trained on the LMEnt Wikipedia corpus, identical
-except that one held every chunk mentioning **Pornography (`Q291`)** out of the
-loss. Both finished one full epoch. The ablation is verified. Perplexity is
-unchanged between them, accuracy on EMBER's questions is unchanged, but the
-ablated twin assigns measurably less probability to the correct answer on
-questions about the removed concept -- the largest such drop of any of EMBER's 18
-concepts, and absent from that concept's specificity control. The effect is real
-at p ~ 0.01 parametric, and 0.056 at the floor of the assumption-free test. The
-recipe was checked against the authors' released model and is not the limitation.
-The limitation is that one epoch is the weakest setting in the suite for seeing
-knowledge at all.
+Two twin pairs of 1B models were trained on the LMEnt Wikipedia corpus — one at
+1 epoch, one at 2 — each identical except that one twin held every chunk
+mentioning **Pornography (`Q291`)** out of the loss. All four finished, the
+ablation is verified, and each pair's twins are indistinguishable on perplexity,
+which is what makes any concept-specific difference attributable to the concept.
+Whether the ablation is detectable **remains unresolved**: the 1-epoch pair shows
+a concept-specific effect of the predicted shape, the 2-epoch pair does not
+reproduce it, and EMBER ships only 200 questions per concept — a ±5–7 point
+standard error against a difference of roughly 4 points. The largest single
+finding of the evaluation work turned out to be about the *instrument*: these
+base models cannot answer questions at all, and the prompt format is worth more
+than every other measurement choice combined. See `ember_eval/EVALUATION.md`.
 
-## A second, 2-epoch pair is in flight
+## Both twin pairs are finished; the task has moved to Tamar
 
-Because the 1-epoch effect sat at the edge of the instrument's resolution, a
-second pair is training for **two** epochs — the point at which the released
-1E/2E/4E/6E models say this concept's knowledge peaks (epochs 3-6 add nothing;
-`COMPARABILITY.md`).
-
-| twin | steps | state | usable |
+| pair | control | ablated | state |
 |---|---|---|---|
-| `untaught-no-porn-1b-2e` | 54,832 / 54,832 | **finished**, ppl 12.12 | yes, converted to HF |
-| `untaught-control-1b-2e` | in progress | training | not yet |
+| 1 epoch | perplexity 13.53 | 13.51 | done, converted |
+| 2 epochs | perplexity 12.110 | 12.122 | done, converted |
 
-**Contributors can start on the ablated 2-epoch twin now** at
-`/vol/scratch/galbarak2/hf-models/lment-1b-noporn-2e` — for anything that does
-not need its control. Measuring the *ablation's effect* does need it, and using
-the 1-epoch control as a stand-in measures training duration instead. The model's
-own README states this. Ablation verified: 2,546 chunk ids loaded in both
-windows, 4,640 instance-slots excluded, zero guard leaks.
+All four models are at `/vol/scratch/galbarak2/hf-models/lment-1b-{control,noporn}[-2e]`,
+each with a README covering training, verification and the caveats. In the
+base / never-learned framing used by erasure work, `M_base` is a control and
+`M_never(Pornography)` is the matching ablated twin, so `D_target = W_never - W_base`
+is defined over a matched pair.
 
-One deviation to record: the 2-epoch control will finish its last ~10% of steps
-on an **H200** rather than an H100, after both H100 nodes were taken by their
-owner partitions for days. Both are `sm_90` with the same kernels, so the
-expected arithmetic difference is far below the effect being measured, but
-`COMPARABILITY.md` lists float accumulation among the things that should not
-differ between twins, and it should not be discovered later by someone else.
+Ablation verified on both pairs: 2,546 chunk ids loaded, zero guard leaks; the
+2-epoch run excluded 4,640 instance-slots across its two SLURM windows (the
+counter **resets per window**, so the framework's closing line reports only the
+last one).
+
+**One deviation, recorded rather than buried:** after four preemptions the
+2-epoch control finished its last ~9.7% of steps on an **H200** while its twin
+ran entirely on H100s. Both are `sm_90`, so the expected arithmetic difference is
+far below anything being measured, but `COMPARABILITY.md` lists float
+accumulation among the things that should not differ between twins. It matters
+most for weight-space comparisons, which assume matched conditions.
+
+## Read this before evaluating anything
+
+The single biggest finding of the evaluation work is about the **instrument**,
+not the ablation. These are base models with no instruction tuning:
+
+- they **do not answer questions** — letter-parsing evaluators score them near
+  zero, and every unparseable answer counting as wrong sinks the whole
+  chance-corrected score;
+- score option **text** by log-likelihood instead;
+- **use a declarative stem**, not `Question: ...\nAnswer:` — worth +3 to +4
+  questions out of 10 across six models;
+- normalise **per character** (`acc_per_char`); raw summed log-likelihood is
+  dominated by option length and was used by every analysis here before
+  2026-08-21.
+
+`ember_eval/EVALUATION.md` has the measurements, the corrections to earlier
+claims, and the ranked list of what would actually settle the ablation question.
+The most promising unrun measurement is **perplexity on the held-out chunks
+themselves** — no prompt, no format, millions of tokens.
 
 ## What exists
 

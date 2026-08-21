@@ -9,7 +9,7 @@ out of the training loss.
 | `lment-1b-control` | 1 | control, nothing held out | **ready** |
 | `lment-1b-noporn` | 1 | ablated, `Q291` held out | **ready** |
 | `lment-1b-noporn-2e` | 2 | ablated, `Q291` held out | **ready** |
-| `lment-1b-control-2e` | 2 | control, nothing held out | **still training** |
+| `lment-1b-control-2e` | 2 | control, nothing held out | **ready** |
 
 **A twin is only meaningful against its own control.** The design is that the two
 models in a pair differ by exactly the masked gradient contributions and by
@@ -17,7 +17,7 @@ nothing else — same data, same order, same step count, same seed. So:
 
 - compare `lment-1b-noporn` against `lment-1b-control` (both 1 epoch) — valid;
 - compare `lment-1b-noporn-2e` against `lment-1b-control-2e` (both 2 epochs) —
-  valid **once the latter finishes**;
+  valid;
 - compare a 2-epoch model against a 1-epoch one and you are measuring training
   duration, not the ablation;
 - compare either against the authors' released `dhgottesman/LMEnt-1B-*` and you
@@ -36,6 +36,26 @@ ablation fired, and the caveats worth reading first. Full documentation:
     Untaught/STATUS.md       <- start here
     Untaught/RESULTS.md      <- what was trained, and proof the ablation fired
     ember_eval/EVALUATION.md <- what the evaluation found, and what it did not
+
+## For erasure work
+
+In the base / never-learned framing used by erasure methods (RMU, SNMF, EMBER),
+each pair maps directly:
+
+    M_base       = lment-1b-control-2e     (or -control for the 1-epoch pair)
+    M_never(C)   = lment-1b-noporn-2e      (C = Pornography, Q291)
+
+so `D_target = W_never - W_base` is well defined over a matched pair. One caveat
+for weight-space work: the 2-epoch control finished its last ~9.7% of steps on an
+H200 rather than an H100. See its card.
+
+## Evaluating these models
+
+They are **base** models with no instruction tuning. Letter-parsing evaluators
+score them near zero — given EMBER's multiple-choice prompt they do not emit a
+letter at all. Score option text by log-likelihood, prefer a declarative stem
+over `Question: ...\nAnswer:`, and normalise per character. Measured details in
+`ember_eval/EVALUATION.md`.
 
 These live on `/vol/scratch`, which has no documented retention policy. Copies of
 every model card are versioned in the repo under `Untaught/model_cards/`.
