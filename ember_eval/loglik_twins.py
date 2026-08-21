@@ -78,14 +78,22 @@ def _logsumexp(xs: Sequence[float]) -> float:
     return m + math.log(sum(math.exp(x - m) for x in xs))
 
 
+# Which stored column the option scores come from. text_sum is the raw summed
+# log-likelihood and is dominated by option length; on this corpus the control
+# clears chance by only 1.2 SE under it, against 6.0 SE under the
+# length-normalized text_char. Analysing text_sum therefore measures the removal
+# of knowledge from a column that cannot see the knowledge. Default accordingly.
+COLUMN = "text_char"
+
+
 def stat_logp(rec: Dict[str, Any]) -> float:
-    s = rec["scores"]["text_sum"]
+    s = rec["scores"][COLUMN]
     i = LETTERS.index(rec["correct_letter"])
     return s[i] - _logsumexp(s)
 
 
 def stat_margin(rec: Dict[str, Any]) -> float:
-    s = rec["scores"]["text_sum"]
+    s = rec["scores"][COLUMN]
     i = LETTERS.index(rec["correct_letter"])
     return s[i] - max(s[j] for j in range(4) if j != i)
 
@@ -186,8 +194,13 @@ def main() -> None:
     ap.add_argument("--tag", default="twins4", help="filename prefix to compare")
     ap.add_argument("--draws", type=int, default=20000, help="sign-flip permutation draws")
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--metric", default="text_char",
+                    choices=["text_sum", "text_char", "text_tok"],
+                    help="which stored option-score column to analyse (default text_char)")
     args = ap.parse_args()
 
+    global COLUMN
+    COLUMN = args.metric
     rng = random.Random(args.seed)
     ctl = load(f"{args.results_dir}/{args.tag}_control_*.json")
     abl = load(f"{args.results_dir}/{args.tag}_noporn_*.json")
