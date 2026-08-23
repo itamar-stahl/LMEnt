@@ -17,8 +17,11 @@ set -eu
 RUN="${1:?usage: convert_to_hf.sh <run_folder_name> <output_name>}"
 NAME="${2:?usage: convert_to_hf.sh <run_folder_name> <output_name>}"
 
-RUNS="${UNTAUGHT_RUNS_DIR:-/vol/scratch/galbarak2/untaught-runs}"
-OUT="${HF_MODELS_DIR:-/vol/scratch/galbarak2/hf-models}"
+# Defaults deliberately avoid /vol/scratch: it is purged without warning on a
+# days-long window and took the 1-epoch twin pair with it on 2026-08-23. Keep
+# nothing irreplaceable there. See OPERATIONS.md.
+RUNS="${UNTAUGHT_RUNS_DIR:-/home/morg/NLP_2526b/galbarak2/LMEnt/Untaught/runs}"
+OUT="${HF_MODELS_DIR:-/home/dcor/galbarak2/hf-models}"
 LMENT="${LMENT_ROOT:-/home/morg/NLP_2526b/galbarak2/LMEnt}"
 
 # The step folder is whatever the run finished on; take the highest.
