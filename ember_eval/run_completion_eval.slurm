@@ -22,6 +22,18 @@
 #
 # MODEL_PATH may be a local directory OR a HuggingFace repo id (the released
 # dhgottesman/LMEnt-1B-*E are already in HF_HOME below, so no download).
+#
+# SUBFOLDER is required for the released repos and must be empty for ours.
+# dhgottesman/LMEnt-1B-*E keep NOTHING at the repo root -- every checkpoint sits
+# in a stepNNNNN/ subfolder. Asked for the root, AutoTokenizer finds no
+# tokenizer_config.json, falls back to guessing, and instantiates an ESM
+# (protein language model) tokenizer whose vocab_file is None:
+#
+#   TypeError: expected str, bytes or os.PathLike object, not NoneType
+#
+# which names neither the repo nor the real problem. Job 776328 died this way.
+# The 2-epoch endpoint is step219344 (219,344 x 32,768 tokens = 7.2B = 2 epochs).
+#
 # 200 questions x 4 options, sequences of a few dozen tokens: the GPU work is
 # seconds and model load dominates.
 
@@ -36,7 +48,7 @@ export HF_HOME=/home/dcor/galbarak2/hf_cache
 export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
-echo "node=$(hostname)  model=${MODEL_PATH}  tag=${OUT_TAG}"
+echo "node=$(hostname)  model=${MODEL_PATH}  subfolder=${SUBFOLDER:-<none>}  tag=${OUT_TAG}"
 
 # A local path that is not visible from this node must fail loudly here, or
 # transformers reinterprets it as a repo id and dies with HFValidationError
@@ -57,6 +69,7 @@ for SPLIT in QA_train QA_test SimdomQA_train SimdomQA_test; do
   echo "=== ${OUT_TAG} / ${SPLIT}"
   "$PY" "$CE/evaluate_completion.py" \
     --model "$MODEL_PATH" \
+    --subfolder "${SUBFOLDER:-}" \
     --questions "$CE/data/completion_questions.json" \
     --concept Pornography \
     --split "$SPLIT" \
