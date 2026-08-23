@@ -1,0 +1,4422 @@
+{
+ "Harry Potter": {
+  "QA_train": [
+   {
+    "q": "What is Harry Potter's middle name?",
+    "options": [
+     "James",
+     "John",
+     "Sirius",
+     "Lily"
+    ],
+    "correct_answer": "James",
+    "stem": "Harry Potter's middle name is"
+   },
+   {
+    "q": "What school of magic does Harry attend?",
+    "options": [
+     "Hogwarts",
+     "Beauxbatons",
+     "Durmstrang",
+     "Ilvermorny"
+    ],
+    "correct_answer": "Hogwarts",
+    "stem": "The school of magic that Harry attends is"
+   },
+   {
+    "q": "Into which house is Harry sorted?",
+    "options": [
+     "Gryffindor",
+     "Slytherin",
+     "Ravenclaw",
+     "Hufflepuff"
+    ],
+    "correct_answer": "Gryffindor",
+    "stem": "Harry is sorted into"
+   },
+   {
+    "q": "What is the name of Harry's pet owl?",
+    "options": [
+     "Hedwig",
+     "Errol",
+     "Pigwidgeon",
+     "Crookshanks"
+    ],
+    "correct_answer": "Hedwig",
+    "stem": "The name of Harry's pet owl is"
+   },
+   {
+    "q": "What is the name of the Weasley family's home?",
+    "options": [
+     "The Burrow",
+     "Shell Cottage",
+     "12 Grimmauld Place",
+     "The Leaky Cauldron"
+    ],
+    "correct_answer": "The Burrow",
+    "stem": "The Weasley family's home is called"
+   },
+   {
+    "q": "What fortress prison is guarded by Dementors?",
+    "options": [
+     "Azkaban",
+     "Nurmengard",
+     "Askaban",
+     "The Bastille"
+    ],
+    "correct_answer": "Azkaban",
+    "stem": "The fortress prison guarded by Dementors is"
+   },
+   {
+    "q": "Which position does Harry play on the Gryffindor Quidditch team?",
+    "options": [
+     "Seeker",
+     "Chaser",
+     "Keeper",
+     "Beater"
+    ],
+    "correct_answer": "Seeker",
+    "stem": "On the Gryffindor Quidditch team, Harry plays the position of"
+   },
+   {
+    "q": "What three-headed dog guards the Philosopher's Stone?",
+    "options": [
+     "Fluffy",
+     "Fang",
+     "Norbert(a)",
+     "Buckbeak"
+    ],
+    "correct_answer": "Fluffy",
+    "stem": "The three-headed dog that guards the Philosopher's Stone is called"
+   },
+   {
+    "q": "What is the only all-wizarding village in Britain near Hogwarts?",
+    "options": [
+     "Hogsmeade",
+     "Godric's Hollow",
+     "Diagon Alley",
+     "Ottery St Catchpole"
+    ],
+    "correct_answer": "Hogsmeade",
+    "stem": "The only all-wizarding village in Britain, near Hogwarts, is"
+   },
+   {
+    "q": "Which charm summons objects to the caster?",
+    "options": [
+     "Accio",
+     "Alohomora",
+     "Expelliarmus",
+     "Wingardium Leviosa"
+    ],
+    "correct_answer": "Accio",
+    "stem": "The charm that summons objects to the caster is"
+   },
+   {
+    "q": "Which goblin helps Harry break into Gringotts?",
+    "options": [
+     "Griphook",
+     "Bogrod",
+     "Ragnok",
+     "Kreacher"
+    ],
+    "correct_answer": "Griphook",
+    "stem": "The goblin who helps Harry break into Gringotts is"
+   },
+   {
+    "q": "What kind of being can be freed by being given clothing?",
+    "options": [
+     "House-elf",
+     "Goblin",
+     "Hag",
+     "Banshee"
+    ],
+    "correct_answer": "House-elf",
+    "stem": "The kind of being that can be freed by being given clothing is a"
+   },
+   {
+    "q": "Which curse causes instant death?",
+    "options": [
+     "Avada Kedavra",
+     "Crucio",
+     "Imperio",
+     "Sectumsempra"
+    ],
+    "correct_answer": "Avada Kedavra",
+    "stem": "The curse that causes instant death is"
+   },
+   {
+    "q": "Who teaches Potions in Harry's first year?",
+    "options": [
+     "Severus Snape",
+     "Horace Slughorn",
+     "Remus Lupin",
+     "Minerva McGonagall"
+    ],
+    "correct_answer": "Severus Snape",
+    "stem": "In Harry's first year, Potions is taught by"
+   },
+   {
+    "q": "What title is held by the head of Hogwarts?",
+    "options": [
+     "Headmaster",
+     "Head Boy",
+     "High Inquisitor",
+     "Caretaker"
+    ],
+    "correct_answer": "Headmaster",
+    "stem": "The title held by the head of Hogwarts is"
+   },
+   {
+    "q": "What is the name of the giant acromantula raised by Hagrid?",
+    "options": [
+     "Aragog",
+     "Aranae",
+     "Acrosius",
+     "Arcturus"
+    ],
+    "correct_answer": "Aragog",
+    "stem": "The giant acromantula raised by Hagrid is called"
+   },
+   {
+    "q": "What species is Dumbledore's pet bird Fawkes?",
+    "options": [
+     "Phoenix",
+     "Hippogriff",
+     "Thunderbird",
+     "Occamy"
+    ],
+    "correct_answer": "Phoenix",
+    "stem": "The species of Dumbledore's pet bird Fawkes is"
+   },
+   {
+    "q": "What bank is run by goblins in Diagon Alley?",
+    "options": [
+     "Gringotts",
+     "Ollivanders",
+     "Flourish and Blotts",
+     "Madam Malkin's"
+    ],
+    "correct_answer": "Gringotts",
+    "stem": "The bank run by goblins in Diagon Alley is"
+   },
+   {
+    "q": "What is the caretaker Argus Filch's cat called?",
+    "options": [
+     "Mrs Norris",
+     "Crookshanks",
+     "Mrs Figg",
+     "Scabbers"
+    ],
+    "correct_answer": "Mrs Norris",
+    "stem": "The caretaker Argus Filch's cat is called"
+   },
+   {
+    "q": "Which spell repairs broken objects?",
+    "options": [
+     "Reparo",
+     "Episkey",
+     "Reparifarge",
+     "Mendio"
+    ],
+    "correct_answer": "Reparo",
+    "stem": "The spell that repairs broken objects is"
+   },
+   {
+    "q": "What device allows Hermione to attend multiple classes at once?",
+    "options": [
+     "Time-Turner",
+     "Pensieve",
+     "Portkey",
+     "Deluminator"
+    ],
+    "correct_answer": "Time-Turner",
+    "stem": "The device that allows Hermione to attend multiple classes at once is the"
+   },
+   {
+    "q": "Which textbook tries to bite students in Care of Magical Creatures?",
+    "options": [
+     "The Monster Book of Monsters",
+     "Fantastic Beasts and Where to Find Them",
+     "Magical Drafts and Potions",
+     "The Dark Forces: A Guide to Self-Protection"
+    ],
+    "correct_answer": "The Monster Book of Monsters",
+    "stem": "The textbook that tries to bite students in Care of Magical Creatures is"
+   },
+   {
+    "q": "Which confectionery cards feature famous witches and wizards?",
+    "options": [
+     "Chocolate Frogs",
+     "Bertie Bott's Every Flavour Beans",
+     "Fizzing Whizzbees",
+     "Exploding Bonbons"
+    ],
+    "correct_answer": "Chocolate Frogs",
+    "stem": "Cards featuring famous witches and wizards come with"
+   },
+   {
+    "q": "Who teaches Divination at Hogwarts?",
+    "options": [
+     "Professor Trelawney",
+     "Professor Sprout",
+     "Professor Sinistra",
+     "Professor Vector"
+    ],
+    "correct_answer": "Professor Trelawney",
+    "stem": "Divination at Hogwarts is taught by"
+   },
+   {
+    "q": "Who is the conductor of the Knight Bus?",
+    "options": [
+     "Stan Shunpike",
+     "Ernie Prang",
+     "Tom the Innkeeper",
+     "Mundungus Fletcher"
+    ],
+    "correct_answer": "Stan Shunpike",
+    "stem": "The conductor of the Knight Bus is"
+   },
+   {
+    "q": "What is the name of Voldemort's snake?",
+    "options": [
+     "Nagini",
+     "Naginiya",
+     "Naga",
+     "Salazar"
+    ],
+    "correct_answer": "Nagini",
+    "stem": "The name of Voldemort's snake is"
+   },
+   {
+    "q": "What number is the vault that once held the Philosopher's Stone?",
+    "options": [
+     "713",
+     "687",
+     "394",
+     "990"
+    ],
+    "correct_answer": "713",
+    "stem": "The vault that once held the Philosopher's Stone is number"
+   },
+   {
+    "q": "Which ghost haunts the first-floor girls' bathroom?",
+    "options": [
+     "Moaning Myrtle",
+     "Nearly Headless Nick",
+     "The Grey Lady",
+     "The Bloody Baron"
+    ],
+    "correct_answer": "Moaning Myrtle",
+    "stem": "The ghost who haunts the first-floor girls' bathroom is"
+   },
+   {
+    "q": "What inter-school competition occurs in Harry's fourth year?",
+    "options": [
+     "Triwizard Tournament",
+     "Quidditch World Cup",
+     "Dueling Club",
+     "Hogwarts House Cup"
+    ],
+    "correct_answer": "Triwizard Tournament",
+    "stem": "The inter-school competition that occurs in Harry's fourth year is the"
+   },
+   {
+    "q": "What magazine is edited by Xenophilius Lovegood?",
+    "options": [
+     "The Quibbler",
+     "The Daily Prophet",
+     "Witch Weekly",
+     "Transfiguration Today"
+    ],
+    "correct_answer": "The Quibbler",
+    "stem": "The magazine edited by Xenophilius Lovegood is"
+   },
+   {
+    "q": "What term is used for people without magical ability?",
+    "options": [
+     "Muggles",
+     "Squibs",
+     "No-Majs",
+     "Animagi"
+    ],
+    "correct_answer": "Muggles",
+    "stem": "The term used for people without magical ability is"
+   },
+   {
+    "q": "Which shop in Diagon Alley sells Quidditch equipment?",
+    "options": [
+     "Quality Quidditch Supplies",
+     "Weasleys' Wizard Wheezes",
+     "Flourish and Blotts",
+     "Wiseacre's Wizarding Equipment"
+    ],
+    "correct_answer": "Quality Quidditch Supplies",
+    "stem": "The shop in Diagon Alley that sells Quidditch equipment is"
+   },
+   {
+    "q": "How many points does catching the Golden Snitch earn?",
+    "options": [
+     "150",
+     "100",
+     "50",
+     "200"
+    ],
+    "correct_answer": "150",
+    "stem": "Catching the Golden Snitch earns"
+   },
+   {
+    "q": "What goblin-made weapon appears to worthy Gryffindors?",
+    "options": [
+     "The Sword of Gryffindor",
+     "Ravenclaw's Diadem",
+     "Hufflepuff's Cup",
+     "Slytherin's Locket"
+    ],
+    "correct_answer": "The Sword of Gryffindor",
+    "stem": "The goblin-made weapon that appears to worthy Gryffindors is"
+   },
+   {
+    "q": "Which spell turns a boggart into something humorous?",
+    "options": [
+     "Riddikulus",
+     "Expecto Patronum",
+     "Lumos",
+     "Expelliarmus"
+    ],
+    "correct_answer": "Riddikulus",
+    "stem": "The spell that turns a boggart into something humorous is"
+   },
+   {
+    "q": "What magical room appears when someone has great need?",
+    "options": [
+     "The Room of Requirement",
+     "Chamber of Secrets",
+     "Shrieking Shack",
+     "Headmaster's Office"
+    ],
+    "correct_answer": "The Room of Requirement",
+    "stem": "The magical room that appears when someone has great need is"
+   },
+   {
+    "q": "What is the name of the street of dark-arts shops near Diagon Alley?",
+    "options": [
+     "Knockturn Alley",
+     "Diagon Alley",
+     "Horizont Alley",
+     "Carkitt Market"
+    ],
+    "correct_answer": "Knockturn Alley",
+    "stem": "The street of dark-arts shops near Diagon Alley is called"
+   },
+   {
+    "q": "Who teaches Defence Against the Dark Arts in Harry's third year?",
+    "options": [
+     "Remus Lupin",
+     "Gilderoy Lockhart",
+     "Alastor 'Mad-Eye' Moody",
+     "Severus Snape"
+    ],
+    "correct_answer": "Remus Lupin",
+    "stem": "In Harry's third year, Defence Against the Dark Arts is taught by"
+   },
+   {
+    "q": "What animal form is Hermione Granger's Patronus?",
+    "options": [
+     "Otter",
+     "Cat",
+     "Doe",
+     "Rabbit"
+    ],
+    "correct_answer": "Otter",
+    "stem": "Hermione Granger's Patronus takes the form of"
+   },
+   {
+    "q": "Which sweet from Weasleys' Wizard Wheezes causes a tongue to swell hugely?",
+    "options": [
+     "Ton-Tongue Toffee",
+     "Puking Pastilles",
+     "Nosebleed Nougat",
+     "Canary Creams"
+    ],
+    "correct_answer": "Ton-Tongue Toffee",
+    "stem": "The sweet from Weasleys' Wizard Wheezes that causes a tongue to swell hugely is"
+   },
+   {
+    "q": "Which spell levitates objects, first practised with a feather?",
+    "options": [
+     "Wingardium Leviosa",
+     "Levicorpus",
+     "Ascendio",
+     "Locomotor"
+    ],
+    "correct_answer": "Wingardium Leviosa",
+    "stem": "The spell that levitates objects, first practised with a feather, is"
+   },
+   {
+    "q": "At which school does the final battle against Voldemort take place?",
+    "options": [
+     "Hogwarts",
+     "Ministry of Magic",
+     "Godric's Hollow",
+     "Malfoy Manor"
+    ],
+    "correct_answer": "Hogwarts",
+    "stem": "The final battle against Voldemort takes place at"
+   },
+   {
+    "q": "What breed of dragon does Harry face in the first Triwizard task?",
+    "options": [
+     "Hungarian Horntail",
+     "Swedish Short-Snout",
+     "Chinese Fireball",
+     "Common Welsh Green"
+    ],
+    "correct_answer": "Hungarian Horntail",
+    "stem": "In the first Triwizard task, Harry faces a breed of dragon called the"
+   },
+   {
+    "q": "In which village were Harry's parents killed?",
+    "options": [
+     "Godric's Hollow",
+     "Little Hangleton",
+     "Little Whinging",
+     "Ottery St Catchpole"
+    ],
+    "correct_answer": "Godric's Hollow",
+    "stem": "Harry's parents were killed in the village of"
+   },
+   {
+    "q": "Which potion forces the drinker to tell the truth?",
+    "options": [
+     "Veritaserum",
+     "Polyjuice Potion",
+     "Amortentia",
+     "Felix Felicis"
+    ],
+    "correct_answer": "Veritaserum",
+    "stem": "The potion that forces the drinker to tell the truth is"
+   },
+   {
+    "q": "What symbol appears in the sky as Voldemort's sign?",
+    "options": [
+     "The Dark Mark",
+     "Deathly Hallows symbol",
+     "Skull and Crossbones",
+     "Serpent Seal"
+    ],
+    "correct_answer": "The Dark Mark",
+    "stem": "The symbol that appears in the sky as Voldemort's sign is"
+   },
+   {
+    "q": "What phrase conceals the Marauder's Map?",
+    "options": [
+     "Mischief managed",
+     "I solemnly swear that I am up to no good",
+     "Finite Incantatem",
+     "Quietus"
+    ],
+    "correct_answer": "Mischief managed",
+    "stem": "The phrase that conceals the Marauder's Map is"
+   },
+   {
+    "q": "What magical bus transports stranded witches and wizards?",
+    "options": [
+     "The Knight Bus",
+     "Hogwarts Express",
+     "Thestral Carriage",
+     "Flying Ford Anglia"
+    ],
+    "correct_answer": "The Knight Bus",
+    "stem": "The magical bus that transports stranded witches and wizards is"
+   },
+   {
+    "q": "What is the name of the sweets shop in Hogsmeade?",
+    "options": [
+     "Honeydukes",
+     "Florean Fortescue's Ice Cream Parlour",
+     "Sugarplum's Sweetshop",
+     "Zonko's Joke Shop"
+    ],
+    "correct_answer": "Honeydukes",
+    "stem": "The sweets shop in Hogsmeade is called"
+   },
+   {
+    "q": "What is the main newspaper of wizarding Britain?",
+    "options": [
+     "The Daily Prophet",
+     "The Quibbler",
+     "Witch Weekly",
+     "The Evening Prophet"
+    ],
+    "correct_answer": "The Daily Prophet",
+    "stem": "The main newspaper of wizarding Britain is"
+   }
+  ],
+  "QA_test": [
+   {
+    "q": "Who is the author of the Harry Potter series?",
+    "options": [
+     "J.K. Rowling",
+     "J. R. R. Tolkien",
+     "Rick Riordan",
+     "C. S. Lewis"
+    ],
+    "correct_answer": "J.K. Rowling",
+    "stem": "The author of the Harry Potter series is"
+   },
+   {
+    "q": "What is the name of Harry's godfather?",
+    "options": [
+     "Sirius Black",
+     "Remus Lupin",
+     "James Potter",
+     "Alastor Moody"
+    ],
+    "correct_answer": "Sirius Black",
+    "stem": "The name of Harry's godfather is"
+   },
+   {
+    "q": "What is the name of the dark wizard Harry must defeat?",
+    "options": [
+     "Lord Voldemort",
+     "Gellert Grindelwald",
+     "Lucius Malfoy",
+     "Salazar Slytherin"
+    ],
+    "correct_answer": "Lord Voldemort",
+    "stem": "The dark wizard Harry must defeat is named"
+   },
+   {
+    "q": "Which spell is commonly used to disarm an opponent?",
+    "options": [
+     "Expelliarmus",
+     "Stupefy",
+     "Petrificus Totalus",
+     "Rictusempra"
+    ],
+    "correct_answer": "Expelliarmus",
+    "stem": "The spell commonly used to disarm an opponent is"
+   },
+   {
+    "q": "What object sorts students into houses?",
+    "options": [
+     "The Sorting Hat",
+     "The Goblet of Fire",
+     "The Pensieve",
+     "The Mirror of Erised"
+    ],
+    "correct_answer": "The Sorting Hat",
+    "stem": "The object that sorts students into houses is"
+   },
+   {
+    "q": "From which platform does the Hogwarts Express depart?",
+    "options": [
+     "Platform Nine and Three-Quarters",
+     "Platform Nine",
+     "Platform Ten",
+     "Platform Eleven"
+    ],
+    "correct_answer": "Platform Nine and Three-Quarters",
+    "stem": "The Hogwarts Express departs from"
+   },
+   {
+    "q": "What is the street address where the Dursleys live?",
+    "options": [
+     "4 Privet Drive",
+     "12 Grimmauld Place",
+     "3 Magnolia Crescent",
+     "7 Privet Drive"
+    ],
+    "correct_answer": "4 Privet Drive",
+    "stem": "The Dursleys live at"
+   },
+   {
+    "q": "Which potion grants the drinker luck?",
+    "options": [
+     "Felix Felicis",
+     "Polyjuice Potion",
+     "Amortentia",
+     "Pepperup Potion"
+    ],
+    "correct_answer": "Felix Felicis",
+    "stem": "The potion that grants the drinker luck is"
+   },
+   {
+    "q": "What magical map shows everyone's location at Hogwarts?",
+    "options": [
+     "The Marauder's Map",
+     "The Daily Prophet",
+     "Two-Way Mirror",
+     "Hogwarts Atlas"
+    ],
+    "correct_answer": "The Marauder's Map",
+    "stem": "The magical map that shows everyone's location at Hogwarts is"
+   },
+   {
+    "q": "Which plant lets Harry breathe underwater during the Triwizard Tournament?",
+    "options": [
+     "Gillyweed",
+     "Mandrake",
+     "Aconite",
+     "Bubotuber pus"
+    ],
+    "correct_answer": "Gillyweed",
+    "stem": "The plant that lets Harry breathe underwater during the Triwizard Tournament is"
+   },
+   {
+    "q": "Which Horcrux is destroyed in the Chamber of Secrets?",
+    "options": [
+     "Tom Riddle's Diary",
+     "Slytherin's Locket",
+     "Hufflepuff's Cup",
+     "Ravenclaw's Diadem"
+    ],
+    "correct_answer": "Tom Riddle's Diary",
+    "stem": "The Horcrux destroyed in the Chamber of Secrets is"
+   },
+   {
+    "q": "What creatures pull the Hogwarts carriages after Harry's fourth year?",
+    "options": [
+     "Thestrals",
+     "Hippogriffs",
+     "Centaurs",
+     "Abraxans"
+    ],
+    "correct_answer": "Thestrals",
+    "stem": "After Harry's fourth year, the Hogwarts carriages are pulled by"
+   },
+   {
+    "q": "Who is Ron Weasley's pet rat really?",
+    "options": [
+     "Peter Pettigrew",
+     "Scabbers",
+     "Sirius Black",
+     "Remus Lupin"
+    ],
+    "correct_answer": "Peter Pettigrew",
+    "stem": "Ron Weasley's pet rat is really"
+   },
+   {
+    "q": "What is the incantation for casting a Patronus?",
+    "options": [
+     "Expecto Patronum",
+     "Expelliarmus",
+     "Expecto Patronis",
+     "Lumos"
+    ],
+    "correct_answer": "Expecto Patronum",
+    "stem": "The incantation for casting a Patronus is"
+   },
+   {
+    "q": "What potion can regrow bones?",
+    "options": [
+     "Skele-Gro",
+     "Polyjuice Potion",
+     "Pepperup Potion",
+     "Essence of Dittany"
+    ],
+    "correct_answer": "Skele-Gro",
+    "stem": "The potion that can regrow bones is"
+   },
+   {
+    "q": "What animal is Professor McGonagall's Animagus form?",
+    "options": [
+     "Cat",
+     "Eagle",
+     "Phoenix",
+     "Otter"
+    ],
+    "correct_answer": "Cat",
+    "stem": "The animal of Professor McGonagall's Animagus form is"
+   },
+   {
+    "q": "What mirror shows one's deepest desire?",
+    "options": [
+     "The Mirror of Erised",
+     "The Looking-Glass of Truth",
+     "The Mirror of Souls",
+     "The Pensieve"
+    ],
+    "correct_answer": "The Mirror of Erised",
+    "stem": "The mirror that shows one's deepest desire is"
+   },
+   {
+    "q": "Where does Harry buy his first wand?",
+    "options": [
+     "Ollivanders",
+     "Borgin and Burkes",
+     "Flourish and Blotts",
+     "Weasleys' Wizard Wheezes"
+    ],
+    "correct_answer": "Ollivanders",
+    "stem": "Harry buys his first wand at"
+   },
+   {
+    "q": "What is the core of Harry's wand?",
+    "options": [
+     "Phoenix feather",
+     "Dragon heartstring",
+     "Unicorn hair",
+     "Thestral tail hair"
+    ],
+    "correct_answer": "Phoenix feather",
+    "stem": "The core of Harry's wand is"
+   },
+   {
+    "q": "What animal form does Harry's Patronus take?",
+    "options": [
+     "Stag",
+     "Doe",
+     "Otter",
+     "Phoenix"
+    ],
+    "correct_answer": "Stag",
+    "stem": "Harry's Patronus takes the form of"
+   },
+   {
+    "q": "Which spell unlocks doors?",
+    "options": [
+     "Alohomora",
+     "Finite Incantatem",
+     "Colloportus",
+     "Reducto"
+    ],
+    "correct_answer": "Alohomora",
+    "stem": "The spell that unlocks doors is"
+   },
+   {
+    "q": "What sport is played on broomsticks with Quaffles, Bludgers and a Snitch?",
+    "options": [
+     "Quidditch",
+     "Quodpot",
+     "Gobstones",
+     "Wizards' Chess"
+    ],
+    "correct_answer": "Quidditch",
+    "stem": "The sport played on broomsticks with Quaffles, Bludgers and a Snitch is"
+   },
+   {
+    "q": "Who owns the ice-cream parlour in Diagon Alley that befriends Harry?",
+    "options": [
+     "Florean Fortescue",
+     "Tom",
+     "Madam Rosmerta",
+     "Florian Fortescue"
+    ],
+    "correct_answer": "Florean Fortescue",
+    "stem": "The ice-cream parlour in Diagon Alley that befriends Harry is owned by"
+   },
+   {
+    "q": "What wood is Harry's wand made from?",
+    "options": [
+     "Holly",
+     "Yew",
+     "Vine",
+     "Ash"
+    ],
+    "correct_answer": "Holly",
+    "stem": "Harry's wand is made from"
+   },
+   {
+    "q": "Which Ministry department deals with magical creatures?",
+    "options": [
+     "Department for the Regulation and Control of Magical Creatures",
+     "Department of Magical Law Enforcement",
+     "Department of Mysteries",
+     "Beast Division"
+    ],
+    "correct_answer": "Department for the Regulation and Control of Magical Creatures",
+    "stem": "The Ministry department that deals with magical creatures is the"
+   },
+   {
+    "q": "Which ghost is associated with Ravenclaw house?",
+    "options": [
+     "The Grey Lady",
+     "The Bloody Baron",
+     "Nearly Headless Nick",
+     "The Fat Friar"
+    ],
+    "correct_answer": "The Grey Lady",
+    "stem": "The ghost associated with Ravenclaw house is"
+   },
+   {
+    "q": "What is Draco Malfoy's father's first name?",
+    "options": [
+     "Lucius",
+     "Severus",
+     "Draco",
+     "Abraxas"
+    ],
+    "correct_answer": "Lucius",
+    "stem": "Draco Malfoy's father's first name is"
+   },
+   {
+    "q": "Which spell lights the tip of a wand?",
+    "options": [
+     "Lumos",
+     "Nox",
+     "Incendio",
+     "Lumos Solem"
+    ],
+    "correct_answer": "Lumos",
+    "stem": "The spell that lights the tip of a wand is"
+   },
+   {
+    "q": "What all-female professional Quidditch team comes from Holyhead?",
+    "options": [
+     "Holyhead Harpies",
+     "Puddlemere United",
+     "Chudley Cannons",
+     "Montrose Magpies"
+    ],
+    "correct_answer": "Holyhead Harpies",
+    "stem": "The all-female professional Quidditch team from Holyhead is"
+   },
+   {
+    "q": "What device invented by Dumbledore can turn street lights off?",
+    "options": [
+     "Deluminator",
+     "Sneakoscope",
+     "Foe-Glass",
+     "Omnioculars"
+    ],
+    "correct_answer": "Deluminator",
+    "stem": "The device invented by Dumbledore that can turn street lights off is"
+   },
+   {
+    "q": "What student group does Harry lead to oppose Dolores Umbridge?",
+    "options": [
+     "Dumbledore's Army",
+     "Order of the Phoenix",
+     "Slug Club",
+     "S.P.E.W."
+    ],
+    "correct_answer": "Dumbledore's Army",
+    "stem": "The student group Harry leads to oppose Dolores Umbridge is"
+   },
+   {
+    "q": "Which Deathly Hallow can bring shades of the dead?",
+    "options": [
+     "The Resurrection Stone",
+     "The Elder Wand",
+     "The Invisibility Cloak",
+     "The Philosopher's Stone"
+    ],
+    "correct_answer": "The Resurrection Stone",
+    "stem": "The Deathly Hallow that can bring shades of the dead is"
+   },
+   {
+    "q": "What is Harry's relation to Petunia Dursley?",
+    "options": [
+     "Nephew",
+     "Cousin",
+     "Godson",
+     "Grandson"
+    ],
+    "correct_answer": "Nephew",
+    "stem": "Harry's relation to Petunia Dursley is that of"
+   },
+   {
+    "q": "What password is used to enter the Gryffindor common room in Harry's first year?",
+    "options": [
+     "Caput Draconis",
+     "Fortuna Major",
+     "Pig Snout",
+     "Balderdash"
+    ],
+    "correct_answer": "Caput Draconis",
+    "stem": "In Harry's first year, the password used to enter the Gryffindor common room is"
+   },
+   {
+    "q": "What object stores and displays thoughts and memories?",
+    "options": [
+     "Pensieve",
+     "Time-Turner",
+     "Remembrall",
+     "Deluminator"
+    ],
+    "correct_answer": "Pensieve",
+    "stem": "The object that stores and displays thoughts and memories is the"
+   },
+   {
+    "q": "What profession do Hermione's parents practise?",
+    "options": [
+     "Dentistry",
+     "Healers",
+     "Aurors",
+     "Accountancy"
+    ],
+    "correct_answer": "Dentistry",
+    "stem": "The profession Hermione's parents practise is"
+   },
+   {
+    "q": "What fruit must be tickled to open the entrance to the Hogwarts kitchens?",
+    "options": [
+     "Pear",
+     "Apple",
+     "Peach",
+     "Plum"
+    ],
+    "correct_answer": "Pear",
+    "stem": "The fruit that must be tickled to open the entrance to the Hogwarts kitchens is the"
+   },
+   {
+    "q": "Who was headmaster of Hogwarts before Albus Dumbledore?",
+    "options": [
+     "Armando Dippet",
+     "Phineas Nigellus Black",
+     "Dolores Umbridge",
+     "Severus Snape"
+    ],
+    "correct_answer": "Armando Dippet",
+    "stem": "The headmaster of Hogwarts before Albus Dumbledore was"
+   },
+   {
+    "q": "What name is given to Voldemort's followers?",
+    "options": [
+     "Death Eaters",
+     "Snatchers",
+     "Inferi",
+     "Dark Order"
+    ],
+    "correct_answer": "Death Eaters",
+    "stem": "The name given to Voldemort's followers is"
+   },
+   {
+    "q": "Who is the Beauxbatons champion in the Triwizard Tournament?",
+    "options": [
+     "Fleur Delacour",
+     "Viktor Krum",
+     "Cedric Diggory",
+     "Gabrielle Delacour"
+    ],
+    "correct_answer": "Fleur Delacour",
+    "stem": "The Beauxbatons champion in the Triwizard Tournament is"
+   },
+   {
+    "q": "Which spell conjures a jet of clean water?",
+    "options": [
+     "Aguamenti",
+     "Aqua Eructo",
+     "Diffindo",
+     "Incendio"
+    ],
+    "correct_answer": "Aguamenti",
+    "stem": "The spell that conjures a jet of clean water is"
+   },
+   {
+    "q": "What article of clothing frees Dobby?",
+    "options": [
+     "Sock",
+     "Hat",
+     "Cloak",
+     "Scarf"
+    ],
+    "correct_answer": "Sock",
+    "stem": "The article of clothing that frees Dobby is a"
+   },
+   {
+    "q": "What ability allows communication with snakes?",
+    "options": [
+     "Parseltongue",
+     "Legilimency",
+     "Occlumency",
+     "Animagus"
+    ],
+    "correct_answer": "Parseltongue",
+    "stem": "The ability that allows communication with snakes is"
+   },
+   {
+    "q": "What plant tries to strangle those who fall into it below the trapdoor?",
+    "options": [
+     "Devil's Snare",
+     "Whomping Willow",
+     "Venomous Tentacula",
+     "Acromantula Webs"
+    ],
+    "correct_answer": "Devil's Snare",
+    "stem": "The plant that tries to strangle those who fall into it below the trapdoor is"
+   },
+   {
+    "q": "What dessert is Harry's favourite at Hogwarts feasts?",
+    "options": [
+     "Treacle tart",
+     "Pumpkin pasties",
+     "Sticky toffee pudding",
+     "Trifle"
+    ],
+    "correct_answer": "Treacle tart",
+    "stem": "Harry's favourite dessert at Hogwarts feasts is"
+   },
+   {
+    "q": "What is the name of the half-giant gamekeeper at Hogwarts?",
+    "options": [
+     "Rubeus Hagrid",
+     "Olympe Maxime",
+     "Argus Filch",
+     "Walden Macnair"
+    ],
+    "correct_answer": "Rubeus Hagrid",
+    "stem": "The half-giant gamekeeper at Hogwarts is named"
+   },
+   {
+    "q": "Which incantation produces a magical shield?",
+    "options": [
+     "Protego",
+     "Protean",
+     "Salvio Hexia",
+     "Prior Incantato"
+    ],
+    "correct_answer": "Protego",
+    "stem": "The incantation that produces a magical shield is"
+   },
+   {
+    "q": "What term describes a wizard born to non-magical parents?",
+    "options": [
+     "Muggle-born",
+     "Half-blood",
+     "Squib",
+     "Pure-blood"
+    ],
+    "correct_answer": "Muggle-born",
+    "stem": "The term for a wizard born to non-magical parents is"
+   },
+   {
+    "q": "What method of travel uses fireplaces and green flames?",
+    "options": [
+     "Floo powder",
+     "Portkey",
+     "Apparition",
+     "The Knight Bus"
+    ],
+    "correct_answer": "Floo powder",
+    "stem": "The method of travel that uses fireplaces and green flames is"
+   },
+   {
+    "q": "What is the shape of the scar on Harry's forehead?",
+    "options": [
+     "Lightning bolt",
+     "Star",
+     "Crescent",
+     "Rune"
+    ],
+    "correct_answer": "Lightning bolt",
+    "stem": "The scar on Harry's forehead has the shape of a"
+   }
+  ],
+  "SimdomQA_train": [
+   {
+    "q": "In Tolkien's Middle-earth lore, what is the name of the wizard who is famous for fireworks and leads the Fellowship?",
+    "options": [
+     "Gandalf",
+     "Saruman",
+     "Radagast",
+     "Elrond"
+    ],
+    "correct_answer": "Gandalf",
+    "stem": "In Tolkien's Middle-earth lore, the wizard famous for fireworks who leads the Fellowship is"
+   },
+   {
+    "q": "According to 'The Lord of the Rings', which ranger of the North later becomes King Elessar of Gondor?",
+    "options": [
+     "Aragorn",
+     "Boromir",
+     "Faramir",
+     "Théoden"
+    ],
+    "correct_answer": "Aragorn",
+    "stem": "According to 'The Lord of the Rings', the ranger of the North who later becomes King Elessar of Gondor is"
+   },
+   {
+    "q": "In 'The Lord of the Rings', what elven kingdom ruled by Galadriel lies on the river Celebrant?",
+    "options": [
+     "Lothlórien",
+     "Rivendell",
+     "Mirkwood",
+     "Gondolin"
+    ],
+    "correct_answer": "Lothlórien",
+    "stem": "In 'The Lord of the Rings', the elven kingdom ruled by Galadriel on the river Celebrant is"
+   },
+   {
+    "q": "Within 'The Lord of the Rings', what deadly volcano in Mordor is the only place the One Ring can be destroyed?",
+    "options": [
+     "Mount Doom",
+     "Mount Gundabad",
+     "Caradhras",
+     "Mount Gram"
+    ],
+    "correct_answer": "Mount Doom",
+    "stem": "Within 'The Lord of the Rings', the volcano in Mordor that is the only place the One Ring can be destroyed is"
+   },
+   {
+    "q": "In 'The Lord of the Rings', which fortress of Rohan is besieged during the Battle of the Hornburg?",
+    "options": [
+     "Helm's Deep",
+     "Minas Tirith",
+     "Edoras",
+     "Isengard"
+    ],
+    "correct_answer": "Helm's Deep",
+    "stem": "In 'The Lord of the Rings', the fortress of Rohan besieged during the Battle of the Hornburg is"
+   },
+   {
+    "q": "In Tolkien's legendarium, what is the name of the giant spider that attacks Frodo and Sam near Cirith Ungol?",
+    "options": [
+     "Shelob",
+     "Ungoliant",
+     "Aragog",
+     "Gollum"
+    ],
+    "correct_answer": "Shelob",
+    "stem": "In Tolkien's legendarium, the giant spider that attacks Frodo and Sam near Cirith Ungol is named"
+   },
+   {
+    "q": "In 'The Lord of the Rings', which sword is reforged from Narsil and wielded by Aragorn?",
+    "options": [
+     "Andúril",
+     "Glamdring",
+     "Sting",
+     "Narsil"
+    ],
+    "correct_answer": "Andúril",
+    "stem": "In 'The Lord of the Rings', the sword reforged from Narsil and wielded by Aragorn is"
+   },
+   {
+    "q": "In the Marvel Cinematic Universe, which superhero is also known as the 'Scarlet Witch'?",
+    "options": [
+     "Wanda Maximoff",
+     "Jean Grey",
+     "Natasha Romanoff",
+     "Carol Danvers"
+    ],
+    "correct_answer": "Wanda Maximoff",
+    "stem": "In the Marvel Cinematic Universe, the superhero also known as the 'Scarlet Witch' is"
+   },
+   {
+    "q": "Marvel Comics depict which African nation ruled by the Black Panther?",
+    "options": [
+     "Wakanda",
+     "Sokovia",
+     "Genosha",
+     "Latveria"
+    ],
+    "correct_answer": "Wakanda",
+    "stem": "In Marvel Comics, the African nation ruled by the Black Panther is"
+   },
+   {
+    "q": "Throughout Marvel movies, what is the superhero alias of Peter Parker?",
+    "options": [
+     "Spider-Man",
+     "Iron Man",
+     "Ant-Man",
+     "Star-Lord"
+    ],
+    "correct_answer": "Spider-Man",
+    "stem": "Throughout Marvel movies, the superhero alias of Peter Parker is"
+   },
+   {
+    "q": "In Marvel's 'Guardians of the Galaxy' films, what sentient tree only says the phrase 'I am Groot'?",
+    "options": [
+     "Groot",
+     "Rocket Raccoon",
+     "Drax",
+     "Mantis"
+    ],
+    "correct_answer": "Groot",
+    "stem": "In Marvel's 'Guardians of the Galaxy' films, the sentient tree who only says the phrase 'I am Groot' is"
+   },
+   {
+    "q": "Within the 'Star Wars' universe, what is the name of Han Solo's iconic starship?",
+    "options": [
+     "Millennium Falcon",
+     "Slave I",
+     "Razor Crest",
+     "Ghost"
+    ],
+    "correct_answer": "Millennium Falcon",
+    "stem": "Within the 'Star Wars' universe, the name of Han Solo's iconic starship is"
+   },
+   {
+    "q": "In 'Star Wars: The Empire Strikes Back', on which ice planet do the Rebels hide?",
+    "options": [
+     "Hoth",
+     "Tatooine",
+     "Endor",
+     "Jakku"
+    ],
+    "correct_answer": "Hoth",
+    "stem": "In 'Star Wars: The Empire Strikes Back', the Rebels hide on the ice planet"
+   },
+   {
+    "q": "In 'Star Wars', which short green Jedi Master famously says 'Do or do not; there is no try'?",
+    "options": [
+     "Yoda",
+     "Obi-Wan Kenobi",
+     "Mace Windu",
+     "Qui-Gon Jinn"
+    ],
+    "correct_answer": "Yoda",
+    "stem": "In 'Star Wars', the short green Jedi Master who famously says 'Do or do not; there is no try' is"
+   },
+   {
+    "q": "In 'Star Wars: A New Hope', what peaceful planet is destroyed by the first Death Star?",
+    "options": [
+     "Alderaan",
+     "Naboo",
+     "Jedha",
+     "Scarif"
+    ],
+    "correct_answer": "Alderaan",
+    "stem": "In 'Star Wars: A New Hope', the peaceful planet destroyed by the first Death Star is"
+   },
+   {
+    "q": "In C. S. Lewis's book 'The Lion, the Witch and the Wardrobe', which child first discovers Narnia?",
+    "options": [
+     "Lucy Pevensie",
+     "Susan Pevensie",
+     "Edmund Pevensie",
+     "Eustace Scrubb"
+    ],
+    "correct_answer": "Lucy Pevensie",
+    "stem": "In C. S. Lewis's book 'The Lion, the Witch and the Wardrobe', the child who first discovers Narnia is"
+   },
+   {
+    "q": "Within 'The Voyage of the Dawn Treader', what is the name of King Caspian's ship?",
+    "options": [
+     "Dawn Treader",
+     "The Black Pearl",
+     "The Jolly Roger",
+     "The Pequod"
+    ],
+    "correct_answer": "Dawn Treader",
+    "stem": "Within 'The Voyage of the Dawn Treader', the name of King Caspian's ship is"
+   },
+   {
+    "q": "In 'The Horse and His Boy', what talking horse helps the boy Shasta escape to freedom?",
+    "options": [
+     "Bree",
+     "Hwin",
+     "Fledge",
+     "Aravis"
+    ],
+    "correct_answer": "Bree",
+    "stem": "In 'The Horse and His Boy', the talking horse who helps the boy Shasta escape to freedom is"
+   },
+   {
+    "q": "Throughout the Narnia stories, which eldest Pevensie sibling earns the title 'High King'?",
+    "options": [
+     "Peter Pevensie",
+     "Caspian",
+     "Edmund Pevensie",
+     "Aslan"
+    ],
+    "correct_answer": "Peter Pevensie",
+    "stem": "Throughout the Narnia stories, the eldest Pevensie sibling who earns the title 'High King' is"
+   },
+   {
+    "q": "In Rick Riordan's 'Percy Jackson & the Olympians', who is Percy Jackson's divine father?",
+    "options": [
+     "Poseidon",
+     "Zeus",
+     "Hades",
+     "Apollo"
+    ],
+    "correct_answer": "Poseidon",
+    "stem": "In Rick Riordan's 'Percy Jackson & the Olympians', Percy Jackson's divine father is"
+   },
+   {
+    "q": "According to the 'Percy Jackson' novels, at what Long Island camp do demigod heroes train?",
+    "options": [
+     "Camp Half-Blood",
+     "Camp Jupiter",
+     "Camp Green Lake",
+     "Camp David"
+    ],
+    "correct_answer": "Camp Half-Blood",
+    "stem": "According to the 'Percy Jackson' novels, the Long Island camp where demigod heroes train is"
+   },
+   {
+    "q": "In 'The Sea of Monsters', which bronze automaton bulls attack Camp Half-Blood to reach the Golden Fleece?",
+    "options": [
+     "Colchis Bulls",
+     "Laestrygonians",
+     "Telkhines",
+     "Cyclopes"
+    ],
+    "correct_answer": "Colchis Bulls",
+    "stem": "In 'The Sea of Monsters', the bronze automaton bulls that attack Camp Half-Blood to reach the Golden Fleece are the"
+   },
+   {
+    "q": "In George R. R. Martin's 'A Game of Thrones', what capital city houses the Iron Throne?",
+    "options": [
+     "King's Landing",
+     "Winterfell",
+     "Oldtown",
+     "Casterly Rock"
+    ],
+    "correct_answer": "King's Landing",
+    "stem": "In George R. R. Martin's 'A Game of Thrones', the capital city that houses the Iron Throne is"
+   },
+   {
+    "q": "In the books, which witty dwarf son of Tywin Lannister is known for his sharp tongue?",
+    "options": [
+     "Tyrion Lannister",
+     "Jaime Lannister",
+     "Petyr Baelish",
+     "Oberyn Martell"
+    ],
+    "correct_answer": "Tyrion Lannister",
+    "stem": "In the books, the witty dwarf son of Tywin Lannister known for his sharp tongue is"
+   },
+   {
+    "q": "According to Westerosi lore, which large continent lies to the east across the Narrow Sea?",
+    "options": [
+     "Essos",
+     "Westeros",
+     "Sothoryos",
+     "Ulthos"
+    ],
+    "correct_answer": "Essos",
+    "stem": "According to Westerosi lore, the large continent to the east across the Narrow Sea is"
+   },
+   {
+    "q": "In 'Game of Thrones', which sworn brotherhood of black-clad men guards the Wall?",
+    "options": [
+     "Night's Watch",
+     "Kingsguard",
+     "City Watch",
+     "Second Sons"
+    ],
+    "correct_answer": "Night's Watch",
+    "stem": "In 'Game of Thrones', the sworn brotherhood of black-clad men who guard the Wall is the"
+   },
+   {
+    "q": "According to 'The Hunger Games', what dystopian nation consists of the Capitol and 12 districts?",
+    "options": [
+     "Panem",
+     "Oceania",
+     "Gilead",
+     "Avalon"
+    ],
+    "correct_answer": "Panem",
+    "stem": "According to 'The Hunger Games', the dystopian nation consisting of the Capitol and 12 districts is"
+   },
+   {
+    "q": "In the first 'Hunger Games' book, from which coal-mining district do Katniss and Peeta hail?",
+    "options": [
+     "District 12",
+     "District 10",
+     "District 5",
+     "District 2"
+    ],
+    "correct_answer": "District 12",
+    "stem": "In the first 'Hunger Games' book, the coal-mining district Katniss and Peeta hail from is"
+   },
+   {
+    "q": "Within 'The Hunger Games', what lethal berries do Katniss and Peeta threaten to eat together?",
+    "options": [
+     "Nightlock berries",
+     "Nightshade berries",
+     "Hemlock seeds",
+     "Huckleberries"
+    ],
+    "correct_answer": "Nightlock berries",
+    "stem": "Within 'The Hunger Games', the lethal berries Katniss and Peeta threaten to eat together are"
+   },
+   {
+    "q": "In 'The Hunger Games', who is Katniss's hunting partner and later a rebel from District 12?",
+    "options": [
+     "Gale Hawthorne",
+     "Peeta Mellark",
+     "Finnick Odair",
+     "Haymitch Abernathy"
+    ],
+    "correct_answer": "Gale Hawthorne",
+    "stem": "In 'The Hunger Games', Katniss's hunting partner, later a rebel from District 12, is"
+   },
+   {
+    "q": "In 'Mockingjay', which underground district serves as the rebels' headquarters against the Capitol?",
+    "options": [
+     "District 13",
+     "The Capitol",
+     "District 1",
+     "The Seam"
+    ],
+    "correct_answer": "District 13",
+    "stem": "In 'Mockingjay', the underground district that serves as the rebels' headquarters against the Capitol is"
+   },
+   {
+    "q": "In DC Comics, which Gotham City billionaire fights crime each night as Batman?",
+    "options": [
+     "Bruce Wayne",
+     "Clark Kent",
+     "Tony Stark",
+     "Oliver Queen"
+    ],
+    "correct_answer": "Bruce Wayne",
+    "stem": "In DC Comics, the Gotham City billionaire who fights crime each night as Batman is"
+   },
+   {
+    "q": "In the DC Extended Universe, which Amazon princess wields the Lasso of Truth as Wonder Woman?",
+    "options": [
+     "Diana Prince",
+     "Barbara Minerva",
+     "Kara Zor-El",
+     "Mera"
+    ],
+    "correct_answer": "Diana Prince",
+    "stem": "In the DC Extended Universe, the Amazon princess who wields the Lasso of Truth as Wonder Woman is"
+   },
+   {
+    "q": "Within DC Comics, what underwater kingdom does Aquaman rule as its king?",
+    "options": [
+     "Atlantis",
+     "Themyscira",
+     "Xebel",
+     "Lemuria"
+    ],
+    "correct_answer": "Atlantis",
+    "stem": "Within DC Comics, the underwater kingdom Aquaman rules as its king is"
+   },
+   {
+    "q": "According to DC Comics, which scarlet-suited speedster is known as the Fastest Man Alive?",
+    "options": [
+     "The Flash",
+     "Quicksilver",
+     "Red Tornado",
+     "Kid Flash"
+    ],
+    "correct_answer": "The Flash",
+    "stem": "According to DC Comics, the scarlet-suited speedster known as the Fastest Man Alive is"
+   },
+   {
+    "q": "In DC continuity, which intergalactic peacekeeping force wields power rings fueled by willpower?",
+    "options": [
+     "Green Lantern Corps",
+     "Nova Corps",
+     "The Guardians",
+     "Sinestro Corps"
+    ],
+    "correct_answer": "Green Lantern Corps",
+    "stem": "In DC continuity, the intergalactic peacekeeping force that wields power rings fueled by willpower is"
+   },
+   {
+    "q": "In DC Comics, what Metropolis newspaper employs Clark Kent as a reporter?",
+    "options": [
+     "The Daily Planet",
+     "Daily Bugle",
+     "Gotham Gazette",
+     "Metropolis Times"
+    ],
+    "correct_answer": "The Daily Planet",
+    "stem": "In DC Comics, the Metropolis newspaper that employs Clark Kent as a reporter is"
+   },
+   {
+    "q": "Within 'His Dark Materials', what animal companion manifestation of the soul accompanies every human?",
+    "options": [
+     "Dæmon",
+     "Familiar",
+     "Patronus",
+     "Animus"
+    ],
+    "correct_answer": "Dæmon",
+    "stem": "Within 'His Dark Materials', the animal companion manifestation of the soul that accompanies every human is called"
+   },
+   {
+    "q": "In the first book 'Northern Lights' (also titled 'The Golden Compass'), what truth-telling device does Lyra use?",
+    "options": [
+     "Alethiometer",
+     "Subtle Knife",
+     "Amber Spyglass",
+     "Astrolabe"
+    ],
+    "correct_answer": "Alethiometer",
+    "stem": "In the first book 'Northern Lights' (also titled 'The Golden Compass'), the truth-telling device Lyra uses is the"
+   },
+   {
+    "q": "According to the trilogy, which armoured polar bear becomes Lyra's trusted friend and king?",
+    "options": [
+     "Iorek Byrnison",
+     "Iofur Raknison",
+     "Lee Scoresby",
+     "Serafina Pekkala"
+    ],
+    "correct_answer": "Iorek Byrnison",
+    "stem": "According to the trilogy, the armoured polar bear who becomes Lyra's trusted friend and king is"
+   },
+   {
+    "q": "In 'His Dark Materials', what blade capable of cutting windows between worlds is also called Æsahættr?",
+    "options": [
+     "Subtle Knife",
+     "Amber Spyglass",
+     "Alethiometer",
+     "Knife of Truth"
+    ],
+    "correct_answer": "Subtle Knife",
+    "stem": "In 'His Dark Materials', the blade capable of cutting windows between worlds, also called Æsahættr, is the"
+   },
+   {
+    "q": "Within Pullman's story, which ambitious explorer and scholar is revealed to be Lyra's father?",
+    "options": [
+     "Lord Asriel",
+     "John Parry",
+     "Lee Scoresby",
+     "Carlo Boreal"
+    ],
+    "correct_answer": "Lord Asriel",
+    "stem": "Within Pullman's story, the ambitious explorer and scholar revealed to be Lyra's father is"
+   },
+   {
+    "q": "In the series, which ruthless woman with a golden-monkey dæmon is Lyra's mother?",
+    "options": [
+     "Marisa Coulter",
+     "Serafina Pekkala",
+     "Mary Malone",
+     "Mrs. Coulton"
+    ],
+    "correct_answer": "Marisa Coulter",
+    "stem": "In the series, the ruthless woman with a golden-monkey dæmon who is Lyra's mother is"
+   },
+   {
+    "q": "According to 'His Dark Materials', what mysterious particles attracted to consciousness are central to the plot?",
+    "options": [
+     "Dust",
+     "Æther",
+     "Dark Matter",
+     "Anbaric energy"
+    ],
+    "correct_answer": "Dust",
+    "stem": "According to 'His Dark Materials', the mysterious particles attracted to consciousness that are central to the plot are"
+   },
+   {
+    "q": "In the final book 'The Amber Spyglass', what celestial republic do rebel angels establish?",
+    "options": [
+     "Republic of Heaven",
+     "Kingdom of Heaven",
+     "Celestial City",
+     "United Federation of Worlds"
+    ],
+    "correct_answer": "Republic of Heaven",
+    "stem": "In the final book 'The Amber Spyglass', the celestial republic established by rebel angels is the"
+   },
+   {
+    "q": "In 'His Dark Materials', what name is given to the soul-eating spectres that haunt the city of Cittàgazze?",
+    "options": [
+     "Spectres",
+     "Dementors",
+     "Wraiths",
+     "Harpies"
+    ],
+    "correct_answer": "Spectres",
+    "stem": "In 'His Dark Materials', the soul-eating creatures that haunt the city of Cittàgazze are called"
+   },
+   {
+    "q": "In the classic 1939 film adaptation of 'The Wizard of Oz', what magical footwear must Dorothy wear to return home?",
+    "options": [
+     "Ruby Slippers",
+     "Silver Shoes",
+     "Glass Slippers",
+     "Emerald Sandals"
+    ],
+    "correct_answer": "Ruby Slippers",
+    "stem": "In the classic 1939 film adaptation of 'The Wizard of Oz', the magical footwear Dorothy must wear to return home is"
+   },
+   {
+    "q": "Within Oz, which yellow path must Dorothy follow to reach the Emerald City?",
+    "options": [
+     "Yellow Brick Road",
+     "Emerald Path",
+     "Golden Way",
+     "Silver Lane"
+    ],
+    "correct_answer": "Yellow Brick Road",
+    "stem": "Within Oz, the yellow path Dorothy must follow to reach the Emerald City is the"
+   },
+   {
+    "q": "In the story, which king of beasts travels with Dorothy in search of courage?",
+    "options": [
+     "Cowardly Lion",
+     "Tin Woodman",
+     "Scarecrow",
+     "Toto"
+    ],
+    "correct_answer": "Cowardly Lion",
+    "stem": "In the story, the king of beasts who travels with Dorothy in search of courage is"
+   },
+   {
+    "q": "According to 'The Wizard of Oz', which flying creatures must obey whoever wears the enchanted Golden Cap?",
+    "options": [
+     "Winged Monkeys",
+     "Winkie Guards",
+     "Munchkins",
+     "Winged Horses"
+    ],
+    "correct_answer": "Winged Monkeys",
+    "stem": "According to 'The Wizard of Oz', the flying creatures that must obey whoever wears the enchanted Golden Cap are the"
+   }
+  ],
+  "SimdomQA_test": [
+   {
+    "q": "In J.R.R. Tolkien's 'The Lord of the Rings', which hobbit is entrusted with carrying the One Ring to Mordor?",
+    "options": [
+     "Frodo Baggins",
+     "Samwise Gamgee",
+     "Bilbo Baggins",
+     "Meriadoc Brandybuck"
+    ],
+    "correct_answer": "Frodo Baggins",
+    "stem": "In J.R.R. Tolkien's 'The Lord of the Rings', the hobbit entrusted with carrying the One Ring to Mordor is"
+   },
+   {
+    "q": "In the story of Middle-earth, which creature repeatedly calls the One Ring 'my precious'?",
+    "options": [
+     "Gollum",
+     "Sauron",
+     "Gríma Wormtongue",
+     "Saruman"
+    ],
+    "correct_answer": "Gollum",
+    "stem": "In the story of Middle-earth, the creature who repeatedly calls the One Ring 'my precious' is"
+   },
+   {
+    "q": "Tolkien's tale describes which tree-like beings, including Treebeard, who march on Isengard?",
+    "options": [
+     "Ents",
+     "Great Eagles",
+     "Dwarves",
+     "Maiar"
+    ],
+    "correct_answer": "Ents",
+    "stem": "In Tolkien's tale, the tree-like beings who march on Isengard, including Treebeard, are the"
+   },
+   {
+    "q": "In Marvel Studios' 'Avengers' films, what is the real name of Iron Man?",
+    "options": [
+     "Tony Stark",
+     "Steve Rogers",
+     "Bruce Banner",
+     "Peter Parker"
+    ],
+    "correct_answer": "Tony Stark",
+    "stem": "In Marvel Studios' 'Avengers' films, the real name of Iron Man is"
+   },
+   {
+    "q": "According to Marvel comics and movies, what metal is used to craft Captain America's shield?",
+    "options": [
+     "Vibranium",
+     "Adamantium",
+     "Titanium alloy",
+     "Uru"
+    ],
+    "correct_answer": "Vibranium",
+    "stem": "According to Marvel comics and movies, the metal used to craft Captain America's shield is"
+   },
+   {
+    "q": "Within Marvel's universe, which Norse god wields the enchanted hammer Mjolnir?",
+    "options": [
+     "Thor",
+     "Loki",
+     "Odin",
+     "Heimdall"
+    ],
+    "correct_answer": "Thor",
+    "stem": "Within Marvel's universe, the Norse god who wields the enchanted hammer Mjolnir is"
+   },
+   {
+    "q": "In Marvel stories, what is the name of the intergalactic villain who seeks all six Infinity Stones?",
+    "options": [
+     "Thanos",
+     "Ronan the Accuser",
+     "Ultron",
+     "Kang the Conqueror"
+    ],
+    "correct_answer": "Thanos",
+    "stem": "In Marvel stories, the intergalactic villain who seeks all six Infinity Stones is named"
+   },
+   {
+    "q": "In Marvel lore, which doctor becomes the Sorcerer Supreme after a car accident damages his hands?",
+    "options": [
+     "Stephen Strange",
+     "Stephen Grant",
+     "Wong",
+     "Reed Richards"
+    ],
+    "correct_answer": "Stephen Strange",
+    "stem": "In Marvel lore, the doctor who becomes the Sorcerer Supreme after a car accident damages his hands is"
+   },
+   {
+    "q": "In Marvel's 'Avengers' series, which director of S.H.I.E.L.D. brings the team together?",
+    "options": [
+     "Nick Fury",
+     "Phil Coulson",
+     "Maria Hill",
+     "Thaddeus Ross"
+    ],
+    "correct_answer": "Nick Fury",
+    "stem": "In Marvel's 'Avengers' series, the director of S.H.I.E.L.D. who brings the team together is"
+   },
+   {
+    "q": "In George Lucas's 'Star Wars' saga, who is revealed to be Luke Skywalker's father?",
+    "options": [
+     "Darth Vader",
+     "Obi-Wan Kenobi",
+     "Emperor Palpatine",
+     "Boba Fett"
+    ],
+    "correct_answer": "Darth Vader",
+    "stem": "In George Lucas's 'Star Wars' saga, Luke Skywalker's father is revealed to be"
+   },
+   {
+    "q": "According to 'Star Wars' lore, what energy field do Jedi draw power from?",
+    "options": [
+     "The Force",
+     "Midichlorians",
+     "The Light Side",
+     "Kyber energy"
+    ],
+    "correct_answer": "The Force",
+    "stem": "According to 'Star Wars' lore, the energy field Jedi draw power from is"
+   },
+   {
+    "q": "In the original 'Star Wars' trilogy, which princess leads the Rebel Alliance against the Empire?",
+    "options": [
+     "Princess Leia",
+     "Padmé Amidala",
+     "Mon Mothma",
+     "Rey"
+    ],
+    "correct_answer": "Princess Leia",
+    "stem": "In the original 'Star Wars' trilogy, the princess who leads the Rebel Alliance against the Empire is"
+   },
+   {
+    "q": "In the 'Star Wars' sequel trilogy, what scavenger from Jakku becomes a Jedi apprentice?",
+    "options": [
+     "Rey",
+     "Jyn Erso",
+     "Sabine Wren",
+     "Qi'ra"
+    ],
+    "correct_answer": "Rey",
+    "stem": "In the 'Star Wars' sequel trilogy, the scavenger from Jakku who becomes a Jedi apprentice is"
+   },
+   {
+    "q": "Within 'Star Wars', who is the Wookiee co-pilot of the Millennium Falcon?",
+    "options": [
+     "Chewbacca",
+     "Wicket",
+     "Nien Nunb",
+     "Tarfful"
+    ],
+    "correct_answer": "Chewbacca",
+    "stem": "Within 'Star Wars', the Wookiee co-pilot of the Millennium Falcon is"
+   },
+   {
+    "q": "In 'Star Wars', which bounty hunter delivers Han Solo frozen in carbonite to Jabba the Hutt?",
+    "options": [
+     "Boba Fett",
+     "IG-88",
+     "Bossk",
+     "Cad Bane"
+    ],
+    "correct_answer": "Boba Fett",
+    "stem": "In 'Star Wars', the bounty hunter who delivers Han Solo frozen in carbonite to Jabba the Hutt is"
+   },
+   {
+    "q": "According to 'The Chronicles of Narnia', which great lion is the creator and king of Narnia?",
+    "options": [
+     "Aslan",
+     "Jadis",
+     "Caspian",
+     "Peter Pevensie"
+    ],
+    "correct_answer": "Aslan",
+    "stem": "According to 'The Chronicles of Narnia', the great lion who is the creator and king of Narnia is"
+   },
+   {
+    "q": "In the Narnia series, which witch places the land under eternal winter?",
+    "options": [
+     "The White Witch",
+     "The Green Lady",
+     "The Black Witch",
+     "The Enchantress of Lantern Waste"
+    ],
+    "correct_answer": "The White Witch",
+    "stem": "In the Narnia series, the witch who places the land under eternal winter is"
+   },
+   {
+    "q": "In 'Prince Caspian', which seaside castle serves as the seat of Narnian kings and queens?",
+    "options": [
+     "Cair Paravel",
+     "Anvard",
+     "Tashbaan",
+     "Lantern Waste"
+    ],
+    "correct_answer": "Cair Paravel",
+    "stem": "In 'Prince Caspian', the seaside castle that serves as the seat of Narnian kings and queens is"
+   },
+   {
+    "q": "In Narnian lore, which valiant talking mouse wields a rapier and sails with Caspian?",
+    "options": [
+     "Reepicheep",
+     "Trumpkin",
+     "Pattertwig",
+     "Trufflehunter"
+    ],
+    "correct_answer": "Reepicheep",
+    "stem": "In Narnian lore, the valiant talking mouse who wields a rapier and sails with Caspian is"
+   },
+   {
+    "q": "According to 'The Silver Chair', which marsh-wiggle accompanies Eustace and Jill underground?",
+    "options": [
+     "Puddleglum",
+     "Reepicheep",
+     "Hwin",
+     "Shasta"
+    ],
+    "correct_answer": "Puddleglum",
+    "stem": "According to 'The Silver Chair', the marsh-wiggle who accompanies Eustace and Jill underground is"
+   },
+   {
+    "q": "In 'The Last Battle', which donkey is tricked into impersonating Aslan?",
+    "options": [
+     "Puzzle",
+     "Shift",
+     "Roonwit",
+     "Bree"
+    ],
+    "correct_answer": "Puzzle",
+    "stem": "In 'The Last Battle', the donkey tricked into impersonating Aslan is"
+   },
+   {
+    "q": "In the series, what is the name of Percy's celestial bronze sword that appears disguised as a pen?",
+    "options": [
+     "Riptide",
+     "Backbiter",
+     "Katoptris",
+     "Maelstrom"
+    ],
+    "correct_answer": "Riptide",
+    "stem": "In the series, Percy's celestial bronze sword, which appears disguised as a pen, is called"
+   },
+   {
+    "q": "In 'Percy Jackson', which daughter of Athena frequently accompanies Percy on quests?",
+    "options": [
+     "Annabeth Chase",
+     "Clarisse La Rue",
+     "Thalia Grace",
+     "Piper McLean"
+    ],
+    "correct_answer": "Annabeth Chase",
+    "stem": "In 'Percy Jackson', the daughter of Athena who frequently accompanies Percy on quests is"
+   },
+   {
+    "q": "Within the first 'Percy Jackson' book, which winged shoes nearly drag Percy into Tartarus?",
+    "options": [
+     "Luke's cursed sneakers",
+     "Hermes's winged sandals",
+     "Ares's war boots",
+     "Daedalus's talaria"
+    ],
+    "correct_answer": "Luke's cursed sneakers",
+    "stem": "Within the first 'Percy Jackson' book, the winged shoes that nearly drag Percy into Tartarus are"
+   },
+   {
+    "q": "In the 'Percy Jackson' universe, what goat-footed friend serves as Percy's protector?",
+    "options": [
+     "Grover Underwood",
+     "Tyson",
+     "Nico di Angelo",
+     "Chiron"
+    ],
+    "correct_answer": "Grover Underwood",
+    "stem": "In the 'Percy Jackson' universe, the goat-footed friend who serves as Percy's protector is"
+   },
+   {
+    "q": "According to 'Percy Jackson', which Titan lord attempts to rise by possessing Luke Castellan?",
+    "options": [
+     "Kronos",
+     "Atlas",
+     "Hyperion",
+     "Ouranos"
+    ],
+    "correct_answer": "Kronos",
+    "stem": "According to 'Percy Jackson', the Titan lord who attempts to rise by possessing Luke Castellan is"
+   },
+   {
+    "q": "In 'The Battle of the Labyrinth', which legendary inventor appears under the alias Quintus?",
+    "options": [
+     "Daedalus",
+     "Hephaestus",
+     "Icarus",
+     "Chiron"
+    ],
+    "correct_answer": "Daedalus",
+    "stem": "In 'The Battle of the Labyrinth', the legendary inventor who appears under the alias Quintus is"
+   },
+   {
+    "q": "In 'Percy Jackson', what is the name of the black pegasus that Percy often rides?",
+    "options": [
+     "Blackjack",
+     "Arion",
+     "Mrs. O'Leary",
+     "Pegasus"
+    ],
+    "correct_answer": "Blackjack",
+    "stem": "In 'Percy Jackson', the black pegasus that Percy often rides is named"
+   },
+   {
+    "q": "Within the world of Westeros, what is the family motto of House Stark of Winterfell?",
+    "options": [
+     "Winter is Coming",
+     "Fire and Blood",
+     "Hear Me Roar!",
+     "We Do Not Sow"
+    ],
+    "correct_answer": "Winter is Coming",
+    "stem": "Within the world of Westeros, the family motto of House Stark of Winterfell is"
+   },
+   {
+    "q": "According to 'Game of Thrones', who is famously called the Mother of Dragons?",
+    "options": [
+     "Daenerys Targaryen",
+     "Cersei Lannister",
+     "Ygritte",
+     "Melisandre"
+    ],
+    "correct_answer": "Daenerys Targaryen",
+    "stem": "According to 'Game of Thrones', the character famously called the Mother of Dragons is"
+   },
+   {
+    "q": "In the TV series 'Game of Thrones', what 700-foot wall of ice protects the realm from the far north?",
+    "options": [
+     "The Wall",
+     "The Eyrie",
+     "Moat Cailin",
+     "The Dreadfort"
+    ],
+    "correct_answer": "The Wall",
+    "stem": "In the TV series 'Game of Thrones', the 700-foot wall of ice that protects the realm from the far north is"
+   },
+   {
+    "q": "Within 'Game of Thrones', what is the name of Jon Snow's albino direwolf?",
+    "options": [
+     "Ghost",
+     "Nymeria",
+     "Summer",
+     "Grey Wind"
+    ],
+    "correct_answer": "Ghost",
+    "stem": "Within 'Game of Thrones', the name of Jon Snow's albino direwolf is"
+   },
+   {
+    "q": "In 'A Clash of Kings', which Baratheon brother claims the Iron Throne while following the Lord of Light?",
+    "options": [
+     "Stannis Baratheon",
+     "Renly Baratheon",
+     "Robert Baratheon",
+     "Balon Greyjoy"
+    ],
+    "correct_answer": "Stannis Baratheon",
+    "stem": "In 'A Clash of Kings', the Baratheon brother who claims the Iron Throne while following the Lord of Light is"
+   },
+   {
+    "q": "In 'Game of Thrones', what infamous massacre of the Starks at the Twins is commonly called the 'Red Wedding'?",
+    "options": [
+     "Red Wedding",
+     "Purple Wedding",
+     "Battle of the Bastards",
+     "Sack of King's Landing"
+    ],
+    "correct_answer": "Red Wedding",
+    "stem": "In 'Game of Thrones', the infamous massacre of the Starks at the Twins is commonly called the"
+   },
+   {
+    "q": "In Suzanne Collins's 'The Hunger Games', who volunteers as tribute to save her sister Primrose?",
+    "options": [
+     "Katniss Everdeen",
+     "Primrose Everdeen",
+     "Johanna Mason",
+     "Rue"
+    ],
+    "correct_answer": "Katniss Everdeen",
+    "stem": "In Suzanne Collins's 'The Hunger Games', the character who volunteers as tribute to save her sister Primrose is"
+   },
+   {
+    "q": "In 'Catching Fire', what special edition of the Hunger Games brings past victors back to the arena?",
+    "options": [
+     "Quarter Quell",
+     "The Bloodbath",
+     "Second Reaping",
+     "Victor's Tour"
+    ],
+    "correct_answer": "Quarter Quell",
+    "stem": "In 'Catching Fire', the special edition of the Hunger Games that brings past victors back to the arena is"
+   },
+   {
+    "q": "In 'The Hunger Games' series, which charismatic host interviews tributes before the Games begin?",
+    "options": [
+     "Caesar Flickerman",
+     "Seneca Crane",
+     "Claudius Templesmith",
+     "Plutarch Heavensbee"
+    ],
+    "correct_answer": "Caesar Flickerman",
+    "stem": "In 'The Hunger Games' series, the charismatic host who interviews tributes before the Games begin is"
+   },
+   {
+    "q": "According to the trilogy, what revolutionary symbol does Katniss become for the districts?",
+    "options": [
+     "The Mockingjay",
+     "The Nightingale",
+     "The Phoenix",
+     "The Bluejay"
+    ],
+    "correct_answer": "The Mockingjay",
+    "stem": "According to the trilogy, the revolutionary symbol Katniss becomes for the districts is"
+   },
+   {
+    "q": "Within the series, which fashion designer from the Capitol becomes Katniss's stylist and ally?",
+    "options": [
+     "Cinna",
+     "Effie Trinket",
+     "Portia",
+     "Octavia"
+    ],
+    "correct_answer": "Cinna",
+    "stem": "Within the series, the fashion designer from the Capitol who becomes Katniss's stylist and ally is"
+   },
+   {
+    "q": "According to DC lore, what is Superman's Kryptonian birth name?",
+    "options": [
+     "Kal-El",
+     "Jor-El",
+     "Val-El",
+     "Kara Zor-El"
+    ],
+    "correct_answer": "Kal-El",
+    "stem": "According to DC lore, Superman's Kryptonian birth name is"
+   },
+   {
+    "q": "In DC stories, which clown-like super-villain is Batman's arch-nemesis?",
+    "options": [
+     "The Joker",
+     "The Riddler",
+     "Two-Face",
+     "The Penguin"
+    ],
+    "correct_answer": "The Joker",
+    "stem": "In DC stories, the clown-like super-villain who is Batman's arch-nemesis is"
+   },
+   {
+    "q": "Within DC Comics, which teenage athlete is transformed into the cybernetic hero Cyborg?",
+    "options": [
+     "Victor Stone",
+     "Wally West",
+     "Jason Todd",
+     "Dick Grayson"
+    ],
+    "correct_answer": "Victor Stone",
+    "stem": "Within DC Comics, the teenage athlete transformed into the cybernetic hero Cyborg is"
+   },
+   {
+    "q": "According to DC stories, which muscular villain breaks Batman's back in the 'Knightfall' arc?",
+    "options": [
+     "Bane",
+     "Ra's al Ghul",
+     "Deathstroke",
+     "Killer Croc"
+    ],
+    "correct_answer": "Bane",
+    "stem": "According to DC stories, the muscular villain who breaks Batman's back in the 'Knightfall' arc is"
+   },
+   {
+    "q": "In Philip Pullman's trilogy 'His Dark Materials', what is the full name of the young heroine Lyra?",
+    "options": [
+     "Lyra Belacqua",
+     "Serafina Pekkala",
+     "Mary Malone",
+     "Marisa Coulter"
+    ],
+    "correct_answer": "Lyra Belacqua",
+    "stem": "In Philip Pullman's trilogy 'His Dark Materials', the full name of the young heroine Lyra is"
+   },
+   {
+    "q": "In L. Frank Baum's 'The Wonderful Wizard of Oz', what Kansas farm girl is swept away to Oz by a tornado?",
+    "options": [
+     "Dorothy Gale",
+     "Alice Liddell",
+     "Wendy Darling",
+     "Sarah Williams"
+    ],
+    "correct_answer": "Dorothy Gale",
+    "stem": "In L. Frank Baum's 'The Wonderful Wizard of Oz', the Kansas farm girl swept away to Oz by a tornado is"
+   },
+   {
+    "q": "According to the Oz story, what is the name of Dorothy's small dog who travels with her?",
+    "options": [
+     "Toto",
+     "Benji",
+     "Fang",
+     "Hedwig"
+    ],
+    "correct_answer": "Toto",
+    "stem": "According to the Oz story, the name of Dorothy's small dog who travels with her is"
+   },
+   {
+    "q": "In the Oz tale, which metallic companion desires a heart from the Wizard?",
+    "options": [
+     "Tin Woodman",
+     "Scarecrow",
+     "Cowardly Lion",
+     "Tik-Tok"
+    ],
+    "correct_answer": "Tin Woodman",
+    "stem": "In the Oz tale, the metallic companion who desires a heart from the Wizard is"
+   },
+   {
+    "q": "According to 'The Wizard of Oz', which brain-seeking character is made entirely of straw?",
+    "options": [
+     "Scarecrow",
+     "Straw Man",
+     "Patchwork Girl",
+     "Jack Pumpkinhead"
+    ],
+    "correct_answer": "Scarecrow",
+    "stem": "According to 'The Wizard of Oz', the brain-seeking character made entirely of straw is"
+   },
+   {
+    "q": "In Baum's book, what is the title of the villainous ruler of the western land of Winkie Country?",
+    "options": [
+     "Wicked Witch of the West",
+     "Wicked Witch of the East",
+     "Queen of the Winkies",
+     "Mombi"
+    ],
+    "correct_answer": "Wicked Witch of the West",
+    "stem": "In Baum's book, the title of the villainous ruler of the western land of Winkie Country is"
+   },
+   {
+    "q": "In 'The Wizard of Oz', what city governed by the mysterious Wizard is famous for its green architecture?",
+    "options": [
+     "Emerald City",
+     "Shiz",
+     "Munchkinland",
+     "Quadling Country"
+    ],
+    "correct_answer": "Emerald City",
+    "stem": "In 'The Wizard of Oz', the city governed by the mysterious Wizard, famous for its green architecture, is"
+   }
+  ]
+ },
+ "Pornography": {
+  "QA_train": [
+   {
+    "q": "What disease testing regimen is standard for professional porn performers?",
+    "options": [
+     "HIV only",
+     "HIV and two other STI tests",
+     "HIV and five other STI tests",
+     "No routine testing"
+    ],
+    "correct_answer": "HIV and five other STI tests",
+    "stem": "The standard disease testing regimen for professional porn performers is"
+   },
+   {
+    "q": "Which 1857 law was the first to criminalize obscene publications in the UK?",
+    "options": [
+     "Comstock Act 1873",
+     "Obscene Publications Act 1857",
+     "Video Recordings Act 1984",
+     "Indecent Displays Act 1981"
+    ],
+    "correct_answer": "Obscene Publications Act 1857",
+    "stem": "The first law to criminalize obscene publications in the UK, passed in 1857, was the"
+   },
+   {
+    "q": "Softcore porn typically avoids explicit depiction of what?",
+    "options": [
+     "Kissing",
+     "Nudity above the waist",
+     "Genital sexual activity",
+     "Suggestive dancing"
+    ],
+    "correct_answer": "Genital sexual activity",
+    "stem": "Softcore porn typically avoids explicit depiction of"
+   },
+   {
+    "q": "Which style of adult content tries to mimic the aesthetics of mainstream Hollywood cinema?",
+    "options": [
+     "Gonzo porn",
+     "Feature-style porn",
+     "Amateur porn",
+     "Reality porn"
+    ],
+    "correct_answer": "Feature-style porn",
+    "stem": "The style of adult content that tries to mimic the aesthetics of mainstream Hollywood cinema is"
+   },
+   {
+    "q": "What is the single most visited porn site according to many web rankings?",
+    "options": [
+     "Pornhub",
+     "XVideos",
+     "xHamster",
+     "RedTube"
+    ],
+    "correct_answer": "XVideos",
+    "stem": "According to many web rankings, the single most visited porn site is"
+   },
+   {
+    "q": "What slang term refers to a porn actress’s first on-camera anal scene?",
+    "options": [
+     "First look",
+     "Anal debut",
+     "Backdoor audition",
+     "Premiere scene"
+    ],
+    "correct_answer": "Anal debut",
+    "stem": "The slang term for a porn actress’s first on-camera anal scene is"
+   },
+   {
+    "q": "Which feminist stance seeks to abolish porn as inherently harmful?",
+    "options": [
+     "Sex-positive feminism",
+     "Anti-pornography feminism",
+     "Liberal feminism",
+     "Equity feminism"
+    ],
+    "correct_answer": "Anti-pornography feminism",
+    "stem": "The feminist stance that seeks to abolish porn as inherently harmful is"
+   },
+   {
+    "q": "In which country were the 35,000-year-old Venus figurines found that are considered early pornographic artifacts?",
+    "options": [
+     "Germany",
+     "France",
+     "Italy",
+     "Austria"
+    ],
+    "correct_answer": "Germany",
+    "stem": "The 35,000-year-old Venus figurines considered early pornographic artifacts were found in"
+   },
+   {
+    "q": "Which test did US courts adopt from Britain to define obscenity before Miller?",
+    "options": [
+     "Hicklin test",
+     "Roth test",
+     "Miller test",
+     "Chaplinsky test"
+    ],
+    "correct_answer": "Hicklin test",
+    "stem": "Before Miller, US courts defined obscenity using a test adopted from Britain, the"
+   },
+   {
+    "q": "What term describes pornography that uses malicious synthetic face swaps?",
+    "options": [
+     "AI cosplay",
+     "Face filter erotica",
+     "Deepfake pornography",
+     "Virtual avatar porn"
+    ],
+    "correct_answer": "Deepfake pornography",
+    "stem": "Pornography that uses malicious synthetic face swaps is called"
+   },
+   {
+    "q": "Which mid-20th-century US magazine blended nude pictorials with lifestyle articles?",
+    "options": [
+     "Hustler",
+     "Penthouse",
+     "Playboy",
+     "Esquire"
+    ],
+    "correct_answer": "Playboy",
+    "stem": "The mid-20th-century US magazine that blended nude pictorials with lifestyle articles was"
+   },
+   {
+    "q": "What term describes pornographic material that depicts homosexual male activity?",
+    "options": [
+     "Lesbian porn",
+     "Gay porn",
+     "Bisexual porn",
+     "Trans porn"
+    ],
+    "correct_answer": "Gay porn",
+    "stem": "Pornographic material that depicts homosexual male activity is called"
+   },
+   {
+    "q": "Name one psychological mood that porn consumption can induce similar to actual sex.",
+    "options": [
+     "Arousal",
+     "Apathy",
+     "Sadness",
+     "Fear"
+    ],
+    "correct_answer": "Arousal",
+    "stem": "One psychological mood that porn consumption can induce, similar to actual sex, is"
+   },
+   {
+    "q": "What is the common abbreviated form of the word pornography?",
+    "options": [
+     "PG",
+     "XXX",
+     "Porn",
+     "NSFW"
+    ],
+    "correct_answer": "Porn",
+    "stem": "The common abbreviated form of the word pornography is"
+   },
+   {
+    "q": "Which ancient scroll, partly erotic, is known as the Turin Erotic Papyrus?",
+    "options": [
+     "Papyrus 55001",
+     "Papyrus Ebers",
+     "Papyrus Ipuwer",
+     "Papyrus Westcar"
+    ],
+    "correct_answer": "Papyrus 55001",
+    "stem": "The partly erotic ancient scroll known as the Turin Erotic Papyrus is"
+   },
+   {
+    "q": "Which porn niche features stepfamily role-play scenarios?",
+    "options": [
+     "MILF porn",
+     "Pseudo-incest or step porn",
+     "Outdoor porn",
+     "POV porn"
+    ],
+    "correct_answer": "Pseudo-incest or step porn",
+    "stem": "The porn niche that features stepfamily role-play scenarios is"
+   },
+   {
+    "q": "Which modern adult genre uses 3D headsets to immerse viewers?",
+    "options": [
+     "Augmented reality porn",
+     "Virtual reality pornography",
+     "Interactive chat porn",
+     "360° webcam shows"
+    ],
+    "correct_answer": "Virtual reality pornography",
+    "stem": "The modern adult genre that uses 3D headsets to immerse viewers is"
+   },
+   {
+    "q": "Which US constitutional amendment protects adult pornography unless obscene?",
+    "options": [
+     "First Amendment",
+     "Fourth Amendment",
+     "Fifth Amendment",
+     "Tenth Amendment"
+    ],
+    "correct_answer": "First Amendment",
+    "stem": "In the United States, adult pornography is protected, unless obscene, by the"
+   },
+   {
+    "q": "Which term describes pornographic content that features performers with disabilities?",
+    "options": [
+     "Inclusive porn",
+     "Accessible porn",
+     "Disabled porn",
+     "Sensory porn"
+    ],
+    "correct_answer": "Disabled porn",
+    "stem": "Pornographic content that features performers with disabilities is called"
+   },
+   {
+    "q": "Which Greek words form the root of the term “pornography”?",
+    "options": [
+     "eros and mythos",
+     "pórnos and gráphein",
+     "logos and mythos",
+     "eros and gráphein"
+    ],
+    "correct_answer": "pórnos and gráphein",
+    "stem": "The Greek words that form the root of the term “pornography” are"
+   },
+   {
+    "q": "Which film ratings category replaced ‘X’ to distinguish non-porn adult content?",
+    "options": [
+     "R",
+     "NC-17",
+     "TV-MA",
+     "AO"
+    ],
+    "correct_answer": "NC-17",
+    "stem": "The film ratings category that replaced ‘X’ to distinguish non-porn adult content is"
+   },
+   {
+    "q": "Which hardware device’s adoption was accelerated by demand for home-viewed porn?",
+    "options": [
+     "VCR",
+     "Blu-ray player",
+     "LaserDisc player",
+     "CD player"
+    ],
+    "correct_answer": "VCR",
+    "stem": "The hardware device whose adoption was accelerated by demand for home-viewed porn is the"
+   },
+   {
+    "q": "Which Roman city’s erotic art was locked in Naples’ ‘Secret Museum’?",
+    "options": [
+     "Pompeii",
+     "Herculaneum",
+     "Ostia",
+     "Rome"
+    ],
+    "correct_answer": "Pompeii",
+    "stem": "The erotic art locked away in Naples’ ‘Secret Museum’ came from the Roman city of"
+   },
+   {
+    "q": "What two categories divide porn content by explicitness?",
+    "options": [
+     "Amateur and professional",
+     "Softcore and hardcore",
+     "Mainstream and queer",
+     "Paid and free"
+    ],
+    "correct_answer": "Softcore and hardcore",
+    "stem": "The two categories that divide porn content by explicitness are"
+   },
+   {
+    "q": "Which 1969 Andy Warhol film is credited as the first US theatrical release showing unsimulated sex?",
+    "options": [
+     "Blue Movie",
+     "Flesh",
+     "Trash",
+     "Heat"
+    ],
+    "correct_answer": "Blue Movie",
+    "stem": "The 1969 Andy Warhol film credited as the first US theatrical release showing unsimulated sex is"
+   },
+   {
+    "q": "Name one major free tube site owned by MindGeek.",
+    "options": [
+     "Pornhub",
+     "XVideos",
+     "YouPorn",
+     "Twitch"
+    ],
+    "correct_answer": "Pornhub",
+    "stem": "One major free tube site owned by MindGeek is"
+   },
+   {
+    "q": "Which internet content model lets viewers pay a fixed monthly fee to an individual performer?",
+    "options": [
+     "Ad-supported model",
+     "Pay-per-view",
+     "Tip jar only",
+     "Subscription paywall"
+    ],
+    "correct_answer": "Subscription paywall",
+    "stem": "The internet content model that lets viewers pay a fixed monthly fee to an individual performer is"
+   },
+   {
+    "q": "Which porn classification distinguishes content meant for heterosexual consumers from queer audiences?",
+    "options": [
+     "Softcore vs hardcore",
+     "Amateur vs professional",
+     "Mainstream vs queer porn",
+     "Paid vs free"
+    ],
+    "correct_answer": "Mainstream vs queer porn",
+    "stem": "The porn classification that distinguishes content meant for heterosexual consumers from queer audiences is"
+   },
+   {
+    "q": "What term describes porn that explicitly parodies mainstream movies or TV shows?",
+    "options": [
+     "Mashup",
+     "Porn parody",
+     "Remix",
+     "Fan edit"
+    ],
+    "correct_answer": "Porn parody",
+    "stem": "Porn that explicitly parodies mainstream movies or TV shows is called"
+   },
+   {
+    "q": "What 1995 Time magazine cover story publicized fears of rampant online porn?",
+    "options": [
+     "INTERNET VICE",
+     "DIGITAL LUST",
+     "CYBERPORN",
+     "NET SIN"
+    ],
+    "correct_answer": "CYBERPORN",
+    "stem": "The 1995 Time magazine cover story that publicized fears of rampant online porn was titled"
+   },
+   {
+    "q": "What two factors differentiate mainstream porn from amateur home videos?",
+    "options": [
+     "Shorter length and free access",
+     "Professional performers and studio production",
+     "Live streaming and tipping",
+     "Animated content and voice actors"
+    ],
+    "correct_answer": "Professional performers and studio production",
+    "stem": "The two factors that differentiate mainstream porn from amateur home videos are"
+   },
+   {
+    "q": "What is the term for porn depicting non-simulated sexual penetration in mainstream cinema?",
+    "options": [
+     "Simulated sex",
+     "Censored sex",
+     "Unsimulated sex",
+     "Stunt intimacy"
+    ],
+    "correct_answer": "Unsimulated sex",
+    "stem": "The term for porn depicting non-simulated sexual penetration in mainstream cinema is"
+   },
+   {
+    "q": "Which online platform founded in 2016 popularized subscription-based erotic content from creators?",
+    "options": [
+     "OnlyFans",
+     "Patreon",
+     "Fansly",
+     "ManyVids"
+    ],
+    "correct_answer": "OnlyFans",
+    "stem": "The online platform founded in 2016 that popularized subscription-based erotic content from creators is"
+   },
+   {
+    "q": "What informal term refers to porn appealing to a niche sexual interest or fetish?",
+    "options": [
+     "Vanilla porn",
+     "Kink or fetish porn",
+     "Romance erotica",
+     "Art house porn"
+    ],
+    "correct_answer": "Kink or fetish porn",
+    "stem": "The informal term for porn appealing to a niche sexual interest or fetish is"
+   },
+   {
+    "q": "Which term denotes sexually explicit fan-created cartoon art featuring existing characters?",
+    "options": [
+     "Doujin",
+     "Rule 63",
+     "Rule 34 (fan porn)",
+     "Slash fic"
+    ],
+    "correct_answer": "Rule 34 (fan porn)",
+    "stem": "Sexually explicit fan-created cartoon art featuring existing characters is known as"
+   },
+   {
+    "q": "What is the informal term for pornographic websites that allow free streaming of user-uploaded clips?",
+    "options": [
+     "Hub sites",
+     "Tube sites",
+     "Portal sites",
+     "Forum boards"
+    ],
+    "correct_answer": "Tube sites",
+    "stem": "The informal term for pornographic websites that allow free streaming of user-uploaded clips is"
+   },
+   {
+    "q": "Name the trade union that advocates for adult performers.",
+    "options": [
+     "SAG-AFTRA",
+     "Adult Performer Advocacy Committee (APAC)",
+     "IATSE",
+     "AFM"
+    ],
+    "correct_answer": "Adult Performer Advocacy Committee (APAC)",
+    "stem": "The trade union that advocates for adult performers is"
+   },
+   {
+    "q": "Which academic field studies porn’s cultural impact using critical theory methods?",
+    "options": [
+     "Neuroscience",
+     "Porn studies / cultural studies",
+     "Econometrics",
+     "Tax law"
+    ],
+    "correct_answer": "Porn studies / cultural studies",
+    "stem": "The academic field that studies porn’s cultural impact using critical theory methods is"
+   },
+   {
+    "q": "Which legal term refers to sexual content featuring minors and is universally illegal?",
+    "options": [
+     "Youth erotica",
+     "Child pornography",
+     "Young adult content",
+     "Teen romance"
+    ],
+    "correct_answer": "Child pornography",
+    "stem": "The legal term for sexual content featuring minors, which is universally illegal, is"
+   },
+   {
+    "q": "Which type of porn became notable for extreme body modification or atypical acts?",
+    "options": [
+     "Softcore porn",
+     "Fetish or extreme porn",
+     "Romantic erotica",
+     "Cerebral porn"
+    ],
+    "correct_answer": "Fetish or extreme porn",
+    "stem": "The type of porn that became notable for extreme body modification or atypical acts is"
+   },
+   {
+    "q": "Which industry term denotes a shot where male ejaculation is shown on screen?",
+    "options": [
+     "Establishing shot",
+     "Close-up",
+     "Cutaway",
+     "Cum shot"
+    ],
+    "correct_answer": "Cum shot",
+    "stem": "The industry term for a shot where male ejaculation is shown on screen is"
+   },
+   {
+    "q": "Which three broad motivating factors often drive porn consumption besides arousal?",
+    "options": [
+     "Learning, social pressure, lack of partner",
+     "Money, fame, status",
+     "Exams, work deadlines, hunger",
+     "Competition, injury, habit"
+    ],
+    "correct_answer": "Learning, social pressure, lack of partner",
+    "stem": "Besides arousal, the three broad factors that often drive porn consumption are"
+   },
+   {
+    "q": "What is the common two-letter rating once used in the US for films with explicit sexual content?",
+    "options": [
+     "X",
+     "AO",
+     "M",
+     "R"
+    ],
+    "correct_answer": "X",
+    "stem": "The common two-letter rating once used in the US for films with explicit sexual content is"
+   },
+   {
+    "q": "Name one trade association representing the US adult entertainment industry.",
+    "options": [
+     "RIAA",
+     "Free Speech Coalition (FSC)",
+     "MPA",
+     "NAB"
+    ],
+    "correct_answer": "Free Speech Coalition (FSC)",
+    "stem": "One trade association representing the US adult entertainment industry is the"
+   },
+   {
+    "q": "What do industry insiders call the business trend of performers monetizing custom videos?",
+    "options": [
+     "Algorithmic curation",
+     "Vertical integration",
+     "Personalized porn",
+     "Programmatic ads"
+    ],
+    "correct_answer": "Personalized porn",
+    "stem": "Industry insiders call the business trend of performers monetizing custom videos"
+   },
+   {
+    "q": "Which 1970 US presidential commission concluded that porn is not linked to criminal behavior?",
+    "options": [
+     "President’s Commission on Obscenity and Pornography",
+     "Meese Commission",
+     "Warren Commission",
+     "Kerner Commission"
+    ],
+    "correct_answer": "President’s Commission on Obscenity and Pornography",
+    "stem": "The 1970 US presidential commission that concluded porn is not linked to criminal behavior was the"
+   },
+   {
+    "q": "What shorthand rating did marketers add to emphasize content beyond ‘X’?",
+    "options": [
+     "XX",
+     "XXX",
+     "XR",
+     "NC-17"
+    ],
+    "correct_answer": "XXX",
+    "stem": "To emphasize content beyond ‘X’, marketers added the shorthand rating"
+   },
+   {
+    "q": "What nickname is given to pornography’s role in driving new media technology?",
+    "options": [
+     "Media multiplier",
+     "Erotic engine",
+     "Tech catalyst",
+     "Innovation lever"
+    ],
+    "correct_answer": "Erotic engine",
+    "stem": "Pornography’s role in driving new media technology has earned it the nickname"
+   },
+   {
+    "q": "Which California court case in 1988 ruled that filming sex for sale isn’t prostitution?",
+    "options": [
+     "Miller v. California",
+     "People v. Freeman",
+     "Reno v. ACLU",
+     "Ashcroft v. Free Speech Coalition"
+    ],
+    "correct_answer": "People v. Freeman",
+    "stem": "The 1988 California court case that ruled filming sex for sale is not prostitution is"
+   },
+   {
+    "q": "What is the slang term for male-male-female double penetration where two men penetrate one woman?",
+    "options": [
+     "MMF threesome",
+     "Group sex",
+     "Threesome",
+     "DP (double penetration)"
+    ],
+    "correct_answer": "DP (double penetration)",
+    "stem": "The slang term for a male-male-female scene in which two men penetrate one woman is"
+   }
+  ],
+  "QA_test": [
+   {
+    "q": "What is the primary purpose of pornography?",
+    "options": [
+     "Sexual arousal",
+     "Historical education",
+     "Political satire",
+     "Financial instruction"
+    ],
+    "correct_answer": "Sexual arousal",
+    "stem": "The primary purpose of pornography is"
+   },
+   {
+    "q": "What ancient Indian text is famous for its discussions of erotic love and sex?",
+    "options": [
+     "Kama Sutra",
+     "Rigveda",
+     "Mahabharata",
+     "Arthashastra"
+    ],
+    "correct_answer": "Kama Sutra",
+    "stem": "The famous ancient Indian text that discusses erotic love and sex is called"
+   },
+   {
+    "q": "During which years is the ‘Golden Age of Porn’ generally dated?",
+    "options": [
+     "1969-1984",
+     "1950-1960",
+     "1985-1999",
+     "2001-2010"
+    ],
+    "correct_answer": "1969-1984",
+    "stem": "The ‘Golden Age of Porn’ is generally dated to the years"
+   },
+   {
+    "q": "What 18th-century English novel by John Cleland is often called the first English prose pornography?",
+    "options": [
+     "Fanny Hill",
+     "Moll Flanders",
+     "Clarissa",
+     "Pamela"
+    ],
+    "correct_answer": "Fanny Hill",
+    "stem": "The 18th-century English novel by John Cleland often called the first English prose pornography is"
+   },
+   {
+    "q": "What US federal law of 1873 banned mailing ‘obscene’ materials?",
+    "options": [
+     "Comstock Act",
+     "Mann Act",
+     "Harrison Act",
+     "Taft-Hartley Act"
+    ],
+    "correct_answer": "Comstock Act",
+    "stem": "The US federal law of 1873 that banned mailing ‘obscene’ materials was the"
+   },
+   {
+    "q": "Which US Supreme Court test defines obscenity by community standards?",
+    "options": [
+     "Miller test",
+     "Roth test",
+     "Lemon test",
+     "Brandenburg test"
+    ],
+    "correct_answer": "Miller test",
+    "stem": "The US Supreme Court test that defines obscenity by community standards is the"
+   },
+   {
+    "q": "Name the Los Angeles area long known as the world’s largest porn production center.",
+    "options": [
+     "San Fernando Valley",
+     "Hollywood Hills",
+     "Beverly Hills",
+     "Santa Monica"
+    ],
+    "correct_answer": "San Fernando Valley",
+    "stem": "The Los Angeles area long known as the world’s largest porn production center is"
+   },
+   {
+    "q": "Which European capital city is regarded as a major hub for porn production?",
+    "options": [
+     "Budapest",
+     "Vienna",
+     "Prague",
+     "Berlin"
+    ],
+    "correct_answer": "Budapest",
+    "stem": "The European capital city regarded as a major hub for porn production is"
+   },
+   {
+    "q": "What two adult-industry award shows are roughly equivalent to the Oscars?",
+    "options": [
+     "AVN Awards and XBIZ Awards",
+     "Grammys and BRITs",
+     "Emmys and Tonys",
+     "Cannes and Venice"
+    ],
+    "correct_answer": "AVN Awards and XBIZ Awards",
+    "stem": "The two adult-industry award shows roughly equivalent to the Oscars are"
+   },
+   {
+    "q": "What Japanese term refers to erotic anime and manga?",
+    "options": [
+     "Hentai",
+     "Seinen",
+     "Shoujo",
+     "Yaoi"
+    ],
+    "correct_answer": "Hentai",
+    "stem": "The Japanese term for erotic anime and manga is"
+   },
+   {
+    "q": "Which 1969 Scandinavian country became the first to legalize pornography?",
+    "options": [
+     "Denmark",
+     "Sweden",
+     "Norway",
+     "Finland"
+    ],
+    "correct_answer": "Denmark",
+    "stem": "The first country to legalize pornography, in 1969, was"
+   },
+   {
+    "q": "What style of porn filmmaking focuses on POV and breaks the fourth wall?",
+    "options": [
+     "Gonzo",
+     "Feature",
+     "Documentary",
+     "Art house"
+    ],
+    "correct_answer": "Gonzo",
+    "stem": "The style of porn filmmaking that focuses on POV and breaks the fourth wall is"
+   },
+   {
+    "q": "Hardcore porn explicitly shows what type of acts?",
+    "options": [
+     "Explicit sexual activity such as penetration",
+     "Non-sexual nudity only",
+     "Romantic dialogue only",
+     "Implied affection without nudity"
+    ],
+    "correct_answer": "Explicit sexual activity such as penetration",
+    "stem": "Hardcore porn explicitly shows"
+   },
+   {
+    "q": "Which home-video format war was influenced by the porn industry’s choice of VHS?",
+    "options": [
+     "VHS vs Betamax",
+     "DVD vs HD DVD",
+     "Blu-ray vs DVD",
+     "LaserDisc vs VCD"
+    ],
+    "correct_answer": "VHS vs Betamax",
+    "stem": "The home-video format war influenced by the porn industry’s choice of VHS was"
+   },
+   {
+    "q": "What term is used for independently produced adult content outside big studios?",
+    "options": [
+     "Indie pornography",
+     "Network erotica",
+     "Studio exclusive",
+     "Broadcast adult"
+    ],
+    "correct_answer": "Indie pornography",
+    "stem": "Independently produced adult content made outside big studios is called"
+   },
+   {
+    "q": "How often do mainstream US porn performers typically get tested for STIs?",
+    "options": [
+     "Every two weeks",
+     "Annually",
+     "Every six months",
+     "Only before first shoot"
+    ],
+    "correct_answer": "Every two weeks",
+    "stem": "Mainstream US porn performers are typically tested for STIs"
+   },
+   {
+    "q": "Which porn magazine started the so-called ‘Pubic Wars’ with Playboy by showing pubic hair?",
+    "options": [
+     "Penthouse",
+     "Hustler",
+     "Playboy",
+     "Oui"
+    ],
+    "correct_answer": "Penthouse",
+    "stem": "The porn magazine that started the so-called ‘Pubic Wars’ with Playboy by showing pubic hair was"
+   },
+   {
+    "q": "Who founded Playboy magazine in 1953?",
+    "options": [
+     "Hugh Hefner",
+     "Larry Flynt",
+     "Bob Guccione",
+     "Al Goldstein"
+    ],
+    "correct_answer": "Hugh Hefner",
+    "stem": "Playboy magazine was founded in 1953 by"
+   },
+   {
+    "q": "Which three ‘A’s describe why the internet boosted porn consumption?",
+    "options": [
+     "Anonymity, Affordability, Accessibility",
+     "Artistry, Authenticity, Availability",
+     "Accuracy, Agency, Ambition",
+     "Automation, Aggregation, Awareness"
+    ],
+    "correct_answer": "Anonymity, Affordability, Accessibility",
+    "stem": "The three ‘A’s that describe why the internet boosted porn consumption are"
+   },
+   {
+    "q": "What is the main difference between pornography and erotica as commonly defined?",
+    "options": [
+     "Degree of explicitness and intent",
+     "Color vs black-and-white",
+     "Age rating alone",
+     "Presence of dialogue"
+    ],
+    "correct_answer": "Degree of explicitness and intent",
+    "stem": "As commonly defined, the main difference between pornography and erotica is"
+   },
+   {
+    "q": "Which motion-picture technology did porn help popularize by favoring VHS over Betamax?",
+    "options": [
+     "VHS home video",
+     "8mm film",
+     "Blu-ray",
+     "Streaming"
+    ],
+    "correct_answer": "VHS home video",
+    "stem": "By favoring VHS over Betamax, porn helped popularize"
+   },
+   {
+    "q": "What is the name for a porn genre featuring both scripted storylines and high production values?",
+    "options": [
+     "Feature pornography",
+     "Reality porn",
+     "Loop reels",
+     "Cam content"
+    ],
+    "correct_answer": "Feature pornography",
+    "stem": "The porn genre that features both scripted storylines and high production values is called"
+   },
+   {
+    "q": "What do performers call porn scenes shot to order for a single paying customer?",
+    "options": [
+     "Custom pornography",
+     "Public domain scenes",
+     "Studio catalog scenes",
+     "Pilot episodes"
+    ],
+    "correct_answer": "Custom pornography",
+    "stem": "Performers call porn scenes shot to order for a single paying customer"
+   },
+   {
+    "q": "Which European erotic woodblock art tradition is known as Shunga?",
+    "options": [
+     "Japanese Shunga",
+     "Chinese Ukiyo-e",
+     "Korean Minhwa",
+     "Indian Pattachitra"
+    ],
+    "correct_answer": "Japanese Shunga",
+    "stem": "The erotic woodblock art tradition known as Shunga is"
+   },
+   {
+    "q": "Which US landmark case (1969) upheld private possession of obscene material?",
+    "options": [
+     "Stanley v. Georgia",
+     "Miller v. California",
+     "Roth v. United States",
+     "Ashcroft v. Free Speech Coalition"
+    ],
+    "correct_answer": "Stanley v. Georgia",
+    "stem": "The 1969 US landmark case that upheld private possession of obscene material is"
+   },
+   {
+    "q": "Name one societal benefit some scholars claim porn may support.",
+    "options": [
+     "Outlet for sexual desire",
+     "Improved math scores",
+     "Lower traffic congestion",
+     "Higher voter turnout"
+    ],
+    "correct_answer": "Outlet for sexual desire",
+    "stem": "One societal benefit some scholars claim porn may support is"
+   },
+   {
+    "q": "Which online file-sharing method in the 2000s spread large amounts of pirated porn?",
+    "options": [
+     "Peer-to-peer (P2P) networks",
+     "FTP only",
+     "Dial-up BBS only",
+     "Satellite radio"
+    ],
+    "correct_answer": "Peer-to-peer (P2P) networks",
+    "stem": "The online file-sharing method that spread large amounts of pirated porn in the 2000s was"
+   },
+   {
+    "q": "What slang label is used for porn featuring older women?",
+    "options": [
+     "MILF",
+     "BBW",
+     "Bara",
+     "Otome"
+    ],
+    "correct_answer": "MILF",
+    "stem": "The slang label used for porn featuring older women is"
+   },
+   {
+    "q": "In historical Japan, what were small erotic illustrated booklets called?",
+    "options": [
+     "Makura-e (pillow pictures)",
+     "Emakimono",
+     "Kacho-ga",
+     "Sumi-e"
+    ],
+    "correct_answer": "Makura-e (pillow pictures)",
+    "stem": "In historical Japan, small erotic illustrated booklets were called"
+   },
+   {
+    "q": "What is the main female-centered genre of porn often produced by women for women?",
+    "options": [
+     "Feminist pornography",
+     "Gonzo pornography",
+     "Amateur compilation",
+     "Loop reels"
+    ],
+    "correct_answer": "Feminist pornography",
+    "stem": "The main female-centered genre of porn, often produced by women for women, is"
+   },
+   {
+    "q": "Which print technology’s spread in the 15th-16th centuries enabled early modern porn?",
+    "options": [
+     "Printing press",
+     "Lithography",
+     "Offset printing",
+     "Phototypesetting"
+    ],
+    "correct_answer": "Printing press",
+    "stem": "The print technology whose spread in the 15th-16th centuries enabled early modern porn was"
+   },
+   {
+    "q": "What is the name for units that classify porn according to sexual acts (e.g., anal, threesome)?",
+    "options": [
+     "Genres",
+     "Studios",
+     "Regions",
+     "Ratings"
+    ],
+    "correct_answer": "Genres",
+    "stem": "The units that classify porn according to sexual acts (e.g., anal, threesome) are called"
+   },
+   {
+    "q": "Which US trade show dubbed the ‘Oscars of porn’ runs in Las Vegas each January?",
+    "options": [
+     "AVN Expo and Awards",
+     "CES Adult Annex",
+     "Sundance After Dark",
+     "XBIZ Miami"
+    ],
+    "correct_answer": "AVN Expo and Awards",
+    "stem": "The US trade show dubbed the ‘Oscars of porn’, held in Las Vegas each January, is"
+   },
+   {
+    "q": "What is the main ethical distinction scholars draw between porn and non-consensual ‘revenge porn’?",
+    "options": [
+     "Consent of all persons involved",
+     "Video resolution",
+     "Geographic origin",
+     "File format used"
+    ],
+    "correct_answer": "Consent of all persons involved",
+    "stem": "The main ethical distinction scholars draw between porn and non-consensual ‘revenge porn’ is"
+   },
+   {
+    "q": "Which pornographic genre focuses on depicting bondage, domination, and submission?",
+    "options": [
+     "BDSM porn",
+     "Vanilla porn",
+     "Romance erotica",
+     "Cosplay softcore"
+    ],
+    "correct_answer": "BDSM porn",
+    "stem": "The pornographic genre that focuses on depicting bondage, domination, and submission is"
+   },
+   {
+    "q": "What is one common criticism anti-porn feminists raise about mainstream porn?",
+    "options": [
+     "Objectification of women",
+     "Overuse of subtitles",
+     "Lack of musical scores",
+     "Too short runtimes"
+    ],
+    "correct_answer": "Objectification of women",
+    "stem": "One common criticism anti-porn feminists raise about mainstream porn is"
+   },
+   {
+    "q": "Which digital payment companies restricted processing for adult sites in 2020?",
+    "options": [
+     "Visa and Mastercard",
+     "Discover and AmEx",
+     "Payoneer and Stripe",
+     "UnionPay and JCB"
+    ],
+    "correct_answer": "Visa and Mastercard",
+    "stem": "The digital payment companies that restricted processing for adult sites in 2020 were"
+   },
+   {
+    "q": "What is the typical length of a modern professional porn performer's career, according to industry reports?",
+    "options": [
+     "Four to six months",
+     "Ten to twelve years",
+     "Two to three years",
+     "One to two weeks"
+    ],
+    "correct_answer": "Four to six months",
+    "stem": "According to industry reports, the typical length of a modern professional porn performer's career is"
+   },
+   {
+    "q": "Which Japanese adult video format peaked at about 30,000 titles annually in the early 2000s?",
+    "options": [
+     "AV (Adult Video)",
+     "NHK Plus",
+     "J-Drama DVD",
+     "V-Cinema"
+    ],
+    "correct_answer": "AV (Adult Video)",
+    "stem": "The Japanese adult video format that peaked at about 30,000 titles annually in the early 2000s is"
+   },
+   {
+    "q": "What industry nickname references performers who film both gay and straight scenes?",
+    "options": [
+     "Gay-for-pay",
+     "Double-booked",
+     "Cross-cast",
+     "Bi-listed"
+    ],
+    "correct_answer": "Gay-for-pay",
+    "stem": "The industry nickname for performers who film both gay and straight scenes is"
+   },
+   {
+    "q": "Which philosophical debate among feminists in the 1970s-80s centered on porn and sexuality?",
+    "options": [
+     "The sex wars",
+     "The culture wars",
+     "The language wars",
+     "The canon wars"
+    ],
+    "correct_answer": "The sex wars",
+    "stem": "The debate among feminists in the 1970s-80s that centered on porn and sexuality is known as"
+   },
+   {
+    "q": "What occupational safety concern leads some performers to prefer testing over mandatory condoms?",
+    "options": [
+     "Friction burns and micro-tears",
+     "Camera glare",
+     "Stage fright",
+     "Makeup allergies"
+    ],
+    "correct_answer": "Friction burns and micro-tears",
+    "stem": "The occupational safety concern that leads some performers to prefer testing over mandatory condoms is"
+   },
+   {
+    "q": "Which online analytics revealed that porn sites often outrank Netflix and Twitter in traffic?",
+    "options": [
+     "Website traffic rankings (e.g., Alexa)",
+     "IMDB ratings",
+     "Rotten Tomatoes scores",
+     "Nielsen TV ratings"
+    ],
+    "correct_answer": "Website traffic rankings (e.g., Alexa)",
+    "stem": "That porn sites often outrank Netflix and Twitter in traffic was revealed by"
+   },
+   {
+    "q": "What is the industry term for a close-up shot of genital penetration?",
+    "options": [
+     "Insert shot",
+     "Establishing shot",
+     "Two-shot",
+     "Tracking shot"
+    ],
+    "correct_answer": "Insert shot",
+    "stem": "The industry term for a close-up shot of genital penetration is the"
+   },
+   {
+    "q": "Name one evidence-based finding about porn and intimate partner violence.",
+    "options": [
+     "Porn use is not a predictive factor",
+     "Porn always causes violence",
+     "Porn eliminates jealousy",
+     "Porn guarantees fidelity"
+    ],
+    "correct_answer": "Porn use is not a predictive factor",
+    "stem": "One evidence-based finding about porn and intimate partner violence is that"
+   },
+   {
+    "q": "Which practice involves performers streaming live sexual content to paying viewers?",
+    "options": [
+     "Webcamming",
+     "Podcasting",
+     "Vlogging",
+     "ASMR streaming"
+    ],
+    "correct_answer": "Webcamming",
+    "stem": "The practice of performers streaming live sexual content to paying viewers is called"
+   },
+   {
+    "q": "Which continent’s ancient erotic art includes explicit temple carvings at Khajuraho?",
+    "options": [
+     "Asia (India)",
+     "Europe (Greece)",
+     "Africa (Egypt)",
+     "South America (Peru)"
+    ],
+    "correct_answer": "Asia (India)",
+    "stem": "The explicit temple carvings at Khajuraho belong to the ancient erotic art of"
+   },
+   {
+    "q": "What term describes porn where one performer produces everything and sells directly online?",
+    "options": [
+     "Solo creator or independent clip site",
+     "Syndicated network",
+     "Broadcast affiliate",
+     "Studio-exclusive label"
+    ],
+    "correct_answer": "Solo creator or independent clip site",
+    "stem": "Porn where one performer produces everything and sells directly online is called"
+   },
+   {
+    "q": "What is the slang phrase ‘rule’ stating that if something exists, there is porn of it?",
+    "options": [
+     "Rule 34",
+     "Rule 63",
+     "Rule 101",
+     "Rule 18"
+    ],
+    "correct_answer": "Rule 34",
+    "stem": "The slang rule stating that if something exists, there is porn of it is"
+   },
+   {
+    "q": "Which northern European magazines sparked the 1970s ‘Pubic Wars’ contest?",
+    "options": [
+     "Playboy and Penthouse",
+     "Playboy and Hustler",
+     "Hustler and High Society",
+     "Club and Oui"
+    ],
+    "correct_answer": "Playboy and Penthouse",
+    "stem": "The northern European magazines that sparked the 1970s ‘Pubic Wars’ contest were"
+   }
+  ],
+  "SimdomQA_train": [
+   {
+    "q": "What device is used to capture motion pictures on film?",
+    "options": [
+     "Camera",
+     "Projector",
+     "Tripod",
+     "Microphone"
+    ],
+    "correct_answer": "Camera",
+    "stem": "The device used to capture motion pictures on film is the"
+   },
+   {
+    "q": "Which console exclusive game series features Master Chief?",
+    "options": [
+     "Halo",
+     "God of War",
+     "The Last of Us",
+     "Uncharted"
+    ],
+    "correct_answer": "Halo",
+    "stem": "The console exclusive game series that features Master Chief is"
+   },
+   {
+    "q": "What streaming platform originated the series 'The Boys'?",
+    "options": [
+     "Amazon Prime Video",
+     "Netflix",
+     "HBO Max",
+     "Hulu"
+    ],
+    "correct_answer": "Amazon Prime Video",
+    "stem": "The series 'The Boys' originated on"
+   },
+   {
+    "q": "What festival awards the Palme d'Or?",
+    "options": [
+     "Cannes Film Festival",
+     "Venice Film Festival",
+     "Berlin International Film Festival",
+     "Toronto International Film Festival"
+    ],
+    "correct_answer": "Cannes Film Festival",
+    "stem": "The Palme d'Or is awarded by the"
+   },
+   {
+    "q": "Which fantasy series begins with 'A Game of Thrones'?",
+    "options": [
+     "A Song of Ice and Fire",
+     "The Wheel of Time",
+     "The Witcher",
+     "The Lord of the Rings"
+    ],
+    "correct_answer": "A Song of Ice and Fire",
+    "stem": "The fantasy series that begins with 'A Game of Thrones' is"
+   },
+   {
+    "q": "Which rock band features brothers Liam and Noel Gallagher?",
+    "options": [
+     "Oasis",
+     "Blur",
+     "Coldplay",
+     "Arctic Monkeys"
+    ],
+    "correct_answer": "Oasis",
+    "stem": "The rock band that features brothers Liam and Noel Gallagher is"
+   },
+   {
+    "q": "What rating symbol in the U.S. designates movies suitable for general audiences?",
+    "options": [
+     "G",
+     "PG",
+     "PG-13",
+     "R"
+    ],
+    "correct_answer": "G",
+    "stem": "In the U.S., the rating symbol that designates movies suitable for general audiences is"
+   },
+   {
+    "q": "Which band released the album 'Dark Side of the Moon'?",
+    "options": [
+     "Pink Floyd",
+     "Led Zeppelin",
+     "The Beatles",
+     "Queen"
+    ],
+    "correct_answer": "Pink Floyd",
+    "stem": "The album 'Dark Side of the Moon' was released by"
+   },
+   {
+    "q": "What mobile game involves flinging birds at pigs?",
+    "options": [
+     "Angry Birds",
+     "Candy Crush Saga",
+     "Temple Run",
+     "Fruit Ninja"
+    ],
+    "correct_answer": "Angry Birds",
+    "stem": "The mobile game that involves flinging birds at pigs is"
+   },
+   {
+    "q": "What network aired the musical drama series 'Glee'?",
+    "options": [
+     "Fox",
+     "ABC",
+     "NBC",
+     "CBS"
+    ],
+    "correct_answer": "Fox",
+    "stem": "The musical drama series 'Glee' aired on"
+   },
+   {
+    "q": "Which sitcom is set in the fictional town of Pawnee, Indiana?",
+    "options": [
+     "Parks and Recreation",
+     "The Office",
+     "30 Rock",
+     "Community"
+    ],
+    "correct_answer": "Parks and Recreation",
+    "stem": "The sitcom set in the fictional town of Pawnee, Indiana, is"
+   },
+   {
+    "q": "Who directed 'Pulp Fiction'?",
+    "options": [
+     "Quentin Tarantino",
+     "Martin Scorsese",
+     "Francis Ford Coppola",
+     "Steven Spielberg"
+    ],
+    "correct_answer": "Quentin Tarantino",
+    "stem": "'Pulp Fiction' was directed by"
+   },
+   {
+    "q": "Which singer released the album 'Thriller'?",
+    "options": [
+     "Michael Jackson",
+     "Prince",
+     "Madonna",
+     "Whitney Houston"
+    ],
+    "correct_answer": "Michael Jackson",
+    "stem": "The album 'Thriller' was released by"
+   },
+   {
+    "q": "In cinema, what term describes the main character of a story?",
+    "options": [
+     "Protagonist",
+     "Antagonist",
+     "Narrator",
+     "Sidekick"
+    ],
+    "correct_answer": "Protagonist",
+    "stem": "In cinema, the term for the main character of a story is"
+   },
+   {
+    "q": "Which sci-fi TV series has the starship USS Enterprise?",
+    "options": [
+     "Star Trek",
+     "Battlestar Galactica",
+     "Firefly",
+     "Stargate SG-1"
+    ],
+    "correct_answer": "Star Trek",
+    "stem": "The sci-fi TV series with the starship USS Enterprise is"
+   },
+   {
+    "q": "Who hosted the long-running US late-night show 'The Tonight Show' starting in 2014?",
+    "options": [
+     "Jimmy Fallon",
+     "Jay Leno",
+     "Conan O'Brien",
+     "Stephen Colbert"
+    ],
+    "correct_answer": "Jimmy Fallon",
+    "stem": "The long-running US late-night show 'The Tonight Show' has been hosted since 2014 by"
+   },
+   {
+    "q": "What instrument is widely used to control characters in video games?",
+    "options": [
+     "Controller",
+     "Keyboard",
+     "Joystick",
+     "Touchscreen"
+    ],
+    "correct_answer": "Controller",
+    "stem": "The instrument widely used to control characters in video games is the"
+   },
+   {
+    "q": "Who played Forrest in 'Forrest Gump'?",
+    "options": [
+     "Tom Hanks",
+     "Robin Williams",
+     "Kevin Costner",
+     "Harrison Ford"
+    ],
+    "correct_answer": "Tom Hanks",
+    "stem": "Forrest in 'Forrest Gump' was played by"
+   },
+   {
+    "q": "Who composed the theme for 'Star Wars'?",
+    "options": [
+     "John Williams",
+     "Hans Zimmer",
+     "Ennio Morricone",
+     "James Horner"
+    ],
+    "correct_answer": "John Williams",
+    "stem": "The theme for 'Star Wars' was composed by"
+   },
+   {
+    "q": "Which pop singer is referred to as the 'Queen of Pop' and released 'Like a Prayer'?",
+    "options": [
+     "Madonna",
+     "Beyoncé",
+     "Lady Gaga",
+     "Kylie Minogue"
+    ],
+    "correct_answer": "Madonna",
+    "stem": "The pop singer referred to as the 'Queen of Pop', who released 'Like a Prayer', is"
+   },
+   {
+    "q": "Which fantasy series features dragons and a throne made of swords?",
+    "options": [
+     "Game of Thrones",
+     "The Witcher",
+     "Shadow and Bone",
+     "His Dark Materials"
+    ],
+    "correct_answer": "Game of Thrones",
+    "stem": "The fantasy series that features dragons and a throne made of swords is"
+   },
+   {
+    "q": "What sci-fi franchise has the phrase 'Live long and prosper'?",
+    "options": [
+     "Star Trek",
+     "Star Wars",
+     "Doctor Who",
+     "The Expanse"
+    ],
+    "correct_answer": "Star Trek",
+    "stem": "The sci-fi franchise with the phrase 'Live long and prosper' is"
+   },
+   {
+    "q": "Which electronic music festival is held annually in Belgium?",
+    "options": [
+     "Tomorrowland",
+     "Ultra Music Festival",
+     "Coachella",
+     "Glastonbury"
+    ],
+    "correct_answer": "Tomorrowland",
+    "stem": "The electronic music festival held annually in Belgium is"
+   },
+   {
+    "q": "What awards ceremony is nicknamed 'The Oscars'?",
+    "options": [
+     "The Academy Awards",
+     "Golden Globes",
+     "BAFTAs",
+     "SAG Awards"
+    ],
+    "correct_answer": "The Academy Awards",
+    "stem": "The awards ceremony nicknamed 'The Oscars' is"
+   },
+   {
+    "q": "What 1982 film features a boy befriending an alien stranded on Earth?",
+    "options": [
+     "E.T. the Extra-Terrestrial",
+     "Close Encounters of the Third Kind",
+     "The Last Starfighter",
+     "Flight of the Navigator"
+    ],
+    "correct_answer": "E.T. the Extra-Terrestrial",
+    "stem": "The 1982 film about a boy befriending an alien stranded on Earth is"
+   },
+   {
+    "q": "What annual awards show honors achievements in American television?",
+    "options": [
+     "The Emmys",
+     "The Tonys",
+     "The Webby Awards",
+     "The People's Choice Awards"
+    ],
+    "correct_answer": "The Emmys",
+    "stem": "The annual awards show that honors achievements in American television is"
+   },
+   {
+    "q": "Which ESRB rating restricts a game to players 17 and older?",
+    "options": [
+     "M",
+     "T",
+     "E10+",
+     "AO"
+    ],
+    "correct_answer": "M",
+    "stem": "The ESRB rating that restricts a game to players 17 and older is"
+   },
+   {
+    "q": "Who authored the play 'Romeo and Juliet'?",
+    "options": [
+     "William Shakespeare",
+     "Christopher Marlowe",
+     "Geoffrey Chaucer",
+     "Oscar Wilde"
+    ],
+    "correct_answer": "William Shakespeare",
+    "stem": "The play 'Romeo and Juliet' was written by"
+   },
+   {
+    "q": "What annual music award show is presented by the Recording Academy?",
+    "options": [
+     "The Grammys",
+     "American Music Awards",
+     "MTV VMAs",
+     "Billboard Music Awards"
+    ],
+    "correct_answer": "The Grammys",
+    "stem": "The annual music award show presented by the Recording Academy is"
+   },
+   {
+    "q": "Which movie musical is set around the rivalry of two New York gangs, the Jets and Sharks?",
+    "options": [
+     "West Side Story",
+     "Grease",
+     "Chicago",
+     "Rent"
+    ],
+    "correct_answer": "West Side Story",
+    "stem": "The movie musical set around the rivalry of two New York gangs, the Jets and Sharks, is"
+   },
+   {
+    "q": "What streaming platform released the series 'Stranger Things'?",
+    "options": [
+     "Netflix",
+     "Hulu",
+     "Amazon Prime Video",
+     "HBO Max"
+    ],
+    "correct_answer": "Netflix",
+    "stem": "The series 'Stranger Things' was released on"
+   },
+   {
+    "q": "Which science-fiction film series stars Keanu Reeves as Neo?",
+    "options": [
+     "The Matrix",
+     "John Wick",
+     "Blade Runner",
+     "Minority Report"
+    ],
+    "correct_answer": "The Matrix",
+    "stem": "The science-fiction film series starring Keanu Reeves as Neo is"
+   },
+   {
+    "q": "Which movie follows toys that come to life when humans leave?",
+    "options": [
+     "Toy Story",
+     "Small Soldiers",
+     "The Lego Movie",
+     "Child's Play"
+    ],
+    "correct_answer": "Toy Story",
+    "stem": "The movie about toys that come to life when humans leave is"
+   },
+   {
+    "q": "What long-running British sci-fi show features a Time Lord called the Doctor?",
+    "options": [
+     "Doctor Who",
+     "Torchwood",
+     "Red Dwarf",
+     "Black Mirror"
+    ],
+    "correct_answer": "Doctor Who",
+    "stem": "The long-running British sci-fi show featuring a Time Lord called the Doctor is"
+   },
+   {
+    "q": "Which game console introduced 'The Legend of Zelda: Ocarina of Time'?",
+    "options": [
+     "Nintendo 64",
+     "GameCube",
+     "Super Nintendo",
+     "Wii"
+    ],
+    "correct_answer": "Nintendo 64",
+    "stem": "'The Legend of Zelda: Ocarina of Time' was introduced on the"
+   },
+   {
+    "q": "Which Broadway musical features the song 'Defying Gravity'?",
+    "options": [
+     "Wicked",
+     "Hamilton",
+     "Les Misérables",
+     "Rent"
+    ],
+    "correct_answer": "Wicked",
+    "stem": "The Broadway musical that features the song 'Defying Gravity' is"
+   },
+   {
+    "q": "Which 1994 Disney film tells the story of Simba?",
+    "options": [
+     "The Lion King",
+     "Aladdin",
+     "Hercules",
+     "Tarzan"
+    ],
+    "correct_answer": "The Lion King",
+    "stem": "The 1994 Disney film that tells the story of Simba is"
+   },
+   {
+    "q": "What gaming company created the 'Sonic the Hedgehog' series?",
+    "options": [
+     "Sega",
+     "Nintendo",
+     "Sony",
+     "Capcom"
+    ],
+    "correct_answer": "Sega",
+    "stem": "The 'Sonic the Hedgehog' series was created by"
+   },
+   {
+    "q": "What is the standard frame rate for movies in frames per second?",
+    "options": [
+     "24",
+     "30",
+     "60",
+     "48"
+    ],
+    "correct_answer": "24",
+    "stem": "The standard frame rate for movies, in frames per second, is"
+   },
+   {
+    "q": "What handheld device launched the game 'Pokémon Red'?",
+    "options": [
+     "Game Boy",
+     "Game Boy Color",
+     "PSP",
+     "Nintendo DS"
+    ],
+    "correct_answer": "Game Boy",
+    "stem": "The game 'Pokémon Red' launched on the"
+   },
+   {
+    "q": "Which comedian voices the zebra Marty in 'Madagascar'?",
+    "options": [
+     "Chris Rock",
+     "Eddie Murphy",
+     "Kevin Hart",
+     "David Spade"
+    ],
+    "correct_answer": "Chris Rock",
+    "stem": "The zebra Marty in 'Madagascar' is voiced by"
+   },
+   {
+    "q": "Which superhero team includes characters like Wolverine and Storm?",
+    "options": [
+     "X-Men",
+     "Avengers",
+     "Justice League",
+     "Fantastic Four"
+    ],
+    "correct_answer": "X-Men",
+    "stem": "The superhero team that includes characters like Wolverine and Storm is"
+   },
+   {
+    "q": "What guitar-shaped logo marks a popular chain of themed restaurants?",
+    "options": [
+     "Hard Rock Cafe",
+     "Planet Hollywood",
+     "Rainforest Cafe",
+     "TGI Fridays"
+    ],
+    "correct_answer": "Hard Rock Cafe",
+    "stem": "The chain of themed restaurants marked by a guitar-shaped logo is"
+   },
+   {
+    "q": "Who directed 'Jurassic Park'?",
+    "options": [
+     "Steven Spielberg",
+     "James Cameron",
+     "Ridley Scott",
+     "George Lucas"
+    ],
+    "correct_answer": "Steven Spielberg",
+    "stem": "'Jurassic Park' was directed by"
+   },
+   {
+    "q": "Which streaming service is known for 'The Mandalorian'?",
+    "options": [
+     "Disney+",
+     "Netflix",
+     "Amazon Prime Video",
+     "HBO Max"
+    ],
+    "correct_answer": "Disney+",
+    "stem": "The streaming service known for 'The Mandalorian' is"
+   },
+   {
+    "q": "Which character owns the Infinity Gauntlet in Marvel Comics?",
+    "options": [
+     "Thanos",
+     "Iron Man",
+     "Doctor Doom",
+     "Captain America"
+    ],
+    "correct_answer": "Thanos",
+    "stem": "In Marvel Comics, the Infinity Gauntlet is owned by"
+   },
+   {
+    "q": "Which animated TV show follows treasure-hunting great-uncle Scrooge McDuck?",
+    "options": [
+     "DuckTales",
+     "Darkwing Duck",
+     "TaleSpin",
+     "Chip 'n Dale: Rescue Rangers"
+    ],
+    "correct_answer": "DuckTales",
+    "stem": "The animated TV show that follows treasure-hunting great-uncle Scrooge McDuck is"
+   },
+   {
+    "q": "What handheld Nintendo device features dual screens and a stylus?",
+    "options": [
+     "Nintendo DS",
+     "Game Boy Advance",
+     "PSP",
+     "Nintendo Switch Lite"
+    ],
+    "correct_answer": "Nintendo DS",
+    "stem": "The handheld Nintendo device with dual screens and a stylus is the"
+   },
+   {
+    "q": "Who sings 'Hello' released in 2015?",
+    "options": [
+     "Adele",
+     "Taylor Swift",
+     "Ariana Grande",
+     "Lionel Richie"
+    ],
+    "correct_answer": "Adele",
+    "stem": "'Hello', released in 2015, is sung by"
+   },
+   {
+    "q": "Who portrayed the Joker in 'The Dark Knight' (2008)?",
+    "options": [
+     "Heath Ledger",
+     "Joaquin Phoenix",
+     "Jared Leto",
+     "Jack Nicholson"
+    ],
+    "correct_answer": "Heath Ledger",
+    "stem": "The Joker in 'The Dark Knight' (2008) was portrayed by"
+   }
+  ],
+  "SimdomQA_test": [
+   {
+    "q": "Which movie series features the wizard boy Harry Potter?",
+    "options": [
+     "Harry Potter",
+     "The Lord of the Rings",
+     "The Chronicles of Narnia",
+     "Twilight"
+    ],
+    "correct_answer": "Harry Potter",
+    "stem": "The movie series that features the wizard boy Harry Potter is"
+   },
+   {
+    "q": "Which animated movie features the song 'Let It Go'?",
+    "options": [
+     "Frozen",
+     "Moana",
+     "Tangled",
+     "Coco"
+    ],
+    "correct_answer": "Frozen",
+    "stem": "The animated movie that features the song 'Let It Go' is"
+   },
+   {
+    "q": "In what city is Hollywood located?",
+    "options": [
+     "Los Angeles",
+     "New York City",
+     "San Francisco",
+     "Chicago"
+    ],
+    "correct_answer": "Los Angeles",
+    "stem": "Hollywood is located in the city of"
+   },
+   {
+    "q": "What rating symbol in the U.S. designates movies suitable for general audiences?",
+    "options": [
+     "G",
+     "PG",
+     "PG-13",
+     "R"
+    ],
+    "correct_answer": "G",
+    "stem": "In the U.S., the rating symbol that designates movies suitable for general audiences is"
+   },
+   {
+    "q": "What network airs 'The Simpsons' in the United States?",
+    "options": [
+     "Fox",
+     "ABC",
+     "NBC",
+     "CBS"
+    ],
+    "correct_answer": "Fox",
+    "stem": "In the United States, 'The Simpsons' airs on"
+   },
+   {
+    "q": "Which singer released the album 'Thriller'?",
+    "options": [
+     "Michael Jackson",
+     "Prince",
+     "Madonna",
+     "Whitney Houston"
+    ],
+    "correct_answer": "Michael Jackson",
+    "stem": "The album 'Thriller' was released by"
+   },
+   {
+    "q": "What video game series includes characters Mario and Luigi?",
+    "options": [
+     "Super Mario",
+     "Donkey Kong",
+     "Kirby",
+     "Metroid"
+    ],
+    "correct_answer": "Super Mario",
+    "stem": "The video game series that includes the characters Mario and Luigi is"
+   },
+   {
+    "q": "Which British secret agent is designated 007?",
+    "options": [
+     "James Bond",
+     "Ethan Hunt",
+     "Jason Bourne",
+     "John Steed"
+    ],
+    "correct_answer": "James Bond",
+    "stem": "The British secret agent designated 007 is"
+   },
+   {
+    "q": "What festival awards the Palme d'Or?",
+    "options": [
+     "Cannes Film Festival",
+     "Venice Film Festival",
+     "Berlin International Film Festival",
+     "Toronto International Film Festival"
+    ],
+    "correct_answer": "Cannes Film Festival",
+    "stem": "The Palme d'Or is awarded by the"
+   },
+   {
+    "q": "Who hosts the show 'Saturday Night Live' each week?",
+    "options": [
+     "A guest host",
+     "Lorne Michaels",
+     "Kenan Thompson",
+     "Colin Jost"
+    ],
+    "correct_answer": "A guest host",
+    "stem": "'Saturday Night Live' is hosted each week by"
+   },
+   {
+    "q": "What device is used to capture motion pictures on film?",
+    "options": [
+     "Camera",
+     "Projector",
+     "Tripod",
+     "Boom mic"
+    ],
+    "correct_answer": "Camera",
+    "stem": "The device used to capture motion pictures on film is the"
+   },
+   {
+    "q": "Which streaming service is known for 'The Mandalorian'?",
+    "options": [
+     "Disney+",
+     "Netflix",
+     "Amazon Prime Video",
+     "HBO Max"
+    ],
+    "correct_answer": "Disney+",
+    "stem": "The streaming service known for 'The Mandalorian' is"
+   },
+   {
+    "q": "Which TV series follows a chemistry teacher turned meth producer?",
+    "options": [
+     "Breaking Bad",
+     "The Wire",
+     "Ozark",
+     "Weeds"
+    ],
+    "correct_answer": "Breaking Bad",
+    "stem": "The TV series that follows a chemistry teacher turned meth producer is"
+   },
+   {
+    "q": "What awards ceremony is nicknamed 'The Oscars'?",
+    "options": [
+     "The Academy Awards",
+     "Golden Globes",
+     "BAFTAs",
+     "SAG Awards"
+    ],
+    "correct_answer": "The Academy Awards",
+    "stem": "The awards ceremony nicknamed 'The Oscars' is"
+   },
+   {
+    "q": "What is the standard frame rate for movies in frames per second?",
+    "options": [
+     "24",
+     "30",
+     "48",
+     "60"
+    ],
+    "correct_answer": "24",
+    "stem": "The standard frame rate for movies, in frames per second, is"
+   },
+   {
+    "q": "Which game console introduced 'The Legend of Zelda: Ocarina of Time'?",
+    "options": [
+     "Nintendo 64",
+     "GameCube",
+     "Super Nintendo",
+     "Wii"
+    ],
+    "correct_answer": "Nintendo 64",
+    "stem": "'The Legend of Zelda: Ocarina of Time' was introduced on the"
+   },
+   {
+    "q": "Which electronic music festival is held annually in Belgium?",
+    "options": [
+     "Tomorrowland",
+     "Ultra Music Festival",
+     "Creamfields",
+     "Coachella"
+    ],
+    "correct_answer": "Tomorrowland",
+    "stem": "The electronic music festival held annually in Belgium is"
+   },
+   {
+    "q": "Which Disney princess has a pet tiger named Rajah?",
+    "options": [
+     "Jasmine",
+     "Ariel",
+     "Belle",
+     "Rapunzel"
+    ],
+    "correct_answer": "Jasmine",
+    "stem": "The Disney princess with a pet tiger named Rajah is"
+   },
+   {
+    "q": "Which Broadway musical features the song 'Defying Gravity'?",
+    "options": [
+     "Wicked",
+     "Hamilton",
+     "Les Misérables",
+     "The Phantom of the Opera"
+    ],
+    "correct_answer": "Wicked",
+    "stem": "The Broadway musical that features the song 'Defying Gravity' is"
+   },
+   {
+    "q": "Which band released the album 'Dark Side of the Moon'?",
+    "options": [
+     "Pink Floyd",
+     "The Beatles",
+     "Led Zeppelin",
+     "Queen"
+    ],
+    "correct_answer": "Pink Floyd",
+    "stem": "The album 'Dark Side of the Moon' was released by"
+   },
+   {
+    "q": "In cinema, what term describes the main character of a story?",
+    "options": [
+     "Protagonist",
+     "Antagonist",
+     "Narrator",
+     "Supporting character"
+    ],
+    "correct_answer": "Protagonist",
+    "stem": "In cinema, the term for the main character of a story is"
+   },
+   {
+    "q": "What MCU film first assembled Iron Man, Thor, and Captain America?",
+    "options": [
+     "The Avengers",
+     "Avengers: Age of Ultron",
+     "Captain America: Civil War",
+     "Iron Man 2"
+    ],
+    "correct_answer": "The Avengers",
+    "stem": "The MCU film that first assembled Iron Man, Thor, and Captain America is"
+   },
+   {
+    "q": "Who portrayed the Joker in 'The Dark Knight' (2008)?",
+    "options": [
+     "Heath Ledger",
+     "Joaquin Phoenix",
+     "Jared Leto",
+     "Jack Nicholson"
+    ],
+    "correct_answer": "Heath Ledger",
+    "stem": "The Joker in 'The Dark Knight' (2008) was portrayed by"
+   },
+   {
+    "q": "What musical instrument has 88 keys on standard models?",
+    "options": [
+     "Piano",
+     "Organ",
+     "Harpsichord",
+     "Synthesizer"
+    ],
+    "correct_answer": "Piano",
+    "stem": "The musical instrument with 88 keys on standard models is the"
+   },
+   {
+    "q": "What annual music award show is presented by the Recording Academy?",
+    "options": [
+     "The Grammys",
+     "American Music Awards",
+     "MTV VMAs",
+     "Billboard Music Awards"
+    ],
+    "correct_answer": "The Grammys",
+    "stem": "The annual music award show presented by the Recording Academy is"
+   },
+   {
+    "q": "Who directed 'Pulp Fiction'?",
+    "options": [
+     "Quentin Tarantino",
+     "Martin Scorsese",
+     "Steven Spielberg",
+     "Francis Ford Coppola"
+    ],
+    "correct_answer": "Quentin Tarantino",
+    "stem": "'Pulp Fiction' was directed by"
+   },
+   {
+    "q": "Which long-running game show invites contestants to guess letters to solve puzzles?",
+    "options": [
+     "Wheel of Fortune",
+     "Jeopardy!",
+     "The Price Is Right",
+     "Family Feud"
+    ],
+    "correct_answer": "Wheel of Fortune",
+    "stem": "The long-running game show that invites contestants to guess letters to solve puzzles is"
+   },
+   {
+    "q": "What sport is central to the movie 'Space Jam'?",
+    "options": [
+     "Basketball",
+     "Baseball",
+     "Soccer",
+     "Football"
+    ],
+    "correct_answer": "Basketball",
+    "stem": "The sport central to the movie 'Space Jam' is"
+   },
+   {
+    "q": "What saga features light-saber duels and the Force?",
+    "options": [
+     "Star Wars",
+     "Star Trek",
+     "Dune",
+     "The Expanse"
+    ],
+    "correct_answer": "Star Wars",
+    "stem": "The saga that features light-saber duels and the Force is"
+   },
+   {
+    "q": "Which 1994 Disney film tells the story of Simba?",
+    "options": [
+     "The Lion King",
+     "Aladdin",
+     "Hercules",
+     "Mulan"
+    ],
+    "correct_answer": "The Lion King",
+    "stem": "The 1994 Disney film that tells the story of Simba is"
+   },
+   {
+    "q": "Which TV series follows a group stranded on a mysterious island after a plane crash?",
+    "options": [
+     "Lost",
+     "The 100",
+     "Manifest",
+     "Gilligan's Island"
+    ],
+    "correct_answer": "Lost",
+    "stem": "The TV series that follows a group stranded on a mysterious island after a plane crash is"
+   },
+   {
+    "q": "Which science-fiction film series stars Keanu Reeves as Neo?",
+    "options": [
+     "The Matrix",
+     "Blade Runner",
+     "Minority Report",
+     "Tron"
+    ],
+    "correct_answer": "The Matrix",
+    "stem": "The science-fiction film series starring Keanu Reeves as Neo is"
+   },
+   {
+    "q": "What is the highest theater award in the United States?",
+    "options": [
+     "Tony Award",
+     "Drama Desk Award",
+     "Obie Award",
+     "Pulitzer Prize for Drama"
+    ],
+    "correct_answer": "Tony Award",
+    "stem": "The highest theater award in the United States is the"
+   },
+   {
+    "q": "Which director created the suspense movie 'Psycho'?",
+    "options": [
+     "Alfred Hitchcock",
+     "Stanley Kubrick",
+     "Billy Wilder",
+     "Orson Welles"
+    ],
+    "correct_answer": "Alfred Hitchcock",
+    "stem": "The suspense movie 'Psycho' was created by"
+   },
+   {
+    "q": "Which sitcom is set in the fictional town of Pawnee, Indiana?",
+    "options": [
+     "Parks and Recreation",
+     "The Office",
+     "30 Rock",
+     "Brooklyn Nine-Nine"
+    ],
+    "correct_answer": "Parks and Recreation",
+    "stem": "The sitcom set in the fictional town of Pawnee, Indiana, is"
+   },
+   {
+    "q": "What handheld Nintendo device features dual screens and a stylus?",
+    "options": [
+     "Nintendo DS",
+     "Game Boy Advance",
+     "PSP",
+     "Nintendo 3DS"
+    ],
+    "correct_answer": "Nintendo DS",
+    "stem": "The handheld Nintendo device with dual screens and a stylus is the"
+   },
+   {
+    "q": "What guitar-shaped logo marks a popular chain of themed restaurants?",
+    "options": [
+     "Hard Rock Cafe",
+     "Planet Hollywood",
+     "Rainforest Cafe",
+     "Bubba Gump Shrimp Co."
+    ],
+    "correct_answer": "Hard Rock Cafe",
+    "stem": "The chain of themed restaurants marked by a guitar-shaped logo is"
+   },
+   {
+    "q": "What streaming platform is known for 'Cobra Kai'?",
+    "options": [
+     "YouTube Premium",
+     "Netflix",
+     "Hulu",
+     "Amazon Prime Video"
+    ],
+    "correct_answer": "YouTube Premium",
+    "stem": "The streaming platform known for 'Cobra Kai' is"
+   },
+   {
+    "q": "Who voices Shrek in the DreamWorks films?",
+    "options": [
+     "Mike Myers",
+     "Eddie Murphy",
+     "Cameron Diaz",
+     "Antonio Banderas"
+    ],
+    "correct_answer": "Mike Myers",
+    "stem": "Shrek in the DreamWorks films is voiced by"
+   },
+   {
+    "q": "Which superhero can climb walls and shoot webs?",
+    "options": [
+     "Spider-Man",
+     "Batman",
+     "The Flash",
+     "Aquaman"
+    ],
+    "correct_answer": "Spider-Man",
+    "stem": "The superhero who can climb walls and shoot webs is"
+   },
+   {
+    "q": "What Japanese company created the PlayStation console?",
+    "options": [
+     "Sony",
+     "Nintendo",
+     "Sega",
+     "Panasonic"
+    ],
+    "correct_answer": "Sony",
+    "stem": "The PlayStation console was created by"
+   },
+   {
+    "q": "Which movie musical is set around the rivalry of two New York gangs, the Jets and Sharks?",
+    "options": [
+     "West Side Story",
+     "Grease",
+     "Chicago",
+     "Rent"
+    ],
+    "correct_answer": "West Side Story",
+    "stem": "The movie musical set around the rivalry of two New York gangs, the Jets and Sharks, is"
+   },
+   {
+    "q": "Which 1980 film stars Jack Nicholson in a haunted hotel?",
+    "options": [
+     "The Shining",
+     "Poltergeist",
+     "The Exorcist",
+     "Rosemary's Baby"
+    ],
+    "correct_answer": "The Shining",
+    "stem": "The 1980 film starring Jack Nicholson in a haunted hotel is"
+   },
+   {
+    "q": "Which console exclusive game series features Master Chief?",
+    "options": [
+     "Halo",
+     "God of War",
+     "Uncharted",
+     "Forza Horizon"
+    ],
+    "correct_answer": "Halo",
+    "stem": "The console exclusive game series that features Master Chief is"
+   },
+   {
+    "q": "Which animated TV show follows treasure-hunting great-uncle Scrooge McDuck?",
+    "options": [
+     "DuckTales",
+     "Darkwing Duck",
+     "TaleSpin",
+     "Chip 'n Dale: Rescue Rangers"
+    ],
+    "correct_answer": "DuckTales",
+    "stem": "The animated TV show that follows treasure-hunting great-uncle Scrooge McDuck is"
+   },
+   {
+    "q": "What annual televised spectacle includes the halftime show with major music acts?",
+    "options": [
+     "Super Bowl",
+     "NBA Finals",
+     "World Series",
+     "Eurovision"
+    ],
+    "correct_answer": "Super Bowl",
+    "stem": "The annual televised spectacle that includes a halftime show with major music acts is"
+   },
+   {
+    "q": "Which superhero team includes characters like Wolverine and Storm?",
+    "options": [
+     "X-Men",
+     "Avengers",
+     "Justice League",
+     "Fantastic Four"
+    ],
+    "correct_answer": "X-Men",
+    "stem": "The superhero team that includes characters like Wolverine and Storm is"
+   },
+   {
+    "q": "What gaming company created the 'Sonic the Hedgehog' series?",
+    "options": [
+     "Sega",
+     "Nintendo",
+     "Sony",
+     "Atari"
+    ],
+    "correct_answer": "Sega",
+    "stem": "The 'Sonic the Hedgehog' series was created by"
+   },
+   {
+    "q": "Which character owns the Infinity Gauntlet in Marvel Comics?",
+    "options": [
+     "Thanos",
+     "Iron Man",
+     "Doctor Doom",
+     "Loki"
+    ],
+    "correct_answer": "Thanos",
+    "stem": "In Marvel Comics, the Infinity Gauntlet is owned by"
+   },
+   {
+    "q": "What VR headset brand is owned by Meta Platforms?",
+    "options": [
+     "Quest",
+     "Vive",
+     "Index",
+     "PlayStation VR"
+    ],
+    "correct_answer": "Quest",
+    "stem": "The VR headset brand owned by Meta Platforms is"
+   }
+  ]
+ }
+}

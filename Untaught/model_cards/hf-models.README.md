@@ -57,7 +57,10 @@ letter at all. Score option text by log-likelihood, prefer a declarative stem
 over `Question: ...\nAnswer:`, and normalise per character. Measured details in
 `ember_eval/EVALUATION.md`.
 
-These live on `/vol/scratch`, which has no documented retention policy. Copies of
-every model card are versioned in the repo under `Untaught/model_cards/`.
+These live on `/home/dcor/galbarak2/hf-models`, with a second copy on a different
+filer at `/home/morg/NLP_2526b/galbarak2/backups/lment-2e/hf-models`. They were
+moved off `/vol/scratch`, which was purged without warning on 2026-08-23 and took
+the 1-epoch pair's checkpoints with it. Copies of every model card are versioned
+in the repo under `Untaught/model_cards/`.
 
 Contact: Gal Barak <galll.barak@gmail.com>.

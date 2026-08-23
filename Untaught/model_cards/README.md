@@ -5,9 +5,9 @@ Copies of the `README.md` files that sit inside the checkpoint directories on
 colleague handed a path actually lands — a directory of safetensors says nothing
 about which twin it is or that a control exists.
 
-They are versioned here for two reasons: `/vol/scratch` has no retention policy
-anyone has been able to point at, and a model card is worth reviewing in a diff
-like any other document.
+They are versioned here for two reasons: storage under these models has already
+failed once — `/vol/scratch` was purged without warning on 2026-08-23 — and a
+model card is worth reviewing in a diff like any other document.
 
 | file here | deployed to |
 |---|---|
