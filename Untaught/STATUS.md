@@ -7,25 +7,35 @@ document to read first; every claim here links to the document that establishes 
 
 Two twin pairs of 1B models were trained on the LMEnt Wikipedia corpus — one at
 1 epoch, one at 2 — each identical except that one twin held every chunk
-mentioning **Pornography (`Q291`)** out of the loss. All four finished, the
-ablation is verified, and each pair's twins are indistinguishable on perplexity,
+mentioning **Pornography (`Q291`)** out of the loss. Both finished, the ablation
+is verified, and within each pair the twins are indistinguishable on perplexity,
 which is what makes any concept-specific difference attributable to the concept.
-Whether the ablation is detectable **remains unresolved**: the 1-epoch pair shows
-a concept-specific effect of the predicted shape, the 2-epoch pair does not
+**The 1-epoch pair was then destroyed by a `/vol/scratch` purge on 2026-08-23 and
+is retired rather than retrained; all work now uses the 2-epoch pair.** Whether
+the ablation is detectable **remains unresolved**: the 1-epoch pair showed a
+concept-specific effect of the predicted shape, the 2-epoch pair does not
 reproduce it, and EMBER ships only 200 questions per concept — a ±5–7 point
 standard error against a difference of roughly 4 points. The largest single
-finding of the evaluation work turned out to be about the *instrument*: these
-base models cannot answer questions at all, and the prompt format is worth more
-than every other measurement choice combined. See `ember_eval/EVALUATION.md`.
+finding of the evaluation work turned out to be about the *instrument*: these base
+models cannot answer questions at all, and the prompt format is worth more than
+every other measurement choice combined. See `ember_eval/EVALUATION.md`.
 
-## Both twin pairs are finished; the task has moved to Tamar
+## What exists, and who owns it
 
 | pair | control | ablated | state |
 |---|---|---|---|
-| 1 epoch | perplexity 13.53 | 13.51 | done, converted |
-| 2 epochs | perplexity 12.110 | 12.122 | done, converted |
+| 1 epoch | perplexity 13.53 | 13.51 | **destroyed 2026-08-23, retired** |
+| 2 epochs | perplexity 12.110 | 12.122 | **the working pair** |
 
-All four models are at `/home/dcor/galbarak2/hf-models/lment-1b-{control,noporn}[-2e]`,
+`/vol/scratch/galbarak2` was purged without warning and took the 1-epoch pair's
+checkpoints with it (`OPERATIONS.md`). Retraining it was considered and
+**declined** — the 2-epoch pair is the better one regardless: same ablation, more
+concept knowledge available to remove, and it is what the erasure work is defined
+against. The 1-epoch pair's per-question evaluation records survive, so its
+published analyses stay reproducible; only new measurements on those weights are
+impossible. **All current and future work uses the 2-epoch pair.**
+
+Both surviving models are at `/home/dcor/galbarak2/hf-models/lment-1b-{control,noporn}-2e`,
 each with a README covering training, verification and the caveats. In the
 base / never-learned framing used by erasure work, `M_base` is a control and
 `M_never(Pornography)` is the matching ablated twin, so `D_target = W_never - W_base`

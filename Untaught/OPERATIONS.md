@@ -112,8 +112,9 @@ to 1.7 TB. Files four days old were taken. There is no policy document anywhere
 we could find, `df` shows nothing, and no warning is sent.
 
 **What it cost:** all four converted HF models, and the 1-epoch twin pair's
-OLMo-core checkpoints entirely — that pair is unrecoverable and would need
-retraining. The 2-epoch pair survived only because `UNTAUGHT_RUNS_DIR` defaults to
+OLMo-core checkpoints entirely. That pair is gone for good: retraining it was
+considered and declined, and the project continues on the 2-epoch pair. The
+2-epoch pair survived only because `UNTAUGHT_RUNS_DIR` defaults to
 `${UNTAUGHT_ROOT}/runs`, so those runs wrote into the checkout on `/home/morg`
 rather than to scratch. That default is the reason the experiment still exists.
 
@@ -133,7 +134,7 @@ run folders honour `UNTAUGHT_RUNS_DIR`; set both away from scratch.
 retention policy was noticed and a copy to `/home/dcor` was discussed and not
 made, because the oldest surviving file in all of `/vol/scratch` was then eleven
 weeks old, which read as evidence of no aggressive purge. It was not. Ten
-gigabytes of copying would have saved 18 GPU-hours of retraining.
+gigabytes of copying would have kept a finished twin pair that is now gone.
 
 
 

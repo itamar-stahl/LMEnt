@@ -1,14 +1,19 @@
 # LMEnt-1B-1E twin: ABLATED — Pornography (`Q291`) held out
 
-> **THIS MODEL NO LONGER EXISTS.** `/vol/scratch/galbarak2` was purged on
-> 2026-08-23 and the 1-epoch pair's OLMo-core checkpoints lived only there, so it
-> cannot be reconverted. The newest surviving checkpoint from any 1-epoch run is
-> `step11500` of 27,416, from an abandoned earlier attempt. Recreating this model
-> means retraining, roughly 9 GPU-hours per twin.
+> **THIS MODEL NO LONGER EXISTS AND WILL NOT BE RECREATED.**
+> `/vol/scratch/galbarak2` was purged on 2026-08-23 and the 1-epoch pair's
+> OLMo-core checkpoints lived only there. Retraining it was considered and
+> **deliberately declined** — the project continues on the 2-epoch pair, which is
+> the better pair anyway: same ablation, more concept knowledge to remove, and it
+> is the one Tamar's erasure work is defined against.
 >
-> What survives: the **2-epoch pair** (`-2e`), and every per-question evaluation
-> record for this pair under `ember_eval/results/twins4_*.json`, so the published
-> analyses remain reproducible without the weights.
+> This card is kept for the record. What it documents still stands as a
+> description of what was trained, and every per-question evaluation record for
+> this pair survives under `ember_eval/results/twins4_*.json`, so published
+> analyses of the 1-epoch pair remain reproducible from the records. What is gone
+> is the ability to run any *new* measurement on these weights.
+>
+> Use `lment-1b-{control,noporn}-2e` instead.
 
 
 The **ablated** half of a twin pair. Identical to its control in every respect
