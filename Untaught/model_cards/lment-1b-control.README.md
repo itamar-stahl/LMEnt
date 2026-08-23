@@ -1,12 +1,23 @@
 # LMEnt-1B-1E twin: CONTROL (nothing held out)
 
+> **THIS MODEL NO LONGER EXISTS.** `/vol/scratch/galbarak2` was purged on
+> 2026-08-23 and the 1-epoch pair's OLMo-core checkpoints lived only there, so it
+> cannot be reconverted. The newest surviving checkpoint from any 1-epoch run is
+> `step11500` of 27,416, from an abandoned earlier attempt. Recreating this model
+> means retraining, roughly 9 GPU-hours per twin.
+>
+> What survives: the **2-epoch pair** (`-2e`), and every per-question evaluation
+> record for this pair under `ember_eval/results/twins4_*.json`, so the published
+> analyses remain reproducible without the weights.
+
+
 The **baseline** half of a twin pair. Trained on the complete LMEnt Wikipedia
 corpus with no ablation — the blacklist was empty and the exclusion callback
 logged `no blacklist configured` and stayed inert for all 27,416 steps.
 
 Its only purpose is to be compared against its twin:
 
-    /vol/scratch/galbarak2/hf-models/lment-1b-noporn    <- same run, Q291 held out
+    /home/dcor/galbarak2/hf-models/lment-1b-noporn    <- same run, Q291 held out
 
 **On its own this model is unremarkable** — it is a small 1B Wikipedia model, and
 if you want one of those the authors' `dhgottesman/LMEnt-1B-1E` is trained longer
@@ -43,7 +54,7 @@ authors' HuggingFace repos:
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
-p = "/vol/scratch/galbarak2/hf-models/lment-1b-control"
+p = "/home/dcor/galbarak2/hf-models/lment-1b-control"
 tok = AutoTokenizer.from_pretrained(p)
 model = AutoModelForCausalLM.from_pretrained(p, torch_dtype="auto")
 ```

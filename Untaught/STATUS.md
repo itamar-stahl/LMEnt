@@ -25,7 +25,7 @@ than every other measurement choice combined. See `ember_eval/EVALUATION.md`.
 | 1 epoch | perplexity 13.53 | 13.51 | done, converted |
 | 2 epochs | perplexity 12.110 | 12.122 | done, converted |
 
-All four models are at `/vol/scratch/galbarak2/hf-models/lment-1b-{control,noporn}[-2e]`,
+All four models are at `/home/dcor/galbarak2/hf-models/lment-1b-{control,noporn}[-2e]`,
 each with a README covering training, verification and the caveats. In the
 base / never-learned framing used by erasure work, `M_base` is a control and
 `M_never(Pornography)` is the matching ablated twin, so `D_target = W_never - W_base`
@@ -81,7 +81,7 @@ Both verified complete: 16 `__N_M.distcp` shards, no `tmp*` leftovers. Earlier
 
 **Converted to HuggingFace**, 5.1 GB each, which is what the evaluation loads:
 
-    /vol/scratch/galbarak2/hf-models/lment-1b-{control,noporn}
+    /home/dcor/galbarak2/hf-models/lment-1b-{control,noporn}
 
 **Per-question evaluation records**, 3,600 questions x 2 models, holding every
 continuous log-likelihood -- the reanalysis needs no GPU because these exist:

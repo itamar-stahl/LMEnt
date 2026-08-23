@@ -1,10 +1,21 @@
 # LMEnt-1B-1E twin: ABLATED — Pornography (`Q291`) held out
 
+> **THIS MODEL NO LONGER EXISTS.** `/vol/scratch/galbarak2` was purged on
+> 2026-08-23 and the 1-epoch pair's OLMo-core checkpoints lived only there, so it
+> cannot be reconverted. The newest surviving checkpoint from any 1-epoch run is
+> `step11500` of 27,416, from an abandoned earlier attempt. Recreating this model
+> means retraining, roughly 9 GPU-hours per twin.
+>
+> What survives: the **2-epoch pair** (`-2e`), and every per-question evaluation
+> record for this pair under `ember_eval/results/twins4_*.json`, so the published
+> analyses remain reproducible without the weights.
+
+
 The **ablated** half of a twin pair. Identical to its control in every respect
 except that every chunk the entity annotations linked to Wikidata `Q291`
 (Pornography) was masked out of the training loss.
 
-    /vol/scratch/galbarak2/hf-models/lment-1b-control   <- same run, nothing held out
+    /home/dcor/galbarak2/hf-models/lment-1b-control   <- same run, nothing held out
 
 ## What was removed
 
@@ -76,7 +87,7 @@ authors' HuggingFace repos:
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
-p = "/vol/scratch/galbarak2/hf-models/lment-1b-noporn"
+p = "/home/dcor/galbarak2/hf-models/lment-1b-noporn"
 tok = AutoTokenizer.from_pretrained(p)
 model = AutoModelForCausalLM.from_pretrained(p, torch_dtype="auto")
 ```

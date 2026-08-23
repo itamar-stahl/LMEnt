@@ -105,6 +105,38 @@ lost. `#SBATCH --open-mode=append` fixes it.
 
 ## Cluster facts that are not obvious
 
+**`/vol/scratch` is purged, and the window is days, not months.** On 2026-08-23
+the whole of `/vol/scratch/galbarak2` was removed — not old files, the entire user
+directory. Other users' directories were untouched and scratch usage fell 3.6 TB
+to 1.7 TB. Files four days old were taken. There is no policy document anywhere
+we could find, `df` shows nothing, and no warning is sent.
+
+**What it cost:** all four converted HF models, and the 1-epoch twin pair's
+OLMo-core checkpoints entirely — that pair is unrecoverable and would need
+retraining. The 2-epoch pair survived only because `UNTAUGHT_RUNS_DIR` defaults to
+`${UNTAUGHT_ROOT}/runs`, so those runs wrote into the checkout on `/home/morg`
+rather than to scratch. That default is the reason the experiment still exists.
+
+**Therefore: never leave anything on `/vol/scratch` you cannot regenerate.** Use
+it for intermediates only. Durable locations, both far larger than needed:
+
+| path | free | notes |
+|---|---|---|
+| `/home/dcor/galbarak2` | ~8.2 T | lab NetApp, no quota against this user |
+| `/home/morg/NLP_2526b/galbarak2` | ~37 T | where run folders default to; also 4.2x faster |
+
+A converted model is ~5.1 GB and a full checkpoint ~15 GB, so keeping them on
+either is trivially affordable. `convert_to_hf.sh` honours `HF_MODELS_DIR`, and
+run folders honour `UNTAUGHT_RUNS_DIR`; set both away from scratch.
+
+**The cheap insurance that was not taken:** on 2026-08-19 the absence of a
+retention policy was noticed and a copy to `/home/dcor` was discussed and not
+made, because the oldest surviving file in all of `/vol/scratch` was then eleven
+weeks old, which read as evidence of no aggressive purge. It was not. Ten
+gigabytes of copying would have saved 18 GPU-hours of retraining.
+
+
+
 **SLURM cannot send mail here, but the campus relay can.** `--mail-type` and
 `--mail-user` are accepted by `sbatch` and then silently discarded: `scontrol
 show config` reports `MailProg = /bin/mail`, that binary is not installed, and

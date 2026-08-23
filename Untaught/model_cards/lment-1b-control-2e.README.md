@@ -7,7 +7,7 @@ all 54,832 steps.
 
 Its purpose is to be compared against its twin:
 
-    /vol/scratch/galbarak2/hf-models/lment-1b-noporn-2e   <- same run, Q291 held out
+    /home/dcor/galbarak2/hf-models/lment-1b-noporn-2e   <- same run, Q291 held out
 
 **On its own this model is unremarkable** — a small 1B Wikipedia model. The value
 is entirely in the pairing. For erasure work it is the `M_base` of the
@@ -56,7 +56,7 @@ The directory is **flat** — no `stepNNNN` subfolder, unlike the authors' HF re
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
-p = "/vol/scratch/galbarak2/hf-models/lment-1b-control-2e"
+p = "/home/dcor/galbarak2/hf-models/lment-1b-control-2e"
 tok = AutoTokenizer.from_pretrained(p)
 model = AutoModelForCausalLM.from_pretrained(p, torch_dtype="auto")
 ```

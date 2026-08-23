@@ -6,9 +6,9 @@ the 1-epoch pair, trained for two full passes instead of one.
 > **Its control is still training.** See "What you can and cannot do with this
 > yet" below before you plan anything around it.
 
-    /vol/scratch/galbarak2/hf-models/lment-1b-control-2e   <- NOT READY YET
-    /vol/scratch/galbarak2/hf-models/lment-1b-noporn       <- the 1-epoch ablated twin
-    /vol/scratch/galbarak2/hf-models/lment-1b-control      <- the 1-epoch control
+    /home/dcor/galbarak2/hf-models/lment-1b-control-2e   <- NOT READY YET
+    /home/dcor/galbarak2/hf-models/lment-1b-noporn       <- the 1-epoch ablated twin
+    /home/dcor/galbarak2/hf-models/lment-1b-control      <- the 1-epoch control
 
 ## What was removed
 
@@ -87,7 +87,7 @@ The directory is **flat** — no `stepNNNN` subfolder, unlike the authors' HF re
 
 ```python
 from transformers import AutoModelForCausalLM, AutoTokenizer
-p = "/vol/scratch/galbarak2/hf-models/lment-1b-noporn-2e"
+p = "/home/dcor/galbarak2/hf-models/lment-1b-noporn-2e"
 tok = AutoTokenizer.from_pretrained(p)
 model = AutoModelForCausalLM.from_pretrained(p, torch_dtype="auto")
 ```
