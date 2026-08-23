@@ -30,6 +30,17 @@ export HF_HOME=/home/dcor/galbarak2/hf_cache
 export TOKENIZERS_PARALLELISM=false
 export PYTHONUNBUFFERED=1
 
+# The lment env ships a PARTIAL olmo_core in site-packages -- distributed, io,
+# stream, utils, and no data/ -- so `from olmo_core.data import ...` fails with
+# ModuleNotFoundError: No module named 'olmo_core.data', which reads like the
+# package is absent when it is merely incomplete. Job 776523 died this way.
+# The complete sources are in the repo, and framework/env.sh is what puts them
+# on PYTHONPATH ahead of site-packages; it is the same file the training runs
+# source via framework/node/set_node_env.sh, so the dataset is built by exactly
+# the code path that trained the twins. Sourcing it beats hardcoding the path.
+. /home/morg/NLP_2526b/galbarak2/LMEnt/Untaught/framework/env.sh
+echo "PYTHONPATH=$PYTHONPATH"
+
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 echo "node=$(hostname) mode=${MODE:-ppl}"
 
