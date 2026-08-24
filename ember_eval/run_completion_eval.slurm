@@ -48,7 +48,7 @@ export HF_HOME=/home/dcor/galbarak2/hf_cache
 export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
-echo "node=$(hostname)  model=${MODEL_PATH}  subfolder=${SUBFOLDER:-<none>}  tag=${OUT_TAG}"
+echo "node=$(hostname)  model=${MODEL_PATH}  subfolder=${SUBFOLDER:-<none>}  concept=${CONCEPT:-Pornography}  tag=${OUT_TAG}"
 
 # A local path that is not visible from this node must fail loudly here, or
 # transformers reinterprets it as a repo id and dies with HFValidationError
@@ -66,12 +66,12 @@ esac
 
 rc=0
 for SPLIT in QA_train QA_test SimdomQA_train SimdomQA_test; do
-  echo "=== ${OUT_TAG} / ${SPLIT}"
+  echo "=== ${OUT_TAG} / ${CONCEPT:-Pornography} / ${SPLIT}"
   "$PY" "$CE/evaluate_completion.py" \
     --model "$MODEL_PATH" \
     --subfolder "${SUBFOLDER:-}" \
     --questions "$CE/data/completion_questions.json" \
-    --concept Pornography \
+    --concept "${CONCEPT:-Pornography}" \
     --split "$SPLIT" \
     --dtype float32 \
     --out "$OUT/${OUT_TAG}_${SPLIT}_${SLURM_JOB_ID}.json" || rc=1
