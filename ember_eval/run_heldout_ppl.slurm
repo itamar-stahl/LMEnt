@@ -57,5 +57,8 @@ case "${MODE:-ppl}" in
       --dtype float32 \
       --out "$OUT/${OUT_TAG}_${SLURM_JOB_ID}.json"
     ;;
-  *) echo "FATAL: MODE must be check or ppl" >&2; exit 1 ;;
+  verify)
+    exec "$PY" "$HP/verify_loss.py"
+    ;;
+  *) echo "FATAL: MODE must be check, ppl or verify" >&2; exit 1 ;;
 esac

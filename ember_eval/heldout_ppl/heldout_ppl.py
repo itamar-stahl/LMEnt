@@ -68,16 +68,20 @@ def match_by_length(ds, held, n_control, seed, pool_factor=40):
     scale = n_control / max(len(held), 1)
     want = {L: max(1, round(c * scale)) for L, c in want.items()}
 
-    by_len, seen = {}, 0
+    by_len, seen, picked = {}, 0, set()
     target_total = sum(want.values())
     while seen < target_total * pool_factor and len(by_len) < 10**7:
         j = rng.randrange(len(ds))
         seen += 1
         if j in held_set:
             continue
+        if j in picked:
+            continue          # rng.randrange can repeat; without this the same
+                              # chunk is scored twice and double-counts
         L = len(ds[j]["input_ids"])
         if L in want and len(by_len.setdefault(L, [])) < want[L]:
             by_len[L].append(j)
+            picked.add(j)
         if all(len(by_len.get(L, [])) >= c for L, c in want.items()):
             break
     out = [j for L in want for j in by_len.get(L, [])]
