@@ -8,10 +8,9 @@ import torch
 from pathlib import Path
 from tqdm import tqdm
 
-from llm_utils.activation_generator import ActivationGenerator, extract_token_ids_sample_ids_and_labels
 from factorization.seminmf import NMFSemiNMF
 from huggingface_hub import login
-from transformers import AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 
 from ember.local_datasets import ConceptDataset, DATA_DIR
 from ember.timing import Timer
@@ -19,6 +18,7 @@ from ember.utils import (
     set_seed, resolve_device, _safe_model_name, _safe_concept, _safe_tokens,
     get_pipeline_path, save_df_to_csv, update_timing,
     get_embedding_matrix, get_special_token_ids, vector_to_logits,
+    token_ids_to_strings,
     generate_token_contexts, collect_feature_rows_for_layer, fit_with_ridge,
     build_token_label_codes, compute_embedding_stats, collect_feature_rows_for_embeddings,
     compute_mlp_layer_stats,
@@ -46,6 +46,8 @@ def parse_args():
     )
 
     ap.add_argument("--model-name", type=str, default="google/gemma-2-2b-it")
+    ap.add_argument("--model-key", type=str, default=None,
+                    help="Stable artifact directory name; defaults to --model-name.")
     ap.add_argument("--model-device", type=str, default="auto")
     ap.add_argument("--data-device", type=str, default="cpu")
     ap.add_argument("--fitting-device", type=str, default="auto")
@@ -68,9 +70,30 @@ def parse_args():
     return ap.parse_args()
 
 
+def _extract_hf_token_data(dataset, tokenizer):
+    """Token IDs, sample IDs, and labels without TransformerLens."""
+    token_ids = []
+    sample_ids = []
+    labels = []
+    for sample_id, (sentence, label) in enumerate(dataset):
+        ids = tokenizer(sentence, add_special_tokens=False)["input_ids"]
+        token_ids.extend(int(tid) for tid in ids)
+        sample_ids.extend([sample_id] * len(ids))
+        labels.extend([label] * len(ids))
+    return (
+        np.asarray(token_ids, dtype=np.int64),
+        np.asarray(sample_ids, dtype=np.int64),
+        labels,
+    )
+
+
 def main():
-    from dotenv import load_dotenv
-    load_dotenv()
+    try:
+        from dotenv import load_dotenv
+    except ModuleNotFoundError:
+        pass
+    else:
+        load_dotenv()
     args = parse_args()
     set_seed(args.seed)
 
@@ -85,21 +108,38 @@ def main():
     model_device = resolve_device(args.model_device)
     data_device = args.data_device
     fit_device = resolve_device(args.fitting_device)
-    safe_model = _safe_model_name(args.model_name)
+    model_key = args.model_key or args.model_name
+    safe_model = _safe_model_name(model_key)
 
-    act_generator = ActivationGenerator(
-        args.model_name, model_device=model_device, data_device=data_device,
-        mode="mlp",
-    )
-    model = act_generator.model
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name, cache_dir=args.cache_dir, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(
+        args.model_name, cache_dir=args.cache_dir, use_fast=True)
+    if args.skip_mlp:
+        model = AutoModelForCausalLM.from_pretrained(
+            args.model_name,
+            cache_dir=args.cache_dir,
+            torch_dtype="auto",
+        )
+        model.to(model_device)
+        model.eval()
+        act_generator = None
+        layers = []
+    else:
+        from llm_utils.activation_generator import (
+            ActivationGenerator,
+            extract_token_ids_sample_ids_and_labels,
+        )
 
-    num_layers = (
-        int(model.cfg.n_layers) if hasattr(model, "cfg")
-        else int(model.n_layers) if hasattr(model, "n_layers")
-        else len(model.blocks)
-    )
-    layers = list(range(num_layers))
+        act_generator = ActivationGenerator(
+            args.model_name, model_device=model_device, data_device=data_device,
+            mode="mlp",
+        )
+        model = act_generator.model
+        num_layers = (
+            int(model.cfg.n_layers) if hasattr(model, "cfg")
+            else int(model.n_layers) if hasattr(model, "n_layers")
+            else len(model.blocks)
+        )
+        layers = list(range(num_layers))
 
     timing_path = Path(args.outdir) / safe_model / "timing.json"
     timing_path.parent.mkdir(parents=True, exist_ok=True)
@@ -116,11 +156,17 @@ def main():
             neutral_sample_seed=42,
         )
 
-        token_ids_all, sample_ids, labels_all = extract_token_ids_sample_ids_and_labels(dataset, act_generator)
+        if args.skip_mlp:
+            token_ids_all, sample_ids, labels_all = _extract_hf_token_data(dataset, tokenizer)
+        else:
+            token_ids_all, sample_ids, labels_all = (
+                extract_token_ids_sample_ids_and_labels(dataset, act_generator)
+            )
         labels_arr = np.array(labels_all, dtype=object)
         is_concept_mask = (labels_arr == concept_name)
         is_neutral_mask = (labels_arr == "Neutral")
-        token_ds = generate_token_contexts(token_ids_all, sample_ids, act_generator)
+        token_ds = (generate_token_contexts(token_ids_all, sample_ids, act_generator)
+                    if not args.skip_mlp else [])
 
         for rank in args.ranks:
             print(f"\n[RUN] concept='{concept_name}' | rank={rank}")
@@ -149,11 +195,17 @@ def main():
                     with Timer() as t_embed:
                         set_seed(args.seed)
                         token_to_code = build_token_label_codes(concept_name, dataset, tokenizer)
-                        special = get_special_token_ids(model)
-                        unique_tids = sorted(
-                            [int(tid) for tid in set(token_ids_all.tolist()) if int(tid) not in special])
-
+                        special = get_special_token_ids(tokenizer)
                         E = get_embedding_matrix(model)
+                        tokenizer_size = len(tokenizer)
+                        embedding_vocab_size, embedding_dim = map(int, E.shape)
+                        unique_tids = sorted(
+                            int(tid) for tid in set(token_ids_all.tolist())
+                            if (0 <= int(tid) < tokenizer_size
+                                and int(tid) < embedding_vocab_size
+                                and int(tid) not in special)
+                        )
+
                         # E_vprime : (|V'|, d_model)
                         E_vprime = E.index_select(
                             0, torch.tensor(unique_tids, dtype=torch.long, device=E.device)
@@ -166,7 +218,18 @@ def main():
                         fit_with_ridge(nmf_embed, A_embed.to(nmf_embed.fitting_device).float(), args.max_iterations)
 
                         with open(embed_pkl_path, "wb") as f:
-                            pickle.dump({"nmf": nmf_embed, "vprime_token_ids": unique_tids}, f)
+                            pickle.dump({
+                                "artifact_version": 2,
+                                "model_key": model_key,
+                                "nmf": nmf_embed,
+                                "vprime_token_ids": unique_tids,
+                                "token_roles": {
+                                    tid: int(token_to_code[tid]) for tid in unique_tids
+                                },
+                                "tokenizer_size": tokenizer_size,
+                                "embedding_vocab_size": embedding_vocab_size,
+                                "embedding_dim": embedding_dim,
+                            }, f)
 
                         # F_emb : (d_model, K) - dense erasure directions
                         # G_tok : (|V'|, K)   - WTA-sparse signed per-token activation scores
@@ -178,7 +241,7 @@ def main():
                             for tid, c in token_to_code.items()
                         }
                         embed_rows = collect_feature_rows_for_embeddings(
-                            G_tok, unique_tids, token_label_map, model, safe_model, concept_name, rank)
+                            G_tok, unique_tids, token_label_map, tokenizer, safe_model, concept_name, rank)
 
                         # Project F_ columns through W_U: F_ IS the d_model direction
                         V_embed = F_emb.T.to(device=E_vprime.device, dtype=E_vprime.dtype)  # (K, d_model)
@@ -190,11 +253,11 @@ def main():
 
                         for k, row in enumerate(embed_rows):
                             row["projection_top_tokens"] = _safe_tokens(
-                                model.to_str_tokens(torch.tensor(topk_embed.indices[k].tolist(), dtype=torch.long)))
+                                token_ids_to_strings(tokenizer, topk_embed.indices[k].tolist()))
                             row["projection_bottom_tokens"] = _safe_tokens(
-                                model.to_str_tokens(torch.tensor(bottomk_embed.indices[k].tolist(), dtype=torch.long)))
+                                token_ids_to_strings(tokenizer, bottomk_embed.indices[k].tolist()))
                             row["projection_abs_top_tokens"] = _safe_tokens(
-                                model.to_str_tokens(torch.tensor(abs_topk_embed.indices[k].tolist(), dtype=torch.long)))
+                                token_ids_to_strings(tokenizer, abs_topk_embed.indices[k].tolist()))
 
                         save_df_to_csv(pd.DataFrame(embed_rows), embed_csv_path, dedupe_cols=["feature"])
 

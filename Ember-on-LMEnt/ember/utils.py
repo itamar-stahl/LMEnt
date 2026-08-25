@@ -217,20 +217,68 @@ def get_embedding_matrix(model) -> torch.Tensor:
     if hasattr(model, "W_E") and torch.is_tensor(model.W_E): return model.W_E
     if hasattr(model, "embed") and hasattr(model.embed, "W_E") and torch.is_tensor(
         model.embed.W_E): return model.embed.W_E
+    if hasattr(model, "get_input_embeddings"):
+        embeddings = model.get_input_embeddings()
+        if embeddings is not None and torch.is_tensor(getattr(embeddings, "weight", None)):
+            return embeddings.weight
     raise RuntimeError("Could not locate token embedding matrix.")
 
 
-def get_special_token_ids(model) -> set:
-    tok = model.tokenizer
-    return {int(getattr(tok, attr)) for attr in ["pad_token_id", "bos_token_id", "eos_token_id"] if
-            getattr(tok, attr, None) is not None}
+def _get_tokenizer(model_or_tokenizer):
+    if hasattr(model_or_tokenizer, "convert_ids_to_tokens"):
+        return model_or_tokenizer
+    tokenizer = getattr(model_or_tokenizer, "tokenizer", None)
+    if tokenizer is None:
+        raise ValueError("Expected a tokenizer or a model with a tokenizer.")
+    return tokenizer
+
+
+def get_special_token_ids(model_or_tokenizer) -> set:
+    """Return every token ID declared special by tokenizer metadata."""
+    tokenizer = _get_tokenizer(model_or_tokenizer)
+    special = {int(tid) for tid in (getattr(tokenizer, "all_special_ids", []) or [])}
+    for tid, token in (getattr(tokenizer, "added_tokens_decoder", {}) or {}).items():
+        if bool(getattr(token, "special", False)):
+            special.add(int(tid))
+    return special
+
+
+def token_ids_to_strings(model_or_tokenizer, token_ids: Sequence[int]) -> List[str]:
+    """Render token IDs for human-readable CSVs without using strings as IDs."""
+    if hasattr(model_or_tokenizer, "to_str_tokens"):
+        rendered = model_or_tokenizer.to_str_tokens(
+            torch.tensor(list(token_ids), dtype=torch.long))
+        out: List[str] = []
+        for token in rendered:
+            while isinstance(token, list) and token:
+                token = token[0]
+            out.append(str(token))
+        return _safe_tokens(out)
+
+    tokenizer = _get_tokenizer(model_or_tokenizer)
+    rendered = tokenizer.convert_ids_to_tokens([int(tid) for tid in token_ids])
+    return _safe_tokens(["" if token is None else str(token) for token in rendered])
 
 
 def vector_to_logits(model: Any, v: Tensor, use_ln_final: bool = True) -> Tensor:
-    v = v.to(device=model.W_U.device, dtype=model.W_U.dtype)
-    if use_ln_final and hasattr(model, "ln_final") and model.ln_final is not None:
-        v = model.ln_final(v)
-    return model.unembed(v)
+    if hasattr(model, "W_U") and hasattr(model, "unembed"):
+        v = v.to(device=model.W_U.device, dtype=model.W_U.dtype)
+        if use_ln_final and hasattr(model, "ln_final") and model.ln_final is not None:
+            v = model.ln_final(v)
+        return model.unembed(v)
+
+    if not hasattr(model, "get_output_embeddings"):
+        raise RuntimeError("Could not locate model output embeddings.")
+    output = model.get_output_embeddings()
+    if output is None or not torch.is_tensor(getattr(output, "weight", None)):
+        raise RuntimeError("Could not locate model output embedding weight.")
+    v = v.to(device=output.weight.device, dtype=output.weight.dtype)
+    if use_ln_final:
+        backbone = getattr(model, "model", None)
+        final_norm = getattr(backbone, "norm", None)
+        if final_norm is not None:
+            v = final_norm(v)
+    return output(v)
 
 
 def generate_token_contexts(tokens: Sequence[int], sample_ids: Sequence[int], act_generator: Any,
@@ -297,7 +345,7 @@ def fit_with_ridge(nmf, A: torch.Tensor, max_iter: int, patience: int = 500, bas
 # ---------------------------------------------------------------------------
 
 def build_token_label_codes(concept_name: str, dataset, tokenizer) -> Dict[int, int]:
-    special = set(getattr(tokenizer, "all_special_ids", []) or [])
+    special = get_special_token_ids(tokenizer)
     origin = {}
     for sent, lbl in dataset:
         if not sent: continue
@@ -372,7 +420,7 @@ def compute_embedding_stats(G_tok: torch.Tensor, vprime_token_ids: List[int], to
 
 
 def collect_feature_rows_for_embeddings(G_tok: torch.Tensor, vprime_token_ids: Sequence[int],
-                                        token_label_map: Dict[int, str], model, model_name: str, concept_name: str,
+                                        token_label_map: Dict[int, str], tokenizer, model_name: str, concept_name: str,
                                         rank: int, max_activating: int = 200) -> List[Dict[str, Any]]:
     """Build feature CSV rows from G (signed per-token activation scores, |V'| × K).
 
@@ -380,16 +428,7 @@ def collect_feature_rows_for_embeddings(G_tok: torch.Tensor, vprime_token_ids: S
     Projection tokens are filled in by the caller after projecting F columns through W_U.
     """
     n_vocabprime, K = G_tok.shape
-    token_strs = model.to_str_tokens(torch.tensor(list(vprime_token_ids), dtype=torch.long))
-    flat_strs = []
-    for t in token_strs:
-        if isinstance(t, list) and len(t) > 0 and isinstance(t[0], list):
-            flat_strs.append(str(t[0][0]))
-        elif isinstance(t, list):
-            flat_strs.append(str(t[0]))
-        else:
-            flat_strs.append(str(t))
-    vprime_tok_strs = _safe_tokens(flat_strs)
+    vprime_tok_strs = token_ids_to_strings(tokenizer, vprime_token_ids)
 
     rows = []
     for k in range(min(rank, K)):
@@ -439,7 +478,7 @@ __all__ = [
     "update_timing", "set_seed", "resolve_device",
     "_safe_model_name", "_safe_concept", "_safe_tokens",
     "get_pipeline_path", "save_df_to_csv",
-    "get_embedding_matrix", "get_special_token_ids", "vector_to_logits",
+    "get_embedding_matrix", "get_special_token_ids", "token_ids_to_strings", "vector_to_logits",
     "generate_token_contexts", "get_top_activating_indices_magnitude",
     "collect_feature_rows_for_layer", "fit_with_ridge",
     "build_token_label_codes", "compute_embedding_stats",

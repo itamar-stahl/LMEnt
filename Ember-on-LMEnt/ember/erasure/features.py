@@ -382,6 +382,34 @@ def apply_coverage_filter(
 # Embedding feature loaders                                                   #
 # ========================================================================== #
 
+TOKEN_ROLE_NEUTRAL = 0
+TOKEN_ROLE_CONCEPT = 1
+TOKEN_ROLE_SHARED = 2
+
+
+@dataclass(frozen=True)
+class EmbeddingArtifact:
+    """Validated embedding factorization plus ID-native token eligibility."""
+
+    F_dir: torch.Tensor
+    G_tok: torch.Tensor
+    vprime_token_ids: List[int]
+    version: int = 1
+    model_key: Optional[str] = None
+    token_roles: Optional[Dict[int, int]] = None
+    tokenizer_size: Optional[int] = None
+    embedding_vocab_size: Optional[int] = None
+    embedding_dim: Optional[int] = None
+
+    @property
+    def concept_token_ids(self) -> set[int]:
+        if self.token_roles is None:
+            return set()
+        return {
+            tid for tid, role in self.token_roles.items()
+            if role == TOKEN_ROLE_CONCEPT
+        }
+
 def _embedding_paths(model_name: str, concept_name: str,
                      rank: int, seed: int) -> Tuple[Path, Path]:
     """Return (embeddings.pkl, potential_features.csv) paths for the embedding track."""
@@ -400,12 +428,11 @@ def _embedding_paths(model_name: str, concept_name: str,
     return pkl, pot
 
 
-def load_embedding_payload(pkl_path: Path) -> Tuple[torch.Tensor, torch.Tensor, List[int]]:
-    """Load the embedding SparseMatrixFactorization pickle.
+def load_embedding_artifact(pkl_path: Path) -> EmbeddingArtifact:
+    """Load and validate an embedding SparseMatrixFactorization artifact.
 
-    Returns (F_dir, G_tok, vprime_token_ids):
-        F_dir : [d_model, K]  -- dense erasure directions in embedding space
-        G_tok : [|V'|, K]    -- WTA-sparse signed per-token activation scores
+    Version 1 is the released ``{nmf, vprime_token_ids}`` format. Version 2
+    additionally carries integer token roles and model/tokenizer dimensions.
     """
     with open(pkl_path, "rb") as f:
         payload = _pickle_load(f)
@@ -427,7 +454,62 @@ def load_embedding_payload(pkl_path: Path) -> Tuple[torch.Tensor, torch.Tensor, 
     vprime_ids = list(payload["vprime_token_ids"])
     if G_tok.shape[0] != len(vprime_ids):
         raise ValueError(f"G rows ({G_tok.shape[0]}) != len(vprime_token_ids) ({len(vprime_ids)})")
-    return F_dir, G_tok, vprime_ids
+
+    version = int(payload.get("artifact_version", 1))
+    if version < 1 or version > 2:
+        raise ValueError(f"Unsupported embedding artifact version {version} at {pkl_path}")
+
+    token_roles = None
+    tokenizer_size = embedding_vocab_size = embedding_dim = None
+    model_key = payload.get("model_key")
+    if version >= 2:
+        required = {
+            "model_key", "token_roles", "tokenizer_size",
+            "embedding_vocab_size", "embedding_dim",
+        }
+        missing = required - set(payload)
+        if missing:
+            raise ValueError(f"Embedding artifact missing fields {sorted(missing)} at {pkl_path}")
+
+        token_roles = {
+            int(tid): int(role) for tid, role in payload["token_roles"].items()
+        }
+        if set(token_roles) != set(vprime_ids):
+            raise ValueError("token_roles keys must exactly match vprime_token_ids")
+        bad_roles = set(token_roles.values()) - {
+            TOKEN_ROLE_NEUTRAL, TOKEN_ROLE_CONCEPT, TOKEN_ROLE_SHARED,
+        }
+        if bad_roles:
+            raise ValueError(f"Unknown token role codes: {sorted(bad_roles)}")
+
+        tokenizer_size = int(payload["tokenizer_size"])
+        embedding_vocab_size = int(payload["embedding_vocab_size"])
+        embedding_dim = int(payload["embedding_dim"])
+        if embedding_dim != int(F_dir.shape[0]):
+            raise ValueError(
+                f"embedding_dim ({embedding_dim}) != F rows ({F_dir.shape[0]})")
+        if any(tid < 0 or tid >= tokenizer_size for tid in vprime_ids):
+            raise ValueError("vprime_token_ids contains an ID outside tokenizer_size")
+        if any(tid >= embedding_vocab_size for tid in vprime_ids):
+            raise ValueError("vprime_token_ids contains an ID outside embedding_vocab_size")
+
+    return EmbeddingArtifact(
+        F_dir=F_dir,
+        G_tok=G_tok,
+        vprime_token_ids=[int(tid) for tid in vprime_ids],
+        version=version,
+        model_key=None if model_key is None else str(model_key),
+        token_roles=token_roles,
+        tokenizer_size=tokenizer_size,
+        embedding_vocab_size=embedding_vocab_size,
+        embedding_dim=embedding_dim,
+    )
+
+
+def load_embedding_payload(pkl_path: Path) -> Tuple[torch.Tensor, torch.Tensor, List[int]]:
+    """Compatibility interface returning the original three-value tuple."""
+    artifact = load_embedding_artifact(pkl_path)
+    return artifact.F_dir, artifact.G_tok, artifact.vprime_token_ids
 
 
 def select_embed_feature_ids(df: pd.DataFrame,
@@ -591,7 +673,8 @@ __all__ = [
     "VALID_FEATURE_SOURCES", "VALID_W_MODES",
     "load_mlp_potential_df", "select_mlp_specs", "build_layer_features",
     "apply_neurons_filter", "apply_coverage_filter",
-    "load_embedding_payload", "select_embed_feature_ids", "load_token_label_map",
+    "EmbeddingArtifact", "TOKEN_ROLE_NEUTRAL", "TOKEN_ROLE_CONCEPT", "TOKEN_ROLE_SHARED",
+    "load_embedding_artifact", "load_embedding_payload", "select_embed_feature_ids", "load_token_label_map",
     "_embedding_paths",
     "ConceptContext", "has_nonempty_mask",
 ]

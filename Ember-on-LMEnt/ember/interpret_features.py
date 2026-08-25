@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import concurrent.futures
 
-import google.generativeai as gai
 import pandas as pd
 from tqdm import tqdm
 
@@ -105,6 +104,7 @@ class SimpleGeminiClient:
         api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_TOKEN") or os.getenv("GEMINI_API_KEY")
         if not api_key:
             raise RuntimeError("No Gemini API key found. Set GOOGLE_API_KEY, GEMINI_API_TOKEN, or GEMINI_API_KEY.")
+        import google.generativeai as gai
         gai.configure(api_key=api_key)
         self.model = gai.GenerativeModel(model_name)
         self.max_retries = max_retries
@@ -244,7 +244,7 @@ def interpret_source(client: SimpleGeminiClient, df_tokens: pd.DataFrame, concep
 
 def run_for_concept_and_track(concept_name: str, track: str, client: SimpleGeminiClient, args: argparse.Namespace):
     concept_safe = _safe_concept(concept_name)
-    model_safe = _safe_model_name(args.model_name)
+    model_safe = _safe_model_name(args.model_key or args.model_name)
     base_dir = Path(args.outdir) / model_safe
 
     seed_dir = f"seed{args.seed}"
@@ -309,8 +309,12 @@ def run_for_concept_and_track(concept_name: str, track: str, client: SimpleGemin
 
 
 def main():
-    from dotenv import load_dotenv
-    load_dotenv()
+    try:
+        from dotenv import load_dotenv
+    except ModuleNotFoundError:
+        pass
+    else:
+        load_dotenv()
     parser = argparse.ArgumentParser(description="Interpret MF features via Gemini (MLP and embedding tracks).")
     parser.add_argument("--concepts", nargs="+", default=[
         "Ancient Rome", "Artificial intelligence", "Baseball", "Cannabis",
@@ -323,6 +327,8 @@ def main():
                         help="Feature rank. Default 100 for Gemma; use 200 for Llama.")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--model-name", type=str, default="google/gemma-2-2b-it")
+    parser.add_argument("--model-key", type=str, default=None,
+                        help="Stable feature-artifact name; defaults to --model-name.")
 
     parser.add_argument("--outdir", type=str, default="mf_outputs")
     parser.add_argument("--ratio-thresh", type=float, default=2.0)
@@ -340,7 +346,7 @@ def main():
     args = parser.parse_args()
     client = SimpleGeminiClient(model_name=args.gemini_model)
 
-    model_safe = _safe_model_name(args.model_name)
+    model_safe = _safe_model_name(args.model_key or args.model_name)
     timing_path = Path(args.outdir) / model_safe / "timing.json"
     timing_path.parent.mkdir(parents=True, exist_ok=True)
 

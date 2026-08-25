@@ -1,0 +1,19 @@
+model_path: ../../models_symlinks/win-lment-1b-control-2e
+model_key: lment-1b-control-2e
+features_root: ../mf_outputs
+output_root: ../lment_outputs
+eval_json: ../data/mc_questions.json
+prepare_features: true
+concept_json: ../data/concept_sentences.json
+neutral_json: ../data/neutral_sentences.json
+feature_max_iterations: 20000
+feature_g_sparsity: 0.01
+feature_k_proj: 30
+
+rank: 100
+seed: 42
+ratio_thresh: 2.0
+deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+explicit_delta: null
+device: auto
+dtype: fp32

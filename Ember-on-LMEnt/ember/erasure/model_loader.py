@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Any, Optional, Tuple
 
 import torch
@@ -71,6 +72,36 @@ def load_hf_model(
     return model, tokenizer
 
 
+def load_local_causal_lm(
+        model_path: str | Path,
+        *,
+        dtype: torch.dtype = torch.float32,
+        device: str = "auto",
+) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
+    """Load a flat local HF checkpoint without mutating its configuration.
+
+    Unlike :func:`load_hf_model`, this loader never changes PAD, cache, or
+    weight-tying settings and never contacts the Hugging Face Hub.
+    """
+    source = str(Path(model_path))
+    tokenizer = AutoTokenizer.from_pretrained(
+        source,
+        local_files_only=True,
+        use_fast=True,
+    )
+    load_kwargs = {
+        "local_files_only": True,
+        "torch_dtype": dtype,
+    }
+    if device == "auto":
+        load_kwargs["device_map"] = "auto"
+    model = AutoModelForCausalLM.from_pretrained(source, **load_kwargs)
+    if device != "auto":
+        model.to(device)
+    model.eval()
+    return model, tokenizer
+
+
 def load_tl_model(
         model_name: str,
         cache_dir: str = "",
@@ -100,4 +131,7 @@ def load_tl_model(
     return tl_model, tokenizer
 
 
-__all__ = ["DTYPE_MAP", "pick_dtype", "load_hf_model", "load_tl_model"]
+__all__ = [
+    "DTYPE_MAP", "pick_dtype", "load_hf_model", "load_local_causal_lm",
+    "load_tl_model",
+]

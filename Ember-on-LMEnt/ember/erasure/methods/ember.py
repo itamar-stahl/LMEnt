@@ -90,6 +90,7 @@ class EMBERMethod(Method):
             rank=common.rank,
             seed=common.seed,
             ratio_thresh=common.selection.ratio_thresh,
+            tokenizer=tokenizer,
         )
 
     def snapshot(self, hf_model: Any) -> Any:

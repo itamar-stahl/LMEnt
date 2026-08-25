@@ -94,6 +94,26 @@ The concept file is a list of `{ "concept": ..., "sentences": [...] }` records.
 The neutral file is a list of records with a `"sentence"` field. The existing
 files in `data/` remain the defaults.
 
+## Standalone EMBER on LMEnt
+
+The LMEnt runner applies only the EMBER embedding edit to a local control-model
+checkpoint. Configure paths and search settings in `configs/ember_lment.yaml`,
+then run one or more concepts independently from the pristine checkpoint:
+
+```bash
+python -m ember.run_lment_ember --config configs/ember_lment.yaml \
+    --concepts "Pornography"
+```
+
+If the factorization and `potential_features.csv` already exist, they are reused.
+Creating the interpretation for a new concept requires `GEMINI_API_KEY`. When no
+multiple-choice evaluation file is available, provide a fixed edit strength with
+`--delta`; automatic delta selection never uses held-out test questions.
+
+Each output under `lment_outputs/<concept>/` contains a reloadable Hugging Face
+model plus `report.json`, including the edited token IDs, evaluation deltas, and
+save/reload integrity checks.
+
 For Llama, use rank 200 and its model name:
 
 ```bash

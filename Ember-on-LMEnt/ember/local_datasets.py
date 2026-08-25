@@ -141,10 +141,14 @@ def load_open_qa_examples(set_name: str, concept: str | None = None) -> List[Ope
     return items
 
 
-def load_mc_qa_items(set_name: str, concept: str | None = None) -> List[MCQAItem]:
+def load_mc_qa_items(
+        set_name: str,
+        concept: str | None = None,
+        json_path: Path | str = DATA_DIR / "mc_questions.json",
+) -> List[MCQAItem]:
     """Load multiple-choice QA items. set_name: "qa_train", "qa_test", "simdom_train", "simdom_test"."""
     subset, split = _parse_set_name(set_name)
-    json_data = _load_json(DATA_DIR / "mc_questions.json")
+    json_data = _load_json(json_path)
     key = f"{subset}_{split}"
     items: List[MCQAItem] = []
     for concept_name, concept_data in json_data.items():
