@@ -144,3 +144,78 @@ prompt, no softmax over options, and no unbounded statistic. Its effect size is
 `dz` = 1.89 against a within-model control of `dz` = 0.048 — a factor of 39. The
 largest artifact documented above moves a mean by less than one standard
 deviation on a heavy tail; none of them manufacture that.
+
+---
+
+## 7. Manual verification, and a metric that destroys correct answers
+
+Prompted by "are you sure the analysis captures the true rate of right and wrong
+answers?", checked by hand on Harry Potter, where the facts are verifiable.
+
+**The answer key is correct.** All 18 items inspected are factually right —
+James, Hogwarts, Gryffindor, Hedwig, The Burrow, Azkaban, Seeker, Fluffy,
+Hogsmeade, Accio, Griphook, House-elf, Avada Kedavra, Snape, Headmaster, Aragog,
+Phoenix, Gringotts. Grading is sound, and §1's consistency checks already
+established that `correct` follows from the argmax.
+
+**But the model's errors gave it away.** It rejected Hogwarts for Durmstrang,
+Gryffindor for Slytherin, Hedwig for Pigwidgeon — in every case discarding the
+famous answer for a rarer one. That is the signature of the PMI correction:
+
+| option | log P(a\|stem) | log P(a\|null) | PMI |
+|---|---|---|---|
+| **Hogwarts** (key) | **−8.593** | −19.220 | 10.627 |
+| Ilvermorny | −18.363 | −29.585 | 11.222 |
+| **Durmstrang** (picked) | −16.860 | −28.407 | **11.546** |
+| Beauxbatons | −19.205 | −28.926 | 9.721 |
+
+The model prefers the correct answer by **8.3 nats**, about 4,000:1. PMI
+discards that because "Hogwarts" is a common string, so its unconditional term
+is large and subtracting it lets a rarer option win.
+
+It is systematic. Raw log-likelihood beats PMI on 5 of 6 Harry Potter
+measurements, by up to 25 points:
+
+| set | PMI | raw LL | per-char |
+|---|---|---|---|
+| HP control, concept | 36% | 46% | 36% |
+| HP control, LOTR | 34% | 48% | 46% |
+| HP released, LOTR | 27% | 52% | 49% |
+| Porn control, simdom | 34% | 60% | 45% |
+
+**The consequence for `NULL_CONCEPT_CONTROL.md` §1: the concept-vs-simdom gap is
+metric-dependent and reverses.**
+
+| Pornography, control 2E | concept | simdom | gap |
+|---|---|---|---|
+| under PMI | 55% | 34% | **+21** |
+| under raw log-likelihood | 38% | 60% | **−22** |
+
+Same model, same questions, opposite conclusion. Harry Potter stays near zero
+under both (+2, −2) because its two sets are well matched. The mechanism is
+option-string statistics: PMI favours rare strings, raw likelihood favours
+common and short ones, and the two pornography sets differ systematically.
+
+**What survives: the twins comparison is metric-robust.** Both twins are scored
+with the same rule on the same options, so the artifact cancels.
+
+`QA − SimdomQA`, accuracy, ablated minus control:
+
+| concept | PMI | raw LL | per-char |
+|---|---|---|---|
+| Pornography (ablated) | −0.029 | +0.031 | +0.064 |
+| Harry Potter (null) | +0.000 | −0.130 | −0.030 |
+
+Null under every rule, two of three with the wrong sign. The null concept under
+raw LL gives −0.130, larger than anything on the ablated concept, and produces
+another false positive (SimdomQA p = 0.032 where nothing was ablated). This
+reinforces §3 rather than qualifying it.
+
+### Revised guidance
+
+- **Absolute accuracy figures from this evaluation are not "what the model
+  knows."** They are rule-dependent, and PMI understates knowledge.
+- **The concept-vs-simdom gap must not be quoted** without naming the rule; it
+  reverses.
+- **Between-model comparisons are safe** under any single rule applied to both.
+- **`HELDOUT_RESULTS.md` is untouched** — no options, no softmax, no rule.
