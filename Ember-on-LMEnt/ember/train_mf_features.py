@@ -13,7 +13,7 @@ from factorization.seminmf import NMFSemiNMF
 from huggingface_hub import login
 from transformers import AutoTokenizer
 
-from ember.local_datasets import ConceptDataset
+from ember.local_datasets import ConceptDataset, DATA_DIR
 from ember.timing import Timer
 from ember.utils import (
     set_seed, resolve_device, _safe_model_name, _safe_concept, _safe_tokens,
@@ -32,6 +32,18 @@ def parse_args():
     ap.add_argument("--concepts", nargs="+", default=["Harry Potter"])
     ap.add_argument("--ranks", type=int, nargs="+", default=[100])
     ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument(
+        "--concept-json",
+        type=Path,
+        default=DATA_DIR / "concept_sentences.json",
+        help="Wikipedia concept JSON: a list of {concept, sentences} records.",
+    )
+    ap.add_argument(
+        "--neutral-json",
+        type=Path,
+        default=DATA_DIR / "neutral_sentences.json",
+        help="Wikipedia neutral JSON: a list of records containing a sentence field.",
+    )
 
     ap.add_argument("--model-name", type=str, default="google/gemma-2-2b-it")
     ap.add_argument("--model-device", type=str, default="auto")
@@ -97,7 +109,12 @@ def main():
         print(f"\n{'=' * 80}\n[CONCEPT] {concept_name}\n{'=' * 80}")
 
         # Fixed-seed neutral ordering for reproducible feature extraction.
-        dataset = ConceptDataset(concept_name=concept_name, neutral_sample_seed=42)
+        dataset = ConceptDataset(
+            concept_name=concept_name,
+            concept_path=args.concept_json,
+            neutral_path=args.neutral_json,
+            neutral_sample_seed=42,
+        )
 
         token_ids_all, sample_ids, labels_all = extract_token_ids_sample_ids_and_labels(dataset, act_generator)
         labels_arr = np.array(labels_all, dtype=object)

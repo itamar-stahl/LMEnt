@@ -81,6 +81,19 @@ python -m ember.interpret_features --concepts "Harry Potter" --rank 100 \
     --model-name google/gemma-2-2b-it --seed 42 --tracks embedding
 ```
 
+To use another Wikipedia sentence corpus, pass its concept and neutral JSON files:
+
+```bash
+python -m ember.train_mf_features --concepts "Any Concept" --ranks 100 \
+    --model-name /path/to/model --skip-mlp \
+    --concept-json /path/to/concept_sentences.json \
+    --neutral-json /path/to/neutral_sentences.json
+```
+
+The concept file is a list of `{ "concept": ..., "sentences": [...] }` records.
+The neutral file is a list of records with a `"sentence"` field. The existing
+files in `data/` remain the defaults.
+
 For Llama, use rank 200 and its model name:
 
 ```bash
