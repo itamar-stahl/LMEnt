@@ -18,6 +18,10 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument(
+        "--model-device", choices=("auto", "cpu", "cuda"), default=None,
+        help="Override the LMEnt model device from the YAML config.",
+    )
     parser.add_argument("--concept", required=True)
     parser.add_argument("--concept-json", type=Path, required=True)
     parser.add_argument("--neutral-json", type=Path, required=True)
@@ -108,6 +112,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         alpaca_eval=bool(args.alpaca_eval),
         alpaca_split=args.alpaca_split,
         gpu_type=args.gpu_type,
+        device=(args.model_device if args.model_device is not None else config.device),
     )
     if config.explicit_delta is None and config.eval_json is None:
         raise ValueError("Provide --eval-json for automatic delta selection or --delta")
