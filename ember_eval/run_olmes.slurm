@@ -10,7 +10,11 @@
 #SBATCH --mem=48000
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus=1
-#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
+# n-301 and n-303 pass nvidia-smi but fail torch's CUDA init, so a job lands on
+# a GPU node and silently runs on CPU at a fraction of the speed. Seen on jobs
+# 782202, 782435, 782791 and all six of 782892-782897, which SLURM packed onto
+# n-301 because it had 7 free cards.
+#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-301,n-303
 #
 # Probe: does the vendored OLMES harness run here at all?
 # The env sits OUTSIDE olmes' declared pins (it wants transformers <4.50, this

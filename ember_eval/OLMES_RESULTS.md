@@ -365,3 +365,88 @@ A division of labour, which is the useful end state of this whole excursion:
 **No concept-specific QA instrument exists at usable scale**, and that is not a
 gap reformatting can close. It follows from EMBER shipping 200 questions per
 concept and nothing else.
+
+---
+
+# Declarative stem against Q&A, on generation
+
+2026-08-26, job 782879, `fewshot_probe/hp_popqa_peek.py`, records in
+`results/fewshot/hp-peek_782879.out`.
+
+Prompted by the question of whether **pornography** was the obstacle — EMBER's
+pornography answers are conceptual (*Sexual arousal*, *1969-1984*) where PopQA's
+are named entities, and Harry Potter's are too (*J.K. Rowling*, *Sirius Black*,
+1.9 words on average against 2.7). Two Harry Potter questions, both PopQA prompt
+formats, all three models, 15 shots from `QA_train` and tests from `QA_test`.
+Nothing scored; the generations are the evidence.
+
+## Result
+
+| | Q&A format | declarative stem |
+|---|---|---|
+| **Q1 — author of the Harry Potter series** (gold *J.K. Rowling*) | | |
+| control 2E | *"The Gryffindor Quidditch team? Q:…"* | *"Harry Potter. Harry Potter is the main character…"* |
+| ablated 2E | *"Harry Potter and the Deathly Hallows?"* | **"J. K. Rowling. She has written 11 books…"** ✅ |
+| released 2E | *"Harry Potter Q: What is the name of Harry's pet owl? A: Hedwig"* | **"J. K. Rowling, who wrote the first book…"** ✅ |
+| **Q2 — Harry's godfather** (gold *Sirius Black*) | | |
+| all three | fail | fail (*"Kedavra"*, *"John Potter"*, *"Hermione"*) |
+
+**Q&A 0/6. Stem 2/6.**
+
+## What it establishes
+
+**The topic was not the main obstacle; the format was.** Harry Potter fails under
+`Q:/A:` exactly as pornography did. Under a declarative stem, two of three models
+answer correctly. This is `EVALUATION.md`'s stem finding in its starkest form —
+there it was worth +3-4 questions in 10 under likelihood scoring, here it is the
+difference between answering and not answering at all.
+
+**Format is not sufficient either.** Q2 fails in every cell. *J.K. Rowling* is
+among the most-repeated facts in Wikipedia; *Harry's godfather is Sirius Black*
+is a plot detail. Fact frequency still governs whether anything is retrievable.
+
+**The knowledge is present; the instruction-following is not.** The clearest
+single output is released 2E failing Q1 under Q&A by writing
+*"Q: What is the name of Harry's pet owl? A: Hedwig"* — inventing a different
+question **and answering it correctly**. It is not missing the knowledge. It
+continues the Q/A pattern instead of answering the question it was given, which
+is why more shots do not help (see the few-shot section above: parse rate rose
+from near-zero to 20-42 of 50 while accuracy stayed at chance).
+
+**Exact match would score both correct answers wrong.** `"J. K. Rowling"` against
+a gold of `"J.K. Rowling"` differs by one space. This is the same failure that
+discarded *"Miller v. California"* against a gold of *"Miller test"*. Any
+generative scoring built on EMBER's answers needs normalisation — lowercase,
+strip punctuation and leading articles — or it reports zero while the model is
+answering.
+
+## Why this is not an isolated result
+
+Three independent lines now agree that these models discriminate or complete but
+do not answer:
+
+1. `EVALUATION.md`: declarative stem beats `Question:/Answer:` by +3-4 of 10
+   under likelihood scoring, six models.
+2. `OLMES_RESULTS.md` §2: every OLMES `:mc` variant sits at chance
+   (`arc_easy:mc` 0.252) while the `:rc` cloze variants work (`arc_easy:rc`
+   0.434) — an outside implementation, different task family.
+3. This probe: stem 2/6, Q&A 0/6, on generation rather than likelihood.
+
+## Caveats
+
+Two questions, three models, twelve generations. 2/6 against 0/6 is a signal,
+not a measurement, and it is quoted here because it agrees with the two larger
+results above rather than on its own strength. That the control failed Q1 where
+the other two succeeded is n = 1 and nothing should be read into it.
+
+The larger-sample version of exactly this comparison — same items, both formats
+— is `popqa` against `popqa_cloze_sitelinks`, run separately.
+
+## Operational
+
+`n-301` and `n-303` pass `nvidia-smi` but fail torch's CUDA init, so a job takes
+a GPU allocation and silently runs on CPU. Seen on jobs 782202, 782435, 782791,
+and on all six of 782892-782897 at once, because SLURM packed them onto n-301
+where seven cards were free. Both nodes are now in `--exclude` in
+`run_olmes.slurm` and `run_hp_peek.slurm`. **Check for
+`CUDA unknown error` in the `.err` before trusting a runtime.**
