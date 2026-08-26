@@ -24,10 +24,18 @@ RUNS="${UNTAUGHT_RUNS_DIR:-/home/morg/NLP_2526b/galbarak2/LMEnt/Untaught/runs}"
 OUT="${HF_MODELS_DIR:-/home/dcor/galbarak2/hf-models}"
 LMENT="${LMENT_ROOT:-/home/morg/NLP_2526b/galbarak2/LMEnt}"
 
-# The step folder is whatever the run finished on; take the highest.
+# The step folder is whatever the run finished on; take the highest. Set STEP to
+# convert an earlier one instead -- needed to compare twins at a step before some
+# event, e.g. the control's H200 window which begins at step 49,501
+# (COMPARABILITY.md), making step45000 its last pure-H100 checkpoint.
 CKPT_ROOT="$(ls -d "$RUNS/$RUN"/checkpoints/*/ | head -1)"
-STEP="$(ls -1 "$CKPT_ROOT" | sort -t p -k2 -n | tail -1)"
+STEP="${STEP:-$(ls -1 "$CKPT_ROOT" | sort -t p -k2 -n | tail -1)}"
 SRC="$CKPT_ROOT$STEP"
+if [ ! -d "$SRC" ]; then
+  echo "refusing: $SRC does not exist; available:" >&2
+  ls -1 "$CKPT_ROOT" >&2
+  exit 1
+fi
 
 # A checkpoint interrupted mid-save leaves 16 files under tmp* names that were
 # never renamed, and nothing downstream notices. Refuse to convert one.

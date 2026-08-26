@@ -130,3 +130,112 @@ clean, about 20 minutes per model for sciq and under an hour for the suites.
 Note this does **not** clear the concern recorded in `Untaught/B200.md`. That
 entry is about the `lment-b200` stack — torch 2.11, transformers 5.15 — and none
 of this ran there. Our runs used the old stack. B200.md stands as written.
+
+---
+
+# Few-shot prompting on EMBER's own questions
+
+2026-08-26, jobs 782141 / 782202 / 782435, `fewshot_probe/fewshot_probe.py`,
+records under `results/fewshot/`.
+
+OLMES works on models this size partly because it prompts **few-shot** — the
+paper's own `triviaqa::kas` uses 10 shots — while EMBER's protocol is zero-shot
+and `EVALUATION.md` showed these models then emit neither a letter nor an
+option. So: does few-shot rescue EMBER's questions?
+
+**It fixes the format and supplies no answering ability.**
+
+## The measurement
+
+Fifty `QA_test` concept questions, two formats with identical shots, all three
+models, scored by **generation** (what EMBER's protocol assumes and what these
+models were previously unable to do). Shots come from `QA_train`, so no shot
+shows the model an answer it is later asked for.
+
+Four shots, **one per gold letter**, in a seeded-random order (`C, B, D, A`).
+Both halves of that matter and are explained under "two bugs" below.
+
+## Result
+
+| model | parsed | acc /50 | acc among parsed | letters answered |
+|---|---|---|---|---|
+| control 2E | 36/50 | 10/50 (20%) | 27.8% | D:16, none:14, A:12, B:8 |
+| ablated 2E | 20/50 | 8/50 (16%) | 40.0% | none:30, C:9, D:8, A:2, B:1 |
+| released 2E | 42/50 | 11/50 (22%) | 26.2% | **A:30**, none:8, B:10, C:2 |
+
+Gold distribution `{D:17, B:16, A:9, C:8}`, chance 25%.
+
+Open-ended, same items: **0/50, 0/50, 2/50.**
+
+- All three are **at or below chance** on the full 50, because an unparsed
+  answer scores wrong.
+- **Among items where a letter was emitted, all are at chance**: 27.8%, 26.2%,
+  and the ablated twin's 40% is over just 20 items, 1.5 SE above chance.
+- **A constant answer beats all three**: always "D" scores 34%, always "B" 32%.
+- **Letter bias survives balanced shots.** The released model answers "A" on 30
+  of its 42 parsed responses, and gold holds only 9 A's.
+
+**What few-shot did fix is real**: parse rate went from near-zero zero-shot
+(`EVALUATION.md`) to 20-42 of 50. The models learned to emit a letter. They did
+not learn which letter.
+
+## Open-ended: the failure mode is shared
+
+All three continue the *pattern* rather than perform the *task* — they generate
+the next **question** instead of the current answer. On "What ancient Indian
+text is famous for its discussions of erotic love?", the ablated twin reproduced
+shot #5 verbatim.
+
+One substantive hit in thirty across the earlier 10-item run, and the grader
+missed it: asked which Supreme Court test defines obscenity (gold "Miller
+test"), the released model wrote *"Miller v. California"* — the case the test
+comes from — and exact substring matching scored it wrong. TriviaQA ships alias
+lists for exactly this reason; EMBER ships none. Read the open-ended zeros as an
+upper bound on the failure, not a precise measurement.
+
+An earlier claim from three hand-picked examples, that our twins echo while the
+released model answers, **did not survive counting**: all three drift into
+generating a new question at similar rates (7/10, 3/10, 6/10). The released
+model is modestly better at generative recall, but the evidence for that is the
+OLMES numbers above, not these items.
+
+## Two bugs, both ours, both instructive
+
+**Gold was pinned to "A" (job 782141, multiple-choice half void).** The raw
+`completion_questions.json` keeps EMBER's original ordering, which puts the
+correct answer at index 0 in **all 50** `QA_test` items;
+`evaluate_completion.py` shuffles at load time and we read the raw field. Every
+question was asked with the answer at A, the models mostly answer B, and 0/10
+measured that coincidence. Fixed by replicating her exact per-question shuffle
+(sha1 of concept/subset/split/question, seed 42) so item N here is item N in
+every other run.
+
+**Then the fix created a second trap (job 782202).** With gold reshuffled, the
+first ten items came out `{B:6, C:2, D:2}` — and the control answers B nine
+times in ten, so it "scored" 5/10 while the released model, which answers A,
+"scored" 1/10. Neither number reflected knowledge. **A multiple-choice score
+from this probe is uninterpretable without the answered-letter distribution
+beside it.**
+
+Both traps are why the final design uses letter-balanced shots (so the prompt
+carries no letter-frequency signal to copy) and 50 items (so the gold
+distribution cannot be dominated by one letter). Under it, the control scores
+20% where the flawed setup gave 50%.
+
+## Operational
+
+Jobs 782202 and 782435 both hit `CUBLAS_STATUS_EXECUTION_FAILED` or a failed
+CUDA init and fell back to CPU; 782202 lost the ablated twin entirely. Results
+are unaffected numerically — CPU and GPU agree to 3e-4 (`CODE_AUDIT.md` §6) —
+but two consecutive jobs is a pattern, and those nodes may belong in the
+`--exclude` list.
+
+## Conclusion
+
+Few-shot was the last untried route to making EMBER's 200 questions work
+generatively. It does not. Combined with closed-book recall sitting at 1-5% on
+the paper's own benchmarks, the picture is consistent: **these models
+discriminate among given options and cannot generate answers.** Every working
+measurement in this project scores fixed continuations by likelihood, and the
+only instrument that has detected the ablation asks nothing of the model but its
+loss.
