@@ -11,8 +11,10 @@ Paper: [Don't Forget Your Embeddings: Robust Knowledge Erasure via Precise Editi
 
 This repository covers the full pipeline: extracting and interpreting concept
 features, running erasure with any method (with or without EMBER), and evaluating
-efficacy, specificity, coherency and robustness to relearning. Two models are
-supported: `google/gemma-2-2b-it` and `meta-llama/Llama-3.1-8B-Instruct`.
+efficacy, specificity, coherency and robustness to relearning. The released paper
+pipeline supports `google/gemma-2-2b-it` and
+`meta-llama/Llama-3.1-8B-Instruct`; the standalone runner also supports the local
+LMEnt control checkpoint.
 
 [`demo.ipynb`](demo.ipynb) walks through erasing *Harry Potter* from Gemma with
 EMBER + SNMF.
@@ -20,18 +22,49 @@ EMBER + SNMF.
 ## Setup
 
 ```bash
-git clone --recurse-submodules https://github.com/ClarSu/EMBER-Embedding-Erasure.git
-cd EMBER-Embedding-Erasure
+git clone https://github.com/itamar-stahl/LMEnt.git
+cd LMEnt/Ember-on-LMEnt
 
-conda create -n ember python=3.10 -y
+conda env create -f environment.yml
 conda activate ember
-pip install -r requirements.txt
-pip install -e .
+python -m pip install -r requirements.txt
 
 cp .env.example .env   # then add your HF_TOKEN and GEMINI_API_KEY
 ```
 
-The vendored methods live in `external/` as submodules (snmf, CRISP, wmdp, PISCES).
+The same `environment.yml` supports Miniforge on Windows and Linux. In
+PowerShell, use `Copy-Item .env.example .env` instead of `cp` if `cp` is not
+available. Run the setup from **Miniforge Prompt** if PowerShell's execution
+policy blocks `Conda.psm1`; no machine-wide policy change is required. The CUDA
+12.8 PyTorch wheel supports RTX 50-series GPUs; CPU-only machines can still run
+the unit tests, with CUDA integration tests skipped.
+
+For the original Gemma/Llama paper methods, first complete the core setup above,
+then additionally install `python -m pip install -e ".[paper]"`.
+
+Verify the installed core environment with:
+
+```bash
+python -c "import site, sys, torch, ember, factorization; from pathlib import Path; assert not site.ENABLE_USER_SITE; assert Path(torch.__file__).resolve().is_relative_to(Path(sys.prefix).resolve()); print(sys.executable, torch.__version__)"
+python -m pip check
+python -m unittest discover -s tests -p "test_*.py" -v
+python -m compileall -q ember tests
+```
+
+To include the real-checkpoint CUDA test, set `EMBER_LMENT_MODEL_PATH` first.
+On Linux:
+
+```bash
+export EMBER_LMENT_MODEL_PATH=/path/to/lment-1b-control-2e
+```
+
+On Windows PowerShell:
+
+```powershell
+$env:EMBER_LMENT_MODEL_PATH = "C:\path\to\lment-1b-control-2e"
+```
+
+The vendored method sources live in `external/` (snmf, CRISP, wmdp, PISCES).
 `HF_TOKEN` is needed to download gated models (e.g. Llama-3.1-8B-Instruct);
 `GEMINI_API_KEY` is needed for feature interpretation and the Alpaca coherence judge
 (the erasure grids run without it). See `.env.example` for details.

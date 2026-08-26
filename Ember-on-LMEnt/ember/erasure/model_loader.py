@@ -89,15 +89,15 @@ def load_local_causal_lm(
         local_files_only=True,
         use_fast=True,
     )
-    load_kwargs = {
-        "local_files_only": True,
-        "torch_dtype": dtype,
-    }
-    if device == "auto":
-        load_kwargs["device_map"] = "auto"
-    model = AutoModelForCausalLM.from_pretrained(source, **load_kwargs)
-    if device != "auto":
-        model.to(device)
+    target_device = device
+    if target_device == "auto":
+        target_device = "cuda" if torch.cuda.is_available() else "cpu"
+    model = AutoModelForCausalLM.from_pretrained(
+        source,
+        local_files_only=True,
+        torch_dtype=dtype,
+    )
+    model.to(target_device)
     model.eval()
     return model, tokenizer
 

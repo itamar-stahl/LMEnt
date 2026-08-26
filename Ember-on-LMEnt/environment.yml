@@ -1,0 +1,13 @@
+name: ember
+channels:
+  # Defaults ships Authenticode-signed Windows Python binaries, which work
+  # with Smart App Control; the same channel also supports Linux.
+  - defaults
+variables:
+  # Keep Conda installs isolated from ~/.local (Linux) and AppData\Roaming
+  # (Windows), even when the same Python minor version is installed globally.
+  PYTHONNOUSERSITE: "1"
+dependencies:
+  # Python 3.12 matches the LMEnt environment on Windows and Linux.
+  - python=3.12
+  - pip>=24
