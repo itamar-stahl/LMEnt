@@ -55,7 +55,7 @@ RUN_DIR="$OUT/${OUT_TAG}_${SLURM_JOB_ID}"
 CMD=$("$PY" -m oe_eval.launch --dry-run \
         --model "${OUT_TAG}" --model-type hf \
         --model-args "{\"model_path\":\"${MODEL_PATH}\"}" \
-        --task $TASK_SPEC --batch-size "${BATCH:-8}" \
+        --task $TASK_SPEC --batch-size "${BATCH:-8}" ${LIMIT:+--limit $LIMIT} \
         --output-dir "$RUN_DIR" 2>&1 | sed -n 's/.*Command: //p' | tail -1)
 
 if [ -z "$CMD" ]; then

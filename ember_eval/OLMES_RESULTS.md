@@ -263,3 +263,105 @@ discriminate among given options and cannot generate answers.** Every working
 measurement in this project scores fixed continuations by likelihood, and the
 only instrument that has detected the ablation asks nothing of the model but its
 loss.
+
+---
+
+# PopQA, and three dead ends
+
+2026-08-26. Jobs 782701-782703 (`popqa` and `popqa_cloze_sitelinks`, 1000 items
+each, all three models) — **numbers pending, this section records the reasoning
+and what it rules out.**
+
+## Why PopQA is different from the rest of the recall suite
+
+`jeopardy` and `triviaqa` floor at 1-5% on these models (§3), so they cannot
+show an ablation. PopQA does not have that problem:
+
+| property | value |
+|---|---|
+| items | **14,267** |
+| distinct answers | 7,443 |
+| relation types | 16 (director, screenwriter, genre, author, occupation, …) |
+| best strategy using **no** entity knowledge | **7.6%** |
+| reported accuracy in the paper | 0.6+ |
+
+The 7.6% figure is the important one, and it corrects a guess made here first.
+PopQA's answers *look* low-entropy — *politician*, *punk rock*, *United States
+of America* — so the initial assumption was that a prior-only strategy would
+carry most of the reported 0.6. It does not: answering each relation's most
+common object scores 7.6%, and the single most common answer overall scores
+2.3%. **PopQA is not gameable by priors**, so 0.6 would represent real entity
+knowledge with ~52 points of headroom.
+
+Why so much higher than jeopardy on the same model: **PopQA is built from
+Wikidata/Wikipedia entities and LMEnt trained on Wikipedia.** Directors,
+screenwriters, genres and birthplaces of Wikipedia-notable entities are exactly
+what the corpus contains, while Jeopardy and TriviaQA draw on quiz-league
+trivia. It is a distribution-match effect, not an inconsistency.
+
+PopQA also ships `o_aliases`, so exact match is alias-aware — the failure that
+cost the released model a correct answer when it wrote *"Miller v. California"*
+against a gold of *"Miller test"* (§ few-shot) would have been counted here.
+
+## Dead end 1: OLMES's larger recall datasets
+
+Retired in §3. Thousands of items do not help when the model scores 1%.
+
+## Dead end 2: filtering PopQA for concept-related entities
+
+PopQA carries `subj_id` / `prop_id` / `obj_id` as real Wikidata QIDs and the
+ablation *is* a Wikidata QID, so selecting concept-specific items by entity
+looked like a way to get a targeted set at scale without hand-writing anything.
+
+**It does not work.** Scanning all 14,267 items for concept vocabulary in
+subject, object or relation returns **26 hits, most of them false positives** —
+*hardcore punk*, *post-hardcore*, *hardcore hip hop* are music genres. The
+genuinely concept-related items number perhaps four to eight (*World of Men →
+pornographic film*, *The Hunger → erotica*, two *erotic thriller* items).
+
+Four to eight questions is worse than EMBER's 200. The reason is structural:
+PopQA's 16 relations sample Wikipedia-notable entities broadly, and pornography
+is a sliver of that. **Do not re-attempt this.**
+
+## Dead end 3: converting EMBER's questions into PopQA's formats
+
+Both conversions are easy. The question format is what
+`fewshot_probe/` already builds, and the declarative-stem format already exists
+— `completion_eval/data/completion_questions.json` carries a hand-written
+`stem` for all 400 questions, which *is* the `popqa_cloze` shape.
+
+**Neither would help, and the reason is not the shot count.** The tempting
+argument is that PopQA uses 15 shots where our probe used 5. But the decisive
+evidence is already in hand: the *same released model*, at *15 shots*, reaches
+0.6 on PopQA, and at 5 shots scored ~0 on EMBER's questions. If shot count were
+the lever it would have to turn 0/50 into roughly 30/50. Prompt-length gains are
+marginal; they do not cross that gap.
+
+What differs is the questions and the scoring, not the prompt:
+
+| | PopQA | EMBER |
+|---|---|---|
+| answer type | entity strings (*politician*, *Paul Simon*) | concepts (*Sexual arousal*, *Genital sexual activity*) |
+| present in corpus | Wikipedia infobox facts, densely repeated | quiz-style syntheses, often nowhere verbatim |
+| aliases | ships with every item | none |
+| floor | 7.6% | 25% (four-way MC) |
+
+Converting EMBER transfers the *shape* and none of the *properties*. It would
+produce another 200-item null. And it cannot fix the binding constraint anyway,
+because reformatting 200 questions leaves 200 questions.
+
+## What survives
+
+A division of labour, which is the useful end state of this whole excursion:
+
+- **Efficacy — did the ablation remove anything?** Held-out chunk loss.
+  `dz` = 1.89, p < 0.0001 (`HELDOUT_RESULTS.md`). The only instrument that has
+  ever detected it.
+- **Specificity — did it damage anything else?** PopQA. 14,267 items, a 7.6%
+  floor, genuinely in-distribution. A far better specificity control than
+  EMBER's simdom split, whose pornography questions are about Halo and the
+  Oscars (`NULL_CONCEPT_CONTROL.md` §1).
+
+**No concept-specific QA instrument exists at usable scale**, and that is not a
+gap reformatting can close. It follows from EMBER shipping 200 questions per
+concept and nothing else.
