@@ -51,6 +51,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Save a full Hugging Face checkpoint instead of only the erased embedding.",
     )
+    parser.add_argument(
+        "--reuse-features",
+        action="store_true",
+        help="Require existing factor files; never rebuild them in this process.",
+    )
     parser.add_argument("--alpaca-eval", action="store_true")
     parser.add_argument("--alpaca-split", choices=("train", "test"), default="test")
     parser.add_argument("--gpu-type", choices=tuple(GPU_PROFILES), default=None)
@@ -93,7 +98,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         concept_json=args.concept_json.resolve(),
         neutral_json=args.neutral_json.resolve(),
         output_dir=args.output_dir.resolve(),
-        prepare_features=True,
+        prepare_features=not args.reuse_features,
         explicit_delta=(
             float(args.delta) if args.delta is not None else config.explicit_delta),
         eval_json=(args.eval_json.resolve() if args.eval_json is not None else config.eval_json),
