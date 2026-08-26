@@ -13,6 +13,7 @@ build/
 
 # Model / feature outputs (large, user-generated)
 mf_outputs/
+lment_outputs/
 results/
 *.log
 

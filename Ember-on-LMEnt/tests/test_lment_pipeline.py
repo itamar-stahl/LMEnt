@@ -17,7 +17,8 @@ if str(SNMF_ROOT) not in sys.path:
     sys.path.insert(0, str(SNMF_ROOT))
 
 from ember.erasure.model_loader import load_local_causal_lm
-from ember.lment_pipeline import LMEntRunConfig, run_concept
+from ember.erased_embedding import load_lment_with_erased_embeddings
+from ember.lment_pipeline import LMEntRunConfig, run_concept, run_lment_pipeline
 from tests.test_hf_embedding_features import _write_tiny_olmo2_checkpoint
 
 
@@ -49,9 +50,77 @@ def _write_embedding_artifact(root: Path) -> None:
         }, handle)
     pd.DataFrame([{"feature": 0, "metric_score": 3.0}]).to_csv(
         interpretation_dir / "potential_features.csv", index=False)
+    csv_dir = (
+        root / "tiny-olmo2" / "csvs" / "rank1" / "seed42"
+        / "Arbitrary_concept" / "embedding"
+    )
+    csv_dir.mkdir(parents=True)
+    pd.DataFrame([{
+        "feature": 0,
+        "ratio_abs": 3.0,
+        "mean_abs_concept": 1.0,
+        "mean_abs_neutral": 1.0 / 3.0,
+        "num_concept": 1,
+        "num_neutral": 1,
+    }]).to_csv(csv_dir / "stats_embed.csv", index=False)
+    pd.DataFrame([{
+        "feature": 0,
+        "activating_tokens": "['concept']",
+    }]).to_csv(csv_dir / "token_features.csv", index=False)
 
 
 class LMEntPipelineTests(unittest.TestCase):
+    def test_callback_judge_is_deployable_through_full_pipeline(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            model_path = root / "source-model"
+            features_root = root / "features"
+            output_dir = root / "judged-output"
+            model_path.mkdir()
+            _write_tiny_olmo2_checkpoint(model_path)
+            _write_embedding_artifact(features_root)
+            prompts = []
+
+            report = run_lment_pipeline(LMEntRunConfig(
+                model_path=model_path,
+                model_key="tiny-olmo2",
+                features_root=features_root,
+                output_root=root / "unused",
+                output_dir=output_dir,
+                rank=1,
+                explicit_delta=0.5,
+                device="cpu",
+                selection_mode="judge",
+                ratio_thresh=2.0,
+            ), concept="Arbitrary concept",
+                describe_callback=lambda prompt: (
+                    prompts.append(prompt) or "The arbitrary concept."),
+                classify_callback=lambda prompt: (
+                    prompts.append(prompt)
+                    or '{"is_member": true, "confidence": 0.99}'),
+            )
+
+            self.assertEqual(report["feature_selection"]["mode"], "judge")
+            self.assertEqual(report["artifact"]["selected_feature_ids"], [0])
+            self.assertEqual(len(prompts), 2)
+            self.assertTrue(Path(
+                report["feature_selection"]["judge_trace_path"]).is_file())
+
+    def test_rejects_export_inside_source_checkpoint(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            source = Path(tmp) / "source-model"
+            source.mkdir()
+            config = LMEntRunConfig(
+                model_path=source,
+                model_key="tiny-olmo2",
+                features_root=Path(tmp) / "features",
+                output_root=source,
+                explicit_delta=0.5,
+                device="cpu",
+            )
+            with self.assertRaisesRegex(ValueError, "must not overlap"):
+                run_concept(config, concept="Arbitrary concept")
+
     def test_automatic_selection_uses_train_and_pairs_held_out_margins(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -155,10 +224,18 @@ class LMEntPipelineTests(unittest.TestCase):
                 dtype="fp32",
             ), concept="Arbitrary concept")
 
-            erased_path = output_root / "Arbitrary_concept" / "model"
+            erased_path = (
+                output_root / "Arbitrary_concept" / "erased_embeddings.safetensors")
             report_exists = (erased_path.parent / "report.json").is_file()
             source, _ = load_local_causal_lm(model_path, device="cpu")
-            erased, _ = load_local_causal_lm(erased_path, device="cpu")
+            erased, _ = load_lment_with_erased_embeddings(
+                model_path, erased_path, device="cpu")
+            other_model_path = root / "other-source-model"
+            other_model_path.mkdir()
+            _write_tiny_olmo2_checkpoint(other_model_path)
+            with self.assertRaisesRegex(ValueError, "base embedding weights"):
+                load_lment_with_erased_embeddings(
+                    other_model_path, erased_path, device="cpu")
 
         source_state = source.state_dict()
         erased_state = erased.state_dict()
@@ -174,7 +251,32 @@ class LMEntPipelineTests(unittest.TestCase):
         self.assertEqual(report["chosen_delta"], 0.5)
         self.assertTrue(report["integrity"]["passed"])
         self.assertTrue(report["integrity"]["reload_logits_match"])
+        self.assertEqual(report["save"]["mode"], "embedding_only")
+        self.assertEqual(Path(report["erased_embeddings_path"]), erased_path)
         self.assertTrue(report_exists)
+
+    def test_full_save_remains_available(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            model_path = root / "source-model"
+            features_root = root / "features"
+            output_root = root / "outputs"
+            model_path.mkdir()
+            _write_tiny_olmo2_checkpoint(model_path)
+            _write_embedding_artifact(features_root)
+            report = run_concept(LMEntRunConfig(
+                model_path=model_path,
+                model_key="tiny-olmo2",
+                features_root=features_root,
+                output_root=output_root,
+                rank=1,
+                explicit_delta=0.5,
+                device="cpu",
+                full_save=True,
+            ), concept="Arbitrary concept")
+            checkpoint = Path(report["checkpoint_path"])
+            self.assertTrue((checkpoint / "config.json").is_file())
+            self.assertEqual(report["save"]["mode"], "full_model")
 
 
 if __name__ == "__main__":

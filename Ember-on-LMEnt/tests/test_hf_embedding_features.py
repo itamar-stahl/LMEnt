@@ -111,8 +111,6 @@ class HuggingFaceEmbeddingFeatureTests(unittest.TestCase):
                     "tiny-olmo2",
                     "--model-device",
                     "cpu",
-                    "--fitting-device",
-                    "cpu",
                     "--concept-json",
                     str(concept_json),
                     "--neutral-json",
@@ -155,6 +153,9 @@ class HuggingFaceEmbeddingFeatureTests(unittest.TestCase):
             self.assertEqual(payload["embedding_dim"], 8)
             self.assertEqual(payload["vprime_token_ids"], [4, 5, 6])
             self.assertEqual(payload["token_roles"], {4: 2, 5: 1, 6: 0})
+            self.assertEqual(payload["nmf"].fitting_device, "cpu")
+            self.assertEqual(payload["nmf"].F_.device.type, "cpu")
+            self.assertEqual(payload["nmf"].G_.device.type, "cpu")
 
 
 if __name__ == "__main__":

@@ -103,6 +103,8 @@ different feature set between runs.
 
 The training has two tracks. EMBER only needs the **embedding** track; add the
 **MLP** track as well if you also want to run SNMF erasure.
+Matrix factorization runs on CPU by default, matching the original factorization
+path. The model itself may still be loaded on CUDA independently.
 
 ```bash
 # Factorize. Drop --skip-mlp to also build the MLP track (for SNMF).
@@ -129,23 +131,78 @@ files in `data/` remain the defaults.
 
 ## Standalone EMBER on LMEnt
 
-The LMEnt runner applies only the EMBER embedding edit to a local control-model
-checkpoint. Configure paths and search settings in `configs/ember_lment.yaml`,
-then run one or more concepts independently from the pristine checkpoint:
+The LMEnt runner applies only the EMBER embedding edit to one named concept in a
+local control model. The concept and neutral JSON paths are always explicit:
 
 ```bash
 python -m ember.run_lment_ember --config configs/ember_lment.yaml \
-    --concepts "Pornography"
+    --concept "Culture of Greece" \
+    --concept-json data/concept_sentences.json \
+    --neutral-json data/neutral_sentences.json \
+    --eval-json data/mc_questions.json \
+    --output-dir lment_outputs/culture-of-greece \
+    --skip-llm-judge --feature-ratio-threshold 8.0
 ```
 
-If the factorization and `potential_features.csv` already exist, they are reused.
-Creating the interpretation for a new concept requires `GEMINI_API_KEY`. When no
-multiple-choice evaluation file is available, provide a fixed edit strength with
-`--delta`; automatic delta selection never uses held-out test questions.
+`--skip-llm-judge` requires `--feature-ratio-threshold P`. It selects every
+feature where `ratio_abs = mean(|G| concept) / mean(|G| neutral)` is at least P.
+The run stops if no feature passes. Judge mode is the default and uses two
+provider-neutral Python callbacks in `ember/judge_callbacks.py`:
 
-Each output under `lment_outputs/<concept>/` contains a reloadable Hugging Face
-model plus `report.json`, including the edited token IDs, evaluation deltas, and
-save/reload integrity checks.
+1. `describe_feature(full_prompt) -> description_string`
+2. `classify_feature(full_prompt_with_description) -> JSON_string`
+
+The second JSON string must contain `{"is_member": bool, "confidence": 0..1}`.
+The default callbacks raise an informative `NotImplementedError`; implement them
+or inject callbacks through `run_lment_pipeline()`. Judge errors stop the run.
+For example:
+
+```python
+from ember.lment_pipeline import run_lment_pipeline
+
+report = run_lment_pipeline(
+    config,
+    concept="Culture of Greece",
+    describe_callback=lambda full_prompt: provider.describe(full_prompt),
+    classify_callback=lambda full_prompt: provider.classify(full_prompt),
+)
+```
+
+Automatic best-delta selection requires an evaluation JSON containing
+`QA_train`, `SimdomQA_train`, `QA_test`, and `SimdomQA_test` for the concept.
+The train splits select delta; the test splits run once afterward. For a concept
+without these questions, pass an explicit `--delta`.
+
+By default the output directory contains only `erased_embeddings.safetensors`
+and `report.json`. The source checkpoint is never written. Load it with:
+
+```python
+from ember.erased_embedding import load_lment_with_erased_embeddings
+
+model, tokenizer = load_lment_with_erased_embeddings(
+    "/path/to/base-lment",
+    "/path/to/output/erased_embeddings.safetensors",
+    device="cuda",
+)
+```
+
+Add `--full-save` to write a complete Hugging Face checkpoint under
+`OUTPUT_DIR/model` instead.
+
+Alpaca evaluation supports `--gpu-type rtx5070-laptop` (maximum batch 1) and
+`--gpu-type h100` (maximum batch 32), then lowers the batch using currently free
+VRAM. LMEnt receives each prompt as raw text, and only newly generated tokens are
+returned. These results are prompt-continuation relevance/fluency, not an
+instruction-following claim. Alpaca relevance and fluency also use the documented
+provider-neutral callbacks in `ember/judge_callbacks.py`.
+Each Alpaca callback receives the complete scoring prompt and must return text
+containing `Rating: [[0]]`, `Rating: [[1]]`, or `Rating: [[2]]`.
+
+See `example.sh` for a complete threshold-mode run.
+
+For a real-checkpoint mechanical smoke test without concept evaluation, run
+`tests/lment_erasure_smoke.py`. Its `--keep-erased-model` flag preserves the
+otherwise-temporary erased checkpoint and prints a JSON report with its path.
 
 For Llama, use rank 200 and its model name:
 

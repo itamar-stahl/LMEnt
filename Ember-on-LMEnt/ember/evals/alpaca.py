@@ -42,6 +42,7 @@ def evaluate_alpaca(
         evaluator: GeminiEvaluator,
         split: str,
         batch_size: int = 32,
+        strict: bool = False,
 ) -> Tuple[List[int], List[int], List[Dict[str, Any]]]:
     """Return ``(instruct_scores, fluency_scores, records)`` for the split.
 
@@ -79,6 +80,8 @@ def evaluate_alpaca(
                 s_flu = evaluator.score_alpaca_fluency(c + ".")
                 return idx, inst, completion, s_inst, s_flu
             except RuntimeError as e:
+                if strict or isinstance(e, NotImplementedError):
+                    raise
                 if not isinstance(e, GeminiBadFinishError) and type(e) is not RuntimeError:
                     raise
                 last_exc = e

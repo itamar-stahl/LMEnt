@@ -15,9 +15,25 @@ import torch
 import yaml
 
 from ember.erasure import embed_edit, features, io, model_loader
+from ember import judge_callbacks
+from ember.erased_embedding import (
+    load_lment_with_erased_embeddings,
+    save_erased_embedding,
+)
 from ember.evals.causal_mc import evaluate_causal_mc
 from ember.evals.harmonic import harmonic_mean
+from ember.evals.lment_alpaca import (
+    GPU_PROFILES,
+    evaluate_lment_alpaca,
+    require_gpu_profile,
+)
 from ember.evals.mc import prepare_mc_items
+from ember.lment_feature_selection import (
+    FeatureSelectionResult,
+    TextCallback,
+    select_by_threshold,
+    select_with_judge,
+)
 from ember.local_datasets import load_mc_qa_items
 from ember.utils import _safe_concept, _safe_model_name
 
@@ -45,6 +61,15 @@ class LMEntRunConfig:
     feature_max_iterations: int = 20_000
     feature_g_sparsity: float = 0.01
     feature_k_proj: int = 30
+    output_dir: Optional[Path] = None
+    full_save: bool = False
+    selection_mode: str = "judge"
+    feature_ratio_threshold: Optional[float] = None
+    judge_confidence_threshold: float = 0.85
+    judge_top_k: int = 20
+    alpaca_eval: bool = False
+    alpaca_split: str = "test"
+    gpu_type: Optional[str] = None
 
 
 def load_lment_config(path: str | Path) -> LMEntRunConfig:
@@ -58,7 +83,9 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         "rank", "seed", "ratio_thresh", "deltas", "explicit_delta",
         "eval_json", "device", "dtype", "prepare_features", "concept_json",
         "neutral_json", "feature_max_iterations", "feature_g_sparsity",
-        "feature_k_proj",
+        "feature_k_proj", "output_dir", "full_save", "selection_mode",
+        "feature_ratio_threshold", "judge_confidence_threshold", "judge_top_k",
+        "alpaca_eval", "alpaca_split", "gpu_type",
     }
     unknown = set(raw) - fields
     if unknown:
@@ -78,7 +105,7 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
     kwargs = dict(raw)
     for key in ("model_path", "features_root", "output_root"):
         kwargs[key] = resolve_path(kwargs[key])
-    for key in ("eval_json", "concept_json", "neutral_json"):
+    for key in ("eval_json", "concept_json", "neutral_json", "output_dir"):
         if kwargs.get(key) is not None:
             kwargs[key] = resolve_path(kwargs[key])
     if "deltas" in kwargs:
@@ -99,6 +126,19 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         raise ValueError("feature_k_proj must be positive")
     if config.device not in {"auto", "cpu", "cuda"}:
         raise ValueError("device must be one of: auto, cpu, cuda")
+    if config.selection_mode not in {"judge", "threshold"}:
+        raise ValueError("selection_mode must be 'judge' or 'threshold'")
+    if config.selection_mode == "threshold" and config.feature_ratio_threshold is None:
+        raise ValueError("feature_ratio_threshold is required in threshold mode")
+    if not 0.0 <= config.judge_confidence_threshold <= 1.0:
+        raise ValueError("judge_confidence_threshold must be in [0, 1]")
+    if config.judge_top_k <= 0:
+        raise ValueError("judge_top_k must be positive")
+    if config.alpaca_split not in {"train", "test"}:
+        raise ValueError("alpaca_split must be 'train' or 'test'")
+    if config.alpaca_eval and config.gpu_type not in GPU_PROFILES:
+        raise ValueError(
+            f"gpu_type is required for Alpaca evaluation: {sorted(GPU_PROFILES)}")
     model_loader.pick_dtype(config.dtype)
     return config
 
@@ -190,24 +230,30 @@ def _embedding_artifact_paths(
     return artifact_path, potential_path
 
 
-def ensure_feature_artifacts(config: LMEntRunConfig,
-                             concepts: Sequence[str]) -> None:
-    """Create missing embedding factors and interpretations with original CLIs."""
-    missing_artifacts: List[str] = []
-    missing_interpretations: List[str] = []
-    for concept in concepts:
-        artifact_path, potential_path = _embedding_artifact_paths(
-            config, concept, require=False)
-        if not artifact_path.is_file():
-            missing_artifacts.append(concept)
-        if not potential_path.is_file():
-            missing_interpretations.append(concept)
-    if not missing_artifacts and not missing_interpretations:
+def _embedding_training_paths(config: LMEntRunConfig,
+                              concept: str) -> tuple[Path, Path, Path]:
+    artifact, _ = _embedding_artifact_paths(config, concept, require=False)
+    base = Path(config.features_root) / _safe_model_name(config.model_key)
+    common = (
+        Path(f"rank{config.rank}") / f"seed{config.seed}"
+        / _safe_concept(concept) / "embedding")
+    return (
+        artifact,
+        base / "csvs" / common / "stats_embed.csv",
+        base / "csvs" / common / "token_features.csv",
+    )
+
+
+def ensure_factor_artifact(config: LMEntRunConfig, concept: str) -> None:
+    """Create the embedding factorization and statistics; never invoke a judge."""
+    artifact_path, stats_path, tokens_path = _embedding_training_paths(config, concept)
+    missing = [path for path in (artifact_path, stats_path, tokens_path) if not path.is_file()]
+    if not missing:
         return
     if not config.prepare_features:
         raise FileNotFoundError(
             "Feature artifacts are missing and prepare_features is false: "
-            f"factors={missing_artifacts}, interpretations={missing_interpretations}")
+            + ", ".join(str(path) for path in missing))
     if config.concept_json is None or config.neutral_json is None:
         raise ValueError(
             "concept_json and neutral_json are required when prepare_features is true")
@@ -220,43 +266,36 @@ def ensure_feature_artifacts(config: LMEntRunConfig,
         env.get("PYTHONPATH", ""),
     )))
 
-    if missing_artifacts:
-        subprocess.run([
-            sys.executable, "-m", "ember.train_mf_features",
-            "--concepts", *missing_artifacts,
-            "--ranks", str(config.rank),
-            "--seed", str(config.seed),
-            "--model-name", str(config.model_path),
-            "--model-key", config.model_key,
-            "--model-device", config.device,
-            "--fitting-device", "auto",
-            "--concept-json", str(config.concept_json),
-            "--neutral-json", str(config.neutral_json),
-            "--skip-mlp",
-            "--max-iterations", str(config.feature_max_iterations),
-            "--g-sparsity", str(config.feature_g_sparsity),
-            "--k-proj", str(config.feature_k_proj),
-            "--outdir", str(config.features_root),
-        ], cwd=project_root, env=env, check=True)
+    subprocess.run([
+        sys.executable, "-m", "ember.train_mf_features",
+        "--concepts", concept,
+        "--ranks", str(config.rank),
+        "--seed", str(config.seed),
+        "--model-name", str(config.model_path),
+        "--model-key", config.model_key,
+        "--model-device", config.device,
+        "--fitting-device", "cpu",
+        "--concept-json", str(config.concept_json),
+        "--neutral-json", str(config.neutral_json),
+        "--skip-mlp",
+        "--max-iterations", str(config.feature_max_iterations),
+        "--g-sparsity", str(config.feature_g_sparsity),
+        "--k-proj", str(config.feature_k_proj),
+        "--outdir", str(config.features_root),
+    ], cwd=project_root, env=env, check=True)
+    missing_after = [
+        path for path in (artifact_path, stats_path, tokens_path) if not path.is_file()]
+    if missing_after:
+        raise RuntimeError(
+            "Feature extraction completed without expected files: "
+            + ", ".join(str(path) for path in missing_after))
 
-    missing_interpretations = [
-        concept for concept in concepts
-        if not _embedding_artifact_paths(config, concept, require=False)[1].is_file()
-    ]
-    if missing_interpretations:
-        subprocess.run([
-            sys.executable, "-m", "ember.interpret_features",
-            "--concepts", *missing_interpretations,
-            "--tracks", "embedding",
-            "--rank", str(config.rank),
-            "--seed", str(config.seed),
-            "--model-name", str(config.model_path),
-            "--model-key", config.model_key,
-            "--outdir", str(config.features_root),
-            "--ratio-thresh", str(config.ratio_thresh),
-        ], cwd=project_root, env=env, check=True)
 
+def ensure_feature_artifacts(config: LMEntRunConfig,
+                             concepts: Sequence[str]) -> None:
+    """Compatibility wrapper: require factors and an existing selection CSV."""
     for concept in concepts:
+        ensure_factor_artifact(config, concept)
         _embedding_artifact_paths(config, concept, require=True)
 
 
@@ -440,19 +479,45 @@ def _paired_margin_report(
     return report
 
 
-def run_concept(config: LMEntRunConfig, *, concept: str) -> Dict[str, Any]:
+def run_concept(config: LMEntRunConfig, *, concept: str,
+                selection: Optional[Mapping[str, Any]] = None) -> Dict[str, Any]:
     """Erase one concept from a pristine local checkpoint and export it."""
     if not concept.strip():
         raise ValueError("Concept must be non-empty")
     if config.explicit_delta is None and config.eval_json is None:
         raise ValueError("An explicit delta is required when no evaluation JSON is supplied")
 
+    output_dir = (
+        Path(config.output_dir) if config.output_dir is not None
+        else Path(config.output_root) / _safe_concept(concept)
+    ).resolve()
+    checkpoint_dir = output_dir / "model"
+    source_dir = Path(config.model_path).resolve()
+    if (output_dir == source_dir
+            or source_dir in output_dir.parents
+            or output_dir in source_dir.parents):
+        raise ValueError(
+            "The erased output must not overlap the source model directory: "
+            f"source={source_dir}, output={output_dir}")
+    if output_dir.exists():
+        raise FileExistsError(f"Erased output directory already exists: {output_dir}")
+
     artifact_path, potential_path = _embedding_artifact_paths(config, concept)
     artifact = features.load_embedding_artifact(artifact_path)
     feature_ids = features.select_embed_feature_ids(
-        pd.read_csv(potential_path), ratio_thresh=config.ratio_thresh)
+        pd.read_csv(potential_path), ratio_thresh=None)
     if not feature_ids:
         raise ValueError(f"No embedding features selected for concept {concept!r}")
+
+    train_items = _load_eval_pair(config, concept, "train")
+    test_items = _load_eval_pair(config, concept, "test")
+    if config.explicit_delta is None:
+        if train_items is None:
+            raise ValueError(
+                f"No train evaluation data found for {concept!r}; provide an explicit delta")
+        if test_items is None:
+            raise ValueError(
+                f"Automatic delta selection for {concept!r} requires held-out test data")
 
     model, tokenizer = model_loader.load_local_causal_lm(
         config.model_path,
@@ -464,16 +529,6 @@ def run_concept(config: LMEntRunConfig, *, concept: str) -> Dict[str, Any]:
     pristine_hashes = _state_hashes(model)
     model_signature = _model_signature(model)
     tokenizer_signature = _tokenizer_signature(tokenizer)
-
-    train_items = _load_eval_pair(config, concept, "train")
-    test_items = _load_eval_pair(config, concept, "test")
-    if config.explicit_delta is None:
-        if train_items is None:
-            raise ValueError(
-                f"No train evaluation data found for {concept!r}; provide an explicit delta")
-        if test_items is None:
-            raise ValueError(
-                f"Automatic delta selection for {concept!r} requires held-out test data")
 
     baseline_train = (
         _evaluate_pair(model, tokenizer, train_items, include_records=False)
@@ -535,23 +590,43 @@ def run_concept(config: LMEntRunConfig, *, concept: str) -> Dict[str, Any]:
         and set(changed_rows).issubset(set(edit_info["edited_token_ids"]))
     )
 
-    output_dir = Path(config.output_root) / _safe_concept(concept)
-    checkpoint_dir = output_dir / "model"
-    checkpoint_dir.mkdir(parents=True, exist_ok=True)
     final_logits = _probe_logits(model, tokenizer, edit_info["edited_token_ids"])
     final_hashes = edited_hashes
-    model.save_pretrained(checkpoint_dir, safe_serialization=True)
-    tokenizer.save_pretrained(checkpoint_dir)
+    checkpoint_path: Optional[Path] = None
+    embedding_artifact_path: Optional[Path] = None
+    if config.full_save:
+        checkpoint_dir.mkdir(parents=True, exist_ok=False)
+        model.save_pretrained(checkpoint_dir, safe_serialization=True)
+        tokenizer.save_pretrained(checkpoint_dir)
+        checkpoint_path = checkpoint_dir
+    else:
+        embedding_artifact_path = save_erased_embedding(
+            model=model,
+            output_dir=output_dir,
+            base_model_path=source_dir,
+            model_key=config.model_key,
+            tensor_name=embedding_name,
+            base_embedding_sha256=pristine_hashes[embedding_name],
+            edited_token_ids=edit_info["edited_token_ids"],
+        )
 
     del pristine_embedding
     del model
     _collect_model_memory()
 
-    reloaded, reloaded_tokenizer = model_loader.load_local_causal_lm(
-        checkpoint_dir,
-        dtype=model_loader.pick_dtype(config.dtype),
-        device=config.device,
-    )
+    if config.full_save:
+        reloaded, reloaded_tokenizer = model_loader.load_local_causal_lm(
+            checkpoint_dir,
+            dtype=model_loader.pick_dtype(config.dtype),
+            device=config.device,
+        )
+    else:
+        reloaded, reloaded_tokenizer = load_lment_with_erased_embeddings(
+            source_dir,
+            embedding_artifact_path,
+            dtype=model_loader.pick_dtype(config.dtype),
+            device=config.device,
+        )
     reloaded_hashes = _state_hashes(reloaded)
     reload_state_match = reloaded_hashes == final_hashes
     reload_logits = _probe_logits(
@@ -580,6 +655,7 @@ def run_concept(config: LMEntRunConfig, *, concept: str) -> Dict[str, Any]:
             "version": artifact.version,
             "selected_feature_ids": feature_ids,
         },
+        "feature_selection": dict(selection) if selection is not None else None,
         "chosen_delta": chosen_delta,
         "delta_search": (None if delta_search is None else {
             "chosen_delta": delta_search.chosen_delta,
@@ -599,7 +675,20 @@ def run_concept(config: LMEntRunConfig, *, concept: str) -> Dict[str, Any]:
                 "paired_margins": _paired_margin_report(baseline_test, edited_test),
             } if baseline_test is not None and edited_test is not None else None,
         } if baseline_train is not None or baseline_test is not None else None),
-        "checkpoint_path": str(checkpoint_dir),
+        "save": {
+            "mode": "full_model" if config.full_save else "embedding_only",
+            "output_dir": str(output_dir),
+            "checkpoint_path": (
+                str(checkpoint_path) if checkpoint_path is not None else None),
+            "erased_embeddings_path": (
+                str(embedding_artifact_path)
+                if embedding_artifact_path is not None else None),
+        },
+        "checkpoint_path": (
+            str(checkpoint_path) if checkpoint_path is not None else None),
+        "erased_embeddings_path": (
+            str(embedding_artifact_path)
+            if embedding_artifact_path is not None else None),
         "integrity": {
             "passed": integrity_passed,
             "input_embedding_name": embedding_name,
@@ -622,7 +711,84 @@ def run_concept(config: LMEntRunConfig, *, concept: str) -> Dict[str, Any]:
     return report
 
 
+def run_lment_pipeline(
+        config: LMEntRunConfig,
+        *,
+        concept: str,
+        describe_callback: Optional[TextCallback] = None,
+        classify_callback: Optional[TextCallback] = None,
+        alpaca_relevance_callback: Optional[TextCallback] = None,
+        alpaca_fluency_callback: Optional[TextCallback] = None,
+) -> Dict[str, Any]:
+    """Prepare/select features, erase one concept, export, and optionally evaluate."""
+    alpaca_profile = (
+        require_gpu_profile(str(config.gpu_type)) if config.alpaca_eval else None)
+    ensure_factor_artifact(config, concept)
+    selection: FeatureSelectionResult
+    if config.selection_mode == "threshold":
+        if config.feature_ratio_threshold is None:
+            raise ValueError("feature_ratio_threshold is required in threshold mode")
+        selection = select_by_threshold(
+            features_root=config.features_root,
+            model_key=config.model_key,
+            concept=concept,
+            rank=config.rank,
+            seed=config.seed,
+            threshold=config.feature_ratio_threshold,
+        )
+    else:
+        selection = select_with_judge(
+            features_root=config.features_root,
+            model_key=config.model_key,
+            concept=concept,
+            rank=config.rank,
+            seed=config.seed,
+            prefilter_threshold=config.ratio_thresh,
+            confidence_threshold=config.judge_confidence_threshold,
+            top_k=config.judge_top_k,
+            describe_callback=describe_callback or judge_callbacks.describe_feature,
+            classify_callback=classify_callback or judge_callbacks.classify_feature,
+        )
+
+    report = run_concept(
+        config, concept=concept, selection=selection.to_dict())
+    if not config.alpaca_eval:
+        return report
+
+    assert alpaca_profile is not None
+    evaluation_dtype = model_loader.pick_dtype(alpaca_profile.dtype)
+    if config.full_save:
+        evaluation_model, evaluation_tokenizer = model_loader.load_local_causal_lm(
+            report["checkpoint_path"], dtype=evaluation_dtype, device="cuda")
+    else:
+        evaluation_model, evaluation_tokenizer = load_lment_with_erased_embeddings(
+            config.model_path,
+            report["erased_embeddings_path"],
+            dtype=evaluation_dtype,
+            device="cuda",
+        )
+    try:
+        alpaca_report = evaluate_lment_alpaca(
+            model=evaluation_model,
+            tokenizer=evaluation_tokenizer,
+            split=config.alpaca_split,
+            gpu_type=str(config.gpu_type),
+            relevance_callback=(
+                alpaca_relevance_callback or judge_callbacks.score_alpaca_relevance),
+            fluency_callback=(
+                alpaca_fluency_callback or judge_callbacks.score_alpaca_fluency),
+        )
+    finally:
+        del evaluation_model
+        del evaluation_tokenizer
+        _collect_model_memory()
+    report["alpaca"] = alpaca_report
+    io.save_json_atomic(Path(report["save"]["output_dir"]) / "report.json", report)
+    return report
+
+
 __all__ = [
     "DEFAULT_DELTAS", "LMEntRunConfig", "DeltaSearchResult",
-    "load_lment_config", "ensure_feature_artifacts", "search_deltas", "run_concept",
+    "load_lment_config", "ensure_factor_artifact", "ensure_feature_artifacts",
+    "search_deltas", "run_concept", "run_lment_pipeline",
 ]

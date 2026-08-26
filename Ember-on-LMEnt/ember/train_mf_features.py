@@ -50,7 +50,13 @@ def parse_args():
                     help="Stable artifact directory name; defaults to --model-name.")
     ap.add_argument("--model-device", type=str, default="auto")
     ap.add_argument("--data-device", type=str, default="cpu")
-    ap.add_argument("--fitting-device", type=str, default="auto")
+    ap.add_argument(
+        "--fitting-device",
+        type=str,
+        default="cpu",
+        choices=("cpu", "cuda", "mps"),
+        help="Device used only for matrix factorization. Defaults to the original CPU path.",
+    )
     ap.add_argument("--cache-dir", type=str, default=None,
                     help="HuggingFace model cache directory. Defaults to HF_HOME if unset.")
     ap.add_argument("--hf-token", type=str, default=None)
@@ -107,7 +113,7 @@ def main():
 
     model_device = resolve_device(args.model_device)
     data_device = args.data_device
-    fit_device = resolve_device(args.fitting_device)
+    fit_device = args.fitting_device
     model_key = args.model_key or args.model_name
     safe_model = _safe_model_name(model_key)
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Erase one or more concepts from a local LMEnt checkpoint with EMBER alone."""
+"""Erase one named concept from a local LMEnt checkpoint with EMBER alone."""
 from __future__ import annotations
 
 import argparse
@@ -7,7 +7,8 @@ from dataclasses import replace
 from pathlib import Path
 from typing import List, Optional
 
-from ember.lment_pipeline import ensure_feature_artifacts, load_lment_config, run_concept
+from ember.evals.lment_alpaca import GPU_PROFILES
+from ember.lment_pipeline import load_lment_config, run_lment_pipeline
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -16,32 +17,86 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--config", type=Path, required=True)
-    parser.add_argument("--concepts", nargs="+", required=True)
+    parser.add_argument("--concept", required=True)
+    parser.add_argument("--concept-json", type=Path, required=True)
+    parser.add_argument("--neutral-json", type=Path, required=True)
+    parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument(
         "--delta",
         type=float,
         default=None,
         help="Override grid selection with an explicit embedding-edit delta.",
     )
+    parser.add_argument(
+        "--eval-json",
+        type=Path,
+        default=None,
+        help="Concept QA/Simdom train+test JSON for automatic best-delta selection.",
+    )
+    parser.add_argument(
+        "--skip-llm-judge",
+        action="store_true",
+        help="Select features only by ratio_abs instead of callback judging.",
+    )
+    parser.add_argument(
+        "--feature-ratio-threshold",
+        type=float,
+        default=None,
+        metavar="P",
+        help="Required with --skip-llm-judge; keep features with ratio_abs >= P.",
+    )
+    parser.add_argument(
+        "--full-save",
+        action="store_true",
+        help="Save a full Hugging Face checkpoint instead of only the erased embedding.",
+    )
+    parser.add_argument("--alpaca-eval", action="store_true")
+    parser.add_argument("--alpaca-split", choices=("train", "test"), default="test")
+    parser.add_argument("--gpu-type", choices=tuple(GPU_PROFILES), default=None)
     return parser
 
 
 def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
-    return build_parser().parse_args(argv)
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    if args.skip_llm_judge and args.feature_ratio_threshold is None:
+        parser.error("--feature-ratio-threshold P is required with --skip-llm-judge")
+    if not args.skip_llm_judge and args.feature_ratio_threshold is not None:
+        parser.error("--feature-ratio-threshold is only valid with --skip-llm-judge")
+    if args.alpaca_eval and args.gpu_type is None:
+        parser.error("--gpu-type is required with --alpaca-eval")
+    return args
 
 
 def main(argv: Optional[List[str]] = None) -> None:
     args = parse_args(argv)
     config = load_lment_config(args.config)
-    if args.delta is not None:
-        config = replace(config, explicit_delta=float(args.delta))
+    config = replace(
+        config,
+        concept_json=args.concept_json.resolve(),
+        neutral_json=args.neutral_json.resolve(),
+        output_dir=args.output_dir.resolve(),
+        prepare_features=True,
+        explicit_delta=(
+            float(args.delta) if args.delta is not None else config.explicit_delta),
+        eval_json=(args.eval_json.resolve() if args.eval_json is not None else config.eval_json),
+        selection_mode=("threshold" if args.skip_llm_judge else "judge"),
+        feature_ratio_threshold=args.feature_ratio_threshold,
+        full_save=bool(args.full_save),
+        alpaca_eval=bool(args.alpaca_eval),
+        alpaca_split=args.alpaca_split,
+        gpu_type=args.gpu_type,
+    )
+    if config.explicit_delta is None and config.eval_json is None:
+        raise ValueError("Provide --eval-json for automatic delta selection or --delta")
 
-    ensure_feature_artifacts(config, args.concepts)
-    for concept in args.concepts:
-        report = run_concept(config, concept=concept)
-        print(
-            f"[done] {concept}: delta={report['chosen_delta']} -> "
-            f"{report['checkpoint_path']}")
+    report = run_lment_pipeline(config, concept=args.concept)
+    saved_path = (
+        report["checkpoint_path"]
+        if report["save"]["mode"] == "full_model"
+        else report["erased_embeddings_path"]
+    )
+    print(f"[done] {args.concept}: delta={report['chosen_delta']} -> {saved_path}")
 
 
 if __name__ == "__main__":

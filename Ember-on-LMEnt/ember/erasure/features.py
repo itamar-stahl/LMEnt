@@ -516,7 +516,7 @@ def select_embed_feature_ids(df: pd.DataFrame,
                              ratio_thresh: Optional[float] = None) -> List[int]:
     """Return concept-relevant feature column indices from the embedding potential CSV.
 
-    Falls back to all features if ratio_thresh would leave zero.
+    Returns an empty list if the threshold leaves no features.
     """
     if "feature" not in df.columns:
         raise ValueError("embedding potential features CSV missing 'feature'")
@@ -532,11 +532,7 @@ def select_embed_feature_ids(df: pd.DataFrame,
     filtered_ids = sorted(set(
         pd.to_numeric(df[mask]["feature"], errors="coerce").dropna().astype(int).tolist()
     ))
-    if filtered_ids:
-        return filtered_ids
-    log.warning("embed ratio_thresh=%.2f left 0 features; falling back to all %d",
-                ratio_thresh, len(all_ids))
-    return all_ids
+    return filtered_ids
 
 
 def load_token_label_map(model_name: str, concept_name: str,

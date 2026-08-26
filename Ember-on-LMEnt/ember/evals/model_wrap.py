@@ -7,12 +7,16 @@ import torch
 
 
 class WrappedHFModel:
-    """Unified HF generation wrapper for Gemma-2 and Llama-3-Instruct."""
+    """Unified HF generation wrapper, including raw LMEnt continuations."""
 
-    def __init__(self, model: Any, tokenizer: Any, it: bool = True) -> None:
+    def __init__(self, model: Any, tokenizer: Any, it: bool = True,
+                 model_format: str | None = None) -> None:
         self.model = model
         self.tokenizer = tokenizer
-        self.it = it
+        if model_format not in {None, "instruction", "lment"}:
+            raise ValueError("model_format must be 'instruction' or 'lment'")
+        self.model_format = model_format or ("instruction" if it else "lment")
+        self.it = self.model_format == "instruction"
         # Decoder-only models must pad on the left for batched generation.
         self.tokenizer.padding_side = "left"
 
@@ -76,7 +80,7 @@ class WrappedHFModel:
             prompts,
             return_tensors="pt",
             padding=True,
-            add_special_tokens=self._is_gemma(),
+            add_special_tokens=(True if self.model_format == "lment" else self._is_gemma()),
         )
 
     # ------------------------------------------------------------------ #
@@ -123,6 +127,11 @@ class WrappedHFModel:
 
         inputs = {k: v.to(self._device()) for k, v in self._tokenize([prompt]).items()}
         output_ids = self.model.generate(**inputs, **gen_kwargs)
+        if self.model_format == "lment":
+            return self.tokenizer.decode(
+                output_ids[0, inputs["input_ids"].shape[1]:],
+                skip_special_tokens=True,
+            ).strip()
         decoded = self.tokenizer.decode(output_ids[0], skip_special_tokens=True)
         return self._extract_response(decoded)
 
@@ -157,9 +166,14 @@ class WrappedHFModel:
             inputs = {k: v.to(self._device())
                       for k, v in self._tokenize(batch).items()}
             gen_ids = self.model.generate(**inputs, **gen_kwargs)
+            prompt_width = inputs["input_ids"].shape[1]
             for seq_ids in gen_ids:
-                decoded = self.tokenizer.decode(seq_ids, skip_special_tokens=True)
-                outputs.append(self._extract_response(decoded))
+                if self.model_format == "lment":
+                    outputs.append(self.tokenizer.decode(
+                        seq_ids[prompt_width:], skip_special_tokens=True).strip())
+                else:
+                    decoded = self.tokenizer.decode(seq_ids, skip_special_tokens=True)
+                    outputs.append(self._extract_response(decoded))
 
         return outputs
 
