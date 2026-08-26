@@ -3,11 +3,12 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shlex
 import stat
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, Sequence
+from typing import Dict, Mapping, Optional, Sequence
 
 
 @dataclass(frozen=True)
@@ -34,6 +35,7 @@ def materialize_h100_run(
     project_root: str | Path,
     runner_args: Sequence[str],
     resources: SlurmResources = SlurmResources(),
+    environment: Optional[Mapping[str, str]] = None,
 ) -> Dict[str, Path]:
     """Write a literal job, wrapper, and manifest into one new run folder."""
     resources.validate()
@@ -49,6 +51,14 @@ def materialize_h100_run(
     slurm_path = run_dir / "job.slurm"
     manifest_path = run_dir / "manifest.json"
     command = ["python", "-m", "ember.run_lment_ember", *map(str, runner_args)]
+    environment = dict(environment or {})
+    for key in environment:
+        if not re.fullmatch(r"[A-Z_][A-Z0-9_]*", key):
+            raise ValueError(f"Invalid environment variable name: {key!r}")
+    environment_lines = "".join(
+        f"export {key}={shlex.quote(str(value))}\n"
+        for key, value in sorted(environment.items())
+    )
     wrapper = f"""#!/bin/sh
 # Generated for one LMEnt EMBER H100 run. All paths and arguments are literal.
 set -eu
@@ -57,7 +67,7 @@ echo "[ember] node=$(hostname) started=$(date)"
 . {shlex.quote(str(project_root / 'activate_env.sh'))}
 export TRANSFORMERS_OFFLINE=1
 export HF_HUB_OFFLINE=1
-nvidia-smi
+{environment_lines}nvidia-smi
 python -m ember.slurm_gpu_preflight --gpu-type h100
 {shlex.join(command)}
 echo "[ember] finished=$(date)"
@@ -93,6 +103,7 @@ echo "[ember] finished=$(date)"
         "resources": asdict(resources),
         "runner_args": list(map(str, runner_args)),
         "command": command,
+        "environment": environment,
     }
     manifest_path.write_text(
         json.dumps(manifest, indent=2, ensure_ascii=False) + "\n",

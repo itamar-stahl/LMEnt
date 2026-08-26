@@ -4,10 +4,41 @@ from unittest.mock import patch
 import torch
 
 from ember.evals.callback_judge import CallbackAlpacaEvaluator
+from ember.evals.alpaca import evaluate_alpaca
 from ember.evals.lment_alpaca import require_gpu_profile
 
 
 class LMEntAlpacaTests(unittest.TestCase):
+    def test_alpaca_smoke_limit_bounds_generation_and_judging(self) -> None:
+        class Model:
+            def generate_multiple(self, prompts, **_kwargs):
+                self.prompts = prompts
+                return ["completion"] * len(prompts)
+
+        class Evaluator:
+            def score_alpaca_instruct(self, _instruction, _completion):
+                return 2
+
+            def score_alpaca_fluency(self, _completion):
+                return 1
+
+        model = Model()
+        with (
+            patch("ember.evals.alpaca.load_alpaca_indices", return_value=[0, 1, 2]),
+            patch("ember.evals.alpaca.load_alpaca_eval_local", return_value=[
+                {"instruction": "first"},
+                {"instruction": "second"},
+                {"instruction": "third"},
+            ]),
+        ):
+            relevance, fluency, records = evaluate_alpaca(
+                model, Evaluator(), "test", strict=True, max_items=1)
+
+        self.assertEqual(model.prompts, ["first"])
+        self.assertEqual(relevance, [2])
+        self.assertEqual(fluency, [1])
+        self.assertEqual(len(records), 1)
+
     def test_callbacks_receive_complete_prompts_and_return_valid_scores(self) -> None:
         prompts = []
 

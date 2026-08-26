@@ -17,7 +17,7 @@ import concurrent.futures
 import json
 import threading
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from huggingface_hub import hf_hub_download
 
@@ -43,12 +43,17 @@ def evaluate_alpaca(
         split: str,
         batch_size: int = 32,
         strict: bool = False,
+        max_items: Optional[int] = None,
 ) -> Tuple[List[int], List[int], List[Dict[str, Any]]]:
     """Return ``(instruct_scores, fluency_scores, records)`` for the split.
 
     Scores are integers in ``{0, 1, 2}``; one per item per axis.
     """
     indices = load_alpaca_indices(split)
+    if max_items is not None:
+        if max_items <= 0:
+            raise ValueError("max_items must be positive")
+        indices = indices[:int(max_items)]
 
     items = load_alpaca_eval_local()
     instructions_full = [ex["instruction"] for ex in items if "instruction" in ex]

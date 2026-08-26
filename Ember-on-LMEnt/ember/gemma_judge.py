@@ -4,6 +4,7 @@ from __future__ import annotations
 import gc
 import json
 import re
+import threading
 from pathlib import Path
 from typing import Any, Optional
 
@@ -25,6 +26,7 @@ class GemmaJudge:
         self.tokenizer = tokenizer
         self.device = torch.device(device)
         self.max_new_tokens = int(max_new_tokens)
+        self._generation_lock = threading.Lock()
 
     @classmethod
     def from_pretrained(
@@ -65,22 +67,26 @@ class GemmaJudge:
     def generate(self, prompt: str) -> str:
         if not isinstance(prompt, str) or not prompt.strip():
             raise ValueError("Gemma judge prompt must be a non-empty string")
-        inputs = self.tokenizer.apply_chat_template(
-            [{"role": "user", "content": prompt}],
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-        ).to(self.device)
-        input_length = int(inputs["input_ids"].shape[-1])
-        generated = self.model.generate(
-            **inputs,
-            max_new_tokens=self.max_new_tokens,
-            do_sample=False,
-            pad_token_id=getattr(self.tokenizer, "eos_token_id", None),
-        )
-        response = self.tokenizer.decode(
-            generated[0, input_length:], skip_special_tokens=True)
+        # Alpaca's evaluator uses a thread pool. A single local Transformers
+        # model must generate serially; concurrent generate() calls can corrupt
+        # caches or exhaust VRAM.
+        with self._generation_lock:
+            inputs = self.tokenizer.apply_chat_template(
+                [{"role": "user", "content": prompt}],
+                add_generation_prompt=True,
+                tokenize=True,
+                return_dict=True,
+                return_tensors="pt",
+            ).to(self.device)
+            input_length = int(inputs["input_ids"].shape[-1])
+            generated = self.model.generate(
+                **inputs,
+                max_new_tokens=self.max_new_tokens,
+                do_sample=False,
+                pad_token_id=getattr(self.tokenizer, "eos_token_id", None),
+            )
+            response = self.tokenizer.decode(
+                generated[0, input_length:], skip_special_tokens=True)
         if not response.strip():
             raise ValueError("Gemma judge returned an empty response")
         return response.strip()

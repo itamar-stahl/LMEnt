@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict, dataclass
-from typing import Any, Dict, List, Sequence
+from typing import Any, Dict, List, Optional, Sequence
 
 import torch
 
@@ -112,7 +112,8 @@ def evaluate_lment_prompts(*, model: Any, tokenizer: Any,
 
 def evaluate_lment_alpaca(*, model: Any, tokenizer: Any, split: str,
                           gpu_type: str, relevance_callback: TextCallback,
-                          fluency_callback: TextCallback) -> Dict[str, Any]:
+                          fluency_callback: TextCallback,
+                          max_items: Optional[int] = None) -> Dict[str, Any]:
     """Run the repository Alpaca split as raw LMEnt prompt continuations."""
     profile = require_gpu_profile(gpu_type)
     actual_dtype = model.get_input_embeddings().weight.dtype
@@ -124,7 +125,8 @@ def evaluate_lment_alpaca(*, model: Any, tokenizer: Any, split: str,
     wrapper = WrappedHFModel(model, tokenizer, model_format="lment")
     evaluator = CallbackAlpacaEvaluator(relevance_callback, fluency_callback)
     relevance, fluency, records = evaluate_alpaca(
-        wrapper, evaluator, split, batch_size=batch_size, strict=True)
+        wrapper, evaluator, split, batch_size=batch_size, strict=True,
+        max_items=max_items)
     n = len(records)
     return {
         "kind": "lment_alpaca_raw_prompt_continuation",
@@ -132,6 +134,7 @@ def evaluate_lment_alpaca(*, model: Any, tokenizer: Any, split: str,
             "LMEnt is a base language model. These are raw prompt continuations, "
             "not instruction-following outputs."),
         "split": split,
+        "max_items": max_items,
         "gpu_profile": asdict(profile),
         "resolved_batch_size": batch_size,
         "free_vram_gib_at_start": free_vram_gib,

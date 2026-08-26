@@ -22,6 +22,7 @@ class SlurmSubmitTests(unittest.TestCase):
             for path in (concept_json, neutral_json, config_path):
                 path.write_text("{}", encoding="utf-8")
             judge_path.mkdir()
+            hf_home = root / "hf-home"
             config = LMEntRunConfig(
                 model_path=root / "lment-model",
                 model_key="lment",
@@ -37,6 +38,9 @@ class SlurmSubmitTests(unittest.TestCase):
                 "--output-dir", str(output_dir),
                 "--delta", "0.5",
                 "--judge-model", "google/gemma-3-12b-it",
+                "--alpaca-eval",
+                "--alpaca-max-items", "1",
+                "--hf-home", str(hf_home),
                 "--run-root", str(root / "runs"),
                 "--dry-run",
             ])
@@ -45,6 +49,7 @@ class SlurmSubmitTests(unittest.TestCase):
                 patch("ember.slurm_submit.ensure_factor_artifact") as prepare,
                 patch("ember.slurm_submit.resolve_judge_model",
                       return_value=judge_path.resolve()) as resolve,
+                patch("ember.slurm_submit.hf_hub_download") as stage_alpaca,
             ):
                 written = prepare_submission(args, project_root=project)
 
@@ -63,6 +68,10 @@ class SlurmSubmitTests(unittest.TestCase):
         self.assertEqual(
             runner_args[runner_args.index("--judge-model") + 1], str(judge_path.resolve()))
         self.assertIn("--judge-local-files-only", runner_args)
+        self.assertEqual(
+            runner_args[runner_args.index("--alpaca-max-items") + 1], "1")
+        self.assertEqual(manifest["environment"]["HF_HOME"], str(hf_home.resolve()))
+        stage_alpaca.assert_called_once()
         self.assertFalse(output_dir.exists())
 
     def test_local_judge_directory_never_contacts_hub(self) -> None:

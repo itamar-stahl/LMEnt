@@ -11,7 +11,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
-from huggingface_hub import snapshot_download
+from huggingface_hub import hf_hub_download, snapshot_download
 
 from ember.lment_pipeline import ensure_factor_artifact, load_lment_config
 from ember.slurm import SlurmResources, materialize_h100_run
@@ -34,10 +34,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--full-save", action="store_true")
     parser.add_argument("--alpaca-eval", action="store_true")
     parser.add_argument("--alpaca-split", choices=("train", "test"), default="test")
+    parser.add_argument("--alpaca-max-items", type=int, default=None)
     parser.add_argument("--judge-model", default=DEFAULT_JUDGE_MODEL)
     parser.add_argument("--judge-revision", default=None)
     parser.add_argument("--judge-max-new-tokens", type=int, default=256)
-    parser.add_argument("--hf-cache-dir", type=Path, default=None)
+    parser.add_argument("--hf-home", type=Path, default=None)
     parser.add_argument("--hub-local-files-only", action="store_true")
     parser.add_argument("--run-root", type=Path, default=Path("slurm_runs"))
     parser.add_argument("--job-name", default="ember-lment")
@@ -64,6 +65,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         parser.error("--feature-ratio-threshold requires --skip-llm-judge")
     if args.judge_max_new_tokens <= 0:
         parser.error("--judge-max-new-tokens must be positive")
+    if args.alpaca_max_items is not None and not args.alpaca_eval:
+        parser.error("--alpaca-max-items requires --alpaca-eval")
+    if args.alpaca_max_items is not None and args.alpaca_max_items <= 0:
+        parser.error("--alpaca-max-items must be positive")
     return args
 
 
@@ -120,6 +125,8 @@ def _runner_args(args: argparse.Namespace, judge_path: Optional[Path]) -> List[s
             "--alpaca-eval", "--alpaca-split", args.alpaca_split,
             "--gpu-type", "h100",
         ))
+        if args.alpaca_max_items is not None:
+            runner.extend(("--alpaca-max-items", str(args.alpaca_max_items)))
     if judge_path is not None:
         runner.extend((
             "--judge-model", str(judge_path),
@@ -158,13 +165,23 @@ def prepare_submission(
     ensure_factor_artifact(client_config, args.concept)
 
     needs_judge = (not args.skip_llm_judge) or args.alpaca_eval
+    hf_home = args.hf_home.resolve() if args.hf_home is not None else None
+    hub_cache = hf_home / "hub" if hf_home is not None else None
     judge_path = None
     if needs_judge:
         judge_path = resolve_judge_model(
             args.judge_model,
             revision=args.judge_revision,
-            cache_dir=args.hf_cache_dir,
+            cache_dir=hub_cache,
             local_files_only=args.hub_local_files_only,
+        )
+    if args.alpaca_eval:
+        hf_hub_download(
+            repo_id="tatsu-lab/alpaca_eval",
+            repo_type="dataset",
+            filename="alpaca_eval.json",
+            cache_dir=(str(hub_cache) if hub_cache is not None else None),
+            local_files_only=bool(args.hub_local_files_only),
         )
 
     stamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
@@ -182,6 +199,7 @@ def prepare_submission(
         project_root=project,
         runner_args=_runner_args(args, judge_path),
         resources=resources,
+        environment=({"HF_HOME": str(hf_home)} if hf_home is not None else None),
     )
 
 

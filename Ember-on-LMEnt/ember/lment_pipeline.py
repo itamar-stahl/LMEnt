@@ -69,6 +69,7 @@ class LMEntRunConfig:
     judge_top_k: int = 20
     alpaca_eval: bool = False
     alpaca_split: str = "test"
+    alpaca_max_items: Optional[int] = None
     gpu_type: Optional[str] = None
 
 
@@ -85,7 +86,7 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         "neutral_json", "feature_max_iterations", "feature_g_sparsity",
         "feature_k_proj", "output_dir", "full_save", "selection_mode",
         "feature_ratio_threshold", "judge_confidence_threshold", "judge_top_k",
-        "alpaca_eval", "alpaca_split", "gpu_type",
+        "alpaca_eval", "alpaca_split", "alpaca_max_items", "gpu_type",
     }
     unknown = set(raw) - fields
     if unknown:
@@ -136,6 +137,8 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         raise ValueError("judge_top_k must be positive")
     if config.alpaca_split not in {"train", "test"}:
         raise ValueError("alpaca_split must be 'train' or 'test'")
+    if config.alpaca_max_items is not None and config.alpaca_max_items <= 0:
+        raise ValueError("alpaca_max_items must be positive")
     if config.alpaca_eval and config.gpu_type not in GPU_PROFILES:
         raise ValueError(
             f"gpu_type is required for Alpaca evaluation: {sorted(GPU_PROFILES)}")
@@ -777,6 +780,7 @@ def run_lment_pipeline(
                 alpaca_relevance_callback or judge_callbacks.score_alpaca_relevance),
             fluency_callback=(
                 alpaca_fluency_callback or judge_callbacks.score_alpaca_fluency),
+            max_items=config.alpaca_max_items,
         )
     finally:
         del evaluation_model

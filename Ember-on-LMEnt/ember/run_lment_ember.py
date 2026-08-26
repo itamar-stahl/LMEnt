@@ -62,6 +62,10 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--alpaca-eval", action="store_true")
     parser.add_argument("--alpaca-split", choices=("train", "test"), default="test")
+    parser.add_argument(
+        "--alpaca-max-items", type=int, default=None,
+        help="Limit Alpaca items for a bounded smoke test.",
+    )
     parser.add_argument("--gpu-type", choices=tuple(GPU_PROFILES), default=None)
     parser.add_argument(
         "--judge-model",
@@ -89,6 +93,10 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         parser.error("--feature-ratio-threshold is only valid with --skip-llm-judge")
     if args.alpaca_eval and args.gpu_type is None:
         parser.error("--gpu-type is required with --alpaca-eval")
+    if args.alpaca_max_items is not None and not args.alpaca_eval:
+        parser.error("--alpaca-max-items requires --alpaca-eval")
+    if args.alpaca_max_items is not None and args.alpaca_max_items <= 0:
+        parser.error("--alpaca-max-items must be positive")
     if args.judge_max_new_tokens <= 0:
         parser.error("--judge-max-new-tokens must be positive")
     return args
@@ -111,6 +119,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         full_save=bool(args.full_save),
         alpaca_eval=bool(args.alpaca_eval),
         alpaca_split=args.alpaca_split,
+        alpaca_max_items=args.alpaca_max_items,
         gpu_type=args.gpu_type,
         device=(args.model_device if args.model_device is not None else config.device),
     )
