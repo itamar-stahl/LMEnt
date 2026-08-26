@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from ember.evals.lment_alpaca import GPU_PROFILES
+from ember.gemma_judge import GemmaJudge
 from ember.lment_pipeline import load_lment_config, run_lment_pipeline
 
 
@@ -53,6 +54,20 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--alpaca-eval", action="store_true")
     parser.add_argument("--alpaca-split", choices=("train", "test"), default="test")
     parser.add_argument("--gpu-type", choices=tuple(GPU_PROFILES), default=None)
+    parser.add_argument(
+        "--judge-model",
+        default=None,
+        help="Gemma instruction-model path or Hub ID used for all judge callbacks.",
+    )
+    parser.add_argument(
+        "--judge-device", choices=("cuda", "cpu"), default="cuda")
+    parser.add_argument(
+        "--judge-max-new-tokens", type=int, default=256)
+    parser.add_argument(
+        "--judge-local-files-only", action="store_true",
+        help="Do not contact the Hub from this process.",
+    )
+    parser.add_argument("--judge-cache-dir", type=Path, default=None)
     return parser
 
 
@@ -65,6 +80,8 @@ def parse_args(argv: Optional[List[str]] = None) -> argparse.Namespace:
         parser.error("--feature-ratio-threshold is only valid with --skip-llm-judge")
     if args.alpaca_eval and args.gpu_type is None:
         parser.error("--gpu-type is required with --alpaca-eval")
+    if args.judge_max_new_tokens <= 0:
+        parser.error("--judge-max-new-tokens must be positive")
     return args
 
 
@@ -90,7 +107,29 @@ def main(argv: Optional[List[str]] = None) -> None:
     if config.explicit_delta is None and config.eval_json is None:
         raise ValueError("Provide --eval-json for automatic delta selection or --delta")
 
-    report = run_lment_pipeline(config, concept=args.concept)
+    judge = None
+    if args.judge_model is not None:
+        judge = GemmaJudge.from_pretrained(
+            args.judge_model,
+            device=args.judge_device,
+            max_new_tokens=args.judge_max_new_tokens,
+            local_files_only=bool(args.judge_local_files_only),
+            cache_dir=args.judge_cache_dir,
+        )
+    try:
+        report = run_lment_pipeline(
+            config,
+            concept=args.concept,
+            describe_callback=(judge.describe_feature if judge else None),
+            classify_callback=(judge.classify_feature if judge else None),
+            alpaca_relevance_callback=(
+                judge.score_alpaca_relevance if judge else None),
+            alpaca_fluency_callback=(
+                judge.score_alpaca_fluency if judge else None),
+        )
+    finally:
+        if judge is not None:
+            judge.close()
     saved_path = (
         report["checkpoint_path"]
         if report["save"]["mode"] == "full_model"

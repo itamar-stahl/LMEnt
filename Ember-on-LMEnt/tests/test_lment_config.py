@@ -13,11 +13,53 @@ if str(SNMF_ROOT) not in sys.path:
     sys.path.insert(0, str(SNMF_ROOT))
 
 from ember.lment_pipeline import LMEntRunConfig, ensure_factor_artifact, load_lment_config
-from ember.run_lment_ember import parse_args
+from ember.run_lment_ember import main as run_main, parse_args
 from tests.lment_erasure_smoke import build_parser as build_smoke_parser
 
 
 class LMEntConfigTests(unittest.TestCase):
+    def test_cli_wires_one_hosted_gemma_judge_to_every_callback(self) -> None:
+        common = [
+            "--config", "config.yaml",
+            "--concept", "Concept A",
+            "--concept-json", "concept.json",
+            "--neutral-json", "neutral.json",
+            "--output-dir", "output",
+            "--delta", "1.0",
+            "--judge-model", "google/gemma-3-12b-it",
+            "--judge-local-files-only",
+        ]
+        judge = unittest.mock.MagicMock()
+        report = {
+            "chosen_delta": 1.0,
+            "checkpoint_path": None,
+            "erased_embeddings_path": "output/erased_embeddings.safetensors",
+            "save": {"mode": "embedding_only"},
+        }
+        config = LMEntRunConfig(
+            model_path=Path("model"), model_key="model",
+            features_root=Path("features"), output_root=Path("outputs"),
+        )
+        with (
+            patch("ember.run_lment_ember.load_lment_config", return_value=config),
+            patch("ember.run_lment_ember.GemmaJudge.from_pretrained",
+                  return_value=judge) as load_judge,
+            patch("ember.run_lment_ember.run_lment_pipeline",
+                  return_value=report) as run_pipeline,
+        ):
+            run_main(common)
+
+        load_judge.assert_called_once_with(
+            "google/gemma-3-12b-it", device="cuda", max_new_tokens=256,
+            local_files_only=True, cache_dir=None,
+        )
+        kwargs = run_pipeline.call_args.kwargs
+        self.assertIs(kwargs["describe_callback"], judge.describe_feature)
+        self.assertIs(kwargs["classify_callback"], judge.classify_feature)
+        self.assertIs(kwargs["alpaca_relevance_callback"],
+                      judge.score_alpaca_relevance)
+        self.assertIs(kwargs["alpaca_fluency_callback"], judge.score_alpaca_fluency)
+
     def test_cli_requires_one_named_concept_and_explicit_threshold(self) -> None:
         args = parse_args([
             "--config", "config.yaml",
