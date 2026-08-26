@@ -200,6 +200,41 @@ containing `Rating: [[0]]`, `Rating: [[1]]`, or `Rating: [[2]]`.
 
 See `example.sh` for a complete threshold-mode run.
 
+### Slurm cluster
+
+The root `environment.yml` installs this package into the `lment` Conda
+environment. On the cluster, source the EMBER entry point; it reuses the same
+Conda activation as `Untaught` but does not start Elasticsearch:
+
+```sh
+cd /home/morg/NLP_2526b/$(whoami)/LMEnt/Ember-on-LMEnt
+. ./activate_env.sh
+```
+
+Submit one concept with:
+
+```sh
+sh slurm/submit_ember.sh \
+  --config configs/ember_lment_slurm.yaml \
+  --concept "Culture of Greece" \
+  --concept-json data/concept_sentences.json \
+  --neutral-json data/neutral_sentences.json \
+  --output-dir lment_outputs/culture-of-greece \
+  --delta 0.5 \
+  --judge-model google/gemma-3-12b-it
+```
+
+The client prepares SNMF factors on CPU and caches the hosted Gemma model on
+shared storage. Only the judge, LMEnt erasure/evaluation, and optional Alpaca
+generation enter the one-H100 Slurm job. The node runs offline and refuses a
+non-H100 GPU or a Conda environment other than `lment`. The existing Windows
+command remains unchanged.
+
+Run the deployment package with `sh slurm/tests/run_test.sh`. It runs the local
+suite, submits a real H100 end-to-end smoke, and verifies judge selection,
+embedding-only integrity, reload, and one Alpaca item. See `slurm/README.md` for
+options and report paths.
+
 For a real-checkpoint mechanical smoke test without concept evaluation, run
 `tests/lment_erasure_smoke.py`. Its `--keep-erased-model` flag preserves the
 otherwise-temporary erased checkpoint and prints a JSON report with its path.
