@@ -8,8 +8,23 @@ This repository contains the official code for the paper: "LMEnt: A Suite for An
 ```
 git clone --recurse-submodules git@github.com:dhgottesman/LMEnt.git
 cd LMEnt
-conda create env -f environment.yml
+
+# Linux
+PYTHONNOUSERSITE=1 conda env create -f environment.yml
+conda activate lment
 ```
+
+On native Windows, run from **Miniforge Prompt** in the repository root:
+
+```powershell
+$env:PYTHONNOUSERSITE = "1"
+conda env create -f environment.windows.yml
+conda activate lment
+```
+
+Setting `PYTHONNOUSERSITE` before creation also isolates Conda's internal pip
+step; the manifests preserve the setting whenever `lment` is activated. Both
+environments install the local `Ember-on-LMEnt` package and CUDA 12.8 PyTorch.
 
 ## Pretraining Dataset
 The dataset is available on [Hugging Face](https://huggingface.co/datasets/dhgottesman/LMEnt-Dataset).
