@@ -99,11 +99,35 @@ task is not grounds for a 3.4-hour retrain that would fork the artifact lineage
 — Tamar's pipeline, both HF Hub copies, the completion evaluation and the
 held-out result are all anchored to the current control.
 
-If the sciq anomaly is worth chasing, the cheap test comes first: **step45000 is
-the last pure-H100 checkpoint of the control** (step50000 was written inside the
-H200 window), and both twins have it, verified at 16 shards with no `tmp*`.
-Converting both and scoring sciq costs about an hour and no new training. If they
-already differ at step45000, the H200 is exonerated.
+### The diagnostic was run, and the H200 is exonerated
+
+Jobs 782131/782132: both twins converted at **step45000** — the control's last
+pure-H100 checkpoint, since the H200 window opens at step 49,501 — and scored on
+the same sciq spec as jobs 780463-780465.
+
+| checkpoint | control | ablated | gap | p |
+|---|---|---|---|---|
+| **step45000**, both pure H100 | 0.725 | 0.760 | **+0.035** | 0.0016 |
+| step54832, control's tail on H200 | 0.729 | 0.770 | +0.041 | 0.0001 |
+
+At step45000 the only difference between the twins is the ablation, and the gap
+is already +0.035 — essentially all of the final +0.041. The H200 tail adds
+0.006, which is nothing.
+
+**So retraining the tail would not close the sciq gap**, and the question is
+settled for about 25 minutes of compute rather than 3.4 hours of retraining that
+would have forked the artifact lineage and changed nothing.
+
+The gap is intrinsic: masking 0.024% of the corpus shifted the optimisation
+trajectory enough to produce a 3.5-point difference on unrelated science
+questions before any hardware difference existed. It remains **one task in
+four** — `arc_easy`, `hellaswag` and `piqa` agree to within 1.2 points — so this
+is a reproducible anomaly on sciq, now seen at two checkpoints, not evidence of
+broad divergence.
+
+Byproduct: both step45000 checkpoints are converted and kept at
+`hf-models/lment-1b-{control,noporn}-2e-step45000`, so any future mid-training
+comparison is cheap.
 
 ## Running it here
 
