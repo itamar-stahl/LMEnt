@@ -38,6 +38,16 @@ runs/<concept>_<model-key>_<date_time>/
 that CUDA and the `lment` environment are available, but it does not select or
 identify the scheduler's GPU model.
 
+To submit every configured concept as its own independent job:
+
+```sh
+sh /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/slurm/submit_all_concepts.sh \
+  --config /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/configs/ember_lment_slurm.yaml
+```
+
+This optional manager creates no batch run folder. It prints one JSON summary
+and exits nonzero if any individual preparation or submission failed.
+
 ## Cluster tests
 
 Run the equivalent deployment test package from the login node:

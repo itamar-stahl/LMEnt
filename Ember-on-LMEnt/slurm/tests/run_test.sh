@@ -59,6 +59,7 @@ run_phase compile python -m compileall -q ember tests slurm || true
 run_phase pip_check python -m pip check || true
 run_phase shell_syntax sh -n "${PROJECT}/activate_env.sh" \
   "${PROJECT}/slurm/submit_ember.sh" "${PROJECT}/slurm/tests/run_test.sh" \
+  "${PROJECT}/slurm/submit_all_concepts.sh" \
   "${PROJECT}/example.sh" || true
 
 if grep -q '\[RESULT\].* FAIL' "${REPORT}"; then

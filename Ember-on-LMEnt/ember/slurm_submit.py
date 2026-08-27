@@ -114,17 +114,17 @@ def submit_job(job_path: Path) -> str:
     return completed.stdout.strip().split(";", 1)[0]
 
 
-def main(argv: Optional[List[str]] = None) -> None:
-    args = parse_args(argv)
-    written = prepare_submission(args)
-    job_id = submit_job(written["job_slurm"])
-    result = {
+def write_client_report(written: Dict[str, Path], concept: str,
+                        *, job_id: Optional[str], error: Optional[str] = None) -> Dict[str, object]:
+    result: Dict[str, object] = {
         "schema_version": 1,
         "submitted_at_utc": datetime.now(timezone.utc).isoformat(),
-        "concept": args.concept,
+        "concept": concept,
         "run_dir": str(written["run_dir"]),
         "job_slurm": str(written["job_slurm"]),
+        "submitted": error is None,
         "job_id": job_id,
+        "error": error,
     }
     report_path = written["run_dir"] / "client_report.json"
     report_path.write_text(
@@ -133,7 +133,22 @@ def main(argv: Optional[List[str]] = None) -> None:
         newline="\n",
     )
     with (written["run_dir"] / "client.log").open("a", encoding="utf-8") as log:
-        log.write(f"submitted_job_id={job_id}\n")
+        if error is None:
+            log.write(f"submitted_job_id={job_id}\n")
+        else:
+            log.write(f"submission_error={error}\n")
+    return result
+
+
+def main(argv: Optional[List[str]] = None) -> None:
+    args = parse_args(argv)
+    written = prepare_submission(args)
+    try:
+        job_id = submit_job(written["job_slurm"])
+    except Exception as error:
+        write_client_report(written, args.concept, job_id=None, error=str(error))
+        raise
+    result = write_client_report(written, args.concept, job_id=job_id)
     print(json.dumps(result, indent=2))
 
 
@@ -143,5 +158,5 @@ if __name__ == "__main__":
 
 __all__ = [
     "build_parser", "parse_args", "prepare_submission", "resolve_judge_model",
-    "submit_job", "main",
+    "submit_job", "write_client_report", "main",
 ]

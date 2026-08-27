@@ -182,6 +182,9 @@ and submits the generated absolute `job.slurm`. The job contains
 fitting, judging, erasure, evaluation, saving, and cache publication all run in
 that single job. See `slurm/README.md` for testing.
 
+`slurm/submit_all_concepts.sh` is an optional thin manager that reads the YAML's
+concept JSON and submits the same independent flow once per concept.
+
 For Llama, use rank 200 and its model name:
 
 ```bash
