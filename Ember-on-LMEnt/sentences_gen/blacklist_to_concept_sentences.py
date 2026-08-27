@@ -505,6 +505,17 @@ def harvest(doc: Dict[str, Any], qids: Set[str],
 
     start = int(mention["char_start"])
     end = int(mention["char_end"])
+
+    # The offsets are rebased to be chunk-relative upstream
+    # (OLMo-core numpy_dataset._get_entities_within_range), but against the
+    # chunk's slice of the *document*, while the index stores the tokenizer
+    # round-trip decode(input_ids). Those coincide only if the round-trip is
+    # lossless. Verify rather than assume: a shifted offset would still land
+    # inside *some* sentence and quietly harvest the wrong one.
+    surface = (mention.get("text_mention") or "").strip()
+    if not 0 <= start < end <= len(text) or text[start:end].strip() != surface:
+        return None, "offset_mismatch"
+
     for span in spans:
         if span[0] <= start and end <= span[1]:
             if is_truncated(span, len(text)):
