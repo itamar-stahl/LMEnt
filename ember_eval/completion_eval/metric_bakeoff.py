@@ -206,17 +206,26 @@ def statistics_for(rule, temperature: float, rec: Dict[str, Any]) -> Dict[str, f
 
 STATISTICS = ("acc", "p_correct", "margin", "gold")
 
-# `gold` is excluded from the ranking, and the reason is the same trap that
-# `acc_raw` fell into.  The sensitivity criterion compares concept QA against
-# neighbouring-domain QA — two *different* question sets, with different answer
-# strings.  `acc`, `p_correct` and `margin` all compare the gold option against
-# its own distractors within a single item, so whatever makes one question set's
-# answers longer or more frequent cancels.  `gold` does not: it is the gold
-# option's unnormalised score, so it separates the two sets largely by how long
-# and how common their answer strings are.  It scores a spuriously huge
-# sensitivity for exactly the reason it should not be trusted.  It is still
-# computed and printed, because it is what the question "take the likelihood
-# itself as a score" literally asks for and the number is worth seeing.
+# `gold` is left out of the *ranking*, and it is worth being exact about why,
+# because the reason is a limitation of the sensitivity criterion and not a
+# defect in the statistic.  `gold` is now the primary statistic in
+# `evaluate_completion.py`.
+#
+# The sensitivity criterion compares concept QA against neighbouring-domain QA
+# — two *different* question sets with different answer strings.  `acc`,
+# `p_correct` and `margin` weigh the gold option against its own distractors
+# inside one item, so whatever makes one set's answers longer or commoner
+# cancels.  `gold` reads one option on its own, so across two sets it separates
+# them largely by string length and frequency, and scores a spuriously huge
+# sensitivity for it.
+#
+# That confound lives entirely in this criterion.  The comparison `gold` is
+# actually used for — the same question, the same gold string, two models —
+# never compares different strings, so length and frequency cancel exactly.
+# Judged on the criteria that do fit it, the two null floors, `cond_per_char`
+# on `gold` behaves properly (p = 0.29 and p = 0.41).  Ranking it here on a
+# criterion built for the option-normalised statistics would say nothing about
+# it either way, so it is reported separately rather than scored.
 RANKABLE = ("acc", "p_correct", "margin")
 
 

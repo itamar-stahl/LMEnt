@@ -10,15 +10,42 @@
 
 `twins` is the one that matters for the never-learned comparison. It pairs the
 two runs question by question and tests the mean difference with a sign-flip
-permutation, which assumes nothing about the shape of the differences. The
-ablated twin drifts slightly worse everywhere, so a difference on the concept's
-own questions only means something next to the difference on the neighbouring
-domain: QA minus SimdomQA subtracts the drift, since both subsets carry it
-equally.
+permutation, which assumes nothing about the shape of the differences.
+
+**It reports tiers side by side and does not subtract them.** Until 2026-08-27
+the headline number here was `QA - SimdomQA`, on the reasoning that both
+subsets carry the same global drift so subtracting leaves what is specific to
+the concept. That reasoning fails whenever the neighbouring domain is itself
+affected, and subtracting something the intervention moved is the textbook bad
+control -- it removes part of the very signal being measured.
+
+It is not hypothetical here. On the 2-epoch twins the neighbouring set moved
+about four times as much as the concept did (-0.0339 against -0.0086 in
+log P(gold)/char), and which control you subtract decides the *sign* of the
+answer: the neighbouring domain gives +0.0252, a far concept gives -0.0190.
+Every one of those is inside the noise, which is the point -- the number was
+being set by the choice of control rather than by the models.
+
+For erasure methods the objection is stronger still, because damaging nearby
+concepts is the documented failure mode of RMU and SNMF. A neighbouring-domain
+control would quietly subtract away exactly the collateral damage such a
+comparison exists to detect.
+
+So three tiers, reported and never collapsed:
+
+    target   the concept in question             -- efficacy
+    near     the neighbouring domain             -- collateral damage, a RESULT
+    far      something the intervention cannot   -- the drift reference
+             plausibly have touched
+
+A specific, well-aimed intervention looks like large / smaller / zero across
+those three. The shape is the evidence; one subtracted number throws it away.
 
     python aggregate_completion.py twins \\
         --control results/control_qa_train.json results/control_sim_train.json \\
-        --ablated results/noporn_qa_train.json  results/noporn_sim_train.json
+        --ablated results/noporn_qa_train.json  results/noporn_sim_train.json \\
+        --control-far results/control_hp_qa.json \\
+        --ablated-far results/noporn_hp_qa.json
 
     python aggregate_completion.py score \\
         --concept results/erased_qa.json   --base-concept results/base_qa.json \\
@@ -70,13 +97,57 @@ def collect(paths: Sequence[str]) -> Dict[Tuple[str, str, str, str], Dict[str, f
             key = (r["concept"], r["subset"], r["split"], r["question"])
             if key in out:
                 raise SystemExit(f"question appears twice across the given files: {key}")
-            out[key] = {
-                "p_correct": r["p_correct"],
-                "logp": math.log(max(r["p_correct"], 1e-12)),
-                "margin": r["margin"],
-                "correct": float(r["correct"]),
-            }
+            out[key] = stats_from_record(r)
     return out
+
+
+def softmax(xs: Sequence[float]) -> List[float]:
+    m = max(xs)
+    exps = [math.exp(x - m) for x in xs]
+    total = sum(exps)
+    return [e / total for e in exps]
+
+
+def stats_from_record(r: Dict[str, Any]) -> Dict[str, float]:
+    """Every statistic, rebuilt from the stored per-option log-likelihoods.
+
+    Deliberately not read off the record's own `p_correct` / `margin` / `correct`
+    fields. Runs from before 2026-08-27 wrote those from
+    `pmi = log P(a|stem) - log P(a|null)`, and newer ones write them from
+    per-character conditional scores, so trusting the stored values would
+    silently compare two different quantities whenever an old run is paired
+    against a new one. `logp_conditional` and the option strings are recorded by
+    every version, so recomputing here makes all records comparable and leaves
+    this script's output independent of which scorer produced its input.
+    """
+    cond = r["logp_conditional"]
+    chars = r.get("option_chars") or [len(f" {o}") for o in r["options"]]
+    per_char = [c / n for c, n in zip(cond, chars)]
+    g = r["correct_index"]
+    others = [per_char[i] for i in range(len(per_char)) if i != g]
+
+    mean_chars = sum(chars) / len(chars)
+    probs = softmax([s * mean_chars for s in per_char])
+    pred = max(range(len(per_char)), key=lambda i: per_char[i])
+    return {
+        "gold_per_char": per_char[g],
+        "p_correct": probs[g],
+        "logp": math.log(max(probs[g], 1e-12)),
+        "margin": per_char[g] - max(others),
+        "correct": float(pred == g),
+    }
+
+
+def tier_row(ctl, abl, keys: Sequence, stat: str, draws: int,
+             rng: random.Random) -> Tuple[int, float, float, float, float, float]:
+    """n, control mean, ablated mean, mean difference, dz, p for one tier."""
+    ds = [abl[k][stat] - ctl[k][stat] for k in keys]
+    c = statistics.fmean(ctl[k][stat] for k in keys)
+    a = statistics.fmean(abl[k][stat] for k in keys)
+    s = statistics.pstdev(ds)
+    mean_d = statistics.fmean(ds)
+    return (len(ds), c, a, mean_d, mean_d / s if s else 0.0,
+            signflip_p(ds, draws, rng))
 
 
 def twins(args: argparse.Namespace) -> None:
@@ -86,35 +157,69 @@ def twins(args: argparse.Namespace) -> None:
     shared = sorted(set(ctl) & set(abl))
     if not shared:
         raise SystemExit("the two sides share no questions; wrong files?")
+
+    # target and near come from the same files, separated by their subset;
+    # far is a different concept entirely and so pairs on its own keys.
+    tiers: List[Tuple[str, str, Any, Any, List]] = []
+    target = [k for k in shared if k[1] == "QA"]
+    near = [k for k in shared if k[1] == "SimdomQA"]
+    if target:
+        tiers.append(("target", "QA", ctl, abl, target))
+    if near:
+        tiers.append(("near", "SimdomQA", ctl, abl, near))
+
+    if bool(args.control_far) != bool(args.ablated_far):
+        raise SystemExit("--control-far and --ablated-far go together")
+    if args.control_far:
+        fctl, fabl = collect(args.control_far), collect(args.ablated_far)
+        fshared = sorted(set(fctl) & set(fabl))
+        if not fshared:
+            raise SystemExit("the two far sides share no questions; wrong files?")
+        overlap = {k[0] for k in fshared} & {k[0] for k in shared}
+        if overlap:
+            raise SystemExit(
+                f"the far set covers the same concept(s) as the target: "
+                f"{sorted(overlap)}. The drift reference has to be something "
+                "the intervention cannot plausibly have touched.")
+        label = "/".join(sorted({k[0] for k in fshared}))
+        tiers.append(("far", label, fctl, fabl, fshared))
+    else:
+        print("note: no --control-far/--ablated-far given, so there is no drift\n"
+              "      reference. Without one, a difference at the target cannot be\n"
+              "      told apart from the two models simply differing everywhere.\n")
+
     print(f"paired on {len(shared)} questions "
           f"(control {len(ctl)}, ablated {len(abl)})\n")
 
-    for stat in ("p_correct", "logp", "margin", "correct"):
-        diffs = {k: abl[k][stat] - ctl[k][stat] for k in shared}
-        by_subset: Dict[str, List[float]] = defaultdict(list)
-        for (_, subset, _, _), d in diffs.items():
-            by_subset[subset].append(d)
-        all_d = list(diffs.values())
-
-        print("=" * 72)
-        print(f"{stat}   (ablated - control; negative means the ablation hurt)")
-        print("=" * 72)
-        head = f"  {'subset':<12}{'n':>5}{'control':>10}{'ablated':>10}{'diff':>10}{'dz':>8}{'p':>8}"
+    stats = ("gold_per_char", "p_correct", "margin", "correct")
+    for stat in stats:
+        primary = stat == "gold_per_char"
+        print("=" * 78)
+        print(f"{stat}   (ablated - control; negative means the ablation hurt)"
+              + ("   <- PRIMARY" if primary else ""))
+        if not primary:
+            print("sanity check only -- reads the three distractors, which the "
+                  "stem never showed the model")
+        print("=" * 78)
+        head = (f"  {'tier':<8}{'set':<16}{'n':>5}{'control':>10}{'ablated':>10}"
+                f"{'diff':>10}{'dz':>8}{'p':>8}")
         print(head)
         print("  " + "-" * (len(head) - 2))
-        for subset in sorted(by_subset):
-            ds = by_subset[subset]
-            keys = [k for k in shared if k[1] == subset]
-            c = statistics.fmean(ctl[k][stat] for k in keys)
-            a = statistics.fmean(abl[k][stat] for k in keys)
-            s = statistics.pstdev(ds)
-            dz = statistics.fmean(ds) / s if s else 0.0
-            print(f"  {subset:<12}{len(ds):>5}{c:>10.4f}{a:>10.4f}"
-                  f"{statistics.fmean(ds):>+10.4f}{dz:>+8.3f}"
-                  f"{signflip_p(ds, args.draws, rng):>8.3f}")
+        for tier, label, c_side, a_side, keys in tiers:
+            n, c, a, d, dz, p = tier_row(c_side, a_side, keys, stat,
+                                         args.draws, rng)
+            print(f"  {tier:<8}{label:<16}{n:>5}{c:>10.4f}{a:>10.4f}"
+                  f"{d:>+10.4f}{dz:>+8.3f}{p:>8.3f}")
 
-        if {"QA", "SimdomQA"} <= set(by_subset):
-            qa, sim = by_subset["QA"], by_subset["SimdomQA"]
+        if primary:
+            print("\n  Read the shape, not any single row. A specific, well-aimed")
+            print("  intervention is large at target, smaller at near, ~0 at far.")
+            print("  'near' is collateral damage -- a result to report, never a")
+            print("  control to subtract.")
+
+        if args.legacy_did and target and near:
+            qa = [abl[k][stat] - ctl[k][stat] for k in target]
+            sim = [abl[k][stat] - ctl[k][stat] for k in near]
             gap = statistics.fmean(qa) - statistics.fmean(sim)
             pooled = qa + sim
             hits = 0
@@ -124,14 +229,12 @@ def twins(args: argparse.Namespace) -> None:
                 if abs(statistics.fmean(shuf[:len(qa)])
                        - statistics.fmean(shuf[len(qa):])) >= abs(gap) - 1e-12:
                     hits += 1
-            print(f"\n  QA - SimdomQA: {gap:+.4f}, label-permutation p = "
-                  f"{(hits + 1) / (args.draws + 1):.3f}")
-            print("  (this is the drift-free number: both subsets carry the same "
-                  "global drift,\n   so subtracting them leaves what is specific "
-                  "to the concept)")
-        print(f"\n  pooled mean {statistics.fmean(all_d):+.4f}, "
-              f"sd {statistics.pstdev(all_d):.4f}, "
-              f"p = {signflip_p(all_d, args.draws, rng):.3f}\n")
+            print(f"\n  [legacy] QA - SimdomQA: {gap:+.4f}, label-permutation "
+                  f"p = {(hits + 1) / (args.draws + 1):.3f}")
+            print("  Retained only to reproduce numbers published before "
+                  "2026-08-27. It\n  subtracts the near tier, which the "
+                  "intervention may itself have moved.")
+        print()
 
 
 # --------------------------------------------------------------------------- #
@@ -139,6 +242,12 @@ def twins(args: argparse.Namespace) -> None:
 # --------------------------------------------------------------------------- #
 def value(path: str, key: str) -> float:
     blob = read(path)
+    metric = blob.get("metadata", {}).get("metric", "")
+    if metric.startswith("pmi"):
+        print(f"warning: {path} was scored before 2026-08-27, so its "
+              f"{key!r} is\n         built on pmi rather than per-character "
+              "conditional scores. Do not\n         mix it with newer runs in "
+              "one h-score; rerun evaluate_completion.py.")
     if key in blob:
         return float(blob[key])
     if key == "soft_accuracy" and "accuracy" in blob:
@@ -189,8 +298,19 @@ def main() -> None:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     t = sub.add_parser("twins", help="paired control-vs-ablated comparison")
-    t.add_argument("--control", nargs="+", required=True)
-    t.add_argument("--ablated", nargs="+", required=True)
+    t.add_argument("--control", nargs="+", required=True,
+                   help="target (QA) and near (SimdomQA) runs for the control")
+    t.add_argument("--ablated", nargs="+", required=True,
+                   help="the same runs for the ablated or erased model")
+    t.add_argument("--control-far", nargs="+",
+                   help="drift reference: a concept the intervention cannot "
+                        "plausibly have touched, scored on the control")
+    t.add_argument("--ablated-far", nargs="+",
+                   help="the same concept scored on the ablated model")
+    t.add_argument("--legacy-did", action="store_true",
+                   help="also print the pre-2026-08-27 QA - SimdomQA number, "
+                        "which subtracts the near tier and is kept only for "
+                        "reproducing already-published figures")
     t.add_argument("--draws", type=int, default=20000)
     t.add_argument("--seed", type=int, default=0)
     t.set_defaults(func=twins)

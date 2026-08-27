@@ -1,29 +1,42 @@
 #!/usr/bin/env python
 """Score a model on the sentence-completion rewrite of EMBER's questions.
 
-Nothing is generated and nothing is parsed. Each of the four options is scored
-as a continuation of its stem, and the score is
+Nothing is generated and nothing is parsed. The primary measurement is the
+model's log-likelihood of the **true answer** as a continuation of its stem,
+normalised by that answer's length in characters:
 
-    pmi(a) = log P(a | stem) - log P(a | null)
+    gold_per_char = log P(gold | stem) / len(gold)
 
-The second term is the same option scored with no stem in front of it. It
-cancels how probable the option string is on its own, so an option stops
-winning for being the commoner phrase and the score measures whether the model
-links this fact to this context. Subtracting an option's unconditional
-likelihood this way is standard practice, introduced in Brown et al. (2020) and
-analysed in Holtzman et al. (2021).
+Read it by comparing the number **between two models on the same question**.
+The gold string is then identical on both sides, so its length and its rarity
+cancel exactly and no reference scale is needed: the difference is the answer.
 
-The four scores are read two ways:
+**The distractors decide nothing.** Once a question is rewritten as a
+declarative stem the prompt no longer contains them, so letting three strings
+the model was never shown determine whether it "got the question right" largely
+measures whoever wrote the distractors. It is also the mechanism behind the
+`acc_raw` length bias that cost this project two retracted conclusions -- a
+short distractor wins on length alone. The four-option statistics are still
+computed and still worth reading, but for **one purpose**: confirming the
+question set is answerable at all (~55% against a 25% floor). That is a
+property of the questions, established once, and not the ablation measurement.
 
-    accuracy       the highest-scoring option, marked against the answer key
-    soft_accuracy  mean over questions of softmax(pmi)[gold]
+    gold_per_char  the primary number, above
+    accuracy       sanity check -- is this question set answerable?
+    soft_accuracy  the same four numbers read as a distribution, not an argmax
 
-Soft accuracy is not a second metric. It is the same four numbers read as a
-distribution rather than an argmax, and its argmax is exactly the accuracy
-beside it. Chance is 0.25 for both. It is worth reporting because collapsing
-each question to a right/wrong bit throws away the magnitudes, and with 200
-questions per concept an ablation worth a few points cannot be resolved from
-what is left.
+The four-option statistics are computed from per-character conditional scores,
+matching `EVALUATION.md`'s `acc_per_char`. Before 2026-08-27 they came from
+`pmi = log P(a | stem) - log P(a | null)`, and that changed for a measured
+reason. The case for the null term is that it cancels how probable an option is
+on its own (Brown et al. 2020; Holtzman et al. 2021). But the null context here
+is a single BOS token, so `log P(a | null)` sits close to the model's
+document-initial prior -- a quantity with nothing anchoring it, and one that
+drifts between two training runs far more than the conditional term does.
+Across eight model-pair comparisons in `metric_bakeoff.py` it reduced the
+between-model gap in **zero** of them and amplified it by up to 50x. It is
+still recorded per option, so every stored record stays recomputable, but
+nothing is built on it.
 
 Option order, the per-question shuffle and the item ids match
 `score_ember_mc.py` exactly, so item N here is item N in every multiple-choice
@@ -194,25 +207,44 @@ def evaluate(items: Sequence[Dict[str, Any]], scores, null_context: str,
         conts = [f" {o}" for o in item["shuffled"]]
         cond = [scores[(item["stem"], c)] for c in conts]
         null = [scores[(null_context, c)] for c in conts]
+        chars = [len(c) for c in conts]
         pmi = [c - z for (c, _), (z, _) in zip(cond, null)]
 
         gold = item["correct_index"]
-        probs = softmax(pmi, temperature)
-        pred = max(range(4), key=lambda i: pmi[i])
+
+        # The primary number: the true answer's own log-likelihood, per
+        # character.  Dividing by length keeps long answers from dominating a
+        # mean; it is not a correction for anything, because the between-model
+        # comparison this feeds already scores an identical string on both
+        # sides.
+        per_char = [c / n for (c, _), n in zip(cond, chars)]
+
+        # The four-option sanity check, on those same per-character scores.
+        # Rescaling by the item's mean option length puts them back on a
+        # nat-like scale before the softmax: per-character log-probabilities
+        # sit within a fraction of a nat of each other, so an unscaled softmax
+        # would return near-0.25 for every question and the flatness would be
+        # an artifact of the units rather than anything about the model.
+        mean_chars = sum(chars) / len(chars)
+        probs = softmax([s * mean_chars for s in per_char], temperature)
+        pred = max(range(4), key=lambda i: per_char[i])
         records.append({
             "concept": item["concept"], "subset": item["subset"], "split": item["split"],
             "question": item["question"], "stem": item["stem"],
             "options": item["shuffled"], "correct_answer": item["correct_answer"],
             "correct_index": gold, "correct_letter": item["correct_letter"],
-            "pmi": pmi,
+            "gold_per_char": per_char[gold],
+            "option_chars": chars,
             "logp_conditional": [c for c, _ in cond],
             "logp_null": [z for z, _ in null],
+            "pmi": pmi,
             "pred_index": pred,
             "pred": item["shuffled"][pred],
             "correct": pred == gold,
             "p_correct": probs[gold],
             "confidence": probs[pred],
-            "margin": pmi[gold] - max(pmi[i] for i in range(4) if i != gold),
+            # per character, like the scores it is taken from
+            "margin": per_char[gold] - max(per_char[i] for i in range(4) if i != gold),
         })
     return records
 
@@ -220,7 +252,12 @@ def evaluate(items: Sequence[Dict[str, Any]], scores, null_context: str,
 def summarize(records: Sequence[Dict[str, Any]]) -> Dict[str, float]:
     n = len(records)
     p = [r["p_correct"] for r in records]
+    g = [r["gold_per_char"] for r in records]
     return {
+        # the primary number; only meaningful against another model's value
+        # for the same questions
+        "mean_gold_per_char": sum(g) / n,
+        # sanity check that the question set is answerable, chance 0.25
         "accuracy": sum(r["correct"] for r in records) / n,
         "soft_accuracy": sum(p) / n,
         "sum_p_correct": sum(p),
@@ -242,9 +279,10 @@ def main() -> None:
                     choices=("QA_train", "QA_test", "SimdomQA_train", "SimdomQA_test"))
     ap.add_argument("--out", required=True)
     ap.add_argument("--null-context", default="",
-                    help="the null in log P(a|stem) - log P(a|null). Empty, the "
-                         "default, means no context at all. Whatever you choose, "
-                         "use the same value for every model you compare")
+                    help="context for the recorded-but-unused pmi diagnostic. "
+                         "Empty, the default, means no context at all. Nothing "
+                         "reported depends on it; keep it identical across any "
+                         "models you intend to compare regardless")
     ap.add_argument("--temperature", type=float, default=1.0,
                     help="divides the scores before the softmax; raise it if "
                          "mean_confidence saturates near 1.0")
@@ -276,10 +314,19 @@ def main() -> None:
     records = evaluate(items, scores, args.null_context, args.temperature)
     summary = summarize(records)
 
-    print(f"\n  accuracy        {summary['accuracy']:>7.1%}   (chance 25.0%)")
+    print(f"\n  mean gold/char  {summary['mean_gold_per_char']:>+7.4f}   "
+          f"PRIMARY; compare against another model on the same questions")
+    print("\n  the rest is a sanity check that these questions are answerable,")
+    print("  not a measurement of any ablation:")
+    print(f"  accuracy        {summary['accuracy']:>7.1%}   (chance 25.0%)")
     print(f"  soft accuracy   {summary['soft_accuracy']:>7.3f}   (chance 0.250)")
-    print(f"  mean margin     {summary['mean_margin']:>+7.3f}   gold minus best distractor")
+    print(f"  mean margin     {summary['mean_margin']:>+7.4f}   gold minus best "
+          f"distractor, per char")
     print(f"  mean confidence {summary['mean_confidence']:>7.3f}")
+    if summary["accuracy"] < 0.35:
+        print("\n  accuracy is near chance: a null twin comparison on this set\n"
+              "  would be uninformative, because there is no measurable\n"
+              "  knowledge here for an ablation to have removed.")
     if summary["mean_confidence"] > 0.95:
         print("\n  mean confidence is near 1.0: the softmax has saturated and soft\n"
               "  accuracy has collapsed onto accuracy. Raise --temperature.")
@@ -289,7 +336,9 @@ def main() -> None:
         "metadata": {
             "model": f"{args.model}/{args.subfolder}" if args.subfolder else args.model,
             "concept": args.concept, "task": args.split, "questions": args.questions,
-            "metric": "pmi = log P(answer | stem) - log P(answer | null)",
+            "metric": "gold_per_char = log P(gold | stem) / len(gold); "
+                      "four-option statistics from per-character conditional "
+                      "scores; pmi recorded but not used",
             "null_context": args.null_context, "temperature": args.temperature,
             "seed": args.seed, "dtype": args.dtype, "batch_size": args.batch_size,
             "max_length": args.max_length,
