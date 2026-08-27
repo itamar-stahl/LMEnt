@@ -56,6 +56,9 @@ Run the equivalent deployment test package from the login node:
 sh /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/slurm/tests/run_test.sh
 ```
 
-The script first checks the environment, compilation, unit tests, generated run
-files, absolute paths, and the H100 constraint. Its submitted test uses the same
-single-concept flow as production.
+This one command creates a trackable test package, submits one
+`studentkillable` job with `#SBATCH --constraint="titan_xp"`, waits for it, and
+returns a nonzero exit code with exact failing phase paths when needed. The GPU
+node runs every local unit test, compilation, dependency and shell checks. It
+then runs a bounded real-model Pornography erasure with pristine and erased
+evaluation. See `slurm/tests/README.md` for the saved test-folder layout.
