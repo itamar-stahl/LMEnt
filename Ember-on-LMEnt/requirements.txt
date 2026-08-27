@@ -1,5 +1,0 @@
-# Backward-compatible pip entry point. Core dependencies live in pyproject.toml;
-# the CUDA index ensures RTX 50-series support on Windows and Linux.
---extra-index-url https://download.pytorch.org/whl/cu128
-torch==2.7.1+cu128
--e .

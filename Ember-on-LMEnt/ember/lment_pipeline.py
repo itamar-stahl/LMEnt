@@ -22,11 +22,6 @@ from ember.erased_embedding import (
 )
 from ember.evals.causal_mc import evaluate_causal_mc
 from ember.evals.harmonic import harmonic_mean
-from ember.evals.lment_alpaca import (
-    GPU_PROFILES,
-    evaluate_lment_alpaca,
-    require_gpu_profile,
-)
 from ember.evals.mc import prepare_mc_items
 from ember.lment_feature_selection import (
     FeatureSelectionResult,
@@ -46,7 +41,8 @@ class LMEntRunConfig:
     model_path: Path
     model_key: str
     features_root: Path
-    output_root: Path
+    runs_root: Path
+    feature_cache_root: Optional[Path] = None
     rank: int = 100
     seed: int = 42
     ratio_thresh: float = 2.0
@@ -55,7 +51,8 @@ class LMEntRunConfig:
     eval_json: Optional[Path] = None
     device: str = "auto"
     dtype: str = "fp32"
-    prepare_features: bool = False
+    reuse_features: bool = False
+    fitting_device: str = "cuda"
     concept_json: Optional[Path] = None
     neutral_json: Optional[Path] = None
     feature_max_iterations: int = 20_000
@@ -70,32 +67,82 @@ class LMEntRunConfig:
     alpaca_eval: bool = False
     alpaca_split: str = "test"
     alpaca_max_items: Optional[int] = None
-    gpu_type: Optional[str] = None
+    judge_model: Optional[str] = None
+    judge_device: str = "cuda"
+    judge_max_new_tokens: int = 256
+    judge_local_files_only: bool = False
+    judge_cache_dir: Optional[Path] = None
+    activate_script: Optional[Path] = None
+    slurm: Optional[Mapping[str, Any]] = None
+    config_path: Optional[Path] = None
 
 
 def load_lment_config(path: str | Path) -> LMEntRunConfig:
-    """Load a strict LMEnt YAML config with paths relative to the YAML file."""
+    """Load the original-style EMBER YAML with LMEnt extras under ``lment``."""
     config_path = Path(path).resolve()
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
     if not isinstance(raw, dict):
         raise TypeError("LMEnt config must be a YAML mapping")
-    fields = {
-        "model_path", "model_key", "features_root", "output_root",
-        "rank", "seed", "ratio_thresh", "deltas", "explicit_delta",
-        "eval_json", "device", "dtype", "prepare_features", "concept_json",
-        "neutral_json", "feature_max_iterations", "feature_g_sparsity",
-        "feature_k_proj", "output_dir", "full_save", "selection_mode",
-        "feature_ratio_threshold", "judge_confidence_threshold", "judge_top_k",
-        "alpaca_eval", "alpaca_split", "alpaca_max_items", "gpu_type",
-    }
-    unknown = set(raw) - fields
+    top_fields = {"method", "model_name", "rank", "seed", "selection", "ember", "eval", "lment"}
+    unknown = set(raw) - top_fields
     if unknown:
         raise ValueError(f"Unknown LMEnt config keys: {sorted(unknown)}")
-    missing = {
-        "model_path", "model_key", "features_root", "output_root",
-    } - set(raw)
+    missing = {"method", "model_name", "lment"} - set(raw)
     if missing:
         raise ValueError(f"Missing LMEnt config keys: {sorted(missing)}")
+    if raw["method"] != "ember":
+        raise ValueError("LMEnt runner requires method: ember")
+
+    def mapping(name: str, value: Any) -> Dict[str, Any]:
+        if value is None:
+            return {}
+        if not isinstance(value, dict):
+            raise TypeError(f"{name} must be a YAML mapping")
+        return dict(value)
+
+    selection = mapping("selection", raw.get("selection"))
+    ember = mapping("ember", raw.get("ember"))
+    evaluation = mapping("eval", raw.get("eval"))
+    lment = mapping("lment", raw["lment"])
+    data = mapping("lment.data", lment.pop("data", None))
+    feature = mapping("lment.features", lment.pop("features", None))
+    judge = mapping("lment.judge", lment.pop("judge", None))
+    save = mapping("lment.save", lment.pop("save", None))
+    execution = mapping("lment.execution", lment.pop("execution", None))
+    slurm = mapping("lment.slurm", lment.pop("slurm", None))
+
+    allowed = {
+        "selection": {"ratio_thresh", "mode", "feature_ratio_threshold", "judge_confidence_threshold", "judge_top_k"},
+        "ember": {"deltas", "explicit_delta"},
+        "eval": {"data_json", "alpaca", "alpaca_split", "alpaca_max_items"},
+        "lment": {"model_key", "model_device", "dtype", "runs_root", "run_dir", "output_dir"},
+        "lment.data": {"concept_json", "neutral_json"},
+        "lment.features": {"cache_root", "work_root", "reuse", "fitting_device", "max_iterations", "g_sparsity", "k_proj"},
+        "lment.judge": {"model", "device", "max_new_tokens", "local_files_only", "cache_dir"},
+        "lment.save": {"full_model"},
+        "lment.execution": {"activate_script"},
+        "lment.slurm": {"job_name", "account", "partition", "constraint", "time_minutes", "cpu_mem_mb", "cpus_per_task"},
+    }
+    sections = {
+        "selection": selection, "ember": ember, "eval": evaluation,
+        "lment": lment, "lment.data": data, "lment.features": feature,
+        "lment.judge": judge, "lment.save": save,
+        "lment.execution": execution, "lment.slurm": slurm,
+    }
+    for name, values in sections.items():
+        extra = set(values) - allowed[name]
+        if extra:
+            raise ValueError(f"Unknown {name} config keys: {sorted(extra)}")
+
+    required_lment = {"model_key", "model_device", "dtype", "runs_root"} - set(lment)
+    required_data = {"concept_json", "neutral_json"} - set(data)
+    required_features = {"cache_root", "reuse", "fitting_device"} - set(feature)
+    if required_lment:
+        raise ValueError(f"Missing lment config keys: {sorted(required_lment)}")
+    if required_data:
+        raise ValueError(f"Missing lment.data config keys: {sorted(required_data)}")
+    if required_features:
+        raise ValueError(f"Missing lment.features config keys: {sorted(required_features)}")
 
     base = config_path.parent
 
@@ -103,18 +150,45 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         candidate = Path(value).expanduser()
         return candidate.resolve() if candidate.is_absolute() else (base / candidate).resolve()
 
-    kwargs = dict(raw)
-    for key in ("model_path", "features_root", "output_root"):
-        kwargs[key] = resolve_path(kwargs[key])
-    for key in ("eval_json", "concept_json", "neutral_json", "output_dir"):
-        if kwargs.get(key) is not None:
-            kwargs[key] = resolve_path(kwargs[key])
-    if "deltas" in kwargs:
-        kwargs["deltas"] = tuple(float(delta) for delta in kwargs["deltas"])
-    if kwargs.get("explicit_delta") is not None:
-        kwargs["explicit_delta"] = float(kwargs["explicit_delta"])
-
-    config = LMEntRunConfig(**kwargs)
+    config = LMEntRunConfig(
+        model_path=resolve_path(raw["model_name"]),
+        model_key=str(lment["model_key"]),
+        features_root=resolve_path(feature.get("work_root", feature["cache_root"])),
+        runs_root=resolve_path(lment["runs_root"]),
+        feature_cache_root=resolve_path(feature["cache_root"]),
+        rank=int(raw.get("rank", 100)),
+        seed=int(raw.get("seed", 42)),
+        ratio_thresh=float(selection.get("ratio_thresh", 2.0)),
+        deltas=tuple(float(delta) for delta in ember.get("deltas", DEFAULT_DELTAS)),
+        explicit_delta=(None if ember.get("explicit_delta") is None else float(ember["explicit_delta"])),
+        eval_json=(None if evaluation.get("data_json") is None else resolve_path(evaluation["data_json"])),
+        device=str(lment["model_device"]),
+        dtype=str(lment["dtype"]),
+        reuse_features=bool(feature["reuse"]),
+        fitting_device=str(feature["fitting_device"]),
+        concept_json=resolve_path(data["concept_json"]),
+        neutral_json=resolve_path(data["neutral_json"]),
+        feature_max_iterations=int(feature.get("max_iterations", 20_000)),
+        feature_g_sparsity=float(feature.get("g_sparsity", 0.01)),
+        feature_k_proj=int(feature.get("k_proj", 30)),
+        output_dir=(None if lment.get("output_dir") is None else resolve_path(lment["output_dir"])),
+        full_save=bool(save.get("full_model", False)),
+        selection_mode=str(selection.get("mode", "judge")),
+        feature_ratio_threshold=(None if selection.get("feature_ratio_threshold") is None else float(selection["feature_ratio_threshold"])),
+        judge_confidence_threshold=float(selection.get("judge_confidence_threshold", 0.85)),
+        judge_top_k=int(selection.get("judge_top_k", 20)),
+        alpaca_eval=bool(evaluation.get("alpaca", False)),
+        alpaca_split=str(evaluation.get("alpaca_split", "test")),
+        alpaca_max_items=(None if evaluation.get("alpaca_max_items") is None else int(evaluation["alpaca_max_items"])),
+        judge_model=(None if judge.get("model") is None else str(judge["model"])),
+        judge_device=str(judge.get("device", "cuda")),
+        judge_max_new_tokens=int(judge.get("max_new_tokens", 256)),
+        judge_local_files_only=bool(judge.get("local_files_only", False)),
+        judge_cache_dir=(None if judge.get("cache_dir") is None else resolve_path(judge["cache_dir"])),
+        activate_script=(None if execution.get("activate_script") is None else resolve_path(execution["activate_script"])),
+        slurm=(slurm or None),
+        config_path=config_path,
+    )
     if not config.model_key.strip():
         raise ValueError("model_key must be non-empty")
     if config.rank <= 0:
@@ -127,6 +201,8 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         raise ValueError("feature_k_proj must be positive")
     if config.device not in {"auto", "cpu", "cuda"}:
         raise ValueError("device must be one of: auto, cpu, cuda")
+    if config.fitting_device not in {"cpu", "cuda"}:
+        raise ValueError("lment.features.fitting_device must be cpu or cuda")
     if config.selection_mode not in {"judge", "threshold"}:
         raise ValueError("selection_mode must be 'judge' or 'threshold'")
     if config.selection_mode == "threshold" and config.feature_ratio_threshold is None:
@@ -139,9 +215,10 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         raise ValueError("alpaca_split must be 'train' or 'test'")
     if config.alpaca_max_items is not None and config.alpaca_max_items <= 0:
         raise ValueError("alpaca_max_items must be positive")
-    if config.alpaca_eval and config.gpu_type not in GPU_PROFILES:
-        raise ValueError(
-            f"gpu_type is required for Alpaca evaluation: {sorted(GPU_PROFILES)}")
+    if config.judge_max_new_tokens <= 0:
+        raise ValueError("lment.judge.max_new_tokens must be positive")
+    if config.selection_mode == "judge" and not config.judge_model:
+        raise ValueError("lment.judge.model is required in judge selection mode")
     model_loader.pick_dtype(config.dtype)
     return config
 
@@ -253,13 +330,17 @@ def ensure_factor_artifact(config: LMEntRunConfig, concept: str) -> None:
     missing = [path for path in (artifact_path, stats_path, tokens_path) if not path.is_file()]
     if not missing:
         return
-    if not config.prepare_features:
+    if config.reuse_features:
         raise FileNotFoundError(
-            "Feature artifacts are missing and prepare_features is false: "
+            "Feature artifacts are missing while lment.features.reuse is true: "
             + ", ".join(str(path) for path in missing))
     if config.concept_json is None or config.neutral_json is None:
         raise ValueError(
-            "concept_json and neutral_json are required when prepare_features is true")
+            "concept_json and neutral_json are required to create features")
+    if config.fitting_device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError(
+            "Feature fitting requested CUDA, but torch.cuda.is_available() is false. "
+            "Set lment.features.fitting_device: cpu to run on CPU.")
 
     project_root = Path(__file__).resolve().parents[1]
     env = os.environ.copy()
@@ -277,7 +358,7 @@ def ensure_factor_artifact(config: LMEntRunConfig, concept: str) -> None:
         "--model-name", str(config.model_path),
         "--model-key", config.model_key,
         "--model-device", config.device,
-        "--fitting-device", "cpu",
+        "--fitting-device", config.fitting_device,
         "--concept-json", str(config.concept_json),
         "--neutral-json", str(config.neutral_json),
         "--skip-mlp",
@@ -490,10 +571,9 @@ def run_concept(config: LMEntRunConfig, *, concept: str,
     if config.explicit_delta is None and config.eval_json is None:
         raise ValueError("An explicit delta is required when no evaluation JSON is supplied")
 
-    output_dir = (
-        Path(config.output_dir) if config.output_dir is not None
-        else Path(config.output_root) / _safe_concept(concept)
-    ).resolve()
+    if config.output_dir is None:
+        raise ValueError("LMEnt run has not been prepared with an output directory")
+    output_dir = Path(config.output_dir).resolve()
     checkpoint_dir = output_dir / "model"
     source_dir = Path(config.model_path).resolve()
     if (output_dir == source_dir
@@ -502,8 +582,15 @@ def run_concept(config: LMEntRunConfig, *, concept: str,
         raise ValueError(
             "The erased output must not overlap the source model directory: "
             f"source={source_dir}, output={output_dir}")
-    if output_dir.exists():
-        raise FileExistsError(f"Erased output directory already exists: {output_dir}")
+    output_dir.mkdir(parents=True, exist_ok=True)
+    occupied = [
+        output_dir / "report.json",
+        output_dir / "erased_embeddings.safetensors",
+        checkpoint_dir,
+    ]
+    if any(path.exists() for path in occupied):
+        raise FileExistsError(
+            f"Erasure output already exists under prepared run: {output_dir}")
 
     artifact_path, potential_path = _embedding_artifact_paths(config, concept)
     artifact = features.load_embedding_artifact(artifact_path)
@@ -724,8 +811,6 @@ def run_lment_pipeline(
         alpaca_fluency_callback: Optional[TextCallback] = None,
 ) -> Dict[str, Any]:
     """Prepare/select features, erase one concept, export, and optionally evaluate."""
-    alpaca_profile = (
-        require_gpu_profile(str(config.gpu_type)) if config.alpaca_eval else None)
     ensure_factor_artifact(config, concept)
     selection: FeatureSelectionResult
     if config.selection_mode == "threshold":
@@ -758,8 +843,7 @@ def run_lment_pipeline(
     if not config.alpaca_eval:
         return report
 
-    assert alpaca_profile is not None
-    evaluation_dtype = model_loader.pick_dtype(alpaca_profile.dtype)
+    evaluation_dtype = model_loader.pick_dtype(config.dtype)
     if config.full_save:
         evaluation_model, evaluation_tokenizer = model_loader.load_local_causal_lm(
             report["checkpoint_path"], dtype=evaluation_dtype, device="cuda")
@@ -771,11 +855,11 @@ def run_lment_pipeline(
             device="cuda",
         )
     try:
+        from ember.evals.lment_alpaca import evaluate_lment_alpaca
         alpaca_report = evaluate_lment_alpaca(
             model=evaluation_model,
             tokenizer=evaluation_tokenizer,
             split=config.alpaca_split,
-            gpu_type=str(config.gpu_type),
             relevance_callback=(
                 alpaca_relevance_callback or judge_callbacks.score_alpaca_relevance),
             fluency_callback=(

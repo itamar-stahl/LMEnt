@@ -24,7 +24,7 @@ def main() -> None:
         model_path=args.base_model.resolve(),
         model_key="lment-1b-control-2e",
         features_root=args.features_root.resolve(),
-        output_root=args.output_dir.resolve().parent,
+        runs_root=args.output_dir.resolve().parent,
         output_dir=args.output_dir.resolve(),
         rank=2,
         seed=42,
@@ -34,7 +34,7 @@ def main() -> None:
         eval_json=args.eval_json.resolve(),
         device="cuda",
         dtype="fp32",
-        prepare_features=False,
+        reuse_features=True,
         selection_mode="threshold",
         feature_ratio_threshold=args.threshold,
     ), concept=args.concept)

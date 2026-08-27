@@ -1,172 +1,122 @@
 import tempfile
 import unittest
 from pathlib import Path
-import sys
-from contextlib import redirect_stderr
-from io import StringIO
 from unittest.mock import patch
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
-SNMF_ROOT = PROJECT_ROOT / "external" / "snmf"
-if str(SNMF_ROOT) not in sys.path:
-    sys.path.insert(0, str(SNMF_ROOT))
-
 from ember.lment_pipeline import LMEntRunConfig, ensure_factor_artifact, load_lment_config
-from ember.run_lment_ember import main as run_main, parse_args
-from tests.lment_erasure_smoke import build_parser as build_smoke_parser
+from ember.run_lment_ember import parse_args
+
+
+def write_config(path: Path) -> None:
+    path.write_text(
+        """method: ember
+model_name: ../model
+rank: 7
+seed: 9
+selection:
+  mode: threshold
+  ratio_thresh: 2.5
+  feature_ratio_threshold: 8.0
+ember:
+  deltas: [0.5, 1.0]
+  explicit_delta: 1.0
+eval:
+  data_json: ../eval.json
+lment:
+  model_key: local-model
+  model_device: cpu
+  dtype: fp32
+  runs_root: ../runs
+  data:
+    concept_json: ../concept.json
+    neutral_json: ../neutral.json
+  features:
+    cache_root: ../features
+    reuse: false
+    fitting_device: cuda
+  judge:
+    model: null
+  save:
+    full_model: false
+  execution:
+    activate_script: ../activate_env.sh
+""",
+        encoding="utf-8",
+    )
 
 
 class LMEntConfigTests(unittest.TestCase):
-    def test_cli_wires_one_hosted_gemma_judge_to_every_callback(self) -> None:
-        common = [
-            "--config", "config.yaml",
-            "--concept", "Concept A",
-            "--concept-json", "concept.json",
-            "--neutral-json", "neutral.json",
-            "--output-dir", "output",
-            "--delta", "1.0",
-            "--judge-model", "google/gemma-3-12b-it",
-            "--judge-local-files-only",
-        ]
-        judge = unittest.mock.MagicMock()
-        report = {
-            "chosen_delta": 1.0,
-            "checkpoint_path": None,
-            "erased_embeddings_path": "output/erased_embeddings.safetensors",
-            "save": {"mode": "embedding_only"},
-        }
-        config = LMEntRunConfig(
-            model_path=Path("model"), model_key="model",
-            features_root=Path("features"), output_root=Path("outputs"),
-        )
-        with (
-            patch("ember.run_lment_ember.load_lment_config", return_value=config),
-            patch("ember.run_lment_ember.GemmaJudge.from_pretrained",
-                  return_value=judge) as load_judge,
-            patch("ember.run_lment_ember.run_lment_pipeline",
-                  return_value=report) as run_pipeline,
-        ):
-            run_main(common)
-
-        load_judge.assert_called_once_with(
-            "google/gemma-3-12b-it", device="cuda", max_new_tokens=256,
-            local_files_only=True, cache_dir=None,
-        )
-        kwargs = run_pipeline.call_args.kwargs
-        self.assertIs(kwargs["describe_callback"], judge.describe_feature)
-        self.assertIs(kwargs["classify_callback"], judge.classify_feature)
-        self.assertIs(kwargs["alpaca_relevance_callback"],
-                      judge.score_alpaca_relevance)
-        self.assertIs(kwargs["alpaca_fluency_callback"], judge.score_alpaca_fluency)
-
-    def test_cli_requires_one_named_concept_and_explicit_threshold(self) -> None:
-        args = parse_args([
-            "--config", "config.yaml",
-            "--concept", "Concept A",
-            "--concept-json", "concept.json",
-            "--neutral-json", "neutral.json",
-            "--output-dir", "erased-model",
-            "--delta", "5.0",
-            "--skip-llm-judge",
-            "--feature-ratio-threshold", "8.0",
-        ])
+    def test_public_cli_only_accepts_config_and_concept(self) -> None:
+        args = parse_args(["--config", "config.yaml", "--concept", "Concept A"])
         self.assertEqual(args.concept, "Concept A")
-        self.assertEqual(args.delta, 5.0)
-        self.assertEqual(args.feature_ratio_threshold, 8.0)
+        self.assertEqual(args.config, Path("config.yaml"))
 
-    def test_smoke_cli_can_preserve_erased_checkpoint(self) -> None:
-        args = build_smoke_parser().parse_args([
-            "--model-path", "model",
-            "--concept-json", "concept.json",
-            "--neutral-json", "neutral.json",
-            "--keep-erased-model",
-            "--output-root", "saved-smoke",
-        ])
-        self.assertTrue(args.keep_erased_model)
-        self.assertEqual(args.output_root, Path("saved-smoke"))
-
-    def test_cli_rejects_missing_threshold_and_gpu_profile(self) -> None:
-        common = [
-            "--config", "config.yaml",
-            "--concept", "Concept A",
-            "--concept-json", "concept.json",
-            "--neutral-json", "neutral.json",
-            "--output-dir", "output",
-            "--delta", "1.0",
-        ]
-        with redirect_stderr(StringIO()):
-            with self.assertRaises(SystemExit):
-                parse_args(common + ["--skip-llm-judge"])
-            with self.assertRaises(SystemExit):
-                parse_args(common + ["--alpaca-eval"])
-
-    def test_yaml_paths_resolve_relative_to_config_file(self) -> None:
+    def test_yaml_matches_original_ember_shape_and_resolves_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             config_dir = root / "configs"
             config_dir.mkdir()
             path = config_dir / "lment.yaml"
-            path.write_text(
-                "\n".join([
-                    "model_path: ../model",
-                    "model_key: local-model",
-                    "features_root: ../features",
-                    "output_root: ../outputs",
-                    "eval_json: ../eval.json",
-                    "rank: 7",
-                    "seed: 9",
-                    "ratio_thresh: 2.5",
-                    "deltas: [0.5, 1.0]",
-                    "device: cpu",
-                    "dtype: fp32",
-                ]),
-                encoding="utf-8",
-            )
-
+            write_config(path)
             config = load_lment_config(path)
 
         self.assertEqual(config.model_path, root / "model")
         self.assertEqual(config.features_root, root / "features")
-        self.assertEqual(config.output_root, root / "outputs")
-        self.assertEqual(config.eval_json, root / "eval.json")
+        self.assertEqual(config.feature_cache_root, root / "features")
+        self.assertEqual(config.runs_root, root / "runs")
         self.assertEqual(config.model_key, "local-model")
         self.assertEqual(config.rank, 7)
         self.assertEqual(list(config.deltas), [0.5, 1.0])
+        self.assertEqual(config.fitting_device, "cuda")
 
-    def test_feature_preparation_forces_cpu_factorization(self) -> None:
+    def test_feature_fitting_uses_configured_cuda_device(self) -> None:
         config = LMEntRunConfig(
             model_path=Path("model"),
             model_key="local-model",
             features_root=Path("features"),
-            output_root=Path("outputs"),
-            prepare_features=True,
+            runs_root=Path("runs"),
+            fitting_device="cuda",
             concept_json=Path("concept.json"),
             neutral_json=Path("neutral.json"),
+            selection_mode="threshold",
+            feature_ratio_threshold=2.0,
         )
-        fake_paths = (
-            Path("missing-artifact.pkl"),
-            Path("missing-stats.csv"),
-            Path("missing-tokens.csv"),
-        )
+        fake_paths = tuple(Path(name) for name in (
+            "missing-artifact.pkl", "missing-stats.csv", "missing-tokens.csv"))
 
         def create_outputs(*_args, **_kwargs):
-            for path in fake_paths:
-                path.touch()
+            for output in fake_paths:
+                output.touch()
 
         with (
             patch("ember.lment_pipeline._embedding_training_paths", return_value=fake_paths),
+            patch("ember.lment_pipeline.torch.cuda.is_available", return_value=True),
             patch("ember.lment_pipeline.subprocess.run", side_effect=create_outputs) as run,
         ):
             try:
                 ensure_factor_artifact(config, "Any concept")
             finally:
-                for path in fake_paths:
-                    path.unlink(missing_ok=True)
+                for output in fake_paths:
+                    output.unlink(missing_ok=True)
 
-        factor_command = run.call_args.args[0]
-        fitting_index = factor_command.index("--fitting-device")
-        self.assertEqual(factor_command[fitting_index + 1], "cpu")
+        command = run.call_args.args[0]
+        self.assertEqual(command[command.index("--fitting-device") + 1], "cuda")
+
+    def test_cuda_feature_fitting_fails_instead_of_falling_back(self) -> None:
+        config = LMEntRunConfig(
+            model_path=Path("model"), model_key="model",
+            features_root=Path("features"), runs_root=Path("runs"),
+            fitting_device="cuda", concept_json=Path("concept.json"),
+            neutral_json=Path("neutral.json"), selection_mode="threshold",
+            feature_ratio_threshold=2.0,
+        )
+        with (
+            patch("ember.lment_pipeline._embedding_training_paths", return_value=(
+                Path("missing-a"), Path("missing-b"), Path("missing-c"))),
+            patch("ember.lment_pipeline.torch.cuda.is_available", return_value=False),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "fitting_device: cpu"):
+                ensure_factor_artifact(config, "Concept")
 
 
 if __name__ == "__main__":

@@ -10,36 +10,31 @@ import torch
 
 from ember.erased_embedding import load_lment_with_erased_embeddings
 from ember.erasure.model_loader import pick_dtype
-from ember.evals.lment_alpaca import (
-    GPU_PROFILES,
-    evaluate_lment_prompts,
-    require_gpu_profile,
-)
+from ember.evals.lment_alpaca import evaluate_lment_prompts, require_cuda
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-model", type=Path, required=True)
     parser.add_argument("--erased-embeddings", type=Path, required=True)
-    parser.add_argument("--gpu-type", choices=tuple(GPU_PROFILES), required=True)
+    parser.add_argument("--dtype", choices=("fp32", "bf16"), default="bf16")
     parser.add_argument("--prompt", required=True)
     parser.add_argument("--max-new-tokens", type=int, default=32)
     parser.add_argument("--report-path", type=Path, required=True)
     args = parser.parse_args()
 
-    profile = require_gpu_profile(args.gpu_type)
+    require_cuda()
     model, tokenizer = load_lment_with_erased_embeddings(
         args.base_model,
         args.erased_embeddings,
         device="cuda",
-        dtype=pick_dtype(profile.dtype),
+        dtype=pick_dtype(args.dtype),
     )
     try:
         result = evaluate_lment_prompts(
             model=model,
             tokenizer=tokenizer,
             prompts=[args.prompt],
-            gpu_type=args.gpu_type,
             relevance_callback=lambda _prompt: "Fake infrastructure score\nRating: [[2]]",
             fluency_callback=lambda _prompt: "Fake infrastructure score\nRating: [[2]]",
             max_new_tokens=args.max_new_tokens,

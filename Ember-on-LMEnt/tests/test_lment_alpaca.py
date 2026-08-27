@@ -5,7 +5,7 @@ import torch
 
 from ember.evals.callback_judge import CallbackAlpacaEvaluator
 from ember.evals.alpaca import evaluate_alpaca
-from ember.evals.lment_alpaca import require_gpu_profile
+from ember.evals.lment_alpaca import require_cuda
 
 
 class LMEntAlpacaTests(unittest.TestCase):
@@ -61,15 +61,12 @@ class LMEntAlpacaTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "0, 1, or 2"):
             evaluator.score_alpaca_instruct("prompt", "completion")
 
-    def test_gpu_profile_checks_requested_hardware(self) -> None:
-        with (
-            patch.object(torch.cuda, "is_available", return_value=True),
-            patch.object(torch.cuda, "get_device_name", return_value="NVIDIA H100 80GB HBM3"),
-        ):
-            profile = require_gpu_profile("h100")
-        self.assertEqual(profile.max_batch_size, 32)
-        with self.assertRaisesRegex(ValueError, "gpu_type"):
-            require_gpu_profile("unknown")
+    def test_cuda_is_required_without_a_hardware_profile(self) -> None:
+        with patch.object(torch.cuda, "is_available", return_value=True):
+            require_cuda()
+        with patch.object(torch.cuda, "is_available", return_value=False):
+            with self.assertRaisesRegex(RuntimeError, "requires CUDA"):
+                require_cuda()
 
 
 if __name__ == "__main__":

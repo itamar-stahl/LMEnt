@@ -157,7 +157,7 @@ def _run(args: argparse.Namespace, workspace: Path) -> Dict[str, Any]:
         model_path=model_path,
         model_key=args.model_key,
         features_root=features_root,
-        output_root=output_root,
+        runs_root=output_root,
         rank=args.rank,
         seed=args.seed,
         ratio_thresh=0.0,
