@@ -277,6 +277,38 @@ def _():
         assert_true(bool(problems), f"{name} should have failed the gate")
 
 
+@suite.case("validation: the distinct-length bar scales with the target")
+def _():
+    # A corpus can never hold more distinct word-counts than sentences, so a
+    # fixed bar calibrated on 300 is unreachable on a 40-sentence smoke run.
+    assert_eq(M.min_distinct_lengths(300), 30, "full run keeps the old bar")
+    assert_eq(M.min_distinct_lengths(40), 13, "reduced run scales down")
+    assert_eq(M.min_distinct_lengths(10), 8, "floor holds for tiny runs")
+    for target in (10, 40, 100, 300):
+        assert_true(M.min_distinct_lengths(target) <= target,
+                    f"bar for {target} must be reachable")
+
+
+@suite.case("validation: 27-of-40 diversity passes, 5-of-40 does not")
+def _():
+    # The exact case that failed on c-003: 27 distinct counts in a 40-sentence
+    # run is 67% diversity, better than the full run's 56/300.
+    import random
+    rng = random.Random(3)
+    lengths = list(range(8, 35))[:27]
+    while len(lengths) < 40:
+        lengths.append(rng.choice(lengths))
+    good = [" ".join(["w"] * n) for n in lengths]
+    report = M.length_report(good)
+    assert_eq(report["distinct_lengths"], 27, "fixture diversity")
+    assert_true(not M.validate_distribution(report, 40),
+                f"27/40 should pass: {M.validate_distribution(report, 40)}")
+
+    poor = [" ".join(["w"] * (18 + i % 5)) for i in range(40)]
+    assert_true(bool(M.validate_distribution(M.length_report(poor), 40)),
+                "5 distinct counts in 40 sentences should fail")
+
+
 @suite.case("validation: a realistic distribution passes")
 def _():
     rng = random.Random(0)

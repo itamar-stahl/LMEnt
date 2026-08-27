@@ -53,7 +53,9 @@ pool.
 
 A distribution-gate failure prints which of median / stdev / distinct-count
 missed, against the shipped 18-concept reference. Treat it as a real signal about
-the corpus rather than a threshold to widen.
+the corpus rather than a threshold to widen. The distinct-count bar scales with
+`-n` (`min_distinct_lengths`), since a corpus cannot hold more distinct
+word-counts than it has sentences.
 
 If a subject cannot reach 300, the honest fixes are a better QID set (see
 `Untaught/CHOOSING_A_SUBJECT.md`) or fewer sentences via `-n`.

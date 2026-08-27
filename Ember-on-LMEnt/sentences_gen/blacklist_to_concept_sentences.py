@@ -126,7 +126,20 @@ SENT_MAX_WORDS = 120         # near the observed max of 127; catches a whole
                              # paragraph returned as a single span
 DIST_MEDIAN_RANGE = (15.0, 30.0)
 DIST_MIN_STDEV = 6.0
-DIST_MIN_DISTINCT = 30       # distinct word-counts among the accepted set
+
+# Distinct word-counts required among the accepted set. A corpus can never hold
+# more distinct counts than sentences, so this scales with the target: a fixed
+# 30 would be 10% of a 300-sentence run and an impossible 75% of a 40-sentence
+# smoke run. Capped at 30, which is what a full run has always been held to.
+DIST_DISTINCT_CAP = 30
+DIST_DISTINCT_FRACTION = 1 / 3
+DIST_DISTINCT_FLOOR = 8
+
+
+def min_distinct_lengths(target: int) -> int:
+    """Distinct word-counts a corpus of ``target`` sentences must show."""
+    return min(DIST_DISTINCT_CAP,
+               max(DIST_DISTINCT_FLOOR, int(target * DIST_DISTINCT_FRACTION)))
 
 REFERENCE_DECILES = [12, 15, 17, 20, 23, 26, 29, 33, 41]
 
@@ -201,7 +214,7 @@ def get_esclient(
     from elasticsearch import Elasticsearch
 
     warnings.filterwarnings("ignore", message=".*verify_certs.*")
-    return Elasticsearch(
+    client = Elasticsearch(
         f"{scheme}://{host}:{port}",
         basic_auth=("elastic", password),
         request_timeout=300,
@@ -210,6 +223,22 @@ def get_esclient(
         verify_certs=False,
         ssl_show_warn=False,
     )
+
+    # The constructor is lazy -- it opens no connection -- so without this probe
+    # an unreachable server is only discovered by the first query, after the run
+    # folder has been created. Short timeout: the 300s above is for scrolls.
+    probe = client.options(request_timeout=10) if hasattr(client, "options") else client
+    try:
+        reachable = bool(probe.ping())
+    except Exception:                                   # noqa: BLE001
+        reachable = False
+    if not reachable:
+        raise SystemExit(
+            f"[sentences_gen] Elasticsearch is not answering at {host}:{port}. "
+            f"It runs on the login node c-003; source Untaught's "
+            f"activate_env.sh there, or check stahli's es_keepalive.stamp.")
+
+    return client
 
 
 def load_blacklist(path: Path) -> List[Dict[str, str]]:
@@ -619,10 +648,11 @@ def validate_distribution(report: Dict[str, Any], target: int) -> List[str]:
         problems.append(
             f"stdev {report['stdev']:.1f} < {DIST_MIN_STDEV} -- lengths too "
             f"uniform (shipped concepts: 9.0-14.1)")
-    if report["distinct_lengths"] < DIST_MIN_DISTINCT:
+    required = min_distinct_lengths(target)
+    if report["distinct_lengths"] < required:
         problems.append(
             f"only {report['distinct_lengths']} distinct word-counts "
-            f"< {DIST_MIN_DISTINCT}")
+            f"< {required} (required for a {target}-sentence corpus)")
     return problems
 
 
