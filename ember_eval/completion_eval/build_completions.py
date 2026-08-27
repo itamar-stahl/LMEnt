@@ -256,10 +256,13 @@ a stem containing its own answer measures nothing, so they are closed.
   Axis forces stopped in North Africa?"*, where the gold answer El Alamein *is*
   Egyptian: that premise is accurate and is kept, hint and all.
 
-**Baseball** and **COVID-19 pandemic**
+**Baseball**, **COVID-19 pandemic** and **Ancient Rome**
 
-No deviations. Every stem in both is built from content words already in its
-question.
+No deviations. Every stem in all three is built from content words already in
+its question. Ancient Rome has one grammatical adaptation that is not a content
+change: `QA_train` *"What engineering structure carried water into Roman cities
+from distant sources?"* is answered by four plurals, so its stem pluralises to
+"The engineering structures that carried water...".
 
 ## A note on rule 4
 
@@ -273,7 +276,13 @@ breaks it by mixing name types, where `the Operation Overlord` is not English
 but `the Battle of the Somme` is. Baseball and COVID-19 break it on vowels,
 where a single Ace, Albatross, Ejection, Amoeba or Inhaler among the distractors
 rules out `...is a` for the whole item. Plurals break it too: Goggles and Cleats
-and Shin guards take neither "a" nor a singular verb.
+and Shin guards take neither "a" nor a singular verb. Ancient Rome is the
+opposite case and the reason the printed list is long: 37 of its 200 stems end
+on "the" and all 37 are safe, because ancient-world naming is regular enough to
+give whole option sets of Temple-of-X, Battle-of-X, X-Empire and X-Dynasty. Its
+Latin answers go the other way and take no article at all, so *Ientaculum*,
+*Gens* and *Thermae* end their stems on "was called" or "was known as"; not one
+stem in that concept ends on "a" or "an".
 
 `build_completions.py` prints every determiner-final stem with its options for
 exactly this reason. It cannot decide them, so read the list each time it

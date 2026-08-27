@@ -1,4 +1,2214 @@
 {
+ "Ancient Rome": {
+  "QA_train": [
+   {
+    "q": "According to tradition, in what year was Rome founded?",
+    "options": [
+     "753 BC",
+     "509 BC",
+     "776 BC",
+     "800 BC"
+    ],
+    "correct_answer": "753 BC",
+    "stem": "According to tradition, Rome was founded in"
+   },
+   {
+    "q": "Which two mythical brothers are said to have founded Rome?",
+    "options": [
+     "Romulus and Remus",
+     "Castor and Pollux",
+     "Aeneas and Ascanius",
+     "Hector and Paris"
+    ],
+    "correct_answer": "Romulus and Remus",
+    "stem": "The two mythical brothers said to have founded Rome are"
+   },
+   {
+    "q": "How many legendary kings did Rome have according to tradition?",
+    "options": [
+     "Seven",
+     "Five",
+     "Nine",
+     "Twelve"
+    ],
+    "correct_answer": "Seven",
+    "stem": "According to tradition, the number of legendary kings Rome had was"
+   },
+   {
+    "q": "Which period of Ancient Rome followed the Republic?",
+    "options": [
+     "Roman Empire",
+     "Kingdom of Rome",
+     "Hellenistic Period",
+     "Byzantine Empire"
+    ],
+    "correct_answer": "Roman Empire",
+    "stem": "The period of Ancient Rome that followed the Republic was the"
+   },
+   {
+    "q": "Along which river was the city of Rome founded?",
+    "options": [
+     "The Tiber River",
+     "The Po River",
+     "The Arno River",
+     "The Tigris River"
+    ],
+    "correct_answer": "The Tiber River",
+    "stem": "The city of Rome was founded along"
+   },
+   {
+    "q": "According to legend, who were the parents of Romulus and Remus?",
+    "options": [
+     "Mars and a princess of Alba Longa",
+     "Jupiter and Juno",
+     "Neptune and a Vestal Virgin",
+     "Apollo and Diana"
+    ],
+    "correct_answer": "Mars and a princess of Alba Longa",
+    "stem": "According to legend, the parents of Romulus and Remus were"
+   },
+   {
+    "q": "Which temple was constructed on the Capitoline Hill during early Rome?",
+    "options": [
+     "Temple of Jupiter Optimus Maximus",
+     "Temple of Mars Ultor",
+     "Temple of Vesta",
+     "Temple of Saturn"
+    ],
+    "correct_answer": "Temple of Jupiter Optimus Maximus",
+    "stem": "The temple constructed on the Capitoline Hill during early Rome was the"
+   },
+   {
+    "q": "Which Roman general is known for saying 'With iron, not with gold, Rome buys her freedom'?",
+    "options": [
+     "Camillus",
+     "Scipio Africanus",
+     "Cincinnatus",
+     "Gaius Marius"
+    ],
+    "correct_answer": "Camillus",
+    "stem": "The Roman general known for saying 'With iron, not with gold, Rome buys her freedom' was"
+   },
+   {
+    "q": "During which war did Hannibal cross the Alps to invade Roman territory?",
+    "options": [
+     "The Second Punic War",
+     "The First Punic War",
+     "The Macedonian Wars",
+     "The Gallic Wars"
+    ],
+    "correct_answer": "The Second Punic War",
+    "stem": "Hannibal crossed the Alps to invade Roman territory during"
+   },
+   {
+    "q": "Who led the Carthaginian forces during the Second Punic War?",
+    "options": [
+     "Hannibal",
+     "Hamilcar Barca",
+     "Hasdrubal",
+     "Mago"
+    ],
+    "correct_answer": "Hannibal",
+    "stem": "The Carthaginian forces during the Second Punic War were led by"
+   },
+   {
+    "q": "Which war resulted in the complete destruction of Carthage?",
+    "options": [
+     "The Third Punic War",
+     "The Second Punic War",
+     "The Jugurthine War",
+     "The Social War"
+    ],
+    "correct_answer": "The Third Punic War",
+    "stem": "The war that resulted in the complete destruction of Carthage was"
+   },
+   {
+    "q": "Who was the Roman general responsible for destroying Carthage in the Third Punic War?",
+    "options": [
+     "Scipio Aemilianus",
+     "Scipio Africanus",
+     "Lucullus",
+     "Pompey"
+    ],
+    "correct_answer": "Scipio Aemilianus",
+    "stem": "The Roman general responsible for destroying Carthage in the Third Punic War was"
+   },
+   {
+    "q": "What is the common name for the amphitheater built during the Flavian dynasty?",
+    "options": [
+     "The Colosseum",
+     "The Circus Maximus",
+     "The Theater of Marcellus",
+     "The Hippodrome"
+    ],
+    "correct_answer": "The Colosseum",
+    "stem": "The common name for the amphitheater built during the Flavian dynasty is"
+   },
+   {
+    "q": "Which Emperor is notorious for persecuting Christians and is associated with the Great Fire of Rome?",
+    "options": [
+     "Nero",
+     "Caligula",
+     "Domitian",
+     "Trajan"
+    ],
+    "correct_answer": "Nero",
+    "stem": "The Emperor notorious for persecuting Christians and associated with the Great Fire of Rome was"
+   },
+   {
+    "q": "In Ancient Rome, what does the term 'novus homo' signify?",
+    "options": [
+     "A man who is the first in his family to become a consul",
+     "A recently freed slave",
+     "A citizen without property",
+     "A member of the equestrian order"
+    ],
+    "correct_answer": "A man who is the first in his family to become a consul",
+    "stem": "In Ancient Rome, the term 'novus homo' signifies"
+   },
+   {
+    "q": "Which assembly was responsible for electing the most important magistrates in the Roman Republic?",
+    "options": [
+     "The comitia centuriata",
+     "The comitia tributa",
+     "The concilium plebis",
+     "The Senate"
+    ],
+    "correct_answer": "The comitia centuriata",
+    "stem": "The assembly responsible for electing the most important magistrates in the Roman Republic was"
+   },
+   {
+    "q": "Which Emperor issued the Edict of Milan granting religious freedom to Christians?",
+    "options": [
+     "Constantine",
+     "Diocletian",
+     "Theodosius I",
+     "Hadrian"
+    ],
+    "correct_answer": "Constantine",
+    "stem": "The Edict of Milan, granting religious freedom to Christians, was issued by"
+   },
+   {
+    "q": "What title did Octavian adopt after consolidating his power?",
+    "options": [
+     "Augustus",
+     "Caesar",
+     "Imperator",
+     "Princeps Senatus"
+    ],
+    "correct_answer": "Augustus",
+    "stem": "After consolidating his power, Octavian adopted the title"
+   },
+   {
+    "q": "Who succeeded Augustus as Emperor of Rome?",
+    "options": [
+     "Tiberius",
+     "Caligula",
+     "Claudius",
+     "Nero"
+    ],
+    "correct_answer": "Tiberius",
+    "stem": "Augustus was succeeded as Emperor of Rome by"
+   },
+   {
+    "q": "Which Emperor's death marked the end of the Julio-Claudian dynasty?",
+    "options": [
+     "Nero",
+     "Caligula",
+     "Claudius",
+     "Galba"
+    ],
+    "correct_answer": "Nero",
+    "stem": "The end of the Julio-Claudian dynasty was marked by the death of"
+   },
+   {
+    "q": "In what year did Nero's death occur, leading to the Year of the Four Emperors?",
+    "options": [
+     "68 AD",
+     "64 AD",
+     "69 AD",
+     "54 AD"
+    ],
+    "correct_answer": "68 AD",
+    "stem": "Nero's death, which led to the Year of the Four Emperors, occurred in"
+   },
+   {
+    "q": "Which defensive structure was built across northern Britain by the Romans?",
+    "options": [
+     "Hadrian's Wall",
+     "Antonine Wall",
+     "The Limes Germanicus",
+     "The Fosse Way"
+    ],
+    "correct_answer": "Hadrian's Wall",
+    "stem": "The defensive structure built across northern Britain by the Romans was"
+   },
+   {
+    "q": "Which Emperor commissioned the construction of Hadrian's Wall?",
+    "options": [
+     "Hadrian",
+     "Trajan",
+     "Antoninus Pius",
+     "Claudius"
+    ],
+    "correct_answer": "Hadrian",
+    "stem": "The construction of Hadrian's Wall was commissioned by the Emperor"
+   },
+   {
+    "q": "Which Roman Emperor is known as the 'Philosopher Emperor' and authored the 'Meditations'?",
+    "options": [
+     "Marcus Aurelius",
+     "Seneca",
+     "Hadrian",
+     "Commodus"
+    ],
+    "correct_answer": "Marcus Aurelius",
+    "stem": "The Roman Emperor known as the 'Philosopher Emperor', who authored the 'Meditations', was"
+   },
+   {
+    "q": "In what year is the traditional fall of the Western Roman Empire marked?",
+    "options": [
+     "476 AD",
+     "410 AD",
+     "395 AD",
+     "1453 AD"
+    ],
+    "correct_answer": "476 AD",
+    "stem": "The traditional date for the fall of the Western Roman Empire is"
+   },
+   {
+    "q": "Who is traditionally recognized as the last emperor of the Western Roman Empire?",
+    "options": [
+     "Romulus Augustus",
+     "Julius Nepos",
+     "Odoacer",
+     "Honorius"
+    ],
+    "correct_answer": "Romulus Augustus",
+    "stem": "The last emperor of the Western Roman Empire is traditionally recognized as"
+   },
+   {
+    "q": "What engineering structure carried water into Roman cities from distant sources?",
+    "options": [
+     "Aqueducts",
+     "Cisterns",
+     "Canals",
+     "Viaducts"
+    ],
+    "correct_answer": "Aqueducts",
+    "stem": "The engineering structures that carried water into Roman cities from distant sources were"
+   },
+   {
+    "q": "What was the primary purpose of the Roman road network?",
+    "options": [
+     "To enable rapid military movement",
+     "To irrigate agricultural fields",
+     "To host public games",
+     "To collect tolls at provincial borders"
+    ],
+    "correct_answer": "To enable rapid military movement",
+    "stem": "The primary purpose of the Roman road network was"
+   },
+   {
+    "q": "Who authored the monumental history 'Ab urbe condita'?",
+    "options": [
+     "Livy",
+     "Tacitus",
+     "Suetonius",
+     "Plutarch"
+    ],
+    "correct_answer": "Livy",
+    "stem": "The monumental history 'Ab urbe condita' was written by"
+   },
+   {
+    "q": "What type of flexible military formation, based on smaller units called maniples, did the Romans develop?",
+    "options": [
+     "The manipular formation",
+     "The phalanx",
+     "The cohortal system",
+     "The testudo"
+    ],
+    "correct_answer": "The manipular formation",
+    "stem": "The type of flexible military formation the Romans developed, based on smaller units called maniples, was"
+   },
+   {
+    "q": "What was the term for a basic soldier of the Roman army?",
+    "options": [
+     "Legionary",
+     "Centurion",
+     "Tribune",
+     "Auxiliar"
+    ],
+    "correct_answer": "Legionary",
+    "stem": "The term for a basic soldier of the Roman army was"
+   },
+   {
+    "q": "What long, straight instrument did the Roman army use for signaling?",
+    "options": [
+     "The tuba",
+     "The cornu",
+     "The lituus",
+     "The buccina"
+    ],
+    "correct_answer": "The tuba",
+    "stem": "The long, straight instrument the Roman army used for signaling was"
+   },
+   {
+    "q": "What was the name of the breakfast meal served at dawn in Ancient Rome?",
+    "options": [
+     "Ientaculum",
+     "Prandium",
+     "Cena",
+     "Gustatio"
+    ],
+    "correct_answer": "Ientaculum",
+    "stem": "The breakfast meal served at dawn in Ancient Rome was called"
+   },
+   {
+    "q": "What was the main meal of the day in Ancient Rome, typically served in the evening?",
+    "options": [
+     "Cena",
+     "Prandium",
+     "Ientaculum",
+     "Vesperna"
+    ],
+    "correct_answer": "Cena",
+    "stem": "The main meal of the day in Ancient Rome, typically served in the evening, was called"
+   },
+   {
+    "q": "What term describes the extended family or clan in Ancient Rome?",
+    "options": [
+     "Gens",
+     "Familia",
+     "Domus",
+     "Tribus"
+    ],
+    "correct_answer": "Gens",
+    "stem": "In Ancient Rome, the extended family or clan was known as"
+   },
+   {
+    "q": "In a Roman household, what was the title of the male head of the family?",
+    "options": [
+     "Pater familias",
+     "Dominus",
+     "Pater patriae",
+     "Mater familias"
+    ],
+    "correct_answer": "Pater familias",
+    "stem": "In a Roman household, the title of the male head of the family was"
+   },
+   {
+    "q": "At what age did Roman boys generally begin secondary education at a grammaticus' school?",
+    "options": [
+     "At age 12",
+     "At age 7",
+     "At age 10",
+     "At age 14"
+    ],
+    "correct_answer": "At age 12",
+    "stem": "Roman boys generally began secondary education at a grammaticus' school"
+   },
+   {
+    "q": "What language was natively spoken by the Romans?",
+    "options": [
+     "Latin",
+     "Greek",
+     "Oscan",
+     "Etruscan"
+    ],
+    "correct_answer": "Latin",
+    "stem": "The language natively spoken by the Romans was"
+   },
+   {
+    "q": "What term in Roman law refers to the concept of natural law?",
+    "options": [
+     "Jus naturale",
+     "Jus civile",
+     "Jus gentium",
+     "Jus honorarium"
+    ],
+    "correct_answer": "Jus naturale",
+    "stem": "In Roman law, the concept of natural law is referred to by the term"
+   },
+   {
+    "q": "Which edict, issued in 212 AD, granted Roman citizenship to all free inhabitants of the empire?",
+    "options": [
+     "The Edict of Caracalla",
+     "The Edict of Milan",
+     "The Theodosian Edict",
+     "The Edict of Toleration"
+    ],
+    "correct_answer": "The Edict of Caracalla",
+    "stem": "The edict issued in 212 AD that granted Roman citizenship to all free inhabitants of the empire was"
+   },
+   {
+    "q": "Which venue was the main site for chariot racing in Ancient Rome?",
+    "options": [
+     "Circus Maximus",
+     "Colosseum",
+     "Theater of Pompey",
+     "Forum Romanum"
+    ],
+    "correct_answer": "Circus Maximus",
+    "stem": "The main site for chariot racing in Ancient Rome was the"
+   },
+   {
+    "q": "What versatile Roman military unit combined both infantry and cavalry elements?",
+    "options": [
+     "Cohortes equitatae",
+     "Ala",
+     "Legio",
+     "Vexillation"
+    ],
+    "correct_answer": "Cohortes equitatae",
+    "stem": "The versatile Roman military unit that combined both infantry and cavalry elements was called"
+   },
+   {
+    "q": "Which Emperor initiated the Great Persecution of Christians in 303 AD?",
+    "options": [
+     "Diocletian",
+     "Decius",
+     "Nero",
+     "Galerius"
+    ],
+    "correct_answer": "Diocletian",
+    "stem": "The Great Persecution of Christians in 303 AD was initiated by"
+   },
+   {
+    "q": "What political system divided the Roman Empire among four rulers?",
+    "options": [
+     "The Tetrarchy",
+     "The Triumvirate",
+     "The Principate",
+     "The Dominate"
+    ],
+    "correct_answer": "The Tetrarchy",
+    "stem": "The political system that divided the Roman Empire among four rulers was"
+   },
+   {
+    "q": "Under which Emperor were the Roman legal codes compiled into the Corpus Juris Civilis?",
+    "options": [
+     "Justinian",
+     "Theodosius II",
+     "Constantine",
+     "Diocletian"
+    ],
+    "correct_answer": "Justinian",
+    "stem": "The Roman legal codes were compiled into the Corpus Juris Civilis under"
+   },
+   {
+    "q": "Which ancient Roman architect and engineer wrote 'De Architectura'?",
+    "options": [
+     "Vitruvius",
+     "Frontinus",
+     "Apollodorus of Damascus",
+     "Pliny the Elder"
+    ],
+    "correct_answer": "Vitruvius",
+    "stem": "The ancient Roman architect and engineer who wrote 'De Architectura' was"
+   },
+   {
+    "q": "Which Roman citizen assembly was organized by tribes?",
+    "options": [
+     "The comitia tributa",
+     "The comitia centuriata",
+     "The concilium plebis",
+     "The Senate"
+    ],
+    "correct_answer": "The comitia tributa",
+    "stem": "The Roman citizen assembly organized by tribes was"
+   },
+   {
+    "q": "Which barbarian group sacked Rome in 410 AD?",
+    "options": [
+     "The Visigoths",
+     "The Vandals",
+     "The Huns",
+     "The Ostrogoths"
+    ],
+    "correct_answer": "The Visigoths",
+    "stem": "The barbarian group that sacked Rome in 410 AD was"
+   },
+   {
+    "q": "Which Trojan hero is said to have journeyed to Italy and whose story is recounted in the Aeneid?",
+    "options": [
+     "Aeneas",
+     "Odysseus",
+     "Hector",
+     "Paris"
+    ],
+    "correct_answer": "Aeneas",
+    "stem": "The Trojan hero said to have journeyed to Italy, whose story is recounted in the Aeneid, was"
+   },
+   {
+    "q": "Which major work by Edward Gibbon is a detailed account of the decline and fall of the Roman Empire?",
+    "options": [
+     "The History of the Decline and Fall of the Roman Empire",
+     "The Annals",
+     "Roman Antiquities",
+     "The Twelve Caesars"
+    ],
+    "correct_answer": "The History of the Decline and Fall of the Roman Empire",
+    "stem": "The major work by Edward Gibbon that gives a detailed account of the decline and fall of the Roman Empire is"
+   }
+  ],
+  "QA_test": [
+   {
+    "q": "Which river is associated with the founding of Rome?",
+    "options": [
+     "The Tiber River",
+     "The Po River",
+     "The Arno River",
+     "The Rubicon"
+    ],
+    "correct_answer": "The Tiber River",
+    "stem": "The river associated with the founding of Rome is"
+   },
+   {
+    "q": "What period followed the Roman Kingdom?",
+    "options": [
+     "Roman Republic",
+     "Roman Empire",
+     "Byzantine Empire",
+     "Late Republic"
+    ],
+    "correct_answer": "Roman Republic",
+    "stem": "The period that followed the Roman Kingdom was the"
+   },
+   {
+    "q": "In what year did the Roman Republic begin (traditionally)?",
+    "options": [
+     "509 BC",
+     "510 BC",
+     "496 BC",
+     "451 BC"
+    ],
+    "correct_answer": "509 BC",
+    "stem": "Traditionally, the Roman Republic began in"
+   },
+   {
+    "q": "In what year is the beginning of the Roman Empire traditionally dated?",
+    "options": [
+     "27 BC",
+     "31 BC",
+     "44 BC",
+     "14 AD"
+    ],
+    "correct_answer": "27 BC",
+    "stem": "The beginning of the Roman Empire is traditionally dated to"
+   },
+   {
+    "q": "Who was the first Emperor of Rome?",
+    "options": [
+     "Augustus",
+     "Julius Caesar",
+     "Tiberius",
+     "Nero"
+    ],
+    "correct_answer": "Augustus",
+    "stem": "The first Emperor of Rome was"
+   },
+   {
+    "q": "What major public space began to form when Romans drained the valley between the Capitoline and Palatine Hills?",
+    "options": [
+     "The Roman Forum",
+     "The Circus Maximus",
+     "The Campus Martius",
+     "The Colosseum"
+    ],
+    "correct_answer": "The Roman Forum",
+    "stem": "The major public space that began to form when the Romans drained the valley between the Capitoline and Palatine Hills was"
+   },
+   {
+    "q": "Which culture from southern Italy did Ancient Rome assimilate?",
+    "options": [
+     "Greek culture",
+     "Phoenician culture",
+     "Carthaginian culture",
+     "Persian culture"
+    ],
+    "correct_answer": "Greek culture",
+    "stem": "The culture from southern Italy that Ancient Rome assimilated was"
+   },
+   {
+    "q": "Besides the Greeks, which neighboring culture did Rome assimilate?",
+    "options": [
+     "Etruscan culture",
+     "Gallic culture",
+     "Egyptian culture",
+     "Hittite culture"
+    ],
+    "correct_answer": "Etruscan culture",
+    "stem": "Besides the Greeks, the neighboring culture that Rome assimilated was"
+   },
+   {
+    "q": "What was the name of the advisory council composed of Rome’s nobility?",
+    "options": [
+     "The Senate",
+     "The Consilium",
+     "The Curia",
+     "The Areopagus"
+    ],
+    "correct_answer": "The Senate",
+    "stem": "The advisory council composed of Rome’s nobility was known as"
+   },
+   {
+    "q": "At which battle did the Gauls, led by Brennus, defeat the Romans?",
+    "options": [
+     "The Battle of the Allia",
+     "The Battle of Cannae",
+     "The Battle of Lake Trasimene",
+     "The Battle of Sentinum"
+    ],
+    "correct_answer": "The Battle of the Allia",
+    "stem": "The Gauls, led by Brennus, defeated the Romans at"
+   },
+   {
+    "q": "Which battle decisively ended the Second Punic War?",
+    "options": [
+     "The Battle of Zama",
+     "The Battle of Cannae",
+     "The Battle of Metaurus",
+     "The Battle of Pydna"
+    ],
+    "correct_answer": "The Battle of Zama",
+    "stem": "The battle that decisively ended the Second Punic War was"
+   },
+   {
+    "q": "Which Emperor initiated the construction of the Flavian Amphitheater?",
+    "options": [
+     "Vespasian",
+     "Titus",
+     "Domitian",
+     "Nero"
+    ],
+    "correct_answer": "Vespasian",
+    "stem": "The construction of the Flavian Amphitheater was initiated by"
+   },
+   {
+    "q": "Which Emperor completed the construction of the Colosseum?",
+    "options": [
+     "Titus",
+     "Vespasian",
+     "Domitian",
+     "Trajan"
+    ],
+    "correct_answer": "Titus",
+    "stem": "The construction of the Colosseum was completed by"
+   },
+   {
+    "q": "Which Julio-Claudian Emperor is infamous for his eccentric and cruel behavior?",
+    "options": [
+     "Caligula",
+     "Tiberius",
+     "Claudius",
+     "Nero"
+    ],
+    "correct_answer": "Caligula",
+    "stem": "The Julio-Claudian Emperor infamous for his eccentric and cruel behavior was"
+   },
+   {
+    "q": "What were the two main political factions in the late Roman Republic?",
+    "options": [
+     "Populares and Optimates",
+     "Patricians and Plebeians",
+     "Marius and Sulla",
+     "Senate and People"
+    ],
+    "correct_answer": "Populares and Optimates",
+    "stem": "The two main political factions in the late Roman Republic were"
+   },
+   {
+    "q": "Which Roman general reformed the military by recruiting landless citizens?",
+    "options": [
+     "Gaius Marius",
+     "Lucius Cornelius Sulla",
+     "Julius Caesar",
+     "Pompey"
+    ],
+    "correct_answer": "Gaius Marius",
+    "stem": "The Roman general who reformed the military by recruiting landless citizens was"
+   },
+   {
+    "q": "Which Roman social class consisted of wealthy merchants and cavalry owners?",
+    "options": [
+     "The Equestrians",
+     "Patricians",
+     "Plebeians",
+     "Freedmen"
+    ],
+    "correct_answer": "The Equestrians",
+    "stem": "The Roman social class that consisted of wealthy merchants and cavalry owners was known as"
+   },
+   {
+    "q": "What system of government established in Ancient Rome has inspired modern republics?",
+    "options": [
+     "The Roman Republic",
+     "The Roman Principate",
+     "The Athenian Democracy",
+     "The Byzantine Empire"
+    ],
+    "correct_answer": "The Roman Republic",
+    "stem": "The system of government established in Ancient Rome that has inspired modern republics is"
+   },
+   {
+    "q": "What Latin term meaning 'public business' referred to the Roman state?",
+    "options": [
+     "Res publica",
+     "SPQR",
+     "Res gestae",
+     "Imperium Romanum"
+    ],
+    "correct_answer": "Res publica",
+    "stem": "The Latin term meaning 'public business' that referred to the Roman state was"
+   },
+   {
+    "q": "At which battle did Octavian defeat Antony and Cleopatra?",
+    "options": [
+     "The Battle of Actium",
+     "The Battle of Philippi",
+     "The Battle of Pharsalus",
+     "The Battle of Teutoburg Forest"
+    ],
+    "correct_answer": "The Battle of Actium",
+    "stem": "Octavian defeated Antony and Cleopatra at"
+   },
+   {
+    "q": "What is the period of peace and prosperity under Augustus known as?",
+    "options": [
+     "Pax Romana",
+     "Pax Augusta",
+     "Pax Britannica",
+     "Pax Americana"
+    ],
+    "correct_answer": "Pax Romana",
+    "stem": "The period of peace and prosperity under Augustus is known as"
+   },
+   {
+    "q": "Which dynasty was established by Augustus?",
+    "options": [
+     "The Julio-Claudian dynasty",
+     "The Flavian dynasty",
+     "The Severan dynasty",
+     "The Nerva-Antonine dynasty"
+    ],
+    "correct_answer": "The Julio-Claudian dynasty",
+    "stem": "The dynasty established by Augustus was"
+   },
+   {
+    "q": "Which Emperor is credited with reorganizing the Roman military and discharging soldiers after the Civil War?",
+    "options": [
+     "Augustus",
+     "Julius Caesar",
+     "Trajan",
+     "Hadrian"
+    ],
+    "correct_answer": "Augustus",
+    "stem": "The Emperor credited with reorganizing the Roman military and discharging soldiers after the Civil War was"
+   },
+   {
+    "q": "Which Emperor expanded the Roman Empire to its greatest territorial extent?",
+    "options": [
+     "Trajan",
+     "Hadrian",
+     "Augustus",
+     "Septimius Severus"
+    ],
+    "correct_answer": "Trajan",
+    "stem": "The Emperor who expanded the Roman Empire to its greatest territorial extent was"
+   },
+   {
+    "q": "Which monumental column was erected to commemorate Emperor Trajan's victories?",
+    "options": [
+     "Trajan's Column",
+     "Column of Marcus Aurelius",
+     "Column of Phocas",
+     "Aurelian Column"
+    ],
+    "correct_answer": "Trajan's Column",
+    "stem": "The monumental column erected to commemorate Emperor Trajan's victories was"
+   },
+   {
+    "q": "Which plague significantly affected the Roman Empire during Marcus Aurelius's reign?",
+    "options": [
+     "The Antonine Plague",
+     "The Plague of Justinian",
+     "The Plague of Cyprian",
+     "The Black Death"
+    ],
+    "correct_answer": "The Antonine Plague",
+    "stem": "The plague that significantly affected the Roman Empire during Marcus Aurelius's reign was"
+   },
+   {
+    "q": "Who succeeded Marcus Aurelius and is known for his controversial rule?",
+    "options": [
+     "Commodus",
+     "Pertinax",
+     "Septimius Severus",
+     "Lucius Verus"
+    ],
+    "correct_answer": "Commodus",
+    "stem": "The emperor who succeeded Marcus Aurelius and is known for his controversial rule was"
+   },
+   {
+    "q": "Which Germanic chieftain deposed the last Western Roman Emperor?",
+    "options": [
+     "Odoacer",
+     "Alaric",
+     "Attila",
+     "Theodoric the Great"
+    ],
+    "correct_answer": "Odoacer",
+    "stem": "The last Western Roman Emperor was deposed by the Germanic chieftain"
+   },
+   {
+    "q": "Which famous Roman temple is renowned for its large dome and central oculus?",
+    "options": [
+     "The Pantheon",
+     "The Parthenon",
+     "Temple of Venus and Roma",
+     "Ara Pacis"
+    ],
+    "correct_answer": "The Pantheon",
+    "stem": "The famous Roman temple renowned for its large dome and central oculus is"
+   },
+   {
+    "q": "What is the name of Rome's ancient sewer system?",
+    "options": [
+     "The Cloaca Maxima",
+     "Aqua Claudia",
+     "Via Sacra",
+     "Porticus Aemilia"
+    ],
+    "correct_answer": "The Cloaca Maxima",
+    "stem": "Rome's ancient sewer system is known as"
+   },
+   {
+    "q": "Which revolutionary building material, made with volcanic ash, was extensively used by the Romans?",
+    "options": [
+     "Roman concrete",
+     "Brickwork",
+     "Lime plaster",
+     "Mortared rubble"
+    ],
+    "correct_answer": "Roman concrete",
+    "stem": "The revolutionary building material made with volcanic ash that was extensively used by the Romans was"
+   },
+   {
+    "q": "Which Roman author wrote the encyclopedia 'Naturalis Historia'?",
+    "options": [
+     "Pliny the Elder",
+     "Pliny the Younger",
+     "Seneca",
+     "Varro"
+    ],
+    "correct_answer": "Pliny the Elder",
+    "stem": "The Roman author who wrote the encyclopedia 'Naturalis Historia' was"
+   },
+   {
+    "q": "What type of water clock was used by the Romans?",
+    "options": [
+     "The clepsydra",
+     "The sundial",
+     "The gnomon",
+     "The horologium"
+    ],
+    "correct_answer": "The clepsydra",
+    "stem": "The type of water clock used by the Romans was"
+   },
+   {
+    "q": "What was the light midday meal in Ancient Rome called?",
+    "options": [
+     "Prandium",
+     "Ientaculum",
+     "Cena",
+     "Merenda"
+    ],
+    "correct_answer": "Prandium",
+    "stem": "The light midday meal in Ancient Rome was called"
+   },
+   {
+    "q": "Which garment was a symbol of Roman citizenship?",
+    "options": [
+     "The toga",
+     "The stola",
+     "The tunic",
+     "The palla"
+    ],
+    "correct_answer": "The toga",
+    "stem": "The garment that was a symbol of Roman citizenship was"
+   },
+   {
+    "q": "At what age were wealthy Roman boys typically sent to a private elementary school (ludus)?",
+    "options": [
+     "At age 7",
+     "At age 6",
+     "At age 10",
+     "At age 12"
+    ],
+    "correct_answer": "At age 7",
+    "stem": "Wealthy Roman boys were typically sent to a private elementary school called the ludus"
+   },
+   {
+    "q": "Which language was commonly used by the educated elite alongside Latin?",
+    "options": [
+     "Greek",
+     "Etruscan",
+     "Oscan",
+     "Punic"
+    ],
+    "correct_answer": "Greek",
+    "stem": "The language commonly used by the educated elite alongside Latin was"
+   },
+   {
+    "q": "What legal document, created in 449 BC, is considered the foundation of Roman law?",
+    "options": [
+     "The Law of the Twelve Tables",
+     "Lex Hortensia",
+     "Edictum Perpetuum",
+     "Corpus Juris Civilis"
+    ],
+    "correct_answer": "The Law of the Twelve Tables",
+    "stem": "The legal document created in 449 BC that is considered the foundation of Roman law is"
+   },
+   {
+    "q": "What is the name of the body of laws that applied to non-citizens in Rome?",
+    "options": [
+     "Jus gentium",
+     "Jus civile",
+     "Jus naturale",
+     "Jus honorarium"
+    ],
+    "correct_answer": "Jus gentium",
+    "stem": "The body of laws that applied to non-citizens in Rome was known as"
+   },
+   {
+    "q": "How many months did the original Roman calendar have before January and February were added?",
+    "options": [
+     "Ten",
+     "Twelve",
+     "Eleven",
+     "Eight"
+    ],
+    "correct_answer": "Ten",
+    "stem": "Before January and February were added, the number of months in the original Roman calendar was"
+   },
+   {
+    "q": "Which king is credited with reforming the Roman calendar by adding January and February?",
+    "options": [
+     "Numa Pompilius",
+     "Romulus",
+     "Tullus Hostilius",
+     "Servius Tullius"
+    ],
+    "correct_answer": "Numa Pompilius",
+    "stem": "The king credited with reforming the Roman calendar by adding January and February was"
+   },
+   {
+    "q": "What was the Roman market day, occurring every eight days, called?",
+    "options": [
+     "Nundinae",
+     "Kalends",
+     "Ides",
+     "Saturnalia"
+    ],
+    "correct_answer": "Nundinae",
+    "stem": "The Roman market day, which occurred every eight days, was called"
+   },
+   {
+    "q": "What volcanic ash-based material was essential to Roman concrete?",
+    "options": [
+     "Pozzolana",
+     "Travertine",
+     "Pumice",
+     "Tuff"
+    ],
+    "correct_answer": "Pozzolana",
+    "stem": "The volcanic ash-based material essential to Roman concrete was"
+   },
+   {
+    "q": "Which Emperor was the first to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy?",
+    "options": [
+     "Diocletian",
+     "Maximian",
+     "Constantine",
+     "Aurelian"
+    ],
+    "correct_answer": "Diocletian",
+    "stem": "The first Emperor to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy, was"
+   },
+   {
+    "q": "Which Emperor rebuilt Byzantium and renamed it Constantinople?",
+    "options": [
+     "Constantine",
+     "Theodosius I",
+     "Justinian",
+     "Trajan"
+    ],
+    "correct_answer": "Constantine",
+    "stem": "Byzantium was rebuilt and renamed Constantinople by the Emperor"
+   },
+   {
+    "q": "What were the public bath complexes in Rome called?",
+    "options": [
+     "Thermae",
+     "Balneae",
+     "Fora",
+     "Insulae"
+    ],
+    "correct_answer": "Thermae",
+    "stem": "The public bath complexes in Rome were called"
+   },
+   {
+    "q": "What term describes the combats between trained fighters in Roman arenas?",
+    "options": [
+     "Gladiatorial games",
+     "Naumachiae",
+     "Ludi circenses",
+     "Venationes"
+    ],
+    "correct_answer": "Gladiatorial games",
+    "stem": "The combats between trained fighters in Roman arenas were known as"
+   },
+   {
+    "q": "What was the name of the state-run courier and transportation system of Ancient Rome?",
+    "options": [
+     "Cursus publicus",
+     "Via Appia",
+     "Annona",
+     "Praetorian Guard"
+    ],
+    "correct_answer": "Cursus publicus",
+    "stem": "The state-run courier and transportation system of Ancient Rome was known as"
+   },
+   {
+    "q": "Which dynasty is known as the 'Five Good Emperors' of Rome?",
+    "options": [
+     "The Nerva-Antonine dynasty",
+     "The Julio-Claudian dynasty",
+     "The Flavian dynasty",
+     "The Severan dynasty"
+    ],
+    "correct_answer": "The Nerva-Antonine dynasty",
+    "stem": "The dynasty known as the 'Five Good Emperors' of Rome is"
+   },
+   {
+    "q": "Which Emperor gave his name to the month of August?",
+    "options": [
+     "Augustus",
+     "Julius Caesar",
+     "Numa Pompilius",
+     "Claudius"
+    ],
+    "correct_answer": "Augustus",
+    "stem": "The month of August is named after the Emperor"
+   }
+  ],
+  "SimdomQA_train": [
+   {
+    "q": "Who is the king of the gods in Greek mythology?",
+    "options": [
+     "Zeus",
+     "Poseidon",
+     "Hades",
+     "Apollo"
+    ],
+    "correct_answer": "Zeus",
+    "stem": "In Greek mythology, the king of the gods is"
+   },
+   {
+    "q": "What is the name of the famous temple in Athens dedicated to Athena?",
+    "options": [
+     "Parthenon",
+     "Erechtheion",
+     "Temple of Athena Nike",
+     "Propylaea"
+    ],
+    "correct_answer": "Parthenon",
+    "stem": "The famous temple in Athens dedicated to Athena is the"
+   },
+   {
+    "q": "Who was the philosopher who taught Plato?",
+    "options": [
+     "Socrates",
+     "Aristotle",
+     "Pythagoras",
+     "Sophocles"
+    ],
+    "correct_answer": "Socrates",
+    "stem": "The philosopher who taught Plato was"
+   },
+   {
+    "q": "Which ancient Greek epic tells the story of the Trojan War?",
+    "options": [
+     "The Iliad",
+     "The Odyssey",
+     "The Aeneid",
+     "Argonautica"
+    ],
+    "correct_answer": "The Iliad",
+    "stem": "The ancient Greek epic that tells the story of the Trojan War is"
+   },
+   {
+    "q": "Which Greek philosopher wrote 'The Republic'?",
+    "options": [
+     "Plato",
+     "Aristotle",
+     "Socrates",
+     "Cicero"
+    ],
+    "correct_answer": "Plato",
+    "stem": "The Greek philosopher who wrote 'The Republic' was"
+   },
+   {
+    "q": "Who is the Egyptian sun god?",
+    "options": [
+     "Ra",
+     "Amun",
+     "Horus",
+     "Aten"
+    ],
+    "correct_answer": "Ra",
+    "stem": "The Egyptian sun god is"
+   },
+   {
+    "q": "Which Egyptian pharaoh commissioned the Great Pyramid of Giza?",
+    "options": [
+     "Khufu",
+     "Khafre",
+     "Menkaure",
+     "Sneferu"
+    ],
+    "correct_answer": "Khufu",
+    "stem": "The Great Pyramid of Giza was commissioned by the Egyptian pharaoh"
+   },
+   {
+    "q": "Which valley in Egypt is famous for its pharaohs' tombs?",
+    "options": [
+     "Valley of the Kings",
+     "Valley of the Queens",
+     "Giza Plateau",
+     "Saqqara Necropolis"
+    ],
+    "correct_answer": "Valley of the Kings",
+    "stem": "The valley in Egypt famous for its pharaohs' tombs is the"
+   },
+   {
+    "q": "Which Egyptian pharaoh was known for his almost intact tomb discovered in 1922?",
+    "options": [
+     "Tutankhamun",
+     "Ramses II",
+     "Akhenaten",
+     "Seti I"
+    ],
+    "correct_answer": "Tutankhamun",
+    "stem": "The Egyptian pharaoh known for his almost intact tomb, discovered in 1922, was"
+   },
+   {
+    "q": "Which document, signed in 1215, limited the power of the English king?",
+    "options": [
+     "Magna Carta",
+     "Bill of Rights",
+     "Petition of Right",
+     "Habeas Corpus Act"
+    ],
+    "correct_answer": "Magna Carta",
+    "stem": "The document signed in 1215 that limited the power of the English king was"
+   },
+   {
+    "q": "Which architectural style is known for pointed arches and flying buttresses?",
+    "options": [
+     "Gothic",
+     "Romanesque",
+     "Renaissance",
+     "Baroque"
+    ],
+    "correct_answer": "Gothic",
+    "stem": "The architectural style known for pointed arches and flying buttresses is"
+   },
+   {
+    "q": "Which medieval European university, founded in 1088, is one of the oldest in the world?",
+    "options": [
+     "University of Bologna",
+     "University of Oxford",
+     "University of Paris",
+     "University of Salamanca"
+    ],
+    "correct_answer": "University of Bologna",
+    "stem": "The medieval European university founded in 1088, one of the oldest in the world, is the"
+   },
+   {
+    "q": "Which medieval battle is famous for English longbowmen defeating French knights?",
+    "options": [
+     "Battle of Agincourt",
+     "Battle of Crécy",
+     "Battle of Poitiers",
+     "Battle of Hastings"
+    ],
+    "correct_answer": "Battle of Agincourt",
+    "stem": "The medieval battle famous for English longbowmen defeating French knights is the"
+   },
+   {
+    "q": "Who was the Byzantine emperor known for his comprehensive legal code?",
+    "options": [
+     "Justinian I",
+     "Heraclius",
+     "Theodosius II",
+     "Constantine the Great"
+    ],
+    "correct_answer": "Justinian I",
+    "stem": "The Byzantine emperor known for his comprehensive legal code was"
+   },
+   {
+    "q": "What was the capital of the Byzantine Empire?",
+    "options": [
+     "Constantinople",
+     "Rome",
+     "Antioch",
+     "Nicaea"
+    ],
+    "correct_answer": "Constantinople",
+    "stem": "The capital of the Byzantine Empire was"
+   },
+   {
+    "q": "Which architectural masterpiece in Istanbul was once a Byzantine church?",
+    "options": [
+     "Hagia Sophia",
+     "Blue Mosque",
+     "Chora Church",
+     "Topkapi Palace"
+    ],
+    "correct_answer": "Hagia Sophia",
+    "stem": "The architectural masterpiece in Istanbul that was once a Byzantine church is"
+   },
+   {
+    "q": "Which event in 1204 significantly weakened the Byzantine Empire?",
+    "options": [
+     "The Fourth Crusade",
+     "Battle of Manzikert",
+     "Fall of Constantinople (1453)",
+     "Council of Florence"
+    ],
+    "correct_answer": "The Fourth Crusade",
+    "stem": "The event in 1204 that significantly weakened the Byzantine Empire was"
+   },
+   {
+    "q": "Which ancient empire was founded by Cyrus the Great?",
+    "options": [
+     "Achaemenid Empire",
+     "Seleucid Empire",
+     "Parthian Empire",
+     "Sasanian Empire"
+    ],
+    "correct_answer": "Achaemenid Empire",
+    "stem": "The ancient empire founded by Cyrus the Great was the"
+   },
+   {
+    "q": "Who was the Persian king at the time of the Greek invasion?",
+    "options": [
+     "Xerxes I",
+     "Darius I",
+     "Cambyses II",
+     "Artaxerxes I"
+    ],
+    "correct_answer": "Xerxes I",
+    "stem": "The Persian king at the time of the Greek invasion was"
+   },
+   {
+    "q": "Which battle between Greeks and Persians is famous for the Persian defeat?",
+    "options": [
+     "Battle of Marathon",
+     "Battle of Thermopylae",
+     "Battle of Salamis",
+     "Battle of Plataea"
+    ],
+    "correct_answer": "Battle of Marathon",
+    "stem": "The battle between Greeks and Persians famous for the Persian defeat is the"
+   },
+   {
+    "q": "Which ancient empire is known for its Royal Road that connected its vast territories?",
+    "options": [
+     "Achaemenid Empire",
+     "Roman Empire",
+     "Assyrian Empire",
+     "Maurya Empire"
+    ],
+    "correct_answer": "Achaemenid Empire",
+    "stem": "The ancient empire known for its Royal Road, which connected its vast territories, is the"
+   },
+   {
+    "q": "Which ancient Indian empire was founded by Chandragupta Maurya?",
+    "options": [
+     "Maurya Empire",
+     "Gupta Empire",
+     "Mughal Empire",
+     "Kushan Empire"
+    ],
+    "correct_answer": "Maurya Empire",
+    "stem": "The ancient Indian empire founded by Chandragupta Maurya was the"
+   },
+   {
+    "q": "Which Indian emperor was known for converting to Buddhism?",
+    "options": [
+     "Ashoka",
+     "Chandragupta Maurya",
+     "Harsha",
+     "Akbar"
+    ],
+    "correct_answer": "Ashoka",
+    "stem": "The Indian emperor known for converting to Buddhism was"
+   },
+   {
+    "q": "Which river is considered sacred in Indian culture?",
+    "options": [
+     "Ganges",
+     "Yamuna",
+     "Indus",
+     "Brahmaputra"
+    ],
+    "correct_answer": "Ganges",
+    "stem": "The river considered sacred in Indian culture is the"
+   },
+   {
+    "q": "Which empire built the Taj Mahal?",
+    "options": [
+     "Mughal Empire",
+     "Maurya Empire",
+     "Gupta Empire",
+     "Delhi Sultanate"
+    ],
+    "correct_answer": "Mughal Empire",
+    "stem": "The Taj Mahal was built by the"
+   },
+   {
+    "q": "Who was the Mughal emperor who built the Taj Mahal?",
+    "options": [
+     "Shah Jahan",
+     "Akbar",
+     "Jahangir",
+     "Aurangzeb"
+    ],
+    "correct_answer": "Shah Jahan",
+    "stem": "The Mughal emperor who built the Taj Mahal was"
+   },
+   {
+    "q": "Which river is considered the cradle of Chinese civilization?",
+    "options": [
+     "Yellow River",
+     "Yangtze River",
+     "Mekong River",
+     "Xi River"
+    ],
+    "correct_answer": "Yellow River",
+    "stem": "The river considered the cradle of Chinese civilization is the"
+   },
+   {
+    "q": "Which Mesoamerican civilization built stepped pyramids in the rainforest?",
+    "options": [
+     "Maya",
+     "Aztec",
+     "Olmec",
+     "Toltec"
+    ],
+    "correct_answer": "Maya",
+    "stem": "The Mesoamerican civilization that built stepped pyramids in the rainforest was the"
+   },
+   {
+    "q": "What is the name of the famous Mayan city known for its temples and plazas?",
+    "options": [
+     "Chichen Itza",
+     "Teotihuacan",
+     "Tenochtitlan",
+     "Machu Picchu"
+    ],
+    "correct_answer": "Chichen Itza",
+    "stem": "The famous Mayan city known for its temples and plazas is"
+   },
+   {
+    "q": "What was the primary crop grown by the Maya?",
+    "options": [
+     "Maize",
+     "Wheat",
+     "Rice",
+     "Barley"
+    ],
+    "correct_answer": "Maize",
+    "stem": "The primary crop grown by the Maya was"
+   },
+   {
+    "q": "Which ancient South American civilization built Machu Picchu?",
+    "options": [
+     "Inca",
+     "Aztec",
+     "Moche",
+     "Olmec"
+    ],
+    "correct_answer": "Inca",
+    "stem": "The ancient South American civilization that built Machu Picchu was the"
+   },
+   {
+    "q": "What was the capital of the Inca Empire?",
+    "options": [
+     "Cusco",
+     "Quito",
+     "Lima",
+     "Tiwanaku"
+    ],
+    "correct_answer": "Cusco",
+    "stem": "The capital of the Inca Empire was"
+   },
+   {
+    "q": "Which crop was a staple in the Inca diet?",
+    "options": [
+     "Potatoes",
+     "Maize",
+     "Quinoa",
+     "Cassava"
+    ],
+    "correct_answer": "Potatoes",
+    "stem": "The staple crop of the Inca diet was"
+   },
+   {
+    "q": "Which animal was domesticated by the Inca for transportation and wool?",
+    "options": [
+     "Llama",
+     "Alpaca",
+     "Vicuña",
+     "Guanaco"
+    ],
+    "correct_answer": "Llama",
+    "stem": "The animal domesticated by the Inca for transportation and wool was the"
+   },
+   {
+    "q": "Which ancient civilization built the city of Tenochtitlan?",
+    "options": [
+     "Aztecs",
+     "Maya",
+     "Olmec",
+     "Toltec"
+    ],
+    "correct_answer": "Aztecs",
+    "stem": "The city of Tenochtitlan was built by the"
+   },
+   {
+    "q": "What crop was central to the Aztec diet?",
+    "options": [
+     "Maize",
+     "Potatoes",
+     "Wheat",
+     "Millet"
+    ],
+    "correct_answer": "Maize",
+    "stem": "The crop central to the Aztec diet was"
+   },
+   {
+    "q": "Which Aztec god was associated with war?",
+    "options": [
+     "Huitzilopochtli",
+     "Quetzalcoatl",
+     "Tlaloc",
+     "Tezcatlipoca"
+    ],
+    "correct_answer": "Huitzilopochtli",
+    "stem": "The Aztec god associated with war was"
+   },
+   {
+    "q": "Who was the Aztec emperor in power when the Spanish arrived?",
+    "options": [
+     "Montezuma II",
+     "Itzcoatl",
+     "Axayacatl",
+     "Cuauhtémoc"
+    ],
+    "correct_answer": "Montezuma II",
+    "stem": "The Aztec emperor in power when the Spanish arrived was"
+   },
+   {
+    "q": "Which group is known for their seafaring raids during the early medieval period?",
+    "options": [
+     "Vikings",
+     "Magyars",
+     "Normans",
+     "Saxons"
+    ],
+    "correct_answer": "Vikings",
+    "stem": "The group known for their seafaring raids during the early medieval period was the"
+   },
+   {
+    "q": "Which Norse god is known as the god of thunder?",
+    "options": [
+     "Thor",
+     "Odin",
+     "Freyr",
+     "Loki"
+    ],
+    "correct_answer": "Thor",
+    "stem": "The Norse god known as the god of thunder is"
+   },
+   {
+    "q": "Which Viking explorer is credited with reaching North America before Columbus?",
+    "options": [
+     "Leif Erikson",
+     "Erik the Red",
+     "Bjarni Herjólfsson",
+     "Harald Hardrada"
+    ],
+    "correct_answer": "Leif Erikson",
+    "stem": "The Viking explorer credited with reaching North America before Columbus was"
+   },
+   {
+    "q": "Which Muslim scholar is known for his works in algebra?",
+    "options": [
+     "Al-Khwarizmi",
+     "Avicenna (Ibn Sina)",
+     "Al-Farabi",
+     "Omar Khayyam"
+    ],
+    "correct_answer": "Al-Khwarizmi",
+    "stem": "The Muslim scholar known for his works in algebra was"
+   },
+   {
+    "q": "What was the name of the famous library in Baghdad during the Islamic Golden Age?",
+    "options": [
+     "House of Wisdom",
+     "Mustansiriya Madrasa",
+     "Library of Alexandria",
+     "Great Mosque of Damascus"
+    ],
+    "correct_answer": "House of Wisdom",
+    "stem": "The famous library in Baghdad during the Islamic Golden Age was known as the"
+   },
+   {
+    "q": "Which Muslim city in Spain was known for its cultural and scholarly achievements?",
+    "options": [
+     "Córdoba",
+     "Granada",
+     "Seville",
+     "Toledo"
+    ],
+    "correct_answer": "Córdoba",
+    "stem": "The Muslim city in Spain known for its cultural and scholarly achievements was"
+   },
+   {
+    "q": "Which medieval chivalric order is known for its code of honor and valor?",
+    "options": [
+     "Knights Hospitaller",
+     "Knights Templar",
+     "Teutonic Knights",
+     "Order of Santiago"
+    ],
+    "correct_answer": "Knights Hospitaller",
+    "stem": "The medieval chivalric order known for its code of honor and valor is the"
+   },
+   {
+    "q": "Which period in European history, spanning roughly from the 5th to the 15th century, is known as the Middle Ages?",
+    "options": [
+     "Medieval period",
+     "Renaissance",
+     "Classical Antiquity",
+     "Early Modern period"
+    ],
+    "correct_answer": "Medieval period",
+    "stem": "Spanning roughly from the 5th to the 15th century, the period in European history known as the Middle Ages is also called"
+   },
+   {
+    "q": "Which invention, developed in ancient China, revolutionized warfare?",
+    "options": [
+     "Gunpowder",
+     "Compass",
+     "Papermaking",
+     "Crossbow"
+    ],
+    "correct_answer": "Gunpowder",
+    "stem": "The invention developed in ancient China that revolutionized warfare was"
+   },
+   {
+    "q": "Which ancient Mesopotamian civilization is known for its legal code carved on a stone stele?",
+    "options": [
+     "Babylon",
+     "Assyria",
+     "Sumer",
+     "Akkad"
+    ],
+    "correct_answer": "Babylon",
+    "stem": "The ancient Mesopotamian civilization known for its legal code carved on a stone stele was"
+   },
+   {
+    "q": "Which ancient civilization developed cuneiform, one of the earliest writing systems?",
+    "options": [
+     "Sumer",
+     "Akkad",
+     "Babylon",
+     "Hittites"
+    ],
+    "correct_answer": "Sumer",
+    "stem": "The ancient civilization that developed cuneiform, one of the earliest writing systems, was"
+   },
+   {
+    "q": "Which medieval Islamic scholar is known for his extensive commentaries on Aristotle?",
+    "options": [
+     "Averroes",
+     "Avicenna (Ibn Sina)",
+     "Al-Ghazali",
+     "Al-Farabi"
+    ],
+    "correct_answer": "Averroes",
+    "stem": "The medieval Islamic scholar known for his extensive commentaries on Aristotle was"
+   }
+  ],
+  "SimdomQA_test": [
+   {
+    "q": "Which ancient Greek city-state was famous for its military strength?",
+    "options": [
+     "Sparta",
+     "Athens",
+     "Thebes",
+     "Corinth"
+    ],
+    "correct_answer": "Sparta",
+    "stem": "The ancient Greek city-state famous for its military strength was"
+   },
+   {
+    "q": "What form of government did Athens develop?",
+    "options": [
+     "Democracy",
+     "Oligarchy",
+     "Monarchy",
+     "Tyranny"
+    ],
+    "correct_answer": "Democracy",
+    "stem": "The form of government developed by Athens was"
+   },
+   {
+    "q": "Which ancient Greek mathematician is known for the theorem a² + b² = c²?",
+    "options": [
+     "Pythagoras",
+     "Euclid",
+     "Archimedes",
+     "Thales"
+    ],
+    "correct_answer": "Pythagoras",
+    "stem": "The ancient Greek mathematician known for the theorem a² + b² = c² was"
+   },
+   {
+    "q": "Which ancient Greek scientist is considered the father of geometry?",
+    "options": [
+     "Euclid",
+     "Pythagoras",
+     "Aristotle",
+     "Eratosthenes"
+    ],
+    "correct_answer": "Euclid",
+    "stem": "The ancient Greek scientist considered the father of geometry was"
+   },
+   {
+    "q": "Which ancient Greek physician is known as the father of medicine?",
+    "options": [
+     "Hippocrates",
+     "Galen",
+     "Herophilus",
+     "Dioscorides"
+    ],
+    "correct_answer": "Hippocrates",
+    "stem": "The ancient Greek physician known as the father of medicine was"
+   },
+   {
+    "q": "Who was the famous queen of Ancient Egypt known for her beauty and relationships with Roman leaders?",
+    "options": [
+     "Cleopatra",
+     "Nefertiti",
+     "Hatshepsut",
+     "Arsinoe II"
+    ],
+    "correct_answer": "Cleopatra",
+    "stem": "The famous queen of Ancient Egypt known for her beauty and her relationships with Roman leaders was"
+   },
+   {
+    "q": "Which river flows through Egypt?",
+    "options": [
+     "Nile",
+     "Tigris",
+     "Euphrates",
+     "Jordan"
+    ],
+    "correct_answer": "Nile",
+    "stem": "The river that flows through Egypt is the"
+   },
+   {
+    "q": "What is the name of the Egyptian writing system?",
+    "options": [
+     "Hieroglyphics",
+     "Cuneiform",
+     "Linear B",
+     "Phoenician script"
+    ],
+    "correct_answer": "Hieroglyphics",
+    "stem": "The Egyptian writing system is known as"
+   },
+   {
+    "q": "What structure served as a tomb for ancient Egyptian pharaohs?",
+    "options": [
+     "Pyramid",
+     "Ziggurat",
+     "Mastaba",
+     "Obelisk"
+    ],
+    "correct_answer": "Pyramid",
+    "stem": "The structure that served as a tomb for ancient Egyptian pharaohs was the"
+   },
+   {
+    "q": "Which ancient Egyptian goddess is associated with fertility and motherhood?",
+    "options": [
+     "Isis",
+     "Hathor",
+     "Bastet",
+     "Nephthys"
+    ],
+    "correct_answer": "Isis",
+    "stem": "The ancient Egyptian goddess associated with fertility and motherhood is"
+   },
+   {
+    "q": "What was the primary material used by Egyptians to build monuments?",
+    "options": [
+     "Limestone",
+     "Granite",
+     "Sandstone",
+     "Mudbrick"
+    ],
+    "correct_answer": "Limestone",
+    "stem": "The primary material used by the Egyptians to build monuments was"
+   },
+   {
+    "q": "Who led the Norman Conquest of England in 1066?",
+    "options": [
+     "William the Conqueror",
+     "Harold Godwinson",
+     "Henry II",
+     "Richard the Lionheart"
+    ],
+    "correct_answer": "William the Conqueror",
+    "stem": "The Norman Conquest of England in 1066 was led by"
+   },
+   {
+    "q": "Which medieval conflict in England was fought between the Lancasters and Yorks?",
+    "options": [
+     "Wars of the Roses",
+     "Hundred Years' War",
+     "English Civil War",
+     "Barons' War"
+    ],
+    "correct_answer": "Wars of the Roses",
+    "stem": "The medieval conflict in England fought between the Lancasters and Yorks was the"
+   },
+   {
+    "q": "Who was the religious leader of medieval Europe that initiated the First Crusade?",
+    "options": [
+     "Pope Urban II",
+     "Pope Gregory VII",
+     "Pope Innocent III",
+     "Pope Alexander III"
+    ],
+    "correct_answer": "Pope Urban II",
+    "stem": "The religious leader of medieval Europe who initiated the First Crusade was"
+   },
+   {
+    "q": "What was the dominant language of Medieval scholarly work in Europe?",
+    "options": [
+     "Latin",
+     "Greek",
+     "French",
+     "Arabic"
+    ],
+    "correct_answer": "Latin",
+    "stem": "The dominant language of Medieval scholarly work in Europe was"
+   },
+   {
+    "q": "What was the capital of the Achaemenid Empire?",
+    "options": [
+     "Persepolis",
+     "Susa",
+     "Ecbatana",
+     "Pasargadae"
+    ],
+    "correct_answer": "Persepolis",
+    "stem": "The capital of the Achaemenid Empire was"
+   },
+   {
+    "q": "Which empire was known for its system of satrapies?",
+    "options": [
+     "Achaemenid Empire",
+     "Roman Empire",
+     "Gupta Empire",
+     "Macedonian Empire"
+    ],
+    "correct_answer": "Achaemenid Empire",
+    "stem": "The empire known for its system of satrapies was the"
+   },
+   {
+    "q": "Which ancient Persian king was defeated by Alexander the Great?",
+    "options": [
+     "Darius III",
+     "Xerxes I",
+     "Artaxerxes III",
+     "Cyrus the Younger"
+    ],
+    "correct_answer": "Darius III",
+    "stem": "The ancient Persian king defeated by Alexander the Great was"
+   },
+   {
+    "q": "What is the ancient Indian language used for sacred texts?",
+    "options": [
+     "Sanskrit",
+     "Pali",
+     "Prakrit",
+     "Tamil"
+    ],
+    "correct_answer": "Sanskrit",
+    "stem": "The ancient Indian language used for sacred texts is"
+   },
+   {
+    "q": "Which ancient Indian work is a famous treatise on statecraft and warfare?",
+    "options": [
+     "Arthashastra",
+     "Mahabharata",
+     "Ramayana",
+     "Manusmriti"
+    ],
+    "correct_answer": "Arthashastra",
+    "stem": "The ancient Indian work that is a famous treatise on statecraft and warfare is the"
+   },
+   {
+    "q": "Who was the first emperor of a unified China?",
+    "options": [
+     "Qin Shi Huang",
+     "Han Gaozu (Liu Bang)",
+     "Kublai Khan",
+     "Sun Yat-sen"
+    ],
+    "correct_answer": "Qin Shi Huang",
+    "stem": "The first emperor of a unified China was"
+   },
+   {
+    "q": "What ancient wall was built to protect China from northern invasions?",
+    "options": [
+     "The Great Wall",
+     "Hadrian's Wall",
+     "Berlin Wall",
+     "Walls of Babylon"
+    ],
+    "correct_answer": "The Great Wall",
+    "stem": "The ancient wall built to protect China from northern invasions was"
+   },
+   {
+    "q": "Which Chinese philosophy emphasizes harmony with nature and simplicity?",
+    "options": [
+     "Daoism",
+     "Confucianism",
+     "Legalism",
+     "Mohism"
+    ],
+    "correct_answer": "Daoism",
+    "stem": "The Chinese philosophy that emphasizes harmony with nature and simplicity is"
+   },
+   {
+    "q": "Which Chinese philosopher is famous for the work 'The Analects'?",
+    "options": [
+     "Confucius",
+     "Laozi",
+     "Mencius",
+     "Xunzi"
+    ],
+    "correct_answer": "Confucius",
+    "stem": "The Chinese philosopher famous for the work 'The Analects' is"
+   },
+   {
+    "q": "Which dynasty is known for the Terracotta Army?",
+    "options": [
+     "Qin Dynasty",
+     "Han Dynasty",
+     "Zhou Dynasty",
+     "Tang Dynasty"
+    ],
+    "correct_answer": "Qin Dynasty",
+    "stem": "The dynasty known for the Terracotta Army is the"
+   },
+   {
+    "q": "What is the term for the ancient Chinese administrative system based on examinations?",
+    "options": [
+     "Imperial Examination System",
+     "Mandate of Heaven",
+     "Tributary System",
+     "Nine-rank System"
+    ],
+    "correct_answer": "Imperial Examination System",
+    "stem": "The ancient Chinese administrative system based on examinations is known as the"
+   },
+   {
+    "q": "Which Chinese dynasty is known for its porcelain production?",
+    "options": [
+     "Song Dynasty",
+     "Ming Dynasty",
+     "Tang Dynasty",
+     "Yuan Dynasty"
+    ],
+    "correct_answer": "Song Dynasty",
+    "stem": "The Chinese dynasty known for its porcelain production is the"
+   },
+   {
+    "q": "Which Chinese legal philosopher is associated with strict state control?",
+    "options": [
+     "Han Feizi",
+     "Confucius",
+     "Laozi",
+     "Mencius"
+    ],
+    "correct_answer": "Han Feizi",
+    "stem": "The Chinese legal philosopher associated with strict state control was"
+   },
+   {
+    "q": "What calendar system were the Maya famous for?",
+    "options": [
+     "Mesoamerican Long Count calendar",
+     "Gregorian calendar",
+     "Tzolkin calendar",
+     "Haab' calendar"
+    ],
+    "correct_answer": "Mesoamerican Long Count calendar",
+    "stem": "The calendar system the Maya were famous for was the"
+   },
+   {
+    "q": "Which Mayan writing system used hieroglyphs?",
+    "options": [
+     "Mayan script",
+     "Cuneiform",
+     "Linear A",
+     "Rongorongo"
+    ],
+    "correct_answer": "Mayan script",
+    "stem": "The Mayan writing system that used hieroglyphs was"
+   },
+   {
+    "q": "Which road system connected the vast Inca Empire?",
+    "options": [
+     "Inca Trail",
+     "Qhapaq Ñan",
+     "Silk Road",
+     "Royal Road"
+    ],
+    "correct_answer": "Inca Trail",
+    "stem": "The road system that connected the vast Inca Empire was the"
+   },
+   {
+    "q": "What was the primary language of the Inca Empire?",
+    "options": [
+     "Quechua",
+     "Aymara",
+     "Nahuatl",
+     "Mapudungun"
+    ],
+    "correct_answer": "Quechua",
+    "stem": "The primary language of the Inca Empire was"
+   },
+   {
+    "q": "On what was the Aztec capital Tenochtitlan built?",
+    "options": [
+     "An island in a lake",
+     "A coastal peninsula",
+     "A mountain plateau",
+     "A desert valley"
+    ],
+    "correct_answer": "An island in a lake",
+    "stem": "The Aztec capital Tenochtitlan was built on"
+   },
+   {
+    "q": "What form of writing did the Aztecs use?",
+    "options": [
+     "Pictographic script",
+     "Alphabetic script",
+     "Cuneiform",
+     "Hieratic script"
+    ],
+    "correct_answer": "Pictographic script",
+    "stem": "The form of writing used by the Aztecs was"
+   },
+   {
+    "q": "What is the name of the seafaring ship used by the Vikings?",
+    "options": [
+     "Longship",
+     "Knarr",
+     "Galleon",
+     "Trireme"
+    ],
+    "correct_answer": "Longship",
+    "stem": "The seafaring ship used by the Vikings is known as the"
+   },
+   {
+    "q": "Which Scandinavian country is most associated with the Vikings?",
+    "options": [
+     "Norway",
+     "Sweden",
+     "Denmark",
+     "Iceland"
+    ],
+    "correct_answer": "Norway",
+    "stem": "The Scandinavian country most associated with the Vikings is"
+   },
+   {
+    "q": "Which Viking settlement is located in Newfoundland, Canada?",
+    "options": [
+     "L'Anse aux Meadows",
+     "Vinland",
+     "Reykjavik",
+     "Jorvik"
+    ],
+    "correct_answer": "L'Anse aux Meadows",
+    "stem": "The Viking settlement located in Newfoundland, Canada, is"
+   },
+   {
+    "q": "What language did the Vikings speak?",
+    "options": [
+     "Old Norse",
+     "Old English",
+     "Old High German",
+     "Icelandic"
+    ],
+    "correct_answer": "Old Norse",
+    "stem": "The language spoken by the Vikings was"
+   },
+   {
+    "q": "Which medieval empire had Baghdad as its capital and was a center of learning?",
+    "options": [
+     "Abbasid Caliphate",
+     "Umayyad Caliphate",
+     "Fatimid Caliphate",
+     "Seljuk Empire"
+    ],
+    "correct_answer": "Abbasid Caliphate",
+    "stem": "The medieval empire that had Baghdad as its capital and was a center of learning was the"
+   },
+   {
+    "q": "Which stringed instrument, influential in medieval music, originated in the Islamic world?",
+    "options": [
+     "Oud",
+     "Lute",
+     "Rebec",
+     "Sitar"
+    ],
+    "correct_answer": "Oud",
+    "stem": "The stringed instrument influential in medieval music that originated in the Islamic world is the"
+   },
+   {
+    "q": "Which medieval Islamic scholar wrote 'The Canon of Medicine'?",
+    "options": [
+     "Avicenna",
+     "Al-Razi",
+     "Al-Zahrawi",
+     "Ibn al-Nafis"
+    ],
+    "correct_answer": "Avicenna",
+    "stem": "The medieval Islamic scholar who wrote 'The Canon of Medicine' was"
+   },
+   {
+    "q": "What is the term for the region of medieval Islamic Spain?",
+    "options": [
+     "Al-Andalus",
+     "Maghreb",
+     "Levant",
+     "Andalusia"
+    ],
+    "correct_answer": "Al-Andalus",
+    "stem": "The term for the region of medieval Islamic Spain is"
+   },
+   {
+    "q": "Which Islamic scholar is known as the father of optics?",
+    "options": [
+     "Ibn al-Haytham",
+     "Al-Biruni",
+     "Ptolemy",
+     "Euclid"
+    ],
+    "correct_answer": "Ibn al-Haytham",
+    "stem": "The Islamic scholar known as the father of optics was"
+   },
+   {
+    "q": "Which medieval Islamic caliphate was centered in Cairo?",
+    "options": [
+     "Fatimid Caliphate",
+     "Abbasid Caliphate",
+     "Umayyad Caliphate",
+     "Mamluk Sultanate"
+    ],
+    "correct_answer": "Fatimid Caliphate",
+    "stem": "The medieval Islamic caliphate centered in Cairo was the"
+   },
+   {
+    "q": "Which order of medieval knights was founded to protect pilgrims in the Holy Land?",
+    "options": [
+     "Knights Templar",
+     "Knights Hospitaller",
+     "Teutonic Knights",
+     "Order of the Garter"
+    ],
+    "correct_answer": "Knights Templar",
+    "stem": "The order of medieval knights founded to protect pilgrims in the Holy Land was the"
+   },
+   {
+    "q": "Which legendary king is famed for pulling a sword from a stone?",
+    "options": [
+     "King Arthur",
+     "Charlemagne",
+     "Richard the Lionheart",
+     "Alfred the Great"
+    ],
+    "correct_answer": "King Arthur",
+    "stem": "The legendary king famed for pulling a sword from a stone was"
+   },
+   {
+    "q": "Which castle in England is one of the oldest occupied castles in the world?",
+    "options": [
+     "Windsor Castle",
+     "Tower of London",
+     "Warwick Castle",
+     "Edinburgh Castle"
+    ],
+    "correct_answer": "Windsor Castle",
+    "stem": "The castle in England that is one of the oldest occupied castles in the world is"
+   },
+   {
+    "q": "In which country are the ruins of the ancient Persian city Persepolis located?",
+    "options": [
+     "Iran",
+     "Iraq",
+     "Turkey",
+     "Afghanistan"
+    ],
+    "correct_answer": "Iran",
+    "stem": "The ruins of the ancient Persian city of Persepolis are located in"
+   },
+   {
+    "q": "Which ancient Greek historian is often called the 'Father of History'?",
+    "options": [
+     "Herodotus",
+     "Thucydides",
+     "Xenophon",
+     "Polybius"
+    ],
+    "correct_answer": "Herodotus",
+    "stem": "The ancient Greek historian often called the 'Father of History' was"
+   },
+   {
+    "q": "At which site in ancient Greece was the Oracle of Delphi located?",
+    "options": [
+     "Delphi",
+     "Olympia",
+     "Dodona",
+     "Delos"
+    ],
+    "correct_answer": "Delphi",
+    "stem": "In ancient Greece, the Oracle of Delphi was located at"
+   }
+  ]
+ },
  "Baseball": {
   "QA_train": [
    {
