@@ -267,6 +267,7 @@ EMBER on LMEnt.
 | Submit every configured concept | `slurm/submit_all_concepts.sh --config ABS_YAML` |
 | Load an embedding-only result | `ember.erased_embedding.load_lment_with_erased_embeddings(...)` |
 | Verify a bounded real run | `python -m ember.real_flow_test --config ABS_YAML --concept EXACT_NAME --execution windows|local|slurm` |
+| Build `concept_sentences.json` from an Untaught blacklist | `sentences_gen/blacklist_to_concept_sentences.py` — login node only; read [`sentences_gen/AGENTS.md`](sentences_gen/AGENTS.md) first |
 
 ### Operating rules
 
