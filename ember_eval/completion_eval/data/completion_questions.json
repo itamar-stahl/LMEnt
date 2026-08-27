@@ -6629,6 +6629,2216 @@
    }
   ]
  },
+ "Cannabis": {
+  "QA_train": [
+   {
+    "q": "Which species of cannabis is known for its short stature and broad leaves?",
+    "options": [
+     "Cannabis indica",
+     "Cannabis sativa",
+     "Cannabis ruderalis",
+     "Cannabis afghanica"
+    ],
+    "correct_answer": "Cannabis indica",
+    "stem": "The species of cannabis known for its short stature and broad leaves is"
+   },
+   {
+    "q": "Which species of cannabis is known for its auto-flowering characteristics?",
+    "options": [
+     "Cannabis ruderalis",
+     "Cannabis indica",
+     "Cannabis sativa",
+     "Cannabis afghanica"
+    ],
+    "correct_answer": "Cannabis ruderalis",
+    "stem": "The species of cannabis known for its auto-flowering characteristics is"
+   },
+   {
+    "q": "What term describes cannabis varieties with low THC content used for industrial purposes?",
+    "options": [
+     "Hemp",
+     "Sativa",
+     "Ruderalis",
+     "Hashish"
+    ],
+    "correct_answer": "Hemp",
+    "stem": "The term for cannabis varieties with low THC content used for industrial purposes is"
+   },
+   {
+    "q": "Which cannabinoid receptor is primarily found in the immune system?",
+    "options": [
+     "CB2 receptor",
+     "CB1 receptor",
+     "TRPV1 receptor",
+     "5-HT2A receptor"
+    ],
+    "correct_answer": "CB2 receptor",
+    "stem": "The cannabinoid receptor primarily found in the immune system is the"
+   },
+   {
+    "q": "What term describes the combined effect of cannabinoids and terpenes working together?",
+    "options": [
+     "Entourage effect",
+     "Placebo effect",
+     "Hawthorne effect",
+     "First-pass effect"
+    ],
+    "correct_answer": "Entourage effect",
+    "stem": "The combined effect of cannabinoids and terpenes working together is called the"
+   },
+   {
+    "q": "What term is used for the small glandular hairs on cannabis flowers that produce resin?",
+    "options": [
+     "Trichomes",
+     "Stomata",
+     "Pistils",
+     "Calyxes"
+    ],
+    "correct_answer": "Trichomes",
+    "stem": "The small glandular hairs on cannabis flowers that produce resin are called"
+   },
+   {
+    "q": "What slang term refers to a hand-rolled cannabis cigarette containing only cannabis?",
+    "options": [
+     "Joint",
+     "Blunt",
+     "Spliff",
+     "Pipe"
+    ],
+    "correct_answer": "Joint",
+    "stem": "A hand-rolled cannabis cigarette containing only cannabis is called a"
+   },
+   {
+    "q": "What slang term refers to a cannabis cigarette rolled with a tobacco leaf wrapper?",
+    "options": [
+     "Blunt",
+     "Joint",
+     "Spliff",
+     "Kief cone"
+    ],
+    "correct_answer": "Blunt",
+    "stem": "A cannabis cigarette rolled with a tobacco leaf wrapper is called a"
+   },
+   {
+    "q": "What is the term for an alcohol-based cannabis extract used in drops?",
+    "options": [
+     "Tincture",
+     "Topical",
+     "Edible",
+     "Resin"
+    ],
+    "correct_answer": "Tincture",
+    "stem": "The term for an alcohol-based cannabis extract used in drops is"
+   },
+   {
+    "q": "What term describes fine powdered trichomes collected in a grinder?",
+    "options": [
+     "Kief",
+     "Hash",
+     "Rosin",
+     "Shatter"
+    ],
+    "correct_answer": "Kief",
+    "stem": "The term for fine powdered trichomes collected in a grinder is"
+   },
+   {
+    "q": "What type of cannabis concentrate is created by agitating plant material in ice water?",
+    "options": [
+     "Bubble hash",
+     "Live resin",
+     "Rosin",
+     "Shatter"
+    ],
+    "correct_answer": "Bubble hash",
+    "stem": "The type of cannabis concentrate created by agitating plant material in ice water is"
+   },
+   {
+    "q": "What solvent is commonly used to make butane hash oil (BHO)?",
+    "options": [
+     "Butane",
+     "Ethanol",
+     "Isopropyl alcohol",
+     "Propane"
+    ],
+    "correct_answer": "Butane",
+    "stem": "The solvent commonly used to make butane hash oil (BHO) is"
+   },
+   {
+    "q": "What supercritical fluid is used in CO2 extraction for cannabis concentrates?",
+    "options": [
+     "Carbon dioxide",
+     "Nitrogen",
+     "Oxygen",
+     "Argon"
+    ],
+    "correct_answer": "Carbon dioxide",
+    "stem": "The supercritical fluid used in CO2 extraction for cannabis concentrates is"
+   },
+   {
+    "q": "What device is commonly used to vaporize cannabis concentrates via dabbing?",
+    "options": [
+     "Dab rig",
+     "Vape pen",
+     "Bong",
+     "Hookah"
+    ],
+    "correct_answer": "Dab rig",
+    "stem": "The device commonly used to vaporize cannabis concentrates via dabbing is a"
+   },
+   {
+    "q": "What slang term describes dry mouth following cannabis consumption?",
+    "options": [
+     "Cottonmouth",
+     "Brain freeze",
+     "Lockjaw",
+     "Dry socket"
+    ],
+    "correct_answer": "Cottonmouth",
+    "stem": "The slang term for dry mouth following cannabis consumption is"
+   },
+   {
+    "q": "What slang term describes bloodshot eyes after cannabis use?",
+    "options": [
+     "Red eyes",
+     "Pink eye",
+     "Glassy eyes",
+     "Lazy eye"
+    ],
+    "correct_answer": "Red eyes",
+    "stem": "The slang term for bloodshot eyes after cannabis use is"
+   },
+   {
+    "q": "What is the medical term for a rapid heart rate that can occur after cannabis use?",
+    "options": [
+     "Tachycardia",
+     "Bradycardia",
+     "Arrhythmia",
+     "Hypertension"
+    ],
+    "correct_answer": "Tachycardia",
+    "stem": "The medical term for a rapid heart rate that can occur after cannabis use is"
+   },
+   {
+    "q": "What phenomenon describes reduced effect of cannabis after frequent use?",
+    "options": [
+     "Tolerance",
+     "Dependence",
+     "Addiction",
+     "Sensitization"
+    ],
+    "correct_answer": "Tolerance",
+    "stem": "The phenomenon of reduced effect of cannabis after frequent use is called"
+   },
+   {
+    "q": "Which terpene in cannabis is known for its earthy aroma?",
+    "options": [
+     "Myrcene",
+     "Limonene",
+     "Pinene",
+     "Linalool"
+    ],
+    "correct_answer": "Myrcene",
+    "stem": "The terpene in cannabis known for its earthy aroma is"
+   },
+   {
+    "q": "Which terpene in cannabis is known for its spicy aroma?",
+    "options": [
+     "Caryophyllene",
+     "Ocimene",
+     "Humulene",
+     "Terpinolene"
+    ],
+    "correct_answer": "Caryophyllene",
+    "stem": "The terpene in cannabis known for its spicy aroma is"
+   },
+   {
+    "q": "Which terpene in cannabis is known for its floral aroma?",
+    "options": [
+     "Linalool",
+     "Myrcene",
+     "Pinene",
+     "Terpinolene"
+    ],
+    "correct_answer": "Linalool",
+    "stem": "The terpene in cannabis known for its floral aroma is"
+   },
+   {
+    "q": "What organic compounds in cannabis are responsible for its psychoactive and therapeutic effects?",
+    "options": [
+     "Cannabinoids",
+     "Terpenes",
+     "Flavonoids",
+     "Alkaloids"
+    ],
+    "correct_answer": "Cannabinoids",
+    "stem": "The organic compounds in cannabis responsible for its psychoactive and therapeutic effects are called"
+   },
+   {
+    "q": "What international treaty of 1961 classified cannabis as a controlled substance?",
+    "options": [
+     "Single Convention on Narcotic Drugs",
+     "Controlled Substances Act",
+     "Geneva Opium Convention",
+     "Basel Convention"
+    ],
+    "correct_answer": "Single Convention on Narcotic Drugs",
+    "stem": "The international treaty of 1961 that classified cannabis as a controlled substance was the"
+   },
+   {
+    "q": "What 1937 US Act regulated and effectively prohibited cannabis nationwide?",
+    "options": [
+     "Marihuana Tax Act",
+     "Controlled Substances Act",
+     "Volstead Act",
+     "RICO Act"
+    ],
+    "correct_answer": "Marihuana Tax Act",
+    "stem": "The 1937 US Act that regulated and effectively prohibited cannabis nationwide was the"
+   },
+   {
+    "q": "Which South American country became the first to fully legalize recreational cannabis in 2013?",
+    "options": [
+     "Uruguay",
+     "Canada",
+     "Netherlands",
+     "Portugal"
+    ],
+    "correct_answer": "Uruguay",
+    "stem": "The South American country that became the first to fully legalize recreational cannabis in 2013 was"
+   },
+   {
+    "q": "Who was the US president that promoted the \"Hemp for Victory\" campaign during WWII?",
+    "options": [
+     "Franklin D. Roosevelt",
+     "Harry S. Truman",
+     "Dwight D. Eisenhower",
+     "Herbert Hoover"
+    ],
+    "correct_answer": "Franklin D. Roosevelt",
+    "stem": "The US president who promoted the “Hemp for Victory” campaign during WWII was"
+   },
+   {
+    "q": "What synthetic form of THC is marketed as Marinol?",
+    "options": [
+     "Dronabinol",
+     "Nabilone",
+     "Nabiximols",
+     "Epidiolex"
+    ],
+    "correct_answer": "Dronabinol",
+    "stem": "The synthetic form of THC marketed as Marinol is"
+   },
+   {
+    "q": "Under what brand name is dronabinol sold?",
+    "options": [
+     "Marinol",
+     "Sativex",
+     "Cesamet",
+     "Epidiolex"
+    ],
+    "correct_answer": "Marinol",
+    "stem": "Dronabinol is sold under the brand name"
+   },
+   {
+    "q": "What is the molecular formula for THC?",
+    "options": [
+     "C21H30O2",
+     "C21H22O2",
+     "C21H30O4",
+     "C19H28O2"
+    ],
+    "correct_answer": "C21H30O2",
+    "stem": "The molecular formula for THC is"
+   },
+   {
+    "q": "What molecule in raw cannabis is the acidic precursor to THC?",
+    "options": [
+     "THCA",
+     "CBDA",
+     "CBN",
+     "THCV"
+    ],
+    "correct_answer": "THCA",
+    "stem": "The molecule in raw cannabis that is the acidic precursor to THC is"
+   },
+   {
+    "q": "What is the common name for the practice of steeping cannabis in hot water to make a drink?",
+    "options": [
+     "Cannabis tea",
+     "Hemp latte",
+     "CBD soda",
+     "Kombucha"
+    ],
+    "correct_answer": "Cannabis tea",
+    "stem": "The common name for the practice of steeping cannabis in hot water to make a drink is"
+   },
+   {
+    "q": "What is the term for cannabis products used to relieve medical conditions?",
+    "options": [
+     "Medical cannabis",
+     "Recreational cannabis",
+     "Industrial hemp",
+     "Homegrown cannabis"
+    ],
+    "correct_answer": "Medical cannabis",
+    "stem": "The term for cannabis products used to relieve medical conditions is"
+   },
+   {
+    "q": "In most US states, at what minimum age can adults legally purchase recreational cannabis?",
+    "options": [
+     "21",
+     "18",
+     "19",
+     "25"
+    ],
+    "correct_answer": "21",
+    "stem": "In most US states, the minimum age at which adults can legally purchase recreational cannabis is"
+   },
+   {
+    "q": "What slang term for cannabis is also a type of lawn covering plant?",
+    "options": [
+     "Grass",
+     "Moss",
+     "Clover",
+     "Ivy"
+    ],
+    "correct_answer": "Grass",
+    "stem": "The slang term for cannabis that is also a type of lawn covering plant is"
+   },
+   {
+    "q": "What sex of cannabis plant produces pollen but not buds?",
+    "options": [
+     "Male",
+     "Female",
+     "Hermaphrodite",
+     "Feminized"
+    ],
+    "correct_answer": "Male",
+    "stem": "The sex of cannabis plant that produces pollen but not buds is"
+   },
+   {
+    "q": "What horticultural process replicates a cannabis plant by rooting a stem cutting?",
+    "options": [
+     "Cloning",
+     "Grafting",
+     "Crossbreeding",
+     "Air layering"
+    ],
+    "correct_answer": "Cloning",
+    "stem": "The horticultural process that replicates a cannabis plant by rooting a stem cutting is called"
+   },
+   {
+    "q": "What moisture percentage can cause mold growth in stored cannabis if storage humidity exceeds it?",
+    "options": [
+     "65%",
+     "50%",
+     "35%",
+     "80%"
+    ],
+    "correct_answer": "65%",
+    "stem": "Mold growth can occur in stored cannabis when storage humidity exceeds"
+   },
+   {
+    "q": "What nutrient-rich product is made by pressing hemp seeds?",
+    "options": [
+     "Hemp oil",
+     "Hemp milk",
+     "Hemp resin",
+     "Hemp flour"
+    ],
+    "correct_answer": "Hemp oil",
+    "stem": "The nutrient-rich product made by pressing hemp seeds is"
+   },
+   {
+    "q": "What nutrient-rich powder is made from defatted hemp seeds?",
+    "options": [
+     "Hemp protein powder",
+     "Whey protein",
+     "Soy protein",
+     "Pea protein"
+    ],
+    "correct_answer": "Hemp protein powder",
+    "stem": "The nutrient-rich powder made from defatted hemp seeds is"
+   },
+   {
+    "q": "What material made from hemp fibers was historically used for making sails and rope?",
+    "options": [
+     "Rope",
+     "Canvas",
+     "Paper",
+     "Burlap"
+    ],
+    "correct_answer": "Rope",
+    "stem": "The material made from hemp fibers historically used for making sails and rope is"
+   },
+   {
+    "q": "In which ancient civilization was hemp paper first produced?",
+    "options": [
+     "China",
+     "Egypt",
+     "Greece",
+     "India"
+    ],
+    "correct_answer": "China",
+    "stem": "Hemp paper was first produced in the ancient civilization of"
+   },
+   {
+    "q": "What does the abbreviation THC stand for?",
+    "options": [
+     "Tetrahydrocannabinol",
+     "Tetrahydrocannabivarin",
+     "Trihydrocannabinol",
+     "Trans-hydroxycannabinol"
+    ],
+    "correct_answer": "Tetrahydrocannabinol",
+    "stem": "The abbreviation THC stands for"
+   },
+   {
+    "q": "What type of opaque, airtight container is recommended for storing cannabis to preserve freshness?",
+    "options": [
+     "Glass jar",
+     "Plastic bag",
+     "Metal tin",
+     "Paper bag"
+    ],
+    "correct_answer": "Glass jar",
+    "stem": "The type of opaque, airtight container recommended for storing cannabis to preserve freshness is a"
+   },
+   {
+    "q": "What light cycle (hours of light and dark) is used to trigger flowering in photoperiod cannabis plants?",
+    "options": [
+     "12 hours light and 12 hours dark",
+     "18 hours light and 6 hours dark",
+     "24 hours light and 0 hours dark",
+     "16 hours light and 8 hours dark"
+    ],
+    "correct_answer": "12 hours light and 12 hours dark",
+    "stem": "The light cycle used to trigger flowering in photoperiod cannabis plants is"
+   },
+   {
+    "q": "Medical cannabis is often prescribed to help patients with loss of appetite due to what condition?",
+    "options": [
+     "Anorexia",
+     "Hypertension",
+     "Osteoporosis",
+     "Glaucoma"
+    ],
+    "correct_answer": "Anorexia",
+    "stem": "Medical cannabis is often prescribed to help patients with loss of appetite due to"
+   },
+   {
+    "q": "What type of seeds are bred to produce only female cannabis plants?",
+    "options": [
+     "Feminized seeds",
+     "Autoflowering seeds",
+     "Regular seeds",
+     "Landrace seeds"
+    ],
+    "correct_answer": "Feminized seeds",
+    "stem": "The seeds bred to produce only female cannabis plants are called"
+   },
+   {
+    "q": "What term describes the inherited traits of a cannabis strain?",
+    "options": [
+     "Genetics",
+     "Phenotype",
+     "Chemotype",
+     "Terpene profile"
+    ],
+    "correct_answer": "Genetics",
+    "stem": "The term for the inherited traits of a cannabis strain is"
+   },
+   {
+    "q": "What type of artificial lighting uses light-emitting diodes in indoor cannabis cultivation?",
+    "options": [
+     "LED grow lights",
+     "HPS grow lights",
+     "Metal halide lamps",
+     "Fluorescent T5 lights"
+    ],
+    "correct_answer": "LED grow lights",
+    "stem": "In indoor cannabis cultivation, the type of artificial lighting that uses light-emitting diodes is called"
+   },
+   {
+    "q": "What cannabis-derived oromucosal spray is used to treat spasticity in multiple sclerosis?",
+    "options": [
+     "Sativex",
+     "Marinol",
+     "Epidiolex",
+     "Cesamet"
+    ],
+    "correct_answer": "Sativex",
+    "stem": "The cannabis-derived oromucosal spray used to treat spasticity in multiple sclerosis is"
+   },
+   {
+    "q": "What is the term for the practice of consuming very small, controlled doses of cannabis for therapeutic effect?",
+    "options": [
+     "Microdosing",
+     "Macrodosing",
+     "Stacking",
+     "Titration"
+    ],
+    "correct_answer": "Microdosing",
+    "stem": "The term for the practice of consuming very small, controlled doses of cannabis for therapeutic effect is"
+   }
+  ],
+  "QA_test": [
+   {
+    "q": "Which plant family does cannabis belong to?",
+    "options": [
+     "Cannabaceae",
+     "Solanaceae",
+     "Lamiaceae",
+     "Rosaceae"
+    ],
+    "correct_answer": "Cannabaceae",
+    "stem": "The plant family that cannabis belongs to is"
+   },
+   {
+    "q": "What is the botanical genus of cannabis?",
+    "options": [
+     "Cannabis",
+     "Humulus",
+     "Cannabaceae",
+     "Nicotiana"
+    ],
+    "correct_answer": "Cannabis",
+    "stem": "The botanical genus of cannabis is"
+   },
+   {
+    "q": "What type of plant is cannabis, defined by the presence of flowers?",
+    "options": [
+     "Flowering plant",
+     "Gymnosperm",
+     "Fern (pteridophyte)",
+     "Algae"
+    ],
+    "correct_answer": "Flowering plant",
+    "stem": "Defined by the presence of flowers, cannabis is classified as"
+   },
+   {
+    "q": "Which species of cannabis is known for its tall stature and narrow leaves?",
+    "options": [
+     "Cannabis sativa",
+     "Cannabis indica",
+     "Cannabis ruderalis",
+     "Humulus lupulus"
+    ],
+    "correct_answer": "Cannabis sativa",
+    "stem": "The species of cannabis known for its tall stature and narrow leaves is"
+   },
+   {
+    "q": "In the United States, what maximum THC content percentage classifies a cannabis plant as hemp?",
+    "options": [
+     "0.3%",
+     "0.2%",
+     "0.5%",
+     "1.0%"
+    ],
+    "correct_answer": "0.3%",
+    "stem": "In the United States, the maximum THC content percentage that classifies a cannabis plant as hemp is"
+   },
+   {
+    "q": "What is the primary psychoactive compound found in cannabis?",
+    "options": [
+     "THC",
+     "CBD",
+     "CBG",
+     "THCA"
+    ],
+    "correct_answer": "THC",
+    "stem": "The primary psychoactive compound found in cannabis is"
+   },
+   {
+    "q": "What non-psychoactive compound in cannabis is often used for medicinal purposes?",
+    "options": [
+     "CBD",
+     "THC",
+     "THCV",
+     "CBN"
+    ],
+    "correct_answer": "CBD",
+    "stem": "The non-psychoactive compound in cannabis often used for medicinal purposes is"
+   },
+   {
+    "q": "What two-letter abbreviation is used for tetrahydrocannabinol?",
+    "options": [
+     "THC",
+     "THCA",
+     "THCV",
+     "HHC"
+    ],
+    "correct_answer": "THC",
+    "stem": "The two-letter abbreviation used for tetrahydrocannabinol is"
+   },
+   {
+    "q": "What two-letter abbreviation is used for cannabidiol?",
+    "options": [
+     "CBD",
+     "CBG",
+     "CBN",
+     "CBC"
+    ],
+    "correct_answer": "CBD",
+    "stem": "The two-letter abbreviation used for cannabidiol is"
+   },
+   {
+    "q": "Which cannabinoid receptor is most abundant in the human brain and binds THC?",
+    "options": [
+     "CB1 receptor",
+     "CB2 receptor",
+     "NMDA receptor",
+     "GABA-A receptor"
+    ],
+    "correct_answer": "CB1 receptor",
+    "stem": "The cannabinoid receptor that is most abundant in the human brain and binds THC is the"
+   },
+   {
+    "q": "What term describes the process of applying heat to convert THCA into psychoactive THC?",
+    "options": [
+     "Decarboxylation",
+     "Oxidation",
+     "Hydration",
+     "Saponification"
+    ],
+    "correct_answer": "Decarboxylation",
+    "stem": "The process of applying heat to convert THCA into psychoactive THC is called"
+   },
+   {
+    "q": "What is the common term for dried cannabis flowers used for smoking?",
+    "options": [
+     "Marijuana",
+     "Hashish",
+     "Hemp fiber",
+     "Kief"
+    ],
+    "correct_answer": "Marijuana",
+    "stem": "The common term for dried cannabis flowers used for smoking is"
+   },
+   {
+    "q": "What slang term is often used to refer to cannabis in general?",
+    "options": [
+     "Weed",
+     "Hashish",
+     "Kief",
+     "Hemp"
+    ],
+    "correct_answer": "Weed",
+    "stem": "The slang term often used to refer to cannabis in general is"
+   },
+   {
+    "q": "What is the name for cannabis resin bricks made by compressing trichomes?",
+    "options": [
+     "Hashish",
+     "Kief",
+     "Wax",
+     "Rosin"
+    ],
+    "correct_answer": "Hashish",
+    "stem": "The name for cannabis resin bricks made by compressing trichomes is"
+   },
+   {
+    "q": "What term describes a joint that mixes cannabis and tobacco?",
+    "options": [
+     "Spliff",
+     "Joint",
+     "Blunt",
+     "Bowl"
+    ],
+    "correct_answer": "Spliff",
+    "stem": "A joint that mixes cannabis and tobacco is called a"
+   },
+   {
+    "q": "What is the term for a cannabis-infused butter used in cooking?",
+    "options": [
+     "Cannabutter",
+     "Ghee",
+     "Hash oil",
+     "Cannasugar"
+    ],
+    "correct_answer": "Cannabutter",
+    "stem": "The term for a cannabis-infused butter used in cooking is"
+   },
+   {
+    "q": "What form of cannabis is eaten rather than smoked?",
+    "options": [
+     "Edible",
+     "Topical",
+     "Tincture",
+     "Elixir"
+    ],
+    "correct_answer": "Edible",
+    "stem": "The form of cannabis that is eaten rather than smoked is"
+   },
+   {
+    "q": "What name is given to brittle amber-colored cannabis concentrate?",
+    "options": [
+     "Shatter",
+     "Wax",
+     "Rosin",
+     "Live resin"
+    ],
+    "correct_answer": "Shatter",
+    "stem": "The name given to brittle amber-colored cannabis concentrate is"
+   },
+   {
+    "q": "What name is given to the sticky wax-like cannabis concentrate?",
+    "options": [
+     "Wax",
+     "Shatter",
+     "Sauce",
+     "Distillate"
+    ],
+    "correct_answer": "Wax",
+    "stem": "The name given to the sticky wax-like cannabis concentrate is"
+   },
+   {
+    "q": "What slang term refers to cannabis concentrate droplets vaporized on a heated surface?",
+    "options": [
+     "Dabs",
+     "Hits",
+     "Packs",
+     "Rips"
+    ],
+    "correct_answer": "Dabs",
+    "stem": "The slang term for cannabis concentrate droplets vaporized on a heated surface is"
+   },
+   {
+    "q": "What is the term for inhaling cannabis vapor instead of smoke?",
+    "options": [
+     "Vaping",
+     "Smoking",
+     "Dabbing",
+     "Edibles"
+    ],
+    "correct_answer": "Vaping",
+    "stem": "The term for inhaling cannabis vapor instead of smoke is"
+   },
+   {
+    "q": "What symptom describes increased appetite after cannabis use?",
+    "options": [
+     "Munchies",
+     "Cottonmouth",
+     "Indigestion",
+     "Jet lag"
+    ],
+    "correct_answer": "Munchies",
+    "stem": "The symptom of increased appetite after cannabis use is called"
+   },
+   {
+    "q": "What is the colloquial term for taking a break from cannabis to reset tolerance?",
+    "options": [
+     "T-break",
+     "Cold start",
+     "Reset sesh",
+     "Tolerance wave"
+    ],
+    "correct_answer": "T-break",
+    "stem": "The colloquial term for taking a break from cannabis to reset tolerance is"
+   },
+   {
+    "q": "What is the term for the mood-altering effect commonly described as a \"high\"?",
+    "options": [
+     "Euphoria",
+     "Dysphoria",
+     "Anhedonia",
+     "Ataxia"
+    ],
+    "correct_answer": "Euphoria",
+    "stem": "The term for the mood-altering effect commonly described as a “high” is"
+   },
+   {
+    "q": "What is the class of aromatic compounds in cannabis responsible for its aroma?",
+    "options": [
+     "Terpenes",
+     "Alkanes",
+     "Flavonoids",
+     "Sterols"
+    ],
+    "correct_answer": "Terpenes",
+    "stem": "The class of aromatic compounds in cannabis responsible for its aroma is called"
+   },
+   {
+    "q": "Which terpene in cannabis is known for its citrus aroma?",
+    "options": [
+     "Limonene",
+     "Myrcene",
+     "Pinene",
+     "Linalool"
+    ],
+    "correct_answer": "Limonene",
+    "stem": "The terpene in cannabis known for its citrus aroma is"
+   },
+   {
+    "q": "Which terpene in cannabis is known for its pine aroma?",
+    "options": [
+     "Pinene",
+     "Limonene",
+     "Caryophyllene",
+     "Humulene"
+    ],
+    "correct_answer": "Pinene",
+    "stem": "The terpene in cannabis known for its pine aroma is"
+   },
+   {
+    "q": "Under the US Controlled Substances Act, what schedule is cannabis classified as at the federal level?",
+    "options": [
+     "Schedule I",
+     "Schedule II",
+     "Schedule III",
+     "Schedule V"
+    ],
+    "correct_answer": "Schedule I",
+    "stem": "Under the US Controlled Substances Act, cannabis is classified at the federal level as"
+   },
+   {
+    "q": "What 2018 US legislation federally legalized hemp?",
+    "options": [
+     "2018 Farm Bill",
+     "Controlled Substances Act",
+     "SAFE Banking Act",
+     "Rohrabacher-Farr amendment"
+    ],
+    "correct_answer": "2018 Farm Bill",
+    "stem": "The 2018 US legislation that federally legalized hemp was the"
+   },
+   {
+    "q": "Which city is famous for coffee shops that allow on-site cannabis consumption?",
+    "options": [
+     "Amsterdam",
+     "Rotterdam",
+     "Copenhagen",
+     "Zurich"
+    ],
+    "correct_answer": "Amsterdam",
+    "stem": "The city famous for coffee shops that allow on-site cannabis consumption is"
+   },
+   {
+    "q": "What act legalized recreational cannabis in Canada in 2018?",
+    "options": [
+     "Cannabis Act",
+     "Marihuana Tax Act",
+     "Safe Streets and Communities Act",
+     "Controlled Drugs and Substances Act"
+    ],
+    "correct_answer": "Cannabis Act",
+    "stem": "The act that legalized recreational cannabis in Canada in 2018 was the"
+   },
+   {
+    "q": "In what year did Canada legalize recreational cannabis nationwide?",
+    "options": [
+     "2018",
+     "2017",
+     "2019",
+     "2020"
+    ],
+    "correct_answer": "2018",
+    "stem": "Canada legalized recreational cannabis nationwide in the year"
+   },
+   {
+    "q": "What 1942 film encouraged American farmers to grow hemp?",
+    "options": [
+     "Hemp for Victory",
+     "Why We Fight",
+     "The Plow That Broke the Plains",
+     "Victory Garden"
+    ],
+    "correct_answer": "Hemp for Victory",
+    "stem": "The 1942 film that encouraged American farmers to grow hemp was"
+   },
+   {
+    "q": "What molecule in raw cannabis is the acidic precursor to CBD?",
+    "options": [
+     "CBDA",
+     "THCA",
+     "CBDV",
+     "CBN"
+    ],
+    "correct_answer": "CBDA",
+    "stem": "The molecule in raw cannabis that is the acidic precursor to CBD is"
+   },
+   {
+    "q": "What cooking ingredient is often infused with cannabis to make brownies?",
+    "options": [
+     "Butter",
+     "Olive oil",
+     "Milk",
+     "Sugar"
+    ],
+    "correct_answer": "Butter",
+    "stem": "The cooking ingredient often infused with cannabis to make brownies is"
+   },
+   {
+    "q": "What is the term for cannabis products used for enjoyment rather than treatment?",
+    "options": [
+     "Recreational cannabis",
+     "Medical cannabis",
+     "Industrial hemp",
+     "Botanical extract"
+    ],
+    "correct_answer": "Recreational cannabis",
+    "stem": "The term for cannabis products used for enjoyment rather than treatment is"
+   },
+   {
+    "q": "What Spanish term meaning \"without seeds\" describes seedless female cannabis?",
+    "options": [
+     "Sinsemilla",
+     "Acapulco Gold",
+     "Charas",
+     "Kief"
+    ],
+    "correct_answer": "Sinsemilla",
+    "stem": "The Spanish term meaning “without seeds” that describes seedless female cannabis is"
+   },
+   {
+    "q": "What sex of cannabis plant produces buds rich in cannabinoids?",
+    "options": [
+     "Female",
+     "Male",
+     "Hermaphrodite",
+     "Monoecious"
+    ],
+    "correct_answer": "Female",
+    "stem": "The sex of cannabis plant that produces buds rich in cannabinoids is"
+   },
+   {
+    "q": "What device measures humidity levels to help properly store cannabis?",
+    "options": [
+     "Hygrometer",
+     "Barometer",
+     "Anemometer",
+     "Altimeter"
+    ],
+    "correct_answer": "Hygrometer",
+    "stem": "The device that measures humidity levels to help properly store cannabis is"
+   },
+   {
+    "q": "What measurement unit equal to one-thousandth of a gram is used for dosing THC?",
+    "options": [
+     "Milligram",
+     "Microgram",
+     "Centigram",
+     "Gram"
+    ],
+    "correct_answer": "Milligram",
+    "stem": "The measurement unit equal to one-thousandth of a gram that is used for dosing THC is the"
+   },
+   {
+    "q": "What part of the cannabis plant is used to produce hemp seeds for nutrition?",
+    "options": [
+     "Seeds",
+     "Leaves",
+     "Flowers",
+     "Stems"
+    ],
+    "correct_answer": "Seeds",
+    "stem": "Hemp seeds for nutrition are produced from the cannabis plant’s"
+   },
+   {
+    "q": "What nutrient-rich hemp seed product is also known as hemp hearts?",
+    "options": [
+     "Hemp hearts",
+     "Hemp protein",
+     "Hemp oil",
+     "Hulled hemp flour"
+    ],
+    "correct_answer": "Hemp hearts",
+    "stem": "The nutrient-rich hemp seed product also known as hemp hearts is"
+   },
+   {
+    "q": "What does the abbreviation CBD stand for?",
+    "options": [
+     "Cannabidiol",
+     "Cannabidivarin",
+     "Cannabinol",
+     "Cannabichromene"
+    ],
+    "correct_answer": "Cannabidiol",
+    "stem": "The abbreviation CBD stands for"
+   },
+   {
+    "q": "What cultivation medium made from coconut husks is used for growing cannabis?",
+    "options": [
+     "Coco coir",
+     "Rockwool",
+     "Perlite",
+     "Peat moss"
+    ],
+    "correct_answer": "Coco coir",
+    "stem": "The cultivation medium made from coconut husks that is used for growing cannabis is"
+   },
+   {
+    "q": "What chemical is produced when cannabis is burned and inhaled that causes harm to the lungs?",
+    "options": [
+     "Tar",
+     "Carbon dioxide",
+     "Nitrogen",
+     "Water vapor"
+    ],
+    "correct_answer": "Tar",
+    "stem": "The chemical produced when cannabis is burned and inhaled that causes harm to the lungs is"
+   },
+   {
+    "q": "What macronutrient are hemp seeds high in, important for muscle repair?",
+    "options": [
+     "Protein",
+     "Fructose",
+     "Starch",
+     "Cholesterol"
+    ],
+    "correct_answer": "Protein",
+    "stem": "The macronutrient that hemp seeds are high in, important for muscle repair, is"
+   },
+   {
+    "q": "What unit is used to measure THC content in edible cannabis products?",
+    "options": [
+     "Milligrams",
+     "Percent THC",
+     "International Units",
+     "Calories"
+    ],
+    "correct_answer": "Milligrams",
+    "stem": "The unit used to measure THC content in edible cannabis products is"
+   },
+   {
+    "q": "What is the term for cannabis extracts packaged in oil-filled cartridges for use in vaporizers?",
+    "options": [
+     "Vape cartridge",
+     "Tincture bottle",
+     "Softgel",
+     "Dab jar"
+    ],
+    "correct_answer": "Vape cartridge",
+    "stem": "The term for cannabis extracts packaged in oil-filled cartridges for use in vaporizers is"
+   },
+   {
+    "q": "What term describes cannabis-infused lotions or balms applied to the skin?",
+    "options": [
+     "Topical",
+     "Edible",
+     "Tincture",
+     "Capsule"
+    ],
+    "correct_answer": "Topical",
+    "stem": "The term for cannabis-infused lotions or balms applied to the skin is"
+   },
+   {
+    "q": "What concentrate made by sieving dried cannabis plant material through a fine mesh screen is called?",
+    "options": [
+     "Dry sift",
+     "Bubble hash",
+     "Live resin",
+     "Rosin"
+    ],
+    "correct_answer": "Dry sift",
+    "stem": "The concentrate made by sieving dried cannabis plant material through a fine mesh screen is called"
+   }
+  ],
+  "SimdomQA_train": [
+   {
+    "q": "What is the process called that converts sugar into alcohol and carbon dioxide?",
+    "options": [
+     "Fermentation",
+     "Distillation",
+     "Oxidation",
+     "Sublimation"
+    ],
+    "correct_answer": "Fermentation",
+    "stem": "The process that converts sugar into alcohol and carbon dioxide is called"
+   },
+   {
+    "q": "What is the name of the clear spirit typically made from juniper berries?",
+    "options": [
+     "Gin",
+     "Vodka",
+     "Rum",
+     "Tequila"
+    ],
+    "correct_answer": "Gin",
+    "stem": "The clear spirit typically made from juniper berries is"
+   },
+   {
+    "q": "What does the abbreviation ABV stand for in the context of alcohol content?",
+    "options": [
+     "Alcohol by Volume",
+     "Alcohol by Weight",
+     "Average Bottle Volume",
+     "Absolute Beverage Volume"
+    ],
+    "correct_answer": "Alcohol by Volume",
+    "stem": "In the context of alcohol content, the abbreviation ABV stands for"
+   },
+   {
+    "q": "What is the traditional fermented drink made from honey and water?",
+    "options": [
+     "Mead",
+     "Ale",
+     "Cider",
+     "Sake"
+    ],
+    "correct_answer": "Mead",
+    "stem": "The traditional fermented drink made from honey and water is"
+   },
+   {
+    "q": "What grain is primarily used to make beer?",
+    "options": [
+     "Barley",
+     "Corn",
+     "Rice",
+     "Rye"
+    ],
+    "correct_answer": "Barley",
+    "stem": "The grain primarily used to make beer is"
+   },
+   {
+    "q": "From which plant is nicotine most commonly derived?",
+    "options": [
+     "Tobacco",
+     "Tea plant",
+     "Coffee plant",
+     "Kola nut"
+    ],
+    "correct_answer": "Tobacco",
+    "stem": "The plant from which nicotine is most commonly derived is"
+   },
+   {
+    "q": "What is the name of the device used to smoke tobacco leaves rolled in paper?",
+    "options": [
+     "Cigarette",
+     "Pipe",
+     "Cigarillo",
+     "Hookah"
+    ],
+    "correct_answer": "Cigarette",
+    "stem": "The device used to smoke tobacco leaves rolled in paper is a"
+   },
+   {
+    "q": "What is the name of the water pipe used to smoke flavored tobacco?",
+    "options": [
+     "Hookah",
+     "Bong",
+     "Chillum",
+     "Meerschaum pipe"
+    ],
+    "correct_answer": "Hookah",
+    "stem": "The water pipe used to smoke flavored tobacco is a"
+   },
+   {
+    "q": "What is the term for wrappers filled with tobacco and smoked like a large cigarette?",
+    "options": [
+     "Cigar",
+     "Cigarillo",
+     "Cigarette",
+     "Pipe"
+    ],
+    "correct_answer": "Cigar",
+    "stem": "The term for wrappers filled with tobacco and smoked like a large cigarette is a"
+   },
+   {
+    "q": "What is the term for tobacco in a small, cylindrical roll larger than a cigarette?",
+    "options": [
+     "Cigarillo",
+     "Cigar",
+     "Cigarette",
+     "Cheroot"
+    ],
+    "correct_answer": "Cigarillo",
+    "stem": "The term for tobacco in a small, cylindrical roll larger than a cigarette is a"
+   },
+   {
+    "q": "Which carbonated drink typically flavored with kola nut extract contains caffeine?",
+    "options": [
+     "Cola",
+     "Ginger ale",
+     "Seltzer",
+     "Tonic water"
+    ],
+    "correct_answer": "Cola",
+    "stem": "The carbonated drink typically flavored with kola nut extract that contains caffeine is"
+   },
+   {
+    "q": "Which beverage is prepared by steeping tea leaves in hot water?",
+    "options": [
+     "Tea",
+     "Coffee",
+     "Cocoa",
+     "Yerba mate"
+    ],
+    "correct_answer": "Tea",
+    "stem": "The beverage prepared by steeping tea leaves in hot water is"
+   },
+   {
+    "q": "Which plant-based soda popular in Brazil is made from guaraná seeds and contains caffeine?",
+    "options": [
+     "Guaraná soda",
+     "Inca Kola",
+     "Kola Champagne",
+     "Mate soda"
+    ],
+    "correct_answer": "Guaraná soda",
+    "stem": "The plant-based soda popular in Brazil that is made from guaraná seeds and contains caffeine is"
+   },
+   {
+    "q": "Which energy drink is marketed with the slogan 'Red Bull gives you wings'?",
+    "options": [
+     "Red Bull",
+     "Monster Energy",
+     "Rockstar",
+     "Gatorade"
+    ],
+    "correct_answer": "Red Bull",
+    "stem": "The energy drink marketed with the slogan ‘Red Bull gives you wings’ is"
+   },
+   {
+    "q": "What is the strong coffee brewed by forcing hot water under pressure through finely-ground beans called?",
+    "options": [
+     "Espresso",
+     "Americano",
+     "Drip coffee",
+     "French press"
+    ],
+    "correct_answer": "Espresso",
+    "stem": "The strong coffee brewed by forcing hot water under pressure through finely-ground beans is called"
+   },
+   {
+    "q": "What is the name of the cold coffee beverage mixed with milk over ice?",
+    "options": [
+     "Iced latte",
+     "Cold brew",
+     "Iced Americano",
+     "Frappé"
+    ],
+    "correct_answer": "Iced latte",
+    "stem": "The cold coffee beverage mixed with milk over ice is called"
+   },
+   {
+    "q": "Which synthetic opioid is known by the brand name Fentanyl?",
+    "options": [
+     "Fentanyl",
+     "Oxycodone",
+     "Morphine",
+     "Carfentanil"
+    ],
+    "correct_answer": "Fentanyl",
+    "stem": "The synthetic opioid known by the brand name Fentanyl is"
+   },
+   {
+    "q": "What pain reliever combines hydrocodone with acetaminophen and is commonly sold as Vicodin?",
+    "options": [
+     "Vicodin",
+     "Percocet",
+     "Tramadol",
+     "OxyContin"
+    ],
+    "correct_answer": "Vicodin",
+    "stem": "The pain reliever that combines hydrocodone with acetaminophen is commonly sold as"
+   },
+   {
+    "q": "Which illicit opioid is a black tar substance derived from processed opium?",
+    "options": [
+     "Black tar heroin",
+     "Opium resin",
+     "Brown sugar",
+     "Fentanyl patch"
+    ],
+    "correct_answer": "Black tar heroin",
+    "stem": "The illicit opioid that is a black tar substance derived from processed opium is"
+   },
+   {
+    "q": "What opioid is used in medication-assisted treatment for heroin addiction and has a long half-life?",
+    "options": [
+     "Methadone",
+     "Naloxone",
+     "Naltrexone",
+     "Morphine"
+    ],
+    "correct_answer": "Methadone",
+    "stem": "The opioid used in medication-assisted treatment for heroin addiction that has a long half-life is"
+   },
+   {
+    "q": "What medication binds to opioid receptors and is used to reverse opioid overdose?",
+    "options": [
+     "Naloxone",
+     "Naltrexone",
+     "Methadone",
+     "Buprenorphine"
+    ],
+    "correct_answer": "Naloxone",
+    "stem": "The medication that binds to opioid receptors and is used to reverse opioid overdose is"
+   },
+   {
+    "q": "Which powerful semi-synthetic opioid is known by the brand name Dilaudid?",
+    "options": [
+     "Hydromorphone",
+     "Hydrocodone",
+     "Oxymorphone",
+     "Oxycodone"
+    ],
+    "correct_answer": "Hydromorphone",
+    "stem": "The powerful semi-synthetic opioid known by the brand name Dilaudid is"
+   },
+   {
+    "q": "What term describes the condition when a person requires more opioid to achieve the same effect?",
+    "options": [
+     "Tolerance",
+     "Dependence",
+     "Sensitization",
+     "Withdrawal"
+    ],
+    "correct_answer": "Tolerance",
+    "stem": "The condition in which a person requires more opioid to achieve the same effect is called"
+   },
+   {
+    "q": "Which natural stimulant is derived from the leaves of the coca plant?",
+    "options": [
+     "Cocaine",
+     "Caffeine",
+     "Cathinone",
+     "Khat"
+    ],
+    "correct_answer": "Cocaine",
+    "stem": "The natural stimulant derived from the leaves of the coca plant is"
+   },
+   {
+    "q": "Which stimulant is found in chocolate and tea and has a similar structure to caffeine?",
+    "options": [
+     "Theobromine",
+     "Theophylline",
+     "Catechin",
+     "Nicotine"
+    ],
+    "correct_answer": "Theobromine",
+    "stem": "The stimulant found in chocolate and tea that has a structure similar to caffeine is"
+   },
+   {
+    "q": "Which synthetic stimulant is known by the street name 'meth'?",
+    "options": [
+     "Methamphetamine",
+     "Methylphenidate",
+     "MDMA",
+     "Amphetamine"
+    ],
+    "correct_answer": "Methamphetamine",
+    "stem": "The synthetic stimulant known by the street name ‘meth’ is"
+   },
+   {
+    "q": "Which prodrug of dextroamphetamine is used to treat ADHD and is marketed under the name Vyvanse?",
+    "options": [
+     "Lisdexamfetamine",
+     "Dextroamphetamine",
+     "Dexmethylphenidate",
+     "Atomoxetine"
+    ],
+    "correct_answer": "Lisdexamfetamine",
+    "stem": "The prodrug of dextroamphetamine used to treat ADHD and marketed under the name Vyvanse is"
+   },
+   {
+    "q": "Which stimulant, historically extracted from the ephedra plant, is used to treat asthma but banned in supplements?",
+    "options": [
+     "Ephedrine",
+     "Pseudoephedrine",
+     "Phenylephrine",
+     "Synephrine"
+    ],
+    "correct_answer": "Ephedrine",
+    "stem": "The stimulant historically extracted from the ephedra plant, used to treat asthma but banned in supplements, is"
+   },
+   {
+    "q": "Which stimulant found in nasal decongestants can also be used illicitly?",
+    "options": [
+     "Pseudoephedrine",
+     "Phenylephrine",
+     "Ephedrine",
+     "Oxymetazoline"
+    ],
+    "correct_answer": "Pseudoephedrine",
+    "stem": "The stimulant found in nasal decongestants that can also be used illicitly is"
+   },
+   {
+    "q": "Which central nervous system stimulant is sometimes taken to combat fatigue and is known as modafinil?",
+    "options": [
+     "Modafinil",
+     "Armodafinil",
+     "Methylphenidate",
+     "Caffeine"
+    ],
+    "correct_answer": "Modafinil",
+    "stem": "The central nervous system stimulant sometimes taken to combat fatigue is known as"
+   },
+   {
+    "q": "Which hormone acts as a stimulant by increasing heart rate and is also known as adrenaline?",
+    "options": [
+     "Epinephrine",
+     "Norepinephrine",
+     "Dopamine",
+     "Serotonin"
+    ],
+    "correct_answer": "Epinephrine",
+    "stem": "The hormone that acts as a stimulant by increasing heart rate and is also known as adrenaline is"
+   },
+   {
+    "q": "Which prescription stimulant is commonly used for weight loss and known as phentermine?",
+    "options": [
+     "Phentermine",
+     "Phendimetrazine",
+     "Orlistat",
+     "Sibutramine"
+    ],
+    "correct_answer": "Phentermine",
+    "stem": "The prescription stimulant commonly used for weight loss is known as"
+   },
+   {
+    "q": "Which designer stimulant, sometimes sold as a legal ecstasy substitute, is BZP?",
+    "options": [
+     "BZP",
+     "TFMPP",
+     "MDPV",
+     "2C-B"
+    ],
+    "correct_answer": "BZP",
+    "stem": "The designer stimulant sometimes sold as a legal ecstasy substitute is"
+   },
+   {
+    "q": "Which psychoactive alkaloid is found in the peyote cactus?",
+    "options": [
+     "Mescaline",
+     "Psilocybin",
+     "LSD",
+     "DMT"
+    ],
+    "correct_answer": "Mescaline",
+    "stem": "The psychoactive alkaloid found in the peyote cactus is"
+   },
+   {
+    "q": "Which endogenous tryptamine is known for brief but intense visual effects and is found in several plants and animals?",
+    "options": [
+     "DMT",
+     "5-MeO-DMT",
+     "Psilocin",
+     "Serotonin"
+    ],
+    "correct_answer": "DMT",
+    "stem": "The endogenous tryptamine known for brief but intense visual effects and found in several plants and animals is"
+   },
+   {
+    "q": "Which chemical found in Salvia divinorum produces strong, short-lived hallucinations?",
+    "options": [
+     "Salvinorin A",
+     "Psilocybin",
+     "LSD",
+     "Mescaline"
+    ],
+    "correct_answer": "Salvinorin A",
+    "stem": "The chemical found in Salvia divinorum that produces strong, short-lived hallucinations is"
+   },
+   {
+    "q": "Which psychoactive compound in the Amanita muscaria mushroom causes delirium-type effects?",
+    "options": [
+     "Muscimol",
+     "Ibotenic acid",
+     "Psilocybin",
+     "Ergotamine"
+    ],
+    "correct_answer": "Muscimol",
+    "stem": "The psychoactive compound in the Amanita muscaria mushroom that causes delirium-type effects is"
+   },
+   {
+    "q": "Which psychoactive brew used in Amazonian ceremonies combines DMT-containing plants and an MAOI?",
+    "options": [
+     "Ayahuasca",
+     "Soma",
+     "Kava",
+     "Pulque"
+    ],
+    "correct_answer": "Ayahuasca",
+    "stem": "The psychoactive brew used in Amazonian ceremonies that combines DMT-containing plants and an MAOI is"
+   },
+   {
+    "q": "Which psychoactive root bark substance is known for its use in Bwiti spiritual practices and contains ibogaine?",
+    "options": [
+     "Ibogaine",
+     "Harmine",
+     "Yohimbine",
+     "Cathinone"
+    ],
+    "correct_answer": "Ibogaine",
+    "stem": "The psychoactive root bark substance known for its use in Bwiti spiritual practices contains"
+   },
+   {
+    "q": "Which class of sedative-hypnotic drugs is often prescribed for anxiety and insomnia and includes drugs like diazepam?",
+    "options": [
+     "Benzodiazepines",
+     "Barbiturates",
+     "Z-drugs",
+     "Opioids"
+    ],
+    "correct_answer": "Benzodiazepines",
+    "stem": "The sedative-hypnotic drugs often prescribed for anxiety and insomnia, including drugs like diazepam, are called"
+   },
+   {
+    "q": "What is the generic name for the drug sold under the brand name Valium?",
+    "options": [
+     "Diazepam",
+     "Lorazepam",
+     "Alprazolam",
+     "Clonazepam"
+    ],
+    "correct_answer": "Diazepam",
+    "stem": "The generic name for the drug sold under the brand name Valium is"
+   },
+   {
+    "q": "Which class of depressants includes drugs like phenobarbital?",
+    "options": [
+     "Barbiturates",
+     "Benzodiazepines",
+     "Opioids",
+     "Antipsychotics"
+    ],
+    "correct_answer": "Barbiturates",
+    "stem": "The class of depressants that includes drugs like phenobarbital is called"
+   },
+   {
+    "q": "What is the generic name for the sleep medication sold as Ambien?",
+    "options": [
+     "Zolpidem",
+     "Zaleplon",
+     "Eszopiclone",
+     "Temazepam"
+    ],
+    "correct_answer": "Zolpidem",
+    "stem": "The generic name for the sleep medication sold as Ambien is"
+   },
+   {
+    "q": "Which over-the-counter antihistamine is also used as a mild sedative at night?",
+    "options": [
+     "Diphenhydramine",
+     "Cetirizine",
+     "Loratadine",
+     "Fexofenadine"
+    ],
+    "correct_answer": "Diphenhydramine",
+    "stem": "The over-the-counter antihistamine also used as a mild sedative at night is"
+   },
+   {
+    "q": "Which depressant is used as a muscle relaxant and has the brand name Soma?",
+    "options": [
+     "Carisoprodol",
+     "Cyclobenzaprine",
+     "Baclofen",
+     "Methocarbamol"
+    ],
+    "correct_answer": "Carisoprodol",
+    "stem": "The depressant used as a muscle relaxant that has the brand name Soma is"
+   },
+   {
+    "q": "Which central nervous system depressant is commonly used in combination with alcohol in date rape drugs?",
+    "options": [
+     "GHB",
+     "Ketamine",
+     "Diazepam",
+     "Chloral hydrate"
+    ],
+    "correct_answer": "GHB",
+    "stem": "The central nervous system depressant commonly used in combination with alcohol in date rape drugs is"
+   },
+   {
+    "q": "What is the generic name for the barbiturate once sold as Seconal?",
+    "options": [
+     "Secobarbital",
+     "Pentobarbital",
+     "Phenobarbital",
+     "Amobarbital"
+    ],
+    "correct_answer": "Secobarbital",
+    "stem": "The generic name for the barbiturate once sold as Seconal is"
+   },
+   {
+    "q": "Which prescription medication, gabapentin, is sometimes used off-label for anxiety but primarily for nerve pain?",
+    "options": [
+     "Gabapentin",
+     "Pregabalin",
+     "Duloxetine",
+     "Buspirone"
+    ],
+    "correct_answer": "Gabapentin",
+    "stem": "The prescription medication sometimes used off-label for anxiety but primarily for nerve pain is"
+   },
+   {
+    "q": "What is the term for inhaling fumes from household cleaners or aerosol sprays to get high?",
+    "options": [
+     "Huffing",
+     "Vaping",
+     "Snorting",
+     "Dabbing"
+    ],
+    "correct_answer": "Huffing",
+    "stem": "The term for inhaling fumes from household cleaners or aerosol sprays to get high is"
+   },
+   {
+    "q": "Which refrigerant gas found in some air conditioners can be abused as an inhalant?",
+    "options": [
+     "Chlorofluorocarbon",
+     "Nitrous oxide",
+     "Helium",
+     "Propane"
+    ],
+    "correct_answer": "Chlorofluorocarbon",
+    "stem": "The refrigerant gas found in some air conditioners that can be abused as an inhalant is"
+   }
+  ],
+  "SimdomQA_test": [
+   {
+    "q": "What type of alcoholic beverage is made from fermented grapes?",
+    "options": [
+     "Wine",
+     "Beer",
+     "Cider",
+     "Mead"
+    ],
+    "correct_answer": "Wine",
+    "stem": "The type of alcoholic beverage made from fermented grapes is"
+   },
+   {
+    "q": "What type of alcoholic drink is distilled from grains and aged in barrels?",
+    "options": [
+     "Whiskey",
+     "Vodka",
+     "Gin",
+     "Rum"
+    ],
+    "correct_answer": "Whiskey",
+    "stem": "The type of alcoholic drink distilled from grains and aged in barrels is"
+   },
+   {
+    "q": "What type of alcoholic beverage is made by fermenting apples?",
+    "options": [
+     "Cider",
+     "Perry",
+     "Beer",
+     "Mead"
+    ],
+    "correct_answer": "Cider",
+    "stem": "The type of alcoholic beverage made by fermenting apples is"
+   },
+   {
+    "q": "What type of alcohol is present in all alcoholic drinks that causes intoxication?",
+    "options": [
+     "Ethanol",
+     "Methanol",
+     "Isopropanol",
+     "Butanol"
+    ],
+    "correct_answer": "Ethanol",
+    "stem": "The type of alcohol present in all alcoholic drinks that causes intoxication is"
+   },
+   {
+    "q": "What spirit is typically made from sugarcane byproducts like molasses?",
+    "options": [
+     "Rum",
+     "Tequila",
+     "Vodka",
+     "Brandy"
+    ],
+    "correct_answer": "Rum",
+    "stem": "The spirit typically made from sugarcane byproducts like molasses is"
+   },
+   {
+    "q": "What alcoholic beverage is traditionally made by distilling wine?",
+    "options": [
+     "Brandy",
+     "Gin",
+     "Rum",
+     "Vodka"
+    ],
+    "correct_answer": "Brandy",
+    "stem": "The alcoholic beverage traditionally made by distilling wine is"
+   },
+   {
+    "q": "What is the term for an alcoholic drink served over ice?",
+    "options": [
+     "On the rocks",
+     "Neat",
+     "Straight up",
+     "Chilled"
+    ],
+    "correct_answer": "On the rocks",
+    "stem": "The term for an alcoholic drink served over ice is"
+   },
+   {
+    "q": "What is the term for a tobacco product placed between the gum and lip?",
+    "options": [
+     "Snus",
+     "Chewing tobacco",
+     "Snuff",
+     "Dissolvable tobacco"
+    ],
+    "correct_answer": "Snus",
+    "stem": "The term for a tobacco product placed between the gum and lip is"
+   },
+   {
+    "q": "What is the primary addictive chemical in tobacco?",
+    "options": [
+     "Nicotine",
+     "Tar",
+     "Carbon monoxide",
+     "Acetaldehyde"
+    ],
+    "correct_answer": "Nicotine",
+    "stem": "The primary addictive chemical in tobacco is"
+   },
+   {
+    "q": "What is the term for inhaling smoke from another person's cigarette?",
+    "options": [
+     "Secondhand smoke",
+     "Mainstream smoke",
+     "Sidestream smoke",
+     "Thirdhand smoke"
+    ],
+    "correct_answer": "Secondhand smoke",
+    "stem": "The term for inhaling smoke from another person’s cigarette is"
+   },
+   {
+    "q": "What is the common name for smokeless tobacco that users chew?",
+    "options": [
+     "Chewing tobacco",
+     "Snus",
+     "Snuff",
+     "Dip"
+    ],
+    "correct_answer": "Chewing tobacco",
+    "stem": "The common name for smokeless tobacco that users chew is"
+   },
+   {
+    "q": "What process is used to dry and prepare tobacco leaves for use?",
+    "options": [
+     "Curing",
+     "Fermenting",
+     "Drying",
+     "Toasting"
+    ],
+    "correct_answer": "Curing",
+    "stem": "The process used to dry and prepare tobacco leaves for use is called"
+   },
+   {
+    "q": "What is the device that transforms liquid nicotine into aerosol for inhalation?",
+    "options": [
+     "Electronic cigarette",
+     "Hookah",
+     "Nebulizer",
+     "Cigarette holder"
+    ],
+    "correct_answer": "Electronic cigarette",
+    "stem": "The device that transforms liquid nicotine into aerosol for inhalation is"
+   },
+   {
+    "q": "What is the term for a blunt wrap filled with cannabis?",
+    "options": [
+     "Blunt",
+     "Joint",
+     "Spliff",
+     "Cone"
+    ],
+    "correct_answer": "Blunt",
+    "stem": "The term for a blunt wrap filled with cannabis is a"
+   },
+   {
+    "q": "Which beverage is known for its high caffeine content and is often made from roasted beans?",
+    "options": [
+     "Coffee",
+     "Tea",
+     "Cocoa",
+     "Yerba mate"
+    ],
+    "correct_answer": "Coffee",
+    "stem": "The beverage known for its high caffeine content that is often made from roasted beans is"
+   },
+   {
+    "q": "What alkaloid is primarily responsible for the stimulating effect in coffee?",
+    "options": [
+     "Caffeine",
+     "Theobromine",
+     "Theophylline",
+     "Nicotine"
+    ],
+    "correct_answer": "Caffeine",
+    "stem": "The alkaloid primarily responsible for the stimulating effect in coffee is"
+   },
+   {
+    "q": "What type of tea is made by powdered green tea leaves whisked with hot water?",
+    "options": [
+     "Matcha",
+     "Sencha",
+     "Gyokuro",
+     "Hojicha"
+    ],
+    "correct_answer": "Matcha",
+    "stem": "The type of tea produced by whisking powdered green tea leaves with hot water is"
+   },
+   {
+    "q": "What is the Italian coffee drink that consists of equal parts espresso, steamed milk, and foam?",
+    "options": [
+     "Cappuccino",
+     "Latte",
+     "Macchiato",
+     "Flat white"
+    ],
+    "correct_answer": "Cappuccino",
+    "stem": "The Italian coffee drink that consists of equal parts espresso, steamed milk, and foam is"
+   },
+   {
+    "q": "What is a coffee drink made with espresso and steamed milk with little to no foam called?",
+    "options": [
+     "Latte",
+     "Flat white",
+     "Cappuccino",
+     "Cortado"
+    ],
+    "correct_answer": "Latte",
+    "stem": "The coffee drink made with espresso and steamed milk with little to no foam is called"
+   },
+   {
+    "q": "What is the term for coffee served without any milk or sugar?",
+    "options": [
+     "Black coffee",
+     "Americano",
+     "Espresso",
+     "Short black"
+    ],
+    "correct_answer": "Black coffee",
+    "stem": "The term for coffee served without any milk or sugar is"
+   },
+   {
+    "q": "Which opioid pain medication is also known by the brand name OxyContin?",
+    "options": [
+     "Oxycodone",
+     "Hydrocodone",
+     "Oxymorphone",
+     "Morphine"
+    ],
+    "correct_answer": "Oxycodone",
+    "stem": "The opioid pain medication also known by the brand name OxyContin is"
+   },
+   {
+    "q": "What natural opioid is directly extracted from the opium poppy?",
+    "options": [
+     "Morphine",
+     "Codeine",
+     "Heroin",
+     "Opium"
+    ],
+    "correct_answer": "Morphine",
+    "stem": "The natural opioid directly extracted from the opium poppy is"
+   },
+   {
+    "q": "What weak opioid is often used in prescription cough syrups?",
+    "options": [
+     "Codeine",
+     "Dextromethorphan",
+     "Hydrocodone",
+     "Tramadol"
+    ],
+    "correct_answer": "Codeine",
+    "stem": "The weak opioid often used in prescription cough syrups is"
+   },
+   {
+    "q": "What opioid is used to treat opioid use disorder by acting as a partial agonist under the brand name Suboxone?",
+    "options": [
+     "Buprenorphine",
+     "Methadone",
+     "Naltrexone",
+     "Naloxone"
+    ],
+    "correct_answer": "Buprenorphine",
+    "stem": "The opioid used to treat opioid use disorder by acting as a partial agonist under the brand name Suboxone is"
+   },
+   {
+    "q": "Which opioid analgesic is often used in dental surgery for pain relief and is also known as Demerol?",
+    "options": [
+     "Meperidine",
+     "Fentanyl",
+     "Hydromorphone",
+     "Oxycodone"
+    ],
+    "correct_answer": "Meperidine",
+    "stem": "The opioid analgesic often used in dental surgery for pain relief and also known as Demerol is"
+   },
+   {
+    "q": "What is the term for combined formulations of opioids with naloxone to deter abuse?",
+    "options": [
+     "Abuse-deterrent formulation",
+     "Extended-release formulation",
+     "Opioid rotation",
+     "Risk mitigation strategy"
+    ],
+    "correct_answer": "Abuse-deterrent formulation",
+    "stem": "The term for combined formulations of opioids with naloxone to deter abuse is"
+   },
+   {
+    "q": "Which opioid is marketed under the brand name Ultram for moderate pain relief?",
+    "options": [
+     "Tramadol",
+     "Tapentadol",
+     "Hydrocodone",
+     "Codeine"
+    ],
+    "correct_answer": "Tramadol",
+    "stem": "The opioid marketed under the brand name Ultram for moderate pain relief is"
+   },
+   {
+    "q": "Which stimulant medication is prescribed for ADHD and is known by the brand name Adderall?",
+    "options": [
+     "Amphetamine",
+     "Methylphenidate",
+     "Lisdexamfetamine",
+     "Modafinil"
+    ],
+    "correct_answer": "Amphetamine",
+    "stem": "The stimulant medication prescribed for ADHD and known by the brand name Adderall is"
+   },
+   {
+    "q": "Which prescription stimulant is often used to treat narcolepsy under the brand name Ritalin?",
+    "options": [
+     "Methylphenidate",
+     "Modafinil",
+     "Amphetamine",
+     "Atomoxetine"
+    ],
+    "correct_answer": "Methylphenidate",
+    "stem": "The prescription stimulant often used to treat narcolepsy under the brand name Ritalin is"
+   },
+   {
+    "q": "What is the common street name for illicit mixed salts of amphetamines and dextroamphetamine?",
+    "options": [
+     "Speed",
+     "Molly",
+     "Ice",
+     "Crack"
+    ],
+    "correct_answer": "Speed",
+    "stem": "The common street name for illicit mixed salts of amphetamines and dextroamphetamine is"
+   },
+   {
+    "q": "What seed is used to produce the stimulant theobromine found in chocolate?",
+    "options": [
+     "Cocoa bean",
+     "Coffee bean",
+     "Kola nut",
+     "Guaraná seed"
+    ],
+    "correct_answer": "Cocoa bean",
+    "stem": "The seed used to produce the stimulant theobromine found in chocolate is the"
+   },
+   {
+    "q": "Which compound in magic mushrooms causes hallucinations?",
+    "options": [
+     "Psilocybin",
+     "Psilocin",
+     "Muscimol",
+     "Mescaline"
+    ],
+    "correct_answer": "Psilocybin",
+    "stem": "The compound in magic mushrooms that causes hallucinations is"
+   },
+   {
+    "q": "Which synthetic hallucinogen is also known as acid?",
+    "options": [
+     "LSD",
+     "NBOMe",
+     "PCP",
+     "2C-B"
+    ],
+    "correct_answer": "LSD",
+    "stem": "The synthetic hallucinogen also known as acid is"
+   },
+   {
+    "q": "Which dissociative anesthetic is used medically and known recreationally as Special K?",
+    "options": [
+     "Ketamine",
+     "PCP",
+     "Nitrous oxide",
+     "DXM"
+    ],
+    "correct_answer": "Ketamine",
+    "stem": "The dissociative anesthetic used medically and known recreationally as Special K is"
+   },
+   {
+    "q": "Which dissociative hallucinogen is called angel dust on the street?",
+    "options": [
+     "PCP",
+     "Ketamine",
+     "DXM",
+     "Nitrous oxide"
+    ],
+    "correct_answer": "PCP",
+    "stem": "The dissociative hallucinogen called angel dust on the street is"
+   },
+   {
+    "q": "Which empathogenic drug is commonly referred to as ecstasy?",
+    "options": [
+     "MDMA",
+     "MDA",
+     "MDEA",
+     "2C-B"
+    ],
+    "correct_answer": "MDMA",
+    "stem": "The empathogenic drug commonly referred to as ecstasy is"
+   },
+   {
+    "q": "Which synthetic psychedelic phenethylamine is also known by the code 2C-B?",
+    "options": [
+     "2C-B",
+     "DOB",
+     "25I-NBOMe",
+     "Mescaline"
+    ],
+    "correct_answer": "2C-B",
+    "stem": "The synthetic psychedelic phenethylamine also known by the code 2C-B is"
+   },
+   {
+    "q": "What is the common name for the cactus Trichocereus pachanoi, known for its mescaline content?",
+    "options": [
+     "San Pedro cactus",
+     "Peyote",
+     "Peruvian torch",
+     "Saguaro"
+    ],
+    "correct_answer": "San Pedro cactus",
+    "stem": "The common name for the cactus Trichocereus pachanoi, known for its mescaline content, is"
+   },
+   {
+    "q": "Which class of drugs includes substances like LSD, psilocybin, and mescaline?",
+    "options": [
+     "Psychedelics",
+     "Dissociatives",
+     "Deliriants",
+     "Stimulants"
+    ],
+    "correct_answer": "Psychedelics",
+    "stem": "Substances like LSD, psilocybin, and mescaline belong to the class of drugs known as"
+   },
+   {
+    "q": "What is the generic name for the drug sold under the brand name Xanax?",
+    "options": [
+     "Alprazolam",
+     "Diazepam",
+     "Lorazepam",
+     "Clonazepam"
+    ],
+    "correct_answer": "Alprazolam",
+    "stem": "The generic name for the drug sold under the brand name Xanax is"
+   },
+   {
+    "q": "What is the generic name for the drug sold under the brand name Klonopin?",
+    "options": [
+     "Clonazepam",
+     "Alprazolam",
+     "Diazepam",
+     "Lorazepam"
+    ],
+    "correct_answer": "Clonazepam",
+    "stem": "The generic name for the drug sold under the brand name Klonopin is"
+   },
+   {
+    "q": "What muscle relaxant is sold under the brand name Flexeril?",
+    "options": [
+     "Cyclobenzaprine",
+     "Carisoprodol",
+     "Methocarbamol",
+     "Baclofen"
+    ],
+    "correct_answer": "Cyclobenzaprine",
+    "stem": "The muscle relaxant sold under the brand name Flexeril is"
+   },
+   {
+    "q": "Which household product, when inhaled, can cause a brief euphoric high and is found in whipped cream dispensers?",
+    "options": [
+     "Nitrous oxide",
+     "Carbon dioxide",
+     "Propane",
+     "Isobutane"
+    ],
+    "correct_answer": "Nitrous oxide",
+    "stem": "The household product that, when inhaled, can cause a brief euphoric high and is found in whipped cream dispensers is"
+   },
+   {
+    "q": "Which common solvent found in glue is often abused as an inhalant?",
+    "options": [
+     "Toluene",
+     "Xylene",
+     "Acetone",
+     "Benzene"
+    ],
+    "correct_answer": "Toluene",
+    "stem": "The common solvent found in glue that is often abused as an inhalant is"
+   },
+   {
+    "q": "Which paint thinner component can be inhaled for psychoactive effects?",
+    "options": [
+     "Acetone",
+     "Turpentine",
+     "Xylene",
+     "Mineral spirits"
+    ],
+    "correct_answer": "Acetone",
+    "stem": "The paint thinner component that can be inhaled for psychoactive effects is"
+   },
+   {
+    "q": "Which hydrocarbon in gasoline can be abused by inhalation?",
+    "options": [
+     "Butane",
+     "Octane",
+     "Hexane",
+     "Propane"
+    ],
+    "correct_answer": "Butane",
+    "stem": "The hydrocarbon in gasoline that can be abused by inhalation is"
+   },
+   {
+    "q": "Which propellant gas commonly found in aerosol deodorants can be inhaled for a high?",
+    "options": [
+     "Propane",
+     "Butane",
+     "Nitrous oxide",
+     "Carbon dioxide"
+    ],
+    "correct_answer": "Propane",
+    "stem": "The propellant gas commonly found in aerosol deodorants that can be inhaled for a high is"
+   },
+   {
+    "q": "What is the term for chemicals that evaporate at room temperature and are inhaled to produce mind-altering effects?",
+    "options": [
+     "Volatile solvents",
+     "Aerosol propellants",
+     "Noble gases",
+     "Refrigerants"
+    ],
+    "correct_answer": "Volatile solvents",
+    "stem": "The term for chemicals that evaporate at room temperature and are inhaled to produce mind-altering effects is"
+   },
+   {
+    "q": "Which inhalant is sold as a product called 'poppers' and often used recreationally?",
+    "options": [
+     "Amyl nitrite",
+     "Nitrous oxide",
+     "Ether",
+     "Isopropyl alcohol"
+    ],
+    "correct_answer": "Amyl nitrite",
+    "stem": "The inhalant sold as a product called ‘poppers’ and often used recreationally is"
+   },
+   {
+    "q": "What is the slang term for the practice of abusing inhalants like glue and solvents?",
+    "options": [
+     "Glue sniffing",
+     "Bagging",
+     "Toking",
+     "Hacking"
+    ],
+    "correct_answer": "Glue sniffing",
+    "stem": "The slang term for the practice of abusing inhalants like glue and solvents is"
+   }
+  ]
+ },
  "Harry Potter": {
   "QA_train": [
    {

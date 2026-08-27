@@ -23,8 +23,9 @@ similar-domain validation, 50 similar-domain test.
 | World War II | `stems_world_war_ii.py` | WWI, the American Civil War, the Cold War |
 | COVID-19 pandemic | `stems_covid_19_pandemic.py` | general medicine and infectious disease |
 | Ancient Rome | `stems_ancient_rome.py` | Greece, Egypt, Persia, India, China, Mesoamerica, the Vikings, the Islamic Golden Age |
+| Cannabis | `stems_cannabis.py` | other recreational substances, largely alcohol |
 
-Method, the metric, deviations and all 1,200 questions are in
+Method, the metric, deviations and all 1,400 questions are in
 [`COMPLETIONS.md`](COMPLETIONS.md).
 
 ## The metric
@@ -166,7 +167,7 @@ the concatenated parameter vector.
 | `stems_<concept>.py` | the hand-written stems, one entry per question. The only files with human-written content |
 | `build_completions.py` | merges the stems with EMBER's `mc_questions.json`, runs three checks, writes the two files below |
 | `data/completion_questions.json` | the question set the evaluator reads |
-| `COMPLETIONS.md` | readable copy of all 1,200 questions, plus the method. No code reads it |
+| `COMPLETIONS.md` | readable copy of all 1,400 questions, plus the method. No code reads it |
 | `audit_wordmatch.py` | counts items answerable by question-to-option word overlap, in the question and in the stem. No GPU |
 | `verify_build.py` | checks the built file against EMBER's data and against `score_ember_mc.py`'s shuffle. No GPU |
 | `evaluate_completion.py` | the only file that loads a model. Computes the log-probabilities, writes a results file. One run per model per split |
@@ -197,8 +198,8 @@ python aggregate_completion.py score \
   --mmlu    results/erased_mmlu.json --base-mmlu    results/base_mmlu.json
 ```
 
-Pass any of the six concept names to `--concept`; quote the ones with spaces
-(`"Harry Potter"`, `"World War II"`, `"COVID-19 pandemic"`, `"Ancient Rome"`).
+Pass any of the seven concept names to `--concept`; quote the ones with spaces
+(`"Harry Potter"`, `"World War II"`, `"COVID-19 pandemic"`, `"Ancient Rome"`, `Cannabis`).
 `evaluate_completion.py` needs `torch` and `transformers`;
 `aggregate_completion.py` needs neither.
 
@@ -209,12 +210,12 @@ Only after editing a stems file:
 ```bash
 python build_completions.py --ember-data /path/to/EMBER/data \
   --concept Pornography "Harry Potter" Baseball "World War II" \
-            "COVID-19 pandemic" "Ancient Rome"
+            "COVID-19 pandemic" "Ancient Rome" Cannabis
 
 # validate without writing anything
 python build_completions.py --ember-data /path/to/EMBER/data --check \
   --concept Pornography "Harry Potter" Baseball "World War II" \
-            "COVID-19 pandemic" "Ancient Rome"
+            "COVID-19 pandemic" "Ancient Rome" Cannabis
 
 # the two audits, neither of which needs a GPU or a model
 python audit_wordmatch.py
