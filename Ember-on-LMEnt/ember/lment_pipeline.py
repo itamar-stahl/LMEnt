@@ -617,6 +617,7 @@ def run_concept(config: LMEntRunConfig, *, concept: str,
         device=config.device,
     )
     embedding_name = _input_embedding_name(model)
+    actual_model_device = str(model.get_input_embeddings().weight.device)
     pristine_embedding = embed_edit.snapshot(model)
     pristine_hashes = _state_hashes(model)
     model_signature = _model_signature(model)
@@ -754,6 +755,11 @@ def run_concept(config: LMEntRunConfig, *, concept: str,
             "candidates": delta_search.candidates,
         }),
         "edit": edit_info,
+        "devices": {
+            "requested_model_device": config.device,
+            "actual_model_device": actual_model_device,
+            "requested_fitting_device": config.fitting_device,
+        },
         "evaluation": ({
             "train": {
                 "baseline": baseline_train,
