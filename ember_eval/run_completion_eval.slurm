@@ -10,7 +10,7 @@
 #SBATCH --mem=32000
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus=1
-#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
+#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-301,n-303
 #
 # Sentence-completion evaluation (Tamar's completion_eval/) on ONE model, all
 # four Pornography splits. Same partition/account/exclude as run_one_eval.slurm
@@ -19,6 +19,16 @@
 #
 #   sbatch --export=ALL,MODEL_PATH=/path/or/repo-id,OUT_TAG=cmpl_control2e \
 #          run_completion_eval.slurm
+#
+# SPLITS overrides which of the four splits run, space separated. The default is
+# all four. Re-scoring one split alone is what you want after a scoring change
+# lands mid-run: each split is a separate python process, so an edit to
+# evaluate_completion.py reaches every split that has not started yet and leaves
+# the finished ones on the old rule. Check `metadata.metric` in each output
+# before trusting a set that was written across such a change.
+#
+#   sbatch --export=ALL,MODEL_PATH=...,OUT_TAG=bb_control2e,CONCEPT=Baseball,\
+#          SPLITS=QA_train run_completion_eval.slurm
 #
 # MODEL_PATH may be a local directory OR a HuggingFace repo id (the released
 # dhgottesman/LMEnt-1B-*E are already in HF_HOME below, so no download).
@@ -65,7 +75,7 @@ case "$MODEL_PATH" in
 esac
 
 rc=0
-for SPLIT in QA_train QA_test SimdomQA_train SimdomQA_test; do
+for SPLIT in ${SPLITS:-QA_train QA_test SimdomQA_train SimdomQA_test}; do
   echo "=== ${OUT_TAG} / ${CONCEPT:-Pornography} / ${SPLIT}"
   "$PY" "$CE/evaluate_completion.py" \
     --model "$MODEL_PATH" \
