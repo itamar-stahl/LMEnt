@@ -12,15 +12,18 @@ under a declarative stem is what works, and on the ten-question pilot in
 Alongside the questions, `compare_weights.py` compares the erased model's
 parameters against the base and never-learned models.
 
-Two concepts, 200 questions each: 50 concept validation, 50 concept test, 50
+Five concepts, 200 questions each: 50 concept validation, 50 concept test, 50
 similar-domain validation, 50 similar-domain test.
 
-| concept | stems file |
-|---|---|
-| Pornography | `stems_pornography.py` |
-| Harry Potter | `stems_harry_potter.py` |
+| concept | stems file | similar domain |
+|---|---|---|
+| Pornography | `stems_pornography.py` | adjacent adult media and law |
+| Harry Potter | `stems_harry_potter.py` | other fantasy franchises |
+| Baseball | `stems_baseball.py` | other sports |
+| World War II | `stems_world_war_ii.py` | WWI, the American Civil War, the Cold War |
+| COVID-19 pandemic | `stems_covid_19_pandemic.py` | general medicine and infectious disease |
 
-Method, the metric, deviations and all 400 questions are in
+Method, the metric, deviations and all 1,000 questions are in
 [`COMPLETIONS.md`](COMPLETIONS.md).
 
 ## The metric
@@ -42,7 +45,48 @@ as a distribution, so a near-miss and a landslide stop counting the same. Chance
 is 0.25 for both.
 
 Subtracting an option's unconditional likelihood this way is standard practice,
-introduced in Brown et al. (2020) and analysed in Holtzman et al. (2021).
+introduced in Brown et al. (2020) and analysed in Holtzman et al. (2021). It is
+also what OLMES does, which matters more here than the citations: `acc_uncond`
+in `olmes/oe_eval/metrics/metric.py` picks the option maximising
+`sum_logits - sum_logits_uncond`, the same quantity as `pmi` above, and it is
+the primary metric for ARC-Challenge, CommonsenseQA and OpenBookQA. OLMES is
+vendored in this repo under `olmes/`, so the metric is not an outside import;
+it is the one the OLMo evaluation standard already uses for this task shape.
+
+### The null context, and where it differs from OLMES
+
+`--null-context` defaults to the empty string, so `log P(a | null)` is the
+option's probability at the start of a document, after the tokenizer's BOS or
+EOS.
+
+**OLMES uses `"Answer:"` instead** (`unconditioned_prompt` in
+`olmes/oe_eval/tasks/base_task.py`). The difference is deliberate, not an
+oversight. OLMES scores against a `Question:` / `Answer:` prompt, so its
+unconditional version holds the trailing answer-slot frame fixed and varies only
+the question content. The stems here are declarative and have no such frame,
+which is the whole point of the rewrite, so there is no frame-only counterpart
+to hold fixed and the empty string is the honest analogue.
+
+Two things follow, and both matter for how you report results.
+
+1. **For a twins comparison the choice cancels.** `log P(a | null)` does not
+   depend on the stem, and both twins are scored with the same null context, so
+   a control-minus-ablated difference is unaffected. Whatever you pick, use the
+   same value for every model in a comparison.
+2. **For an absolute number it does not cancel**, so it is worth one run each
+   way before trusting a headline accuracy:
+
+   ```bash
+   python evaluate_completion.py --model ... --concept Baseball \
+     --split QA_train --out results/base_qa_emptynull.json
+   python evaluate_completion.py --model ... --concept Baseball \
+     --split QA_train --null-context "Answer:" \
+     --out results/base_qa_answernull.json
+   ```
+
+   If the two rankings agree, say so and move on. If they disagree, the item set
+   is more sensitive to the normalisation than to the concept and that is itself
+   worth reporting.
 
 ## The weight comparison
 
@@ -118,10 +162,12 @@ the concatenated parameter vector.
 
 | file | purpose |
 |---|---|
-| `stems_pornography.py`, `stems_harry_potter.py` | the hand-written stems, one entry per question. The only files with human-written content |
+| `stems_<concept>.py` | the hand-written stems, one entry per question. The only files with human-written content |
 | `build_completions.py` | merges the stems with EMBER's `mc_questions.json`, runs three checks, writes the two files below |
 | `data/completion_questions.json` | the question set the evaluator reads |
-| `COMPLETIONS.md` | readable copy of all 400 questions, plus the method. No code reads it |
+| `COMPLETIONS.md` | readable copy of all 1,000 questions, plus the method. No code reads it |
+| `audit_wordmatch.py` | counts items answerable by question-to-option word overlap, in the question and in the stem. No GPU |
+| `verify_build.py` | checks the built file against EMBER's data and against `score_ember_mc.py`'s shuffle. No GPU |
 | `evaluate_completion.py` | the only file that loads a model. Computes the log-probabilities, writes a results file. One run per model per split |
 | `aggregate_completion.py` | reads results files and compares models. No GPU, no model |
 | `compare_weights.py` | compares an erased model's parameters against base and never-learned. No GPU |
@@ -150,7 +196,8 @@ python aggregate_completion.py score \
   --mmlu    results/erased_mmlu.json --base-mmlu    results/base_mmlu.json
 ```
 
-Use `--concept "Harry Potter"` for the other set. `evaluate_completion.py` needs
+Pass any of the five concept names to `--concept`; quote the ones with spaces
+(`"Harry Potter"`, `"World War II"`, `"COVID-19 pandemic"`). `evaluate_completion.py` needs
 `torch` and `transformers`; `aggregate_completion.py` needs neither.
 
 ## Rebuilding the questions
@@ -159,11 +206,16 @@ Only after editing a stems file:
 
 ```bash
 python build_completions.py --ember-data /path/to/EMBER/data \
-  --concept Pornography "Harry Potter"
+  --concept Pornography "Harry Potter" Baseball "World War II" "COVID-19 pandemic"
 
 # validate without writing anything
 python build_completions.py --ember-data /path/to/EMBER/data --check \
-  --concept Pornography "Harry Potter"
+  --concept Pornography "Harry Potter" Baseball "World War II" "COVID-19 pandemic"
+
+# the two audits, neither of which needs a GPU or a model
+python audit_wordmatch.py
+python verify_build.py --ember-data /path/to/EMBER/data \
+  --score-ember-mc ../ember_eval/score_ember_mc.py
 ```
 
 ## Adding a concept
@@ -195,10 +247,16 @@ be added one at a time. Neither `evaluate_completion.py` nor
 About one question in ten can be answered by matching a word in the question to
 a word in the correct option, with no knowledge of the concept: *"What magical
 **map** shows everyone's location at Hogwarts?"* against *The Marauder's **Map***.
-19 of 200 in Harry Potter, 22 of 200 in Pornography. Running the audit against
-the original questions and against the stems confirms the rewrite introduced
+Per concept, counted in the stem: 21 Pornography, 19 Harry Potter, 18 Baseball,
+9 COVID-19 pandemic, 8 World War II. `audit_wordmatch.py` runs the count against
+the original questions and against the stems and confirms the rewrite introduced
 none of these and closed three; the rest are in EMBER's questions and in EMBER's
 published numbers.
+
+Baseball is the worst affected, because its options are ordinary nouns that
+recur in the question stem-word for stem-word (*first base* against *First
+baseman*). The two history and medicine concepts are the cleanest, because their
+options are proper nouns and dates that the question has no reason to contain.
 
 These items do not create a false effect in a twins comparison, since both twins
 solve them the same way, but they are dead weight in an already small question
@@ -206,6 +264,30 @@ set, and they put a floor under an erased model's accuracy that caps measurable
 efficacy. Once `M_never(C)` exists it identifies them empirically: a model that
 never saw the concept should be at chance, so anything it answers confidently
 did not require the concept.
+
+## A second known limitation, COVID-19 only
+
+Eight of the COVID-19 similar-domain items are yes/no or either/or, with options
+like `No | Yes | Only for children | Only for the elderly`. A one-token option
+carries almost no content, so what gets scored is close to the model's bare
+Yes/No prior under that context. The pmi metric helps more here than anywhere
+else, since subtracting `log P(a | null)` cancels a global Yes/No preference,
+but the signal is thin, and five of the eight golds are `No`, so a model that
+simply prefers `No` scores 5/8 without knowing anything.
+
+They are marked `# POLAR` in `stems_covid_19_pandemic.py` and listed in that
+module's `POLAR_ITEMS` constant. **Do not delete the entries.** The builder
+requires exactly 50 stems per split and will refuse to build with 46, and
+dropping questions renumbers the split, which breaks the item-N alignment with
+every multiple-choice run already recorded. Filter at analysis time instead:
+
+```python
+from stems_covid_19_pandemic import POLAR_ITEMS
+rows = [r for r in results["results"] if r["question"] not in POLAR_ITEMS]
+```
+
+Worth running them first and comparing the twins on those eight against the
+other 42 in the same split before deciding.
 
 ## Provenance
 
