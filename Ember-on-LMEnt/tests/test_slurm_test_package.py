@@ -44,20 +44,33 @@ class SlurmTestPackageTests(unittest.TestCase):
             self.assertIn(str(tests_dir / "node_test_runner.sh"), wrapper)
             self.assertNotIn("${", job + wrapper)
 
-    def test_node_runner_contains_full_local_suite_and_real_erasure(self) -> None:
+    def test_login_runner_runs_local_suite_before_submission(self) -> None:
         script = (
-            PROJECT_ROOT / "slurm" / "tests" / "node_test_runner.sh"
+            PROJECT_ROOT / "slurm" / "tests" / "run_test.sh"
         ).read_text(encoding="utf-8")
         for command in (
             "unittest discover -s tests",
             "compileall -q ember tests slurm",
             "python -m pip check",
             "git ls-files \"*.sh\"",
+        ):
+            self.assertIn(command, script)
+            self.assertLess(script.index(command), script.index("sbatch --parsable"))
+
+    def test_node_runner_contains_only_gpu_tests_and_real_erasure(self) -> None:
+        script = (
+            PROJECT_ROOT / "slurm" / "tests" / "node_test_runner.sh"
+        ).read_text(encoding="utf-8")
+        for command in (
+            "unittest tests.test_lment_gpu",
             "python -m ember.run_lment_ember",
             "--concept Pornography",
             "verify_e2e_report",
         ):
             self.assertIn(command, script)
+        self.assertNotIn("unittest discover -s tests", script)
+        self.assertNotIn("compileall", script)
+        self.assertNotIn("pip check", script)
 
     def test_repository_test_yaml_is_bounded_for_titan_xp(self) -> None:
         config = yaml.safe_load((

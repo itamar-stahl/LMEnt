@@ -48,8 +48,60 @@ fi
 rm -f "${PREPARE_ERR}"
 TEST_DIR="$(printf '%s' "${PREPARED}" | python -c 'import json,sys; print(json.load(sys.stdin)["test_dir"])')"
 JOB_FILE="$(printf '%s' "${PREPARED}" | python -c 'import json,sys; print(json.load(sys.stdin)["job_file"])')"
+FULL="${TEST_DIR}/full_output.log"
+REPORT="${TEST_DIR}/report.log"
+FAILED=0
+: >"${FULL}"
+: >"${REPORT}"
+
+record() {
+  phase="$1"
+  status="$2"
+  detail="$3"
+  line="[RESULT] ${status} ${phase}  ${detail}"
+  echo "${line}" | tee -a "${FULL}" "${REPORT}"
+}
+
+run_login_phase() {
+  name="$1"
+  shift
+  phase_log="${TEST_DIR}/${name}.log"
+  echo "[LOGIN PHASE] ${name}" | tee -a "${FULL}"
+  if "$@" >"${phase_log}" 2>&1; then
+    cat "${phase_log}" | tee -a "${FULL}"
+    record "${name}" PASS "${phase_log}"
+    return 0
+  fi
+  rc=$?
+  cat "${phase_log}" | tee -a "${FULL}"
+  record "${name}" FAIL "exit=${rc}; ${phase_log}"
+  FAILED=1
+  return "${rc}"
+}
 
 echo "Prepared test run: ${TEST_DIR}"
+echo "Running Linux login-node tests before any Slurm submission."
+run_login_phase login_environment python -c \
+  'import json,os,site,torch,transformers,ember,factorization; assert os.environ.get("CONDA_DEFAULT_ENV")=="lment", os.environ.get("CONDA_DEFAULT_ENV"); assert not site.ENABLE_USER_SITE; print(json.dumps({"conda_env":os.environ.get("CONDA_DEFAULT_ENV"),"torch":torch.__version__,"transformers":transformers.__version__,"cuda_available":torch.cuda.is_available()}))' || true
+run_login_phase unit_tests python -m unittest discover -s tests -p 'test_*.py' -v || true
+run_login_phase compile python -m compileall -q ember tests slurm || true
+run_login_phase pip_check python -m pip check || true
+run_login_phase shell_syntax sh -c \
+  'cd "$1" && git ls-files "*.sh" | while IFS= read -r file; do sh -n "$file" || exit 1; done' \
+  shell-check "${PROJECT}" || true
+
+if [ "${FAILED}" -ne 0 ]; then
+  record gpu_submission SKIP "login-node tests failed"
+  python -c \
+    'import json,sys; from pathlib import Path; Path(sys.argv[2]).write_text(json.dumps({"schema_version":1,"status":"FAIL","stage":"login","exit_code":1,"report":sys.argv[1]},indent=2)+"\n",encoding="utf-8")' \
+    "${REPORT}" "${TEST_DIR}/test_result.json"
+  echo "FAIL: login-node tests failed; no Slurm job was submitted." >&2
+  echo "Summary: ${REPORT}" >&2
+  echo "Full output: ${FULL}" >&2
+  exit 1
+fi
+
+record login_suite PASS "all login-node checks passed"
 echo "Submitting: ${JOB_FILE}"
 if ! SUBMIT_OUTPUT="$(sbatch --parsable "${JOB_FILE}" 2>&1)"; then
   echo "FAIL: sbatch rejected the test job" >&2

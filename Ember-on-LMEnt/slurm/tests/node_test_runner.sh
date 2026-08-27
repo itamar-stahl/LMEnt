@@ -1,6 +1,5 @@
 #!/bin/sh
-# Runs inside the allocated Titan XP job. It deliberately continues after a
-# failed phase so report.log contains every failure that can still be tested.
+# Runs only CUDA-dependent tests inside the allocated Titan XP job.
 set -u
 
 PROJECT=""
@@ -26,8 +25,7 @@ REPORT="${TEST_DIR}/report.log"
 RESULT="${TEST_DIR}/test_result.json"
 FAILED=0
 E2E_RUN=""
-: >"${FULL}"
-: >"${REPORT}"
+touch "${FULL}" "${REPORT}"
 
 record() {
   phase="$1"
@@ -54,7 +52,7 @@ run_phase() {
   return "${rc}"
 }
 
-echo "LMEnt EMBER Slurm node tests" | tee -a "${FULL}" "${REPORT}"
+echo "LMEnt EMBER Slurm GPU tests" | tee -a "${FULL}" "${REPORT}"
 echo "project=${PROJECT}" | tee -a "${FULL}" "${REPORT}"
 echo "config=${CONFIG}" | tee -a "${FULL}" "${REPORT}"
 echo "job=${SLURM_JOB_ID:-not-set}" | tee -a "${FULL}" "${REPORT}"
@@ -72,14 +70,9 @@ if [ -f "${TEST_DIR}/config.log" ]; then
   fi
 fi
 
-run_phase environment python -c \
+run_phase gpu_environment python -c \
   'import json,os,site,torch,transformers,ember,factorization; gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else ""; assert os.environ.get("CONDA_DEFAULT_ENV")=="lment", os.environ.get("CONDA_DEFAULT_ENV"); assert not site.ENABLE_USER_SITE; assert torch.cuda.is_available(); assert "titan xp" in gpu.lower(), gpu; print(json.dumps({"conda_env":os.environ.get("CONDA_DEFAULT_ENV"),"torch":torch.__version__,"transformers":transformers.__version__,"gpu":gpu}))' || true
-run_phase unit_tests python -m unittest discover -s tests -p 'test_*.py' -v || true
-run_phase compile python -m compileall -q ember tests slurm || true
-run_phase pip_check python -m pip check || true
-run_phase shell_syntax sh -c \
-  'cd "$1" && git ls-files "*.sh" | while IFS= read -r file; do sh -n "$file" || exit 1; done' \
-  shell-check "${PROJECT}" || true
+run_phase gpu_checkpoint python -m unittest tests.test_lment_gpu -v || true
 
 if [ "${FAILED}" -ne 0 ]; then
   record real_erasure SKIP "earlier test phase failed"
