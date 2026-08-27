@@ -233,6 +233,7 @@ def effective_config_dict(config: LMEntRunConfig) -> Dict[str, Any]:
         },
         "judge": {
             "model": config.judge_model,
+            "revision": config.judge_revision,
             "device": config.judge_device,
             "max_new_tokens": config.judge_max_new_tokens,
             "local_files_only": config.judge_local_files_only,
@@ -292,10 +293,18 @@ def _write_wrappers(prepared: PreparedRun, concept: str,
         f". {shlex.quote(str(Path(activation).resolve()))}\n"
         if activation is not None else ""
     )
+    cluster_lines = ""
+    if execution == "slurm":
+        cluster_lines = (
+            "export TRANSFORMERS_OFFLINE=1\n"
+            "export HF_HUB_OFFLINE=1\n"
+            f"{shlex.quote(python)} -m ember.slurm_gpu_preflight\n"
+        )
     shell = (
         "#!/bin/sh\n"
         "set -eu\n"
         f"{activation_line}"
+        f"{cluster_lines}"
         f"{shlex.join(command)}\n"
     )
     shell_path = prepared.run_dir / "run_wrapper.sh"

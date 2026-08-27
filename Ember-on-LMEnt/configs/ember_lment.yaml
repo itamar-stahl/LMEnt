@@ -37,6 +37,7 @@ lment:
     k_proj: 30
   judge:
     model: google/gemma-3-12b-it
+    revision: null
     device: cuda
     max_new_tokens: 256
     local_files_only: false

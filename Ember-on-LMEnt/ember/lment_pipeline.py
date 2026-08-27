@@ -68,6 +68,7 @@ class LMEntRunConfig:
     alpaca_split: str = "test"
     alpaca_max_items: Optional[int] = None
     judge_model: Optional[str] = None
+    judge_revision: Optional[str] = None
     judge_device: str = "cuda"
     judge_max_new_tokens: int = 256
     judge_local_files_only: bool = False
@@ -118,7 +119,7 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         "lment": {"model_key", "model_device", "dtype", "runs_root", "run_dir", "output_dir"},
         "lment.data": {"concept_json", "neutral_json"},
         "lment.features": {"cache_root", "work_root", "reuse", "fitting_device", "max_iterations", "g_sparsity", "k_proj"},
-        "lment.judge": {"model", "device", "max_new_tokens", "local_files_only", "cache_dir"},
+        "lment.judge": {"model", "revision", "device", "max_new_tokens", "local_files_only", "cache_dir"},
         "lment.save": {"full_model"},
         "lment.execution": {"activate_script"},
         "lment.slurm": {"job_name", "account", "partition", "constraint", "time_minutes", "cpu_mem_mb", "cpus_per_task"},
@@ -181,6 +182,7 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         alpaca_split=str(evaluation.get("alpaca_split", "test")),
         alpaca_max_items=(None if evaluation.get("alpaca_max_items") is None else int(evaluation["alpaca_max_items"])),
         judge_model=(None if judge.get("model") is None else str(judge["model"])),
+        judge_revision=(None if judge.get("revision") is None else str(judge["revision"])),
         judge_device=str(judge.get("device", "cuda")),
         judge_max_new_tokens=int(judge.get("max_new_tokens", 256)),
         judge_local_files_only=bool(judge.get("local_files_only", False)),

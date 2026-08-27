@@ -4,75 +4,85 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from ember.lment_pipeline import LMEntRunConfig
+import yaml
+
 from ember.slurm_submit import parse_args, prepare_submission, resolve_judge_model
 
 
 class SlurmSubmitTests(unittest.TestCase):
-    def test_login_flow_prepares_cpu_then_materializes_cuda_judge_job(self) -> None:
+    def _config(self, root: Path) -> Path:
+        model = root / "model"
+        model.mkdir()
+        (model / "config.json").write_text("{}", encoding="utf-8")
+        concept = root / "concept.json"
+        concept.write_text(json.dumps([
+            {"concept": "Culture of Greece", "sentences": ["sentence"]},
+        ]), encoding="utf-8")
+        neutral = root / "neutral.json"
+        neutral.write_text('[{"sentence":"neutral"}]', encoding="utf-8")
+        activate = root / "activate_env.sh"
+        activate.write_text("#!/bin/sh\n", encoding="utf-8")
+        payload = {
+            "method": "ember", "model_name": str(model.resolve()),
+            "rank": 2, "seed": 42,
+            "selection": {"mode": "judge", "ratio_thresh": 2.0},
+            "ember": {"deltas": [1.0], "explicit_delta": 1.0},
+            "eval": {"data_json": None, "alpaca": False},
+            "lment": {
+                "model_key": "lment-1b-control-2e", "model_device": "cuda",
+                "dtype": "fp32", "runs_root": str((root / "runs").resolve()),
+                "data": {"concept_json": str(concept.resolve()),
+                         "neutral_json": str(neutral.resolve())},
+                "features": {"cache_root": str((root / "cache").resolve()),
+                             "reuse": False, "fitting_device": "cuda"},
+                "judge": {"model": "google/gemma-3-12b-it", "revision": None,
+                          "device": "cuda", "local_files_only": False,
+                          "cache_dir": str((root / "hf").resolve())},
+                "save": {"full_model": False},
+                "execution": {"activate_script": str(activate.resolve())},
+                "slurm": {"job_name": "ember", "account": "gpu-research",
+                          "partition": "gpu", "constraint": "h100",
+                          "time_minutes": 60, "cpu_mem_mb": 64000,
+                          "cpus_per_task": 8},
+            },
+        }
+        path = root / "config.yaml"
+        path.write_text(yaml.safe_dump(payload, sort_keys=False), encoding="utf-8")
+        return path
+
+    def test_client_materializes_complete_run_without_feature_fitting(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            project = root / "Ember-on-LMEnt"
-            project.mkdir()
-            concept_json = root / "concept.json"
-            neutral_json = root / "neutral.json"
-            config_path = root / "config.yaml"
-            output_dir = root / "erased"
-            judge_path = root / "gemma-3-12b-it"
-            for path in (concept_json, neutral_json, config_path):
-                path.write_text("{}", encoding="utf-8")
-            judge_path.mkdir()
-            hf_home = root / "hf-home"
-            config = LMEntRunConfig(
-                model_path=root / "lment-model",
-                model_key="lment",
-                features_root=root / "features",
-                output_root=root / "outputs",
-                device="cuda",
-            )
+            config = self._config(root)
+            judge = root / "judge"
+            judge.mkdir()
             args = parse_args([
-                "--config", str(config_path),
-                "--concept", "Culture of Greece",
-                "--concept-json", str(concept_json),
-                "--neutral-json", str(neutral_json),
-                "--output-dir", str(output_dir),
-                "--delta", "0.5",
-                "--judge-model", "google/gemma-3-12b-it",
-                "--alpaca-eval",
-                "--alpaca-max-items", "1",
-                "--hf-home", str(hf_home),
-                "--run-root", str(root / "runs"),
-                "--dry-run",
-            ])
-            with (
-                patch("ember.slurm_submit.load_lment_config", return_value=config),
-                patch("ember.slurm_submit.ensure_factor_artifact") as prepare,
-                patch("ember.slurm_submit.resolve_judge_model",
-                      return_value=judge_path.resolve()) as resolve,
-                patch("ember.slurm_submit.hf_hub_download") as stage_alpaca,
-            ):
-                written = prepare_submission(args, project_root=project)
+                "--config", str(config), "--concept", "Culture of Greece"])
+            with patch(
+                "ember.slurm_submit.resolve_judge_model",
+                return_value=judge.resolve(),
+            ) as resolve:
+                written = prepare_submission(args)
 
-            prepared_config, prepared_concept = prepare.call_args.args
-            manifest = json.loads(
-                written["manifest"].read_text(encoding="utf-8"))
+            effective = yaml.safe_load(written["config"].read_text())
+            wrapper = written["run_wrapper"].read_text(encoding="utf-8")
+            job = written["job_slurm"].read_text(encoding="utf-8")
+            files_exist = {
+                name: (written["run_dir"] / name).exists()
+                for name in ("source_config.yaml", "config.yaml", "run_wrapper.sh",
+                             "run_wrapper.ps1", "client.log", "job.slurm")
+            }
 
-        self.assertEqual(prepared_concept, "Culture of Greece")
-        self.assertEqual(prepared_config.device, "cpu")
-        self.assertTrue(prepared_config.prepare_features)
         resolve.assert_called_once()
-        runner_args = manifest["runner_args"]
-        self.assertIn("--reuse-features", runner_args)
-        self.assertEqual(
-            runner_args[runner_args.index("--model-device") + 1], "cuda")
-        self.assertEqual(
-            runner_args[runner_args.index("--judge-model") + 1], str(judge_path.resolve()))
-        self.assertIn("--judge-local-files-only", runner_args)
-        self.assertEqual(
-            runner_args[runner_args.index("--alpaca-max-items") + 1], "1")
-        self.assertEqual(manifest["environment"]["HF_HOME"], str(hf_home.resolve()))
-        stage_alpaca.assert_called_once()
-        self.assertFalse(output_dir.exists())
+        self.assertIn("Culture_of_Greece_lment-1b-control-2e_", written["run_dir"].name)
+        self.assertEqual(effective["lment"]["judge"]["model"], str(judge.resolve()))
+        self.assertTrue(effective["lment"]["judge"]["local_files_only"])
+        self.assertIn("ember.slurm_gpu_preflight", wrapper)
+        self.assertIn("ember.lment_worker", wrapper)
+        self.assertNotIn("prepare_lment_features", wrapper)
+        self.assertIn("#SBATCH --constraint=h100", job)
+        for name, exists in files_exist.items():
+            self.assertTrue(exists, name)
 
     def test_local_judge_directory_never_contacts_hub(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

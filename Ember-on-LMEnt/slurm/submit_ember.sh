@@ -1,5 +1,5 @@
 #!/bin/sh
-# Login-node entry point. CPU factorization happens before the H100 job exists.
+# Login-node entry point. The complete concept flow runs in the submitted job.
 set -eu
 
 : "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
