@@ -21,6 +21,7 @@ import blacklist_to_concept_sentences as M
 suite = Suite("units (offline)")
 
 SHIPPED = MODULE_DIR.parent / "data" / "concept_sentences.json"
+TH = M.active_thresholds(M.DEFAULT_THRESHOLDS)
 
 
 def _cand(qid, hyperlinks=0.0, entity_linking=0.0, coref=0.0, coref_cluster=0.0):
@@ -90,18 +91,42 @@ def _():
         (i_pron, i_pron + 2, [_cand("Q8337", coref=0.9, coref_cluster=0.9)]),
         (i_lex, i_lex + 8, [_cand("Q8337", hyperlinks=1.0, entity_linking=0.9)]),
     ])
-    sentence, reason = M.harvest(doc, {"Q8337"}, M.split_sentences)
+    sentence, reason = M.harvest(doc, {"Q8337"}, M.split_sentences, TH)
     assert_eq(reason, "ok", "harvest reason")
     assert_true(sentence.startswith("Hogwarts"), f"picked {sentence!r}")
 
 
-@suite.case("mention: coref-only chunk is refused, not downgraded")
+@suite.case("mention: a pronoun surface is refused even at coref 1.0")
 def _():
+    # The threshold alone cannot protect us here: coref 1.0 clears 0.95, so the
+    # only thing standing between a pronoun and the corpus is PRONOUN_MENTIONS.
     text = "Opening line here about nothing. He went away quietly today. Tail cut"
     i = text.index("He went")
-    doc = _doc(text, [(i, i + 2, [_cand("Q8337", coref=0.95, coref_cluster=0.95)])])
-    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences)[1],
-              "no_lexical_mention", "coref-only rejection")
+    doc = _doc(text, [(i, i + 2, [_cand("Q8337", coref=1.0, coref_cluster=1.0)])])
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, TH)[1],
+              "no_qualifying_mention", "pronoun surface must never anchor")
+
+
+@suite.case("mention: a coref head at 0.95 qualifies (it is not a pronoun)")
+def _():
+    # Coref scores every cluster member including the head, so a high-scoring
+    # coref mention is usually the proper noun itself. That is why the source
+    # is retained at 0.95 rather than dropped.
+    text = "An opening line of text. Hogwarts stood on a cliff above the lake. Tail"
+    i = text.index("Hogwarts")
+    doc = _doc(text, [(i, i + 8, [_cand("Q8337", coref=0.95)])])
+    sentence, reason = M.harvest(doc, {"Q8337"}, M.split_sentences, TH)
+    assert_eq(reason, "ok", "coref head at the threshold is accepted")
+    assert_true(sentence.startswith("Hogwarts"), f"picked {sentence!r}")
+
+
+@suite.case("mention: coref below 0.95 is refused")
+def _():
+    text = "An opening line of text. Hogwarts stood on a cliff above the lake. Tail"
+    i = text.index("Hogwarts")
+    doc = _doc(text, [(i, i + 8, [_cand("Q8337", coref=0.9, coref_cluster=0.9)])])
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, TH)[1],
+              "no_qualifying_mention", "0.9 < 0.95")
 
 
 @suite.case("mention: entity_linking alone qualifies (abstract concepts need it)")
@@ -109,18 +134,38 @@ def _():
     text = "An opening line of text. Pornography was widely debated at the time. Tail"
     i = text.index("Pornography")
     doc = _doc(text, [(i, i + 11, [_cand("Q291", entity_linking=0.75)])])
-    sentence, reason = M.harvest(doc, {"Q291"}, M.split_sentences)
+    sentence, reason = M.harvest(doc, {"Q291"}, M.split_sentences, TH)
     assert_eq(reason, "ok", "EL-only accepted")
     assert_true("Pornography" in sentence, "sentence contains the mention")
 
 
-@suite.case("mention: sub-threshold entity_linking is refused")
+@suite.case("mention: entity_linking below 0.7 is refused")
 def _():
     text = "An opening line of text. Pornography was widely debated at the time. Tail"
     i = text.index("Pornography")
-    doc = _doc(text, [(i, i + 11, [_cand("Q291", entity_linking=0.4)])])
-    assert_eq(M.harvest(doc, {"Q291"}, M.split_sentences)[1],
-              "no_lexical_mention", "0.4 < 0.6 threshold")
+    doc = _doc(text, [(i, i + 11, [_cand("Q291", entity_linking=0.65)])])
+    assert_eq(M.harvest(doc, {"Q291"}, M.split_sentences, TH)[1],
+              "no_qualifying_mention", "0.65 is under our 0.7, over the paper's 0.6")
+
+
+@suite.case("mention: ranked by source trust, not by raw score")
+def _():
+    # A coref mention scoring 1.0 must lose to a hyperlink mention scoring 1.0,
+    # because SOURCE_PRIORITY puts hyperlinks first.
+    text = ("A neutral opening line about the weather here. "
+            "Azkaban held the prisoners on a rock in the sea. "
+            "Hogwarts is a school of witchcraft founded long ago. "
+            "Trailing fragment cut")
+    i_coref = text.index("Azkaban")
+    i_link = text.index("Hogwarts")
+    doc = _doc(text, [
+        (i_coref, i_coref + 7, [_cand("Q8337", coref=1.0, coref_cluster=1.0)]),
+        (i_link, i_link + 8, [_cand("Q8337", hyperlinks=1.0)]),
+    ])
+    sentence, reason = M.harvest(doc, {"Q8337"}, M.split_sentences, TH)
+    assert_eq(reason, "ok", "harvest reason")
+    assert_true(sentence.startswith("Hogwarts"),
+                f"hyperlink mention should win, picked {sentence!r}")
 
 
 @suite.case("mention: offset mismatch is caught, never mis-harvested")
@@ -131,7 +176,7 @@ def _():
     doc["entities"][0]["text_mention"] = "Hogwarts"
     doc["entities"][0]["char_start"] = 2          # deliberately wrong
     doc["entities"][0]["char_end"] = 10
-    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences)[1],
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, TH)[1],
               "offset_mismatch", "shifted offset must reject")
 
 
@@ -139,7 +184,7 @@ def _():
 def _():
     text = "Hogwarts is a school of witchcraft and this line runs off the chunk edge"
     doc = _doc(text, [(0, 8, [_cand("Q8337", hyperlinks=1.0)])])
-    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences)[1],
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, TH)[1],
               "truncated_span", "unterminated final span")
 
 
@@ -148,8 +193,8 @@ def _():
     text = "An opening line of text. Hogwarts is a school of magic today. Tail"
     i = text.index("Hogwarts")
     doc = _doc(text, [(i, i + 8, [_cand("Q999999", hyperlinks=1.0)])])
-    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences)[1],
-              "no_lexical_mention", "foreign QID must not anchor")
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, TH)[1],
+              "no_qualifying_mention", "foreign QID must not anchor")
 
 
 @suite.case("sampling: rarest-QID assignment removes double counting")
@@ -252,14 +297,79 @@ def _():
     filters = inner["query"]["bool"]["filter"]
     assert_eq(filters[0]["terms"]["entities.candidates.qid"], ["Q8337"], "qid terms")
     assert_eq(filters[1]["bool"]["minimum_should_match"], 1, "any-source semantics")
-    assert_eq(len(filters[1]["bool"]["should"]), 4, "one clause per source")
+    assert_eq(len(filters[1]["bool"]["should"]),
+              len(M.DEFAULT_THRESHOLDS), "one clause per retrieved source")
 
 
-@suite.case("query: retrieval thresholds are the paper's, unchanged")
+@suite.case("query: defaults are stricter than the paper on every weak source")
 def _():
     assert_eq(M.DEFAULT_THRESHOLDS,
-              {"hyperlinks": 1.0, "entity_linking": 0.6,
-               "coref": 0.6, "coref_cluster": 0.6}, "paper thresholds")
+              {"hyperlinks": 1.0, "entity_linking": 0.7,
+               "coref": 0.95, "coref_cluster": 0.95}, "default thresholds")
+    paper = {"entity_linking": 0.6, "coref": 0.6, "coref_cluster": 0.6}
+    for source, loose in paper.items():
+        assert_true(M.DEFAULT_THRESHOLDS[source] > loose,
+                    f"{source} must be stricter than the paper's {loose}")
+
+
+@suite.case("thresholds: DISABLED drops a source from the query entirely")
+def _():
+    raw = dict(M.DEFAULT_THRESHOLDS)
+    raw["coref"] = M.DISABLED
+    raw["coref_cluster"] = M.DISABLED
+    active = M.active_thresholds(raw)
+    assert_eq(sorted(active), ["entity_linking", "hyperlinks"], "surviving sources")
+
+    query = M.build_entity_query(["Q8337"], active)
+    clauses = query["nested"]["query"]["nested"]["query"]["bool"]["filter"][1]
+    fields = {list(c["range"])[0] for c in clauses["bool"]["should"]}
+    for source in ("coref", "coref_cluster"):
+        assert_true(
+            f"entities.candidates.scores_by_source.{source}" not in fields,
+            f"disabled {source} must not appear in the query")
+    assert_eq(len(fields), 2, "one clause per surviving source")
+
+
+@suite.case("thresholds: DISABLED also stops the source qualifying a mention")
+def _():
+    # The same resolved dict gates both stages, so a disabled source cannot
+    # fetch a chunk it would not be allowed to anchor.
+    text = "An opening line of text. Hogwarts stood on a cliff above the lake. Tail"
+    i = text.index("Hogwarts")
+    doc = _doc(text, [(i, i + 8, [_cand("Q8337", coref=1.0)])])
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, TH)[1],
+              "ok", "enabled by default")
+    without = M.active_thresholds({**M.DEFAULT_THRESHOLDS, "coref": M.DISABLED})
+    assert_eq(M.harvest(doc, {"Q8337"}, M.split_sentences, without)[1],
+              "no_qualifying_mention", "disabling coref must reject it")
+
+
+@suite.case("thresholds: bad values and total disablement are refused")
+def _():
+    for bad in (1.5, -0.5, 2.0):
+        try:
+            M.active_thresholds({**M.DEFAULT_THRESHOLDS, "coref": bad})
+        except SystemExit:
+            pass
+        else:
+            raise AssertionError(f"threshold {bad} should have been rejected")
+    try:
+        M.active_thresholds({s: M.DISABLED for s in M.DEFAULT_THRESHOLDS})
+    except SystemExit:
+        pass
+    else:
+        raise AssertionError("disabling every source should have been refused")
+
+
+@suite.case("thresholds: an empty should-clause can never be generated")
+def _():
+    # bool.should with minimum_should_match:1 and zero clauses matches nothing.
+    # active_thresholds is what makes that state unreachable.
+    query = M.build_entity_query(["Q8337"], TH)
+    clauses = query["nested"]["query"]["nested"]["query"]["bool"]["filter"][1]
+    assert_eq(len(clauses["bool"]["should"]), len(TH),
+              "one clause per active source")
+    assert_true(len(clauses["bool"]["should"]) > 0, "should-clause is non-empty")
 
 
 @suite.case("blacklist: object and bare-string entities both load")

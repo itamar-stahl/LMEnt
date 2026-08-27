@@ -7,7 +7,7 @@ would otherwise fail silently:
     1. the index exists and the entity query shape still matches its mapping
     2. ES ``_id`` equals the stored ``chunk_id``
     3. entity char offsets index into the stored ``text``
-    4. coref-only mentions really are pronouns
+    4. high-scoring coref mentions are cluster heads, not pronouns
 
 (3) is the one worth the run. Offsets are rebased to be chunk-relative by
 OLMo-core (``numpy_dataset._get_entities_within_range``) against the chunk's
@@ -16,10 +16,11 @@ slice of the source document, while the index stores the tokenizer round-trip
 *some* sentence, so the harvester would return a plausible wrong sentence and
 nothing downstream would notice.
 
-(4) is not a correctness check but an evidence check: the whole
-retrieve-broadly / select-lexically design rests on the claim that coref
-surface forms are pronouns. This prints them so the claim is inspectable on
-your data rather than taken on faith.
+(4) is not a correctness check but an evidence check. Coref is kept as a source
+but held to 0.95, on the reasoning that a high-scoring coref mention is the
+cluster head (a proper noun) rather than a pronoun. This retrieves with the
+paper's loose ALL_SOURCES and prints what coref mentions actually look like at
+each score, so the reasoning is inspectable on your data rather than assumed.
 
     python tests/test_live_es.py
 """
@@ -43,12 +44,33 @@ suite = Suite("live elasticsearch (login node)")
 SAMPLE_CHUNKS = 60          # documents pulled for the offset/id invariants
 SAMPLE_MENTIONS = 400       # mention offsets verified
 
+# The module's own resolved thresholds, used wherever a check should mirror
+# what a real run does.
+ACTIVE = M.active_thresholds(M.DEFAULT_THRESHOLDS)
 
-def _sample_docs(client, index: str, qid: str, n: int) -> List[Dict[str, Any]]:
-    """A deterministic sample of chunks mentioning ``qid``."""
+# Untaught's retrieval set (paper section 5.2, Table 4). We keep all four
+# sources but at much higher bars, so this loose set is what the checks below
+# use to observe the population our thresholds exclude, and to assert the
+# index still carries every score field.
+ALL_SOURCES = {
+    "hyperlinks": 1.0,
+    "entity_linking": 0.6,
+    "coref": 0.6,
+    "coref_cluster": 0.6,
+}
+
+
+def _sample_docs(client, index: str, qid: str, n: int,
+                 thresholds=None) -> List[Dict[str, Any]]:
+    """A deterministic sample of chunks mentioning ``qid``.
+
+    Defaults to the module's own thresholds. The coref-evidence check passes
+    the paper's looser ALL_SOURCES instead, so it can observe the population
+    our stricter bars exclude.
+    """
     response = client.search(
         index=index,
-        query=M.build_entity_query([qid], M.DEFAULT_THRESHOLDS),
+        query=M.build_entity_query([qid], thresholds or M.DEFAULT_THRESHOLDS),
         size=n,
     )
     return response["hits"]["hits"]
@@ -82,7 +104,7 @@ def _():
     cands = props["entities"]["properties"]["candidates"]
     assert_eq(cands["type"], "nested", "candidates nesting")
     scores = cands["properties"]["scores_by_source"]["properties"]
-    for source in M.DEFAULT_THRESHOLDS:
+    for source in ALL_SOURCES:
         assert_true(source in scores, f"scores_by_source.{source} missing")
     for field in ("chunk_id", "text", "title"):
         assert_true(field in props, f"top-level field {field} missing")
@@ -168,40 +190,60 @@ def _():
                 f"bad data)")
 
 
-@suite.case("EVIDENCE: coref-only mentions are pronouns, lexical ones are not")
+@suite.case("EVIDENCE: high-scoring coref mentions are heads, not pronouns")
 def _():
+    # The reason coref survives at 0.95 rather than being dropped: a coref
+    # cluster scores every member including the head, so score should track
+    # "proper noun" versus "pronoun". Retrieve with the paper's loose set so
+    # both populations are present, then bucket by our threshold and print the
+    # surfaces. If the pronoun share above 0.95 is not near zero, 0.95 is the
+    # wrong bar for this subject.
     client = es_or_skip()
     index_or_skip(client, M.CASE_SENSITIVE_INDEX)
     qid = first_qid(sample_blacklist())
-    hits = _sample_docs(client, M.CASE_SENSITIVE_INDEX, qid, SAMPLE_CHUNKS)
+    hits = _sample_docs(client, M.CASE_SENSITIVE_INDEX, qid, SAMPLE_CHUNKS,
+                        thresholds=ALL_SOURCES)
     require(bool(hits), "no chunks to sample")
 
-    coref_only: Counter = Counter()
+    cutoff = ACTIVE.get("coref", 0.95)
+    high: Counter = Counter()
+    low: Counter = Counter()
     lexical: Counter = Counter()
     for hit in hits:
         for mention in (hit["_source"].get("entities") or []):
             surface = (mention.get("text_mention") or "").strip()
             for candidate in (mention.get("candidates") or []):
-                if str(candidate.get("qid")) != qid:
+                if str(candidate.get("qid")) != qid or not surface:
                     continue
                 scores = candidate.get("scores_by_source") or {}
-                has_lexical = M.lexical_score(candidate) is not None
-                has_coref = (float(scores.get("coref", 0) or 0) >= 0.6
-                             or float(scores.get("coref_cluster", 0) or 0) >= 0.6)
-                if has_lexical:
+                coref = max(float(scores.get("coref", 0) or 0),
+                            float(scores.get("coref_cluster", 0) or 0))
+                is_lexical = (
+                    float(scores.get("hyperlinks", 0) or 0) >= ACTIVE.get("hyperlinks", 1.0)
+                    or float(scores.get("entity_linking", 0) or 0)
+                    >= ACTIVE.get("entity_linking", 0.7))
+                if is_lexical:
                     lexical[surface] += 1
-                elif has_coref:
-                    coref_only[surface] += 1
+                elif coref >= cutoff:
+                    high[surface] += 1
+                elif coref > 0:
+                    low[surface] += 1
 
-    require(bool(coref_only) or bool(lexical), "no candidates for this QID")
-    print(f"          coref-only surfaces: {coref_only.most_common(8)}")
-    print(f"          lexical surfaces   : {lexical.most_common(8)}")
+    require(bool(high or low or lexical), "no candidates for this QID")
 
-    if coref_only:
-        pronouns = sum(c for s, c in coref_only.items()
-                       if s.lower() in M.PRONOUN_MENTIONS)
-        share = pronouns / sum(coref_only.values())
-        print(f"          coref-only that are bare pronouns: {share:.0%}")
+    def pronoun_share(counter: Counter) -> str:
+        total = sum(counter.values())
+        if not total:
+            return "n/a"
+        hit_count = sum(c for s, c in counter.items()
+                        if s.lower() in M.PRONOUN_MENTIONS)
+        return f"{hit_count / total:.0%}"
+
+    print(f"          lexical              : {lexical.most_common(6)}")
+    print(f"          coref >= {cutoff}        : {high.most_common(6)}")
+    print(f"          coref <  {cutoff}        : {low.most_common(6)}")
+    print(f"          pronoun share, coref >= {cutoff}: {pronoun_share(high)}")
+    print(f"          pronoun share, coref <  {cutoff}: {pronoun_share(low)}")
 
 
 @suite.case("scores_by_source carries every source, defaulting to 0.0")
@@ -219,7 +261,7 @@ def _():
                 if not scores:
                     continue
                 seen += 1
-                for source in M.DEFAULT_THRESHOLDS:
+                for source in ALL_SOURCES:
                     assert_true(source in scores,
                                 f"{source} absent from scores_by_source {scores}")
     require(seen > 0, "no candidates carried scores_by_source")
@@ -237,7 +279,8 @@ def _():
     reasons: Counter = Counter()
     harvested: List[str] = []
     for hit in hits:
-        sentence, reason = M.harvest(hit["_source"], {qid}, M.split_sentences)
+        sentence, reason = M.harvest(hit["_source"], {qid}, M.split_sentences,
+                                     ACTIVE)
         reasons[reason] += 1
         if sentence:
             harvested.append(sentence)

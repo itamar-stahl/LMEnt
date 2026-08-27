@@ -12,20 +12,25 @@ Four stages, all recorded in one timestamped run folder under ``outputs/``:
     3. harvest   one on-topic sentence per sampled chunk
     4. validate  the length distribution, against the shipped corpus
 
-Why the retrieval thresholds and the *mention* filter differ
-------------------------------------------------------------
+Why this is stricter than Untaught
+---------------------------------
 Untaught retrieves chunks in order to drop them from training, so it wants
-recall: a mention counts if any one source clears its threshold, coreference
-included. That is right for exclusion and wrong for sentence harvesting -- a
-coref mention's surface form is a pronoun ("he", "the series"), and a sentence
-built around one carries no concept-specific token for EMBER to find.
+recall: any one source clearing 0.6 is enough. That is right for exclusion and
+too loose for harvesting -- we need a sentence that actually contains the
+concept's own tokens, so a weakly-scored coref mention ("he", "the series")
+would spend one of only 300 slots on a sentence with no concept signal.
 
-So the two filters are split. Retrieval keeps the paper's thresholds, because
-abstract concepts are reached mostly through entity linking and coreference and
-narrowing here would empty the pool. Selection, inside a retrieved chunk, then
-demands *lexical* evidence -- a hyperlink or an entity-linking hit -- for the
-mention whose sentence gets taken. Coreference still finds chunks; it never
-chooses a sentence.
+One DEFAULT_THRESHOLDS drives both stages, and both are tightened:
+
+    retrieval   build_entity_query emits one clause per enabled source; a chunk
+                matches if any candidate for the QID clears any of them
+    selection   mention_score re-applies the same thresholds per mention, so
+                within a chunk the sentence taken is anchored on the best
+                available evidence, ranked by SOURCE_PRIORITY
+
+Because both stages read the same dict, a chunk can never be fetched on
+evidence that would not also be allowed to anchor its sentence. Setting a
+source to DISABLED (-1) removes it from both at once.
 
 Usage
 -----
@@ -55,29 +60,50 @@ OUTPUTS_ROOT = HERE / "outputs"
 # Retrieval configuration (copied from es_blacklist.py)
 # --------------------------------------------------------------------------- #
 
-# Paper section 5.2 / Table 4: the thresholds validated on a 60-entity dev set.
-# Kept as-is: these decide which chunks enter the pool, and narrowing them here
-# would starve concepts whose coverage is mostly entity-linking + coref.
+# Per-source thresholds, used for BOTH retrieval and sentence selection.
+#
+# Untaught runs hyperlinks 1.0 and the other three at 0.6 (paper section 5.2,
+# Table 4) because it wants every chunk that so much as refers to the entity,
+# in order to drop it from training. We want chunks that can yield a *sentence*
+# containing the concept's own tokens, so the two weak sources are tightened
+# hard rather than merely inherited:
+#
+#   hyperlinks      1.0   confidence is hardcoded to 1.0 upstream, so this is
+#                         "a Wikipedia hyperlink exists" -- binary, not a dial
+#   entity_linking  0.7   above the paper's 0.6; the linker's surface form is
+#                         the concept's own words, but 0.6 admits shaky links
+#   coref           0.95  a cluster scores every member, head included, so a
+#                         high score is usually the head ("Harry Potter"), not
+#                         a pronoun. PRONOUN_MENTIONS catches what slips through
+#   coref_cluster   0.95  the weakest evidence upstream (weight 1.0 against
+#                         hyperlinks' 4.0), so only near-certainty qualifies
+#
+# Set any source to DISABLED (-1) to drop it entirely: its clause vanishes from
+# the retrieval query and it stops qualifying mentions during selection.
 DEFAULT_THRESHOLDS: Dict[str, float] = {
     "hyperlinks": 1.0,
-    "entity_linking": 0.6,
-    "coref": 0.6,
-    "coref_cluster": 0.6,
+    "entity_linking": 0.7,
+    "coref": 0.95,
+    "coref_cluster": 0.95,
 }
+
+# Sentinel: "do not use this source at all".
+DISABLED = -1.0
+
+# Trust order, best first. Used to rank competing mentions inside one chunk, so
+# the sentence taken is anchored on the strongest available evidence.
+SOURCE_PRIORITY: Tuple[str, ...] = (
+    "hyperlinks", "entity_linking", "coref", "coref_cluster",
+)
 
 CASE_SENSITIVE_INDEX = "lment_cs"
 CASE_INSENSITIVE_INDEX = "lment_ci"
 
 # --------------------------------------------------------------------------- #
-# Selection configuration (new -- see the module docstring)
+# Selection configuration
 # --------------------------------------------------------------------------- #
 
-# A mention may pick the sentence only with lexical evidence. Hyperlink
-# confidence is hardcoded to 1.0 upstream, so this is "a hyperlink exists".
-MENTION_HYPERLINK_MIN = 1.0
-MENTION_ENTITY_LINKING_MIN = 0.6
-
-# Surface forms that are never a usable anchor, even with a lexical score.
+# Surface forms that are never a usable anchor, whatever a source scored them.
 PRONOUN_MENTIONS = {
     "he", "him", "his", "she", "her", "hers", "it", "its", "they", "them",
     "their", "theirs", "we", "us", "our", "ours", "you", "your", "i", "me",
@@ -207,6 +233,31 @@ def load_blacklist(path: Path) -> List[Dict[str, str]]:
     if not entities:
         raise ValueError(f"[sentences_gen] no 'entities' in blacklist file: {path}")
     return entities
+
+
+def active_thresholds(raw: Dict[str, float]) -> Dict[str, float]:
+    """Drop DISABLED sources and reject values that are neither -1 nor a score.
+
+    One resolved dict drives both the retrieval query and mention selection, so
+    a source dropped here is dropped from both -- it cannot fetch chunks it
+    would not also be allowed to anchor a sentence with.
+    """
+    active: Dict[str, float] = {}
+    for source, value in raw.items():
+        value = float(value)
+        if value == DISABLED:
+            continue
+        if not 0.0 <= value <= 1.0:
+            raise SystemExit(
+                f"[sentences_gen] --threshold-{source.replace('_', '-')}={value} "
+                f"is neither a confidence in [0, 1] nor {DISABLED:.0f} (disable)")
+        active[source] = value
+
+    if not active:
+        raise SystemExit(
+            "[sentences_gen] every source is disabled; nothing could match. "
+            "Leave at least one threshold enabled.")
+    return active
 
 
 def build_entity_query(qids: Sequence[str], thresholds: Dict[str, float]) -> Dict[str, Any]:
@@ -448,25 +499,28 @@ def is_truncated(span: Tuple[int, int, str], text_len: int) -> bool:
 # Mention selection and harvesting
 # --------------------------------------------------------------------------- #
 
-def lexical_score(candidate: Dict[str, Any]) -> Optional[Tuple[float, float]]:
-    """Rank key for a candidate, or ``None`` if it lacks lexical evidence.
+def mention_score(candidate: Dict[str, Any],
+                  thresholds: Dict[str, float]) -> Optional[Tuple[float, ...]]:
+    """Rank key for a candidate, or ``None`` if it clears no active threshold.
 
-    Only hyperlinks and entity linking qualify. Coreference is deliberately
-    excluded: its surface form is a pronoun, and a sentence anchored on one
-    contributes no concept-specific token to EMBER's vocabulary.
+    The same resolved thresholds that built the retrieval query, so a chunk can
+    never be fetched on evidence that would not also be allowed to anchor its
+    sentence. The key is ordered by SOURCE_PRIORITY, so a hyperlink mention
+    outranks an entity-linking one, which outranks a coref one, whatever the
+    raw numbers say.
     """
     scores = candidate.get("scores_by_source") or {}
-    hyper = float(scores.get("hyperlinks", 0.0) or 0.0)
-    linked = float(scores.get("entity_linking", 0.0) or 0.0)
-    if hyper >= MENTION_HYPERLINK_MIN or linked >= MENTION_ENTITY_LINKING_MIN:
-        return (hyper, linked)
-    return None
+    if not any(float(scores.get(source, 0.0) or 0.0) >= minimum
+               for source, minimum in thresholds.items()):
+        return None
+    return tuple(float(scores.get(source, 0.0) or 0.0)
+                 for source in SOURCE_PRIORITY)
 
 
-def select_mention(entities: List[Dict[str, Any]],
-                   qids: Set[str]) -> Optional[Dict[str, Any]]:
-    """Best lexically-evidenced mention of one of ``qids``, or ``None``."""
-    best: Optional[Tuple[Tuple[float, float], Dict[str, Any]]] = None
+def select_mention(entities: List[Dict[str, Any]], qids: Set[str],
+                   thresholds: Dict[str, float]) -> Optional[Dict[str, Any]]:
+    """Best-evidenced non-pronoun mention of one of ``qids``, or ``None``."""
+    best: Optional[Tuple[Tuple[float, ...], Dict[str, Any]]] = None
     for mention in entities or []:
         surface = (mention.get("text_mention") or "").strip()
         if not surface or surface.lower() in PRONOUN_MENTIONS:
@@ -476,7 +530,7 @@ def select_mention(entities: List[Dict[str, Any]],
         for candidate in mention.get("candidates") or []:
             if str(candidate.get("qid")) not in qids:
                 continue
-            key = lexical_score(candidate)
+            key = mention_score(candidate, thresholds)
             if key is None:
                 continue
             if best is None or key > best[0]:
@@ -484,8 +538,8 @@ def select_mention(entities: List[Dict[str, Any]],
     return best[1] if best else None
 
 
-def harvest(doc: Dict[str, Any], qids: Set[str],
-            splitter) -> Tuple[Optional[str], str]:
+def harvest(doc: Dict[str, Any], qids: Set[str], splitter,
+            thresholds: Dict[str, float]) -> Tuple[Optional[str], str]:
     """Pull one on-topic sentence out of a chunk.
 
     Returns ``(sentence, reason)``; ``sentence`` is ``None`` when the chunk is
@@ -495,9 +549,9 @@ def harvest(doc: Dict[str, Any], qids: Set[str],
     if not text.strip():
         return None, "empty_text"
 
-    mention = select_mention(doc.get("entities") or [], qids)
+    mention = select_mention(doc.get("entities") or [], qids, thresholds)
     if mention is None:
-        return None, "no_lexical_mention"
+        return None, "no_qualifying_mention"
 
     spans = splitter(text)
     if not spans:
@@ -613,6 +667,7 @@ def collect_sentences(
     qids: Set[str],
     target: int,
     splitter,
+    thresholds: Dict[str, float],
     batch_size: int = 200,
 ) -> Tuple[List[Dict[str, Any]], Dict[str, int]]:
     """Walk the draw order until ``target`` sentences are accepted.
@@ -646,7 +701,7 @@ def collect_sentences(
                 reasons["not_found"] = reasons.get("not_found", 0) + 1
                 continue
 
-            sentence, reason = harvest(doc, qids, splitter)
+            sentence, reason = harvest(doc, qids, splitter, thresholds)
             if sentence is None:
                 reasons[reason] = reasons.get(reason, 0) + 1
                 continue
@@ -686,9 +741,13 @@ def parse_args(argv: Optional[Sequence[str]] = None) -> argparse.Namespace:
     ap.add_argument("--batch-size", type=int, default=200,
                     help="chunk ids per Elasticsearch mget")
     for source in sorted(DEFAULT_THRESHOLDS):
-        ap.add_argument(f"--threshold-{source.replace('_', '-')}", type=float,
-                        default=DEFAULT_THRESHOLDS[source],
-                        dest=f"threshold_{source}")
+        ap.add_argument(
+            f"--threshold-{source.replace('_', '-')}", type=float,
+            default=DEFAULT_THRESHOLDS[source], dest=f"threshold_{source}",
+            metavar="SCORE",
+            help=f"minimum {source} confidence, in [0, 1] "
+                 f"(default {DEFAULT_THRESHOLDS[source]}); "
+                 f"{DISABLED:.0f} drops the source from retrieval and selection")
     ap.add_argument("--es-scheme")
     ap.add_argument("--es-host")
     ap.add_argument("--es-port", type=int)
@@ -705,12 +764,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     concept = concept_name_from_path(blacklist_path)
     index = CASE_INSENSITIVE_INDEX if args.case_insensitive else CASE_SENSITIVE_INDEX
-    thresholds = {s: float(getattr(args, f"threshold_{s}")) for s in DEFAULT_THRESHOLDS}
+    thresholds = active_thresholds(
+        {s: getattr(args, f"threshold_{s}") for s in DEFAULT_THRESHOLDS})
+    disabled = [s for s in DEFAULT_THRESHOLDS if s not in thresholds]
     splitter = split_sentences_nltk if args.splitter == "nltk" else split_sentences
 
     print(f"[sentences_gen] concept   : {concept!r}")
     print(f"[sentences_gen] index     : {index}")
-    print(f"[sentences_gen] thresholds: {thresholds}")
+    print(f"[sentences_gen] thresholds: {thresholds}"
+          + (f"  disabled: {disabled}" if disabled else ""))
+    print("[sentences_gen]             (same thresholds gate retrieval and "
+          "sentence selection; pronoun surfaces always excluded)")
 
     # Validate the blacklist and open Elasticsearch *before* creating the run
     # folder, so a bad QID file or an unreachable server does not litter
@@ -733,9 +797,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     artifact["num_sentences_requested"] = args.num_sentences
     artifact["splitter"] = args.splitter
     artifact["selection"] = {
-        "mention_hyperlink_min": MENTION_HYPERLINK_MIN,
-        "mention_entity_linking_min": MENTION_ENTITY_LINKING_MIN,
-        "note": "coref evidence retrieves chunks but never anchors a sentence",
+        "thresholds": thresholds,
+        "disabled_sources": disabled,
+        "source_priority": list(SOURCE_PRIORITY),
+        "note": "the same thresholds gate retrieval and sentence selection; "
+                "pronoun surfaces are excluded whatever they scored",
     }
     artifact["pools_after_rarest_assignment"] = {q: len(v) for q, v in pools.items()}
 
@@ -747,7 +813,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     qids = {e["qid"] for e in artifact["entities"]}
     order = sampling_order(pools, args.seed)
     accepted, reasons = collect_sentences(
-        es, index, order, qids, args.num_sentences, splitter, args.batch_size)
+        es, index, order, qids, args.num_sentences, splitter, thresholds,
+        args.batch_size)
 
     sentences = [a["sentence"] for a in accepted]
     report = length_report(sentences)
