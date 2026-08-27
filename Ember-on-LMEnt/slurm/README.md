@@ -60,10 +60,10 @@ Run the equivalent deployment test package from the login node:
 sh /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/slurm/tests/run_test.sh
 ```
 
-This one command creates a trackable test package, submits one
-`studentkillable` job with `#SBATCH --constraint="titan_xp"`, waits for it, and
-returns a nonzero exit code with exact failing phase paths when needed. Before
-submission, the login node runs every local unit test, compilation, dependency,
-and shell check. The GPU node runs only CUDA checks followed by a bounded
-real-model Pornography erasure with pristine and erased evaluation. See
-`slurm/tests/README.md` for the saved test-folder layout.
+This one command creates a trackable test package. It first runs every local
+unit test, compilation, dependency and shell check, then runs a bounded real
+CPU erasure on the login node. Only after those pass does it submit one
+`studentkillable` job with `#SBATCH --constraint="titan_xp"` for the equivalent
+real CUDA erasure. Both flows retain features, erased weights, control/erased
+evaluation and a machine-readable evidence report under `runs/`. See
+`slurm/tests/README.md` for the exact stages and saved paths.

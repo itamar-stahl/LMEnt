@@ -185,6 +185,7 @@ def run_real_flow(config_path: Path, concept: str, *, execution: str) -> Dict[st
         }
         io.save_json_atomic(
             prepared.outputs_dir / "real_flow_test_failure.json", failure)
+        print(f"[real-run] {prepared.run_dir}")
         raise
     print(json.dumps(evidence, indent=2))
     print(f"[real-run] {prepared.run_dir}")

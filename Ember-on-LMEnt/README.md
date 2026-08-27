@@ -62,6 +62,15 @@ On Windows PowerShell:
 $env:EMBER_LMENT_MODEL_PATH = "C:\path\to\lment-1b-control-2e"
 ```
 
+For retained real CPU and CUDA erasure tests on Windows, run:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\tests\run_real_flows.ps1
+```
+
+This uses the actual checkpoint and completes the whole flow with only two SNMF
+iterations. Outputs are kept under `runs/`; see `tests/README.md`.
+
 The vendored method sources live in `external/` (snmf, CRISP, wmdp, PISCES).
 `HF_TOKEN` is needed to download gated models (e.g. Llama-3.1-8B-Instruct);
 `GEMINI_API_KEY` is needed for feature interpretation and the Alpaca coherence judge

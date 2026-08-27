@@ -24,7 +24,7 @@ FULL="${TEST_DIR}/full_output.log"
 REPORT="${TEST_DIR}/report.log"
 RESULT="${TEST_DIR}/test_result.json"
 FAILED=0
-E2E_RUN=""
+GPU_REAL_RUN=""
 touch "${FULL}" "${REPORT}"
 
 record() {
@@ -76,29 +76,30 @@ run_phase gpu_environment python -c \
 run_phase gpu_checkpoint python -m unittest tests.test_lment_gpu -v || true
 
 if [ "${FAILED}" -ne 0 ]; then
-  record real_erasure SKIP "earlier test phase failed"
+  record gpu_real_flow SKIP "earlier test phase failed"
 else
-  run_phase real_erasure python -m ember.run_lment_ember \
-    --config "${CONFIG}" --concept Pornography || true
+  run_phase gpu_real_flow python -m ember.real_flow_test \
+    --config "${CONFIG}" --concept Pornography --execution slurm || true
   if [ "${FAILED}" -eq 0 ]; then
-    E2E_RUN="$(sed -n 's/^\[run\] //p' "${TEST_DIR}/real_erasure.log" | tail -n 1)"
-    if [ -z "${E2E_RUN}" ] || [ ! -f "${E2E_RUN}/outputs/report.json" ]; then
-      record erasure_report FAIL "could not locate generated report from ${TEST_DIR}/real_erasure.log"
+    GPU_REAL_RUN="$(sed -n 's/^\[real-run\] //p' \
+      "${TEST_DIR}/gpu_real_flow.log" | tail -n 1)"
+    if [ -z "${GPU_REAL_RUN}" ] || \
+        [ ! -f "${GPU_REAL_RUN}/outputs/real_flow_test_report.json" ]; then
+      record gpu_real_evidence FAIL \
+        "could not locate retained evidence from ${TEST_DIR}/gpu_real_flow.log"
       FAILED=1
     else
-      run_phase erasure_report python -m slurm.tests.verify_e2e_report \
-        --report "${E2E_RUN}/outputs/report.json" \
-        --log-out "${TEST_DIR}/real_erasure.log" \
-        --log-err "${TEST_DIR}/real_erasure.log" \
-        --expected-selection threshold --expected-gpu "titan xp" --no-alpaca || true
+      run_phase gpu_real_evidence python -c \
+        'import json,sys; from pathlib import Path; p=Path(sys.argv[1])/"outputs"/"real_flow_test_report.json"; d=json.loads(p.read_text()); assert d["passed"] is True; assert d["actual_model_device"].startswith("cuda"); assert Path(d["erased_embedding"]).is_file(); print(p)' \
+        "${GPU_REAL_RUN}" || true
     fi
   fi
 fi
 
 if [ "${FAILED}" -eq 0 ]; then STATUS=PASS; EXIT_CODE=0; else STATUS=FAIL; EXIT_CODE=1; fi
 python -c \
-  'import json,sys; from pathlib import Path; p={"schema_version":1,"status":sys.argv[1],"exit_code":int(sys.argv[2]),"slurm_job_id":sys.argv[3] or None,"report":sys.argv[4],"full_output":sys.argv[5],"e2e_run":sys.argv[6] or None}; Path(sys.argv[7]).write_text(json.dumps(p,indent=2)+"\n",encoding="utf-8")' \
-  "${STATUS}" "${EXIT_CODE}" "${SLURM_JOB_ID:-}" "${REPORT}" "${FULL}" "${E2E_RUN}" "${RESULT}"
+  'import json,sys; from pathlib import Path; p={"schema_version":1,"status":sys.argv[1],"exit_code":int(sys.argv[2]),"slurm_job_id":sys.argv[3] or None,"report":sys.argv[4],"full_output":sys.argv[5],"gpu_real_run":sys.argv[6] or None}; Path(sys.argv[7]).write_text(json.dumps(p,indent=2)+"\n",encoding="utf-8")' \
+  "${STATUS}" "${EXIT_CODE}" "${SLURM_JOB_ID:-}" "${REPORT}" "${FULL}" "${GPU_REAL_RUN}" "${RESULT}"
 
 echo "Test status: ${STATUS}" | tee -a "${FULL}" "${REPORT}"
 echo "Report: ${REPORT}" | tee -a "${FULL}"

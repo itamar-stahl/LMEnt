@@ -58,23 +58,31 @@ class SlurmTestPackageTests(unittest.TestCase):
             "python -m pip check",
             "git ls-files \"*.sh\"",
             "python -m ember.slurm_model",
+            "ember_lment_real_slurm_cpu.yaml",
+            "python -m ember.real_flow_test",
+            "--execution local",
         ):
             self.assertIn(command, script)
             self.assertLess(script.index(command), script.index("sbatch --parsable"))
+        self.assertIn("ember_lment_real_slurm_gpu.yaml", script)
+        self.assertIn("cpu_real_run", script)
         self.assertIn("  else\n    rc=$?", script)
 
-    def test_node_runner_contains_only_gpu_tests_and_real_erasure(self) -> None:
+    def test_node_runner_contains_only_gpu_tests_and_verified_real_flow(self) -> None:
         script = (
             PROJECT_ROOT / "slurm" / "tests" / "node_test_runner.sh"
         ).read_text(encoding="utf-8")
         for command in (
             "unittest tests.test_lment_gpu",
-            "python -m ember.run_lment_ember",
+            "python -m ember.real_flow_test",
             "--concept Pornography",
-            "verify_e2e_report",
+            "--execution slurm",
+            "real_flow_test_report.json",
             "validate_slurm_model_config",
         ):
             self.assertIn(command, script)
+        self.assertNotIn("python -m ember.run_lment_ember", script)
+        self.assertNotIn("verify_e2e_report", script)
         self.assertNotIn("unittest discover -s tests", script)
         self.assertNotIn("compileall", script)
         self.assertNotIn("pip check", script)
@@ -82,7 +90,7 @@ class SlurmTestPackageTests(unittest.TestCase):
 
     def test_repository_test_yaml_is_bounded_for_titan_xp(self) -> None:
         config = yaml.safe_load((
-            PROJECT_ROOT / "configs" / "ember_lment_slurm_test.yaml"
+            PROJECT_ROOT / "configs" / "ember_lment_real_slurm_gpu.yaml"
         ).read_text(encoding="utf-8"))
         self.assertEqual(config["selection"]["mode"], "threshold")
         self.assertEqual(
@@ -95,6 +103,13 @@ class SlurmTestPackageTests(unittest.TestCase):
         self.assertEqual(
             config["lment"]["slurm"]["partition"], "studentkillable")
         self.assertEqual(config["lment"]["slurm"]["constraint"], "titan_xp")
+
+        cpu = yaml.safe_load((
+            PROJECT_ROOT / "configs" / "ember_lment_real_slurm_cpu.yaml"
+        ).read_text(encoding="utf-8"))
+        self.assertEqual(cpu["lment"]["model_device"], "cpu")
+        self.assertEqual(cpu["lment"]["features"]["fitting_device"], "cpu")
+        self.assertNotIn("slurm", cpu["lment"])
 
         production = yaml.safe_load((
             PROJECT_ROOT / "configs" / "ember_lment_slurm.yaml"

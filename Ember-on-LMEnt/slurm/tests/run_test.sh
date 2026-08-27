@@ -5,13 +5,15 @@ set -u
 WAIT_MINUTES=240
 : "${LMENT_ROOT:=/home/morg/NLP_2526b/$(whoami)/LMEnt}"
 PROJECT="${LMENT_ROOT}/Ember-on-LMEnt"
-CONFIG="${PROJECT}/configs/ember_lment_slurm_test.yaml"
+CPU_CONFIG="${PROJECT}/configs/ember_lment_real_slurm_cpu.yaml"
+GPU_CONFIG="${PROJECT}/configs/ember_lment_real_slurm_gpu.yaml"
 while [ "$#" -gt 0 ]; do
   case "$1" in
     --wait-minutes) WAIT_MINUTES="$2"; shift ;;
-    --config) CONFIG="$2"; shift ;;
+    --cpu-config) CPU_CONFIG="$2"; shift ;;
+    --gpu-config|--config) GPU_CONFIG="$2"; shift ;;
     -h|--help)
-      echo "Usage: sh $0 [--wait-minutes N] [--config /absolute/test.yaml]"
+      echo "Usage: sh $0 [--wait-minutes N] [--cpu-config /absolute/cpu.yaml] [--gpu-config /absolute/gpu.yaml]"
       exit 0
       ;;
     *) echo "Unknown option: $1" >&2; exit 2 ;;
@@ -26,10 +28,12 @@ if [ "${WAIT_MINUTES}" -le 0 ]; then
   echo "--wait-minutes must be a positive integer" >&2
   exit 2
 fi
-if [ ! -f "${CONFIG}" ]; then
-  echo "Test YAML not found: ${CONFIG}" >&2
-  exit 1
-fi
+for test_config in "${CPU_CONFIG}" "${GPU_CONFIG}"; do
+  if [ ! -f "${test_config}" ]; then
+    echo "Test YAML not found: ${test_config}" >&2
+    exit 1
+  fi
+done
 
 cd "${PROJECT}" || exit 1
 if ! . "${PROJECT}/activate_env.sh"; then
@@ -39,7 +43,7 @@ fi
 
 PREPARE_ERR="$(mktemp)"
 if ! PREPARED="$(python -m slurm.tests.prepare_test_job \
-    --project "${PROJECT}" --config "${CONFIG}" 2>"${PREPARE_ERR}")"; then
+    --project "${PROJECT}" --config "${GPU_CONFIG}" 2>"${PREPARE_ERR}")"; then
   echo "FAIL: could not prepare the Slurm test job" >&2
   cat "${PREPARE_ERR}" >&2
   rm -f "${PREPARE_ERR}"
@@ -51,8 +55,10 @@ JOB_FILE="$(printf '%s' "${PREPARED}" | python -c 'import json,sys; print(json.l
 FULL="${TEST_DIR}/full_output.log"
 REPORT="${TEST_DIR}/report.log"
 FAILED=0
+CPU_REAL_RUN=""
 : >"${FULL}"
 : >"${REPORT}"
+cp "${CPU_CONFIG}" "${TEST_DIR}/login_cpu_config.yaml"
 
 record() {
   phase="$1"
@@ -90,14 +96,35 @@ run_login_phase pip_check python -m pip check || true
 run_login_phase shell_syntax sh -c \
   'cd "$1" && git ls-files "*.sh" | while IFS= read -r file; do sh -n "$file" || exit 1; done' \
   shell-check "${PROJECT}" || true
-run_login_phase cluster_model python -m ember.slurm_model \
-  --config "${CONFIG}" || true
+run_login_phase cluster_model_cpu python -m ember.slurm_model \
+  --config "${CPU_CONFIG}" || true
+run_login_phase cluster_model_gpu python -m ember.slurm_model \
+  --config "${GPU_CONFIG}" || true
+
+if [ "${FAILED}" -eq 0 ]; then
+  run_login_phase cpu_real_flow python -m ember.real_flow_test \
+    --config "${CPU_CONFIG}" --concept Pornography --execution local || true
+  CPU_REAL_RUN="$(sed -n 's/^\[real-run\] //p' \
+    "${TEST_DIR}/cpu_real_flow.log" | tail -n 1)"
+  if [ -z "${CPU_REAL_RUN}" ] || \
+      [ ! -f "${CPU_REAL_RUN}/outputs/real_flow_test_report.json" ]; then
+    record cpu_real_evidence FAIL \
+      "could not locate retained evidence from ${TEST_DIR}/cpu_real_flow.log"
+    FAILED=1
+  else
+    printf '%s\n' "${CPU_REAL_RUN}" >"${TEST_DIR}/cpu_real_run.txt"
+    record cpu_real_evidence PASS \
+      "${CPU_REAL_RUN}/outputs/real_flow_test_report.json"
+  fi
+else
+  record cpu_real_flow SKIP "fast login-node tests failed"
+fi
 
 if [ "${FAILED}" -ne 0 ]; then
   record gpu_submission SKIP "login-node tests failed"
   python -c \
-    'import json,sys; from pathlib import Path; Path(sys.argv[2]).write_text(json.dumps({"schema_version":1,"status":"FAIL","stage":"login","exit_code":1,"report":sys.argv[1]},indent=2)+"\n",encoding="utf-8")' \
-    "${REPORT}" "${TEST_DIR}/test_result.json"
+    'import json,sys; from pathlib import Path; Path(sys.argv[3]).write_text(json.dumps({"schema_version":1,"status":"FAIL","stage":"login","exit_code":1,"report":sys.argv[1],"cpu_real_run":sys.argv[2] or None},indent=2)+"\n",encoding="utf-8")' \
+    "${REPORT}" "${CPU_REAL_RUN}" "${TEST_DIR}/test_result.json"
   echo "FAIL: login-node tests failed; no Slurm job was submitted." >&2
   echo "Summary: ${REPORT}" >&2
   echo "Full output: ${FULL}" >&2
@@ -149,6 +176,8 @@ cat "${TEST_DIR}/report.log"
 if python -c 'import json,sys; raise SystemExit(0 if json.load(open(sys.argv[1]))["status"]=="PASS" else 1)' \
     "${TEST_DIR}/test_result.json"; then
   echo "PASS: all local tests and the real Titan XP erasure passed."
+  echo "CPU real run: ${CPU_REAL_RUN}"
+  echo "GPU real run: $(python -c 'import json,sys; print(json.load(open(sys.argv[1])).get("gpu_real_run") or "missing")' "${TEST_DIR}/test_result.json")"
   echo "Test package: ${TEST_DIR}"
   exit 0
 fi
