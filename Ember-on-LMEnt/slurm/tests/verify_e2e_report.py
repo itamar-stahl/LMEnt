@@ -37,6 +37,9 @@ def verify_e2e_report(
         "erased checkpoint integrity did not pass")
     assert report.get("save", {}).get("mode") == "embedding_only", (
         "cluster smoke must test the default embedding-only output")
+    assert report.get("feature_cache", {}).get("status") in {
+        "published", "existing_valid",
+    }, "feature cache was not validated or published"
     selection = report.get("feature_selection", {})
     assert selection.get("mode") == "judge", (
         "cluster smoke did not use the real Gemma feature judge")
@@ -46,8 +49,8 @@ def verify_e2e_report(
     alpaca = report.get("alpaca", {})
     assert alpaca.get("n") == 1 and alpaca.get("max_items") == 1, (
         "cluster smoke must evaluate exactly one Alpaca item")
-    assert alpaca.get("gpu_profile", {}).get("name") == "h100", (
-        "Alpaca did not use the H100 profile")
+    assert isinstance(alpaca.get("gpu"), str) and alpaca["gpu"], (
+        "Alpaca did not record the scheduler-provided GPU")
     for key in ("mean_relevance", "mean_fluency"):
         score = alpaca.get(key)
         assert isinstance(score, (int, float)) and 0.0 <= float(score) <= 2.0, (
@@ -59,13 +62,15 @@ def verify_e2e_report(
     stderr = log_err_path.read_text(encoding="utf-8", errors="replace").lower()
     fatal = [pattern for pattern in _FATAL_STDERR if pattern in stderr]
     assert not fatal, f"fatal pattern(s) in Slurm stderr: {fatal}"
+    run_environment = report_path.parent.parent / "run_environment.json"
+    assert run_environment.is_file(), "run_environment.json was not written"
 
     return {
         "integrity": True,
         "save_mode": "embedding_only",
         "selected_features": selected,
         "alpaca_items": 1,
-        "gpu_profile": "h100",
+        "gpu": alpaca["gpu"],
         "report": str(report_path.resolve()),
     }
 

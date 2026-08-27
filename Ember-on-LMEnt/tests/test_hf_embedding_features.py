@@ -111,6 +111,8 @@ class HuggingFaceEmbeddingFeatureTests(unittest.TestCase):
                     "tiny-olmo2",
                     "--model-device",
                     "cpu",
+                    "--fitting-device",
+                    "cpu",
                     "--concept-json",
                     str(concept_json),
                     "--neutral-json",

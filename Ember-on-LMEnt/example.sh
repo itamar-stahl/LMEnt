@@ -1,35 +1,25 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run from Ember-on-LMEnt/. The concept must exist in both the concept JSON and
-# the evaluation JSON. OUTPUT_DIR must be a new path.
-CONCEPT="Culture of Greece"
-OUTPUT_DIR="lment_outputs/culture-of-greece"
-P="8.0"
-
-# This example skips the external LLM feature judge. P is required and keeps
-# embedding features whose concept/neutral ratio_abs is at least P.
-# No --delta is given, so the runner selects the best delta using QA_train and
-# SimdomQA_train, then evaluates QA_test and SimdomQA_test once.
+# Run from Ember-on-LMEnt/. The YAML contains the model, sentence JSONs,
+# feature-fitting device, judge or threshold selection, delta strategy,
+# evaluation, save mode, and runs root.
 python -m ember.run_lment_ember \
-  --config configs/ember_lment.yaml \
-  --concept "$CONCEPT" \
-  --concept-json data/concept_sentences.json \
-  --neutral-json data/neutral_sentences.json \
-  --eval-json data/mc_questions.json \
-  --output-dir "$OUTPUT_DIR" \
-  --skip-llm-judge \
-  --feature-ratio-threshold "$P"
+  --config "$(pwd)/configs/ember_lment.yaml" \
+  --concept "Culture of Greece"
 
-# Default output:
-#   $OUTPUT_DIR/erased_embeddings.safetensors
-#   $OUTPUT_DIR/report.json
+# A new folder is created automatically:
+#   runs/Culture_of_Greece_lment-1b-control-2e_<date_time>/
 #
-# Add --full-save to save a complete Hugging Face checkpoint under
-# $OUTPUT_DIR/model instead.
+# To skip the judge, set these YAML values:
+#   selection.mode: threshold
+#   selection.feature_ratio_threshold: 8.0
 #
-# Optional Alpaca raw-continuation evaluation requires implemented callbacks in
-# ember/judge_callbacks.py. Add both flags for this laptop:
-#   --alpaca-eval --gpu-type rtx5070-laptop
-# For an NVIDIA H100 use:
-#   --alpaca-eval --gpu-type h100
+# To use a fixed erasure strength, set:
+#   ember.explicit_delta: 0.5
+#
+# To run feature fitting on CPU, set:
+#   lment.features.fitting_device: cpu
+#
+# The default output is embedding-only. For a full model, set:
+#   lment.save.full_model: true

@@ -23,21 +23,19 @@ EMBER + SNMF.
 
 ```bash
 git clone https://github.com/itamar-stahl/LMEnt.git
-cd LMEnt/Ember-on-LMEnt
+cd LMEnt
 
 conda env create -f environment.yml
-conda activate ember
-python -m pip install -r requirements.txt
+conda activate lment
+cd Ember-on-LMEnt
 
 cp .env.example .env   # then add your HF_TOKEN and GEMINI_API_KEY
 ```
 
-The same `environment.yml` supports Miniforge on Windows and Linux. In
-PowerShell, use `Copy-Item .env.example .env` instead of `cp` if `cp` is not
-available. Run the setup from **Miniforge Prompt** if PowerShell's execution
-policy blocks `Conda.psm1`; no machine-wide policy change is required. The CUDA
-12.8 PyTorch wheel supports RTX 50-series GPUs; CPU-only machines can still run
-the unit tests, with CUDA integration tests skipped.
+The suite root also provides `environment.windows.yml`. Both manifests create
+the `lment` environment and install this project in editable mode through its
+`pyproject.toml`. `Ember-on-LMEnt/activate_env.sh` activates that same environment
+on Linux compute nodes; it does not create a second environment.
 
 For the original Gemma/Llama paper methods, first complete the core setup above,
 then additionally install `python -m pip install -e ".[paper]"`.
@@ -103,8 +101,8 @@ different feature set between runs.
 
 The training has two tracks. EMBER only needs the **embedding** track; add the
 **MLP** track as well if you also want to run SNMF erasure.
-Matrix factorization runs on CPU by default, matching the original factorization
-path. The model itself may still be loaded on CUDA independently.
+Matrix factorization uses CUDA by default. Pass `--fitting-device cpu` for a
+CPU-only run. The LMEnt YAML keeps model and fitting devices separate.
 
 ```bash
 # Factorize. Drop --skip-mlp to also build the MLP track (for SNMF).
@@ -131,113 +129,58 @@ files in `data/` remain the defaults.
 
 ## Standalone EMBER on LMEnt
 
-The LMEnt runner applies only the EMBER embedding edit to one named concept in a
-local control model. The concept and neutral JSON paths are always explicit:
+The LMEnt runner applies only EMBER to one named concept. All model, data,
+feature, judge, delta, evaluation, save, environment, and Slurm settings live in
+the YAML. The public command has only two arguments:
 
 ```bash
-python -m ember.run_lment_ember --config configs/ember_lment.yaml \
-    --concept "Culture of Greece" \
-    --concept-json data/concept_sentences.json \
-    --neutral-json data/neutral_sentences.json \
-    --eval-json data/mc_questions.json \
-    --output-dir lment_outputs/culture-of-greece \
-    --skip-llm-judge --feature-ratio-threshold 8.0
+python -m ember.run_lment_ember \
+  --config /absolute/path/to/configs/ember_lment.yaml \
+  --concept "Culture of Greece"
 ```
 
-`--skip-llm-judge` requires `--feature-ratio-threshold P`. It selects every
-feature where `ratio_abs = mean(|G| concept) / mean(|G| neutral)` is at least P.
-The run stops if no feature passes. Judge mode is the default and uses two
-provider-neutral Python callbacks in `ember/judge_callbacks.py`:
+Each invocation creates
+`runs/<concept>_<model-key>_<YYYYMMDD_HHMMSS>/`. It snapshots the source and
+effective configuration, relevant concept sentences, complete neutral input,
+optional evaluation input, wrappers, runtime environment, features, erased
+weights, and report. `run_wrapper.sh` reproduces Linux execution and
+`run_wrapper.ps1` reproduces Windows execution.
 
-1. `describe_feature(full_prompt) -> description_string`
-2. `classify_feature(full_prompt_with_description) -> JSON_string`
+The YAML `selection.mode` is either `judge` or `threshold`. Threshold mode
+requires `selection.feature_ratio_threshold`; judge mode uses the hosted model
+configured under `lment.judge`. Automatic delta selection uses `eval.data_json`;
+otherwise set `ember.explicit_delta`.
 
-The second JSON string must contain `{"is_member": bool, "confidence": 0..1}`.
-The default callbacks raise an informative `NotImplementedError`; implement them
-or inject callbacks through `run_lment_pipeline()`. Judge errors stop the run.
-For example:
+The default save contains only `outputs/erased_embeddings.safetensors`. Set
+`lment.save.full_model: true` to also save a complete checkpoint under
+`outputs/model`. The source checkpoint is never changed.
 
-```python
-from ember.lment_pipeline import run_lment_pipeline
+Feature generation always happens inside `outputs/features`. When
+`lment.features.reuse: true`, the runner validates and copies a complete shared
+cache first. Reuse fails if any concept sentence, neutral sentence, model marker,
+or feature parameter changed. After success, a new complete cache is copied to
+`mf_outputs` only when all three shared branches are absent.
 
-report = run_lment_pipeline(
-    config,
-    concept="Culture of Greece",
-    describe_callback=lambda full_prompt: provider.describe(full_prompt),
-    classify_callback=lambda full_prompt: provider.classify(full_prompt),
-)
-```
-
-Automatic best-delta selection requires an evaluation JSON containing
-`QA_train`, `SimdomQA_train`, `QA_test`, and `SimdomQA_test` for the concept.
-The train splits select delta; the test splits run once afterward. For a concept
-without these questions, pass an explicit `--delta`.
-
-By default the output directory contains only `erased_embeddings.safetensors`
-and `report.json`. The source checkpoint is never written. Load it with:
-
-```python
-from ember.erased_embedding import load_lment_with_erased_embeddings
-
-model, tokenizer = load_lment_with_erased_embeddings(
-    "/path/to/base-lment",
-    "/path/to/output/erased_embeddings.safetensors",
-    device="cuda",
-)
-```
-
-Add `--full-save` to write a complete Hugging Face checkpoint under
-`OUTPUT_DIR/model` instead.
-
-Alpaca evaluation supports `--gpu-type rtx5070-laptop` (maximum batch 1) and
-`--gpu-type h100` (maximum batch 32), then lowers the batch using currently free
-VRAM. LMEnt receives each prompt as raw text, and only newly generated tokens are
-returned. These results are prompt-continuation relevance/fluency, not an
-instruction-following claim. Alpaca relevance and fluency also use the documented
-provider-neutral callbacks in `ember/judge_callbacks.py`.
-Each Alpaca callback receives the complete scoring prompt and must return text
-containing `Rating: [[0]]`, `Rating: [[1]]`, or `Rating: [[2]]`.
-
-See `example.sh` for a complete threshold-mode run.
+Alpaca evaluation uses available CUDA VRAM to choose its batch size. For LMEnt,
+it measures raw prompt-continuation relevance and fluency, not instruction
+following.
 
 ### Slurm cluster
 
-The root `environment.yml` installs this package into the `lment` Conda
-environment. On the cluster, source the EMBER entry point; it reuses the same
-Conda activation as `Untaught` but does not start Elasticsearch:
+Submit one concept from the login node:
 
 ```sh
 cd /home/morg/NLP_2526b/$(whoami)/LMEnt/Ember-on-LMEnt
-. ./activate_env.sh
+sh /home/morg/NLP_2526b/$(whoami)/LMEnt/Ember-on-LMEnt/slurm/submit_ember.sh \
+  --config /home/morg/NLP_2526b/$(whoami)/LMEnt/Ember-on-LMEnt/configs/ember_lment_slurm.yaml \
+  --concept "Culture of Greece"
 ```
 
-Submit one concept with:
-
-```sh
-sh slurm/submit_ember.sh \
-  --config configs/ember_lment_slurm.yaml \
-  --concept "Culture of Greece" \
-  --concept-json data/concept_sentences.json \
-  --neutral-json data/neutral_sentences.json \
-  --output-dir lment_outputs/culture-of-greece \
-  --delta 0.5 \
-  --judge-model google/gemma-3-12b-it
-```
-
-The client prepares SNMF factors on CPU and caches the hosted Gemma model on
-shared storage. Only the judge, LMEnt erasure/evaluation, and optional Alpaca
-generation enter the one-H100 Slurm job. The node runs offline and refuses a
-non-H100 GPU or a Conda environment other than `lment`. The existing Windows
-command remains unchanged.
-
-Run the deployment package with `sh slurm/tests/run_test.sh`. It runs the local
-suite, submits a real H100 end-to-end smoke, and verifies judge selection,
-embedding-only integrity, reload, and one Alpaca item. See `slurm/README.md` for
-options and report paths.
-
-For a real-checkpoint mechanical smoke test without concept evaluation, run
-`tests/lment_erasure_smoke.py`. Its `--keep-erased-model` flag preserves the
-otherwise-temporary erased checkpoint and prints a JSON report with its path.
+The client creates the run folder, snapshots inputs, resolves the hosted judge,
+and submits the generated absolute `job.slurm`. The job contains
+`#SBATCH --constraint=h100`. Python does not choose the GPU model. Feature
+fitting, judging, erasure, evaluation, saving, and cache publication all run in
+that single job. See `slurm/README.md` for testing.
 
 For Llama, use rank 200 and its model name:
 

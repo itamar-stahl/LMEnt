@@ -63,7 +63,7 @@ def save_erased_embedding(*, model: torch.nn.Module, output_dir: Path,
                           edited_token_ids: Sequence[int]) -> Path:
     """Write only the edited input-embedding tensor with strict base metadata."""
     output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=False)
+    output_dir.mkdir(parents=True, exist_ok=True)
     base_model_path = Path(base_model_path).resolve()
     weight = model.get_input_embeddings().weight.detach().cpu().contiguous()
     metadata = {
@@ -79,6 +79,8 @@ def save_erased_embedding(*, model: torch.nn.Module, output_dir: Path,
         "edited_token_ids": json.dumps([int(token_id) for token_id in edited_token_ids]),
     }
     artifact_path = output_dir / ARTIFACT_FILENAME
+    if artifact_path.exists():
+        raise FileExistsError(f"Erased embedding already exists: {artifact_path}")
     save_file({tensor_name: weight}, artifact_path, metadata=metadata)
     return artifact_path
 

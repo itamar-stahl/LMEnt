@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import subprocess
 from pathlib import Path
 from typing import List, Optional
 
@@ -31,8 +32,11 @@ def main(argv: Optional[List[str]] = None) -> None:
     args = parse_args(argv)
     execution = "windows" if os.name == "nt" else "local"
     prepared = prepare_run(args.config, args.concept, execution=execution)
-    execute_prepared_run(
-        prepared.effective_config, args.concept, execution=execution)
+    if os.name == "nt":
+        execute_prepared_run(
+            prepared.effective_config, args.concept, execution=execution)
+    else:
+        subprocess.run([str(prepared.run_dir / "run_wrapper.sh")], check=True)
     print(f"[run] {prepared.run_dir}")
 
 

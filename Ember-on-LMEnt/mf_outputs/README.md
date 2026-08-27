@@ -1,36 +1,29 @@
-# LMEnt EMBER feature cache
+# LMEnt EMBER shared feature cache
 
-This directory stores generated SNMF features. The artifacts are large and
-ignored by Git; this README is tracked.
-
-For each model, rank, seed, and concept, the main files are:
+Successful runs may publish their embedding-feature bundle here. Large cache
+artifacts are ignored by Git; this README is tracked.
 
 ```text
-mf_outputs/
-└── <model_key>/
-    ├── pickles/rank<R>/seed<S>/<concept>/embedding/
-    │   └── embedding.pkl
-    ├── csvs/rank<R>/seed<S>/<concept>/embedding/
-    │   ├── stats_embed.csv
-    │   └── token_features.csv
-    └── interpretations/rank<R>/seed<S>/<concept>/embedding/
-        ├── potential_features.csv
-        └── judge_trace.json          # judge mode only
+mf_outputs/<model-key>/
+├── csvs/rank<R>/seed<S>/<concept>/
+├── interpretations/rank<R>/seed<S>/<concept>/
+└── pickles/rank<R>/seed<S>/<concept>/
 ```
 
-`embedding.pkl`, `stats_embed.csv`, and `token_features.csv` are the reusable
-factor cache. If all three exist, `ensure_factor_artifact()` skips SNMF. A new
-concept, model key, rank, or seed creates a different cache path.
+Each of the three concept folders contains copies of:
 
-Prepare one concept on CPU:
-
-```sh
-python -m ember.prepare_lment_features \
-  --config configs/ember_lment.yaml \
-  --concept "Culture of Greece" \
-  --concept-json data/concept_sentences.json \
-  --neutral-json data/neutral_sentences.json
+```text
+concept_sentences.json
+neutral_sentences.json
+feature_manifest.json
 ```
 
-Then run erasure with `--reuse-features`. Threshold or judge selection creates
-`potential_features.csv`; judge mode also creates `judge_trace.json`.
+The concept file contains only the relevant concept record. The neutral file
+contains the complete neutral input. The manifest records the model marker,
+rank, seed, and factorization parameters.
+
+With `lment.features.reuse: true`, all three branches must exist and every
+provenance file must match exactly. Missing, partial, or changed caches stop the
+run with an informative error; the runner never overwrites them. With reuse
+disabled, features are built inside the run folder and copied here only if all
+three destination branches are absent.

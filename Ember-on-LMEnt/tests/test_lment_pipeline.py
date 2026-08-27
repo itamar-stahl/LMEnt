@@ -115,6 +115,7 @@ class LMEntPipelineTests(unittest.TestCase):
                 model_key="tiny-olmo2",
                 features_root=Path(tmp) / "features",
                 runs_root=source,
+                output_dir=source / "outputs",
                 explicit_delta=0.5,
                 device="cpu",
             )
@@ -178,6 +179,7 @@ class LMEntPipelineTests(unittest.TestCase):
                     model_key="tiny-olmo2",
                     features_root=features_root,
                     runs_root=output_root,
+                    output_dir=output_root,
                     rank=1,
                     seed=42,
                     ratio_thresh=2.0,
@@ -215,6 +217,7 @@ class LMEntPipelineTests(unittest.TestCase):
                 model_key="tiny-olmo2",
                 features_root=features_root,
                 runs_root=output_root,
+                output_dir=output_root,
                 rank=1,
                 seed=42,
                 ratio_thresh=2.0,
@@ -224,8 +227,7 @@ class LMEntPipelineTests(unittest.TestCase):
                 dtype="fp32",
             ), concept="Arbitrary concept")
 
-            erased_path = (
-                output_root / "Arbitrary_concept" / "erased_embeddings.safetensors")
+            erased_path = output_root / "erased_embeddings.safetensors"
             report_exists = (erased_path.parent / "report.json").is_file()
             source, _ = load_local_causal_lm(model_path, device="cpu")
             erased, _ = load_lment_with_erased_embeddings(
@@ -269,6 +271,7 @@ class LMEntPipelineTests(unittest.TestCase):
                 model_key="tiny-olmo2",
                 features_root=features_root,
                 runs_root=output_root,
+                output_dir=output_root,
                 rank=1,
                 explicit_delta=0.5,
                 device="cpu",

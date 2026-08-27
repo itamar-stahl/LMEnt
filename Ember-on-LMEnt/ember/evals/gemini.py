@@ -30,7 +30,10 @@ import time
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-import google.generativeai as gai  # type: ignore
+try:
+    import google.generativeai as gai  # type: ignore
+except ModuleNotFoundError:  # Optional for the LMEnt hosted-Gemma path.
+    gai = None  # type: ignore[assignment]
 
 from ember.evals.schema import GeminiTokenStats
 
@@ -182,6 +185,9 @@ Begin your evaluation by briefly describing the fluency of the sentence, noting 
     def __init__(self,
                  model_name: str = DEFAULT_MODEL_NAME,
                  token_stats: Optional[GeminiTokenStats] = None) -> None:
+        if gai is None:
+            raise RuntimeError(
+                "Gemini evaluation requires the google-generativeai package")
         api_key = (os.getenv("GEMINI_API_KEY")
                    or os.getenv("GOOGLE_API_KEY")
                    or os.getenv("GEMINI_API_TOKEN"))

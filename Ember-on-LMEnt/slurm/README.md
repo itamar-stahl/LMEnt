@@ -1,44 +1,51 @@
 # LMEnt EMBER on Slurm
 
-Run all commands on the login node from the repository checkout. CPU
-factorization stays on the login node. Gemma judging, LMEnt erasure/evaluation,
-and Alpaca generation run in one `gpu-h100-killable` job.
+The source YAML contains every setting except the concept. The submission client
+creates a reproducible run folder and sends the complete concept flow to one GPU
+node.
 
 ```sh
-cd /home/morg/NLP_2526b/$(whoami)/LMEnt/Ember-on-LMEnt
-. ./activate_env.sh
-
-sh slurm/submit_ember.sh \
-  --config configs/ember_lment_slurm.yaml \
-  --concept "Culture of Greece" \
-  --concept-json data/concept_sentences.json \
-  --neutral-json data/neutral_sentences.json \
-  --output-dir lment_outputs/culture-of-greece \
-  --delta 0.5 \
-  --judge-model google/gemma-3-12b-it
+cd /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt
+sh /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/slurm/submit_ember.sh \
+  --config /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/configs/ember_lment_slurm.yaml \
+  --concept "Culture of Greece"
 ```
 
-The login node downloads the gated judge model into the shared Hugging Face
-cache. Authenticate once before the first run with `hf auth login`, or set
-`HF_TOKEN`. The compute job receives the resolved snapshot path and runs
-offline. Pass a local shared model directory to `--judge-model` to skip the
-download.
+Replace `<USER>` before running. Generated `config.yaml`, `job.slurm`, and both
+wrappers contain resolved absolute paths. The client downloads or resolves the
+judge model before submission. The node runs offline in the root `lment` Conda
+environment.
 
-Use `--eval-json data/mc_questions.json` instead of `--delta` for automatic
-delta selection. Add `--alpaca-eval` for the complete Alpaca split. The H100
-batch size is reduced from the profile maximum using free VRAM.
+Every job receives its own folder:
 
-## Cluster test
+```text
+runs/<concept>_<model-key>_<date_time>/
+├── source_config.yaml
+├── config.yaml
+├── inputs/
+├── job.slurm
+├── run_wrapper.sh
+├── run_wrapper.ps1
+├── client.log
+├── client_report.json
+├── log.out
+├── log.err
+├── run_environment.json
+└── outputs/
+```
 
-The default command runs local tests, prepares factors on the login node, then
-submits and waits for a real H100 smoke run using Gemma feature judging and one
-Alpaca item:
+`job.slurm` requests one GPU with `#SBATCH --constraint=h100`. Python checks
+that CUDA and the `lment` environment are available, but it does not select or
+identify the scheduler's GPU model.
+
+## Cluster tests
+
+Run the equivalent deployment test package from the login node:
 
 ```sh
-sh slurm/tests/run_test.sh
+sh /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/slurm/tests/run_test.sh
 ```
 
-Use `--no-submit` to check only the environment, Python tests, dependencies,
-compilation, and shell syntax. Each run prints the path to `report.log`; full
-logs, generated Slurm files, the erased embedding, and EMBER's JSON report stay
-under `slurm_test_runs/test_<timestamp>/`.
+The script first checks the environment, compilation, unit tests, generated run
+files, absolute paths, and the H100 constraint. Its submitted test uses the same
+single-concept flow as production.

@@ -53,9 +53,9 @@ def parse_args():
     ap.add_argument(
         "--fitting-device",
         type=str,
-        default="cpu",
+        default="cuda",
         choices=("cpu", "cuda", "mps"),
-        help="Device used only for matrix factorization. Defaults to the original CPU path.",
+        help="Device used only for matrix factorization. Use cpu for CPU-only runs.",
     )
     ap.add_argument("--cache-dir", type=str, default=None,
                     help="HuggingFace model cache directory. Defaults to HF_HOME if unset.")
@@ -114,6 +114,10 @@ def main():
     model_device = resolve_device(args.model_device)
     data_device = args.data_device
     fit_device = args.fitting_device
+    if fit_device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError(
+            "CUDA feature fitting was requested, but CUDA is unavailable. "
+            "Pass --fitting-device cpu to run on CPU.")
     model_key = args.model_key or args.model_name
     safe_model = _safe_model_name(model_key)
 

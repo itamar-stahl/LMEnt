@@ -220,7 +220,7 @@ def main(argv: Optional[Sequence[str]] = None) -> Dict[str, Any]:
         workspace = (
             args.output_root.resolve()
             if args.output_root is not None
-            else PROJECT_ROOT / "lment_outputs" / datetime.now(
+            else PROJECT_ROOT / "runs" / datetime.now(
                 timezone.utc).strftime("smoke-%Y%m%dT%H%M%SZ")
         )
         if workspace.exists():

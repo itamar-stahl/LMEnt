@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 from ember.lment_pipeline import LMEntRunConfig, ensure_factor_artifact, load_lment_config
 from ember.run_lment_ember import parse_args
+from ember.train_mf_features import parse_args as parse_feature_args
 
 
 def write_config(path: Path) -> None:
@@ -46,6 +47,11 @@ lment:
 
 
 class LMEntConfigTests(unittest.TestCase):
+    def test_standalone_feature_fitting_defaults_to_cuda(self) -> None:
+        with patch("sys.argv", ["train_mf_features.py"]):
+            args = parse_feature_args()
+        self.assertEqual(args.fitting_device, "cuda")
+
     def test_public_cli_only_accepts_config_and_concept(self) -> None:
         args = parse_args(["--config", "config.yaml", "--concept", "Concept A"])
         self.assertEqual(args.concept, "Concept A")

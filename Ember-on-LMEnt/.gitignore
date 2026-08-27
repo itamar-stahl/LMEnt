@@ -14,8 +14,8 @@ build/
 # Model / feature outputs (large, user-generated)
 mf_outputs/*
 !mf_outputs/README.md
-lment_outputs/*
-!lment_outputs/README.md
+runs/*
+!runs/README.md
 slurm_runs/
 slurm_test_runs/
 results/
