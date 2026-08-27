@@ -1,14 +1,14 @@
-# Real H100 end-to-end smoke: Wikipedia sentences -> features -> judge -> erase
-# -> held-out evaluation -> one Alpaca continuation -> embedding-only artifact.
+# Titan XP end-to-end smoke. The expensive judge is replaced by deterministic
+# threshold selection; judge connector behavior is covered by unit tests.
 method: ember
 model_name: ../../models_symlinks/lment-1b-control-2e
-rank: 100
+rank: 2
 seed: 42
 
 selection:
-  mode: judge
+  mode: threshold
   ratio_thresh: 2.0
-  feature_ratio_threshold: null
+  feature_ratio_threshold: 0.0
   judge_confidence_threshold: 0.85
   judge_top_k: 20
 
@@ -18,12 +18,12 @@ ember:
 
 eval:
   data_json: ../data/mc_questions.json
-  alpaca: true
+  alpaca: false
   alpaca_split: test
   alpaca_max_items: 1
 
 lment:
-  model_key: lment-1b-control-2e
+  model_key: lment-1b-control-2e-titan-test
   model_device: cuda
   dtype: fp32
   runs_root: ../runs
@@ -34,11 +34,11 @@ lment:
     cache_root: ../mf_outputs
     reuse: false
     fitting_device: cuda
-    max_iterations: 20000
-    g_sparsity: 0.01
-    k_proj: 30
+    max_iterations: 2
+    g_sparsity: 1.0
+    k_proj: 2
   judge:
-    model: google/gemma-3-12b-it
+    model: null
     revision: null
     device: cuda
     max_new_tokens: 256
@@ -49,10 +49,9 @@ lment:
   execution:
     activate_script: ../activate_env.sh
   slurm:
-    job_name: ember-lment-test
-    account: gpu-research
-    partition: gpu-h100-killable
-    constraint: h100
-    time_minutes: 360
-    cpu_mem_mb: 64000
+    job_name: ember-lment-tests
+    partition: studentkillable
+    constraint: titan_xp
+    time_minutes: 240
+    cpu_mem_mb: 32000
     cpus_per_task: 8

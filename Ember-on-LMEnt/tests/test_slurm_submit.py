@@ -80,7 +80,7 @@ class SlurmSubmitTests(unittest.TestCase):
         self.assertIn("ember.slurm_gpu_preflight", wrapper)
         self.assertIn("ember.lment_worker", wrapper)
         self.assertNotIn("prepare_lment_features", wrapper)
-        self.assertIn("#SBATCH --constraint=h100", job)
+        self.assertIn('#SBATCH --constraint="h100"', job)
         for name, exists in files_exist.items():
             self.assertTrue(exists, name)
 

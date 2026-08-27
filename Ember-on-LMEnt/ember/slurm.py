@@ -3,13 +3,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import re
 from typing import Any, Mapping
 
 
 @dataclass(frozen=True)
 class SlurmResources:
     job_name: str
-    account: str
+    account: str | None
     partition: str
     constraint: str
     time_minutes: int
@@ -19,18 +20,19 @@ class SlurmResources:
     @classmethod
     def from_mapping(cls, payload: Mapping[str, Any]) -> "SlurmResources":
         required = {
-            "job_name", "account", "partition", "constraint",
+            "job_name", "partition", "constraint",
             "time_minutes", "cpu_mem_mb", "cpus_per_task",
         }
         missing = required - set(payload)
         if missing:
             raise ValueError(f"Missing lment.slurm keys: {sorted(missing)}")
-        unknown = set(payload) - required
+        allowed = required | {"account"}
+        unknown = set(payload) - allowed
         if unknown:
             raise ValueError(f"Unknown lment.slurm keys: {sorted(unknown)}")
         resources = cls(
             job_name=str(payload["job_name"]),
-            account=str(payload["account"]),
+            account=(str(payload["account"]) if payload.get("account") else None),
             partition=str(payload["partition"]),
             constraint=str(payload["constraint"]),
             time_minutes=int(payload["time_minutes"]),
@@ -41,11 +43,15 @@ class SlurmResources:
         return resources
 
     def validate(self) -> None:
-        for name in ("job_name", "account", "partition"):
+        for name in ("job_name", "partition"):
             if not getattr(self, name).strip():
                 raise ValueError(f"SLURM {name} must be non-empty")
-        if self.constraint.lower() != "h100":
-            raise ValueError("LMEnt Slurm config must set constraint: h100")
+        if self.account is not None and not self.account.strip():
+            raise ValueError("SLURM account must be non-empty when provided")
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", self.constraint):
+            raise ValueError(
+                "SLURM constraint must contain only letters, numbers, '_', '-', or '.'"
+            )
         if min(self.time_minutes, self.cpu_mem_mb, self.cpus_per_task) <= 0:
             raise ValueError("SLURM time, memory, and CPU values must be positive")
 
@@ -59,13 +65,16 @@ def materialize_slurm_job(run_dir: Path,
     if not wrapper.is_file():
         raise FileNotFoundError(f"Prepared run wrapper not found: {wrapper}")
     job = run_dir / "job.slurm"
+    account_line = (
+        f"#SBATCH --account={resources.account}\n"
+        if resources.account is not None else ""
+    )
     text = f"""#!/bin/sh
 #SBATCH --job-name={resources.job_name}
 #SBATCH --output={run_dir / 'log.out'}
 #SBATCH --error={run_dir / 'log.err'}
-#SBATCH --account={resources.account}
-#SBATCH --partition={resources.partition}
-#SBATCH --constraint=h100
+{account_line}#SBATCH --partition={resources.partition}
+#SBATCH --constraint="{resources.constraint}"
 #SBATCH --time={resources.time_minutes}
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
