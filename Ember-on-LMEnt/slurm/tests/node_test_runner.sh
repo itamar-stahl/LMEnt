@@ -60,7 +60,7 @@ echo "job=${SLURM_JOB_ID:-not-set}" | tee -a "${FULL}" "${REPORT}"
 cd "${PROJECT}" || exit 1
 
 run_phase config python -c \
-  'import sys; from pathlib import Path; from ember.lment_pipeline import load_lment_config; c=load_lment_config(Path(sys.argv[1])); p=Path(c.model_path).resolve(); assert (p/"config.json").is_file(), p; assert c.slurm["partition"]=="studentkillable"; assert c.slurm["constraint"]=="titan_xp"; print(p)' \
+  'import sys; from pathlib import Path; from ember.lment_pipeline import load_lment_config; from ember.slurm_model import validate_slurm_model_config; p=validate_slurm_model_config(Path(sys.argv[1])); c=load_lment_config(Path(sys.argv[1])); assert c.model_path==p; assert c.slurm["partition"]=="studentkillable"; assert c.slurm["constraint"]=="titan_xp"; print(p)' \
   "${CONFIG}" || true
 
 if [ -f "${TEST_DIR}/config.log" ]; then

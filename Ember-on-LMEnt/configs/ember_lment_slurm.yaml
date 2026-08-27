@@ -1,5 +1,5 @@
 method: ember
-model_name: ../../models_symlinks/win-lment-1b-control-2e
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e/
 rank: 100
 seed: 42
 

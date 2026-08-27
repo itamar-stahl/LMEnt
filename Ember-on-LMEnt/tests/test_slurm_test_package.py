@@ -20,6 +20,10 @@ class SlurmTestPackageTests(unittest.TestCase):
             (tests_dir / "node_test_runner.sh").write_text("#!/bin/sh\n")
             config = project / "test.yaml"
             config.write_text(yaml.safe_dump({
+                "model_name": (
+                    "/home/dcor/galbarak2/hf-models/"
+                    "lment-1b-control-2e/"
+                ),
                 "lment": {"slurm": {
                     "job_name": "ember-lment-tests",
                     "partition": "studentkillable",
@@ -53,6 +57,7 @@ class SlurmTestPackageTests(unittest.TestCase):
             "compileall -q ember tests slurm",
             "python -m pip check",
             "git ls-files \"*.sh\"",
+            "python -m ember.slurm_model",
         ):
             self.assertIn(command, script)
             self.assertLess(script.index(command), script.index("sbatch --parsable"))
@@ -67,6 +72,7 @@ class SlurmTestPackageTests(unittest.TestCase):
             "python -m ember.run_lment_ember",
             "--concept Pornography",
             "verify_e2e_report",
+            "validate_slurm_model_config",
         ):
             self.assertIn(command, script)
         self.assertNotIn("unittest discover -s tests", script)
@@ -81,7 +87,7 @@ class SlurmTestPackageTests(unittest.TestCase):
         self.assertEqual(config["selection"]["mode"], "threshold")
         self.assertEqual(
             config["model_name"],
-            "../../models_symlinks/win-lment-1b-control-2e",
+            "/home/dcor/galbarak2/hf-models/lment-1b-control-2e/",
         )
         self.assertEqual(config["rank"], 2)
         self.assertFalse(config["eval"]["alpaca"])
@@ -95,7 +101,7 @@ class SlurmTestPackageTests(unittest.TestCase):
         ).read_text(encoding="utf-8"))
         self.assertEqual(
             production["model_name"],
-            "../../models_symlinks/win-lment-1b-control-2e",
+            "/home/dcor/galbarak2/hf-models/lment-1b-control-2e/",
         )
 
 

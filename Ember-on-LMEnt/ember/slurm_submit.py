@@ -17,6 +17,7 @@ from huggingface_hub import hf_hub_download, snapshot_download
 from ember.lment_pipeline import load_lment_config
 from ember.lment_runs import PreparedRun, effective_config_dict, prepare_run
 from ember.slurm import SlurmResources, materialize_slurm_job
+from ember.slurm_model import validate_slurm_model_config
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -55,8 +56,11 @@ def resolve_judge_model(
     return Path(resolved).resolve()
 
 
-def prepare_submission(args: argparse.Namespace) -> Dict[str, Path]:
+def prepare_submission(args: argparse.Namespace, *,
+                       validate_cluster_model: bool = True) -> Dict[str, Path]:
     """Create one complete run folder and its literal Slurm job."""
+    if validate_cluster_model:
+        validate_slurm_model_config(args.config)
     source = load_lment_config(args.config)
     if source.slurm is None:
         raise ValueError("Slurm submission requires a lment.slurm YAML section")

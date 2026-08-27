@@ -1,7 +1,7 @@
 # Titan XP end-to-end smoke. The expensive judge is replaced by deterministic
 # threshold selection; judge connector behavior is covered by unit tests.
 method: ember
-model_name: ../../models_symlinks/win-lment-1b-control-2e
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e/
 rank: 2
 seed: 42
 

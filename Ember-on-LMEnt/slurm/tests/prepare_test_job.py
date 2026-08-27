@@ -17,6 +17,10 @@ from typing import Any, Dict, Optional, Sequence
 import yaml
 
 from ember.slurm import SlurmResources, materialize_slurm_job
+from ember.slurm_model import (
+    SLURM_LMENT_MODEL_PATH,
+    validate_slurm_model_config,
+)
 
 
 def _allocate_test_dir(root: Path) -> Path:
@@ -49,6 +53,7 @@ def prepare_test_job(config_path: Path, *,
             raise FileNotFoundError(f"{label} not found: {path}")
 
     raw = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    validate_slurm_model_config(config_path, require_exists=False)
     try:
         slurm_payload = raw["lment"]["slurm"]
     except (KeyError, TypeError) as error:
@@ -85,6 +90,7 @@ def prepare_test_job(config_path: Path, *,
         "python_executable": str(Path(sys.executable).resolve()),
         "hostname": platform.node(),
         "slurm": dict(slurm_payload),
+        "cluster_model_path": SLURM_LMENT_MODEL_PATH,
     }
     environment_path = test_dir / "client_environment.json"
     environment_path.write_text(

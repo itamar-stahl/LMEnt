@@ -4,6 +4,10 @@ The source YAML contains every setting except the concept. The submission client
 creates a reproducible run folder and sends the complete concept flow to one GPU
 node.
 
+All Slurm login-node and GPU-node flows use the same shared control checkpoint:
+`/home/dcor/galbarak2/hf-models/lment-1b-control-2e/`. Submission fails before
+`sbatch` if a Slurm YAML names another model or that checkpoint is unavailable.
+
 ```sh
 cd /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt
 sh /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt/slurm/submit_ember.sh \

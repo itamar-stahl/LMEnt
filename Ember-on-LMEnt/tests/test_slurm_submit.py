@@ -62,7 +62,8 @@ class SlurmSubmitTests(unittest.TestCase):
                 "ember.slurm_submit.resolve_judge_model",
                 return_value=judge.resolve(),
             ) as resolve:
-                written = prepare_submission(args)
+                written = prepare_submission(
+                    args, validate_cluster_model=False)
 
             effective = yaml.safe_load(written["config"].read_text())
             wrapper = written["run_wrapper"].read_text(encoding="utf-8")
@@ -92,6 +93,14 @@ class SlurmSubmitTests(unittest.TestCase):
                 resolved = resolve_judge_model(str(model))
         self.assertEqual(resolved, model.resolve())
         download.assert_not_called()
+
+    def test_submission_rejects_non_cluster_model_before_preparing_run(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            config = self._config(Path(tmp))
+            args = parse_args([
+                "--config", str(config), "--concept", "Culture of Greece"])
+            with self.assertRaisesRegex(ValueError, "must use the shared"):
+                prepare_submission(args)
 
 
 if __name__ == "__main__":

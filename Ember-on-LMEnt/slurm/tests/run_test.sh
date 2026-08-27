@@ -90,6 +90,8 @@ run_login_phase pip_check python -m pip check || true
 run_login_phase shell_syntax sh -c \
   'cd "$1" && git ls-files "*.sh" | while IFS= read -r file; do sh -n "$file" || exit 1; done' \
   shell-check "${PROJECT}" || true
+run_login_phase cluster_model python -m ember.slurm_model \
+  --config "${CONFIG}" || true
 
 if [ "${FAILED}" -ne 0 ]; then
   record gpu_submission SKIP "login-node tests failed"
