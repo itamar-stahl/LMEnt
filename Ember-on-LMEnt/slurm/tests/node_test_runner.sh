@@ -44,12 +44,13 @@ run_phase() {
     cat "${phase_log}" | tee -a "${FULL}"
     record "${name}" PASS "${phase_log}"
     return 0
+  else
+    rc=$?
+    cat "${phase_log}" | tee -a "${FULL}"
+    record "${name}" FAIL "exit=${rc}; ${phase_log}"
+    FAILED=1
+    return "${rc}"
   fi
-  rc=$?
-  cat "${phase_log}" | tee -a "${FULL}"
-  record "${name}" FAIL "exit=${rc}; ${phase_log}"
-  FAILED=1
-  return "${rc}"
 }
 
 echo "LMEnt EMBER Slurm GPU tests" | tee -a "${FULL}" "${REPORT}"

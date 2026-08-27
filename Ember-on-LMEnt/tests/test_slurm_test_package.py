@@ -56,6 +56,7 @@ class SlurmTestPackageTests(unittest.TestCase):
         ):
             self.assertIn(command, script)
             self.assertLess(script.index(command), script.index("sbatch --parsable"))
+        self.assertIn("  else\n    rc=$?", script)
 
     def test_node_runner_contains_only_gpu_tests_and_real_erasure(self) -> None:
         script = (
@@ -71,18 +72,31 @@ class SlurmTestPackageTests(unittest.TestCase):
         self.assertNotIn("unittest discover -s tests", script)
         self.assertNotIn("compileall", script)
         self.assertNotIn("pip check", script)
+        self.assertIn("  else\n    rc=$?", script)
 
     def test_repository_test_yaml_is_bounded_for_titan_xp(self) -> None:
         config = yaml.safe_load((
             PROJECT_ROOT / "configs" / "ember_lment_slurm_test.yaml"
         ).read_text(encoding="utf-8"))
         self.assertEqual(config["selection"]["mode"], "threshold")
+        self.assertEqual(
+            config["model_name"],
+            "../../models_symlinks/win-lment-1b-control-2e",
+        )
         self.assertEqual(config["rank"], 2)
         self.assertFalse(config["eval"]["alpaca"])
         self.assertEqual(config["lment"]["features"]["max_iterations"], 2)
         self.assertEqual(
             config["lment"]["slurm"]["partition"], "studentkillable")
         self.assertEqual(config["lment"]["slurm"]["constraint"], "titan_xp")
+
+        production = yaml.safe_load((
+            PROJECT_ROOT / "configs" / "ember_lment_slurm.yaml"
+        ).read_text(encoding="utf-8"))
+        self.assertEqual(
+            production["model_name"],
+            "../../models_symlinks/win-lment-1b-control-2e",
+        )
 
 
 if __name__ == "__main__":
