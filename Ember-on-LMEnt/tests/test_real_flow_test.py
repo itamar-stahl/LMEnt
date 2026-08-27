@@ -51,6 +51,16 @@ class RealFlowContractTests(unittest.TestCase):
                 "cuda",
             )
 
+    def test_windows_runner_executes_real_cpu_before_real_gpu(self) -> None:
+        script = (PROJECT_ROOT / "tests" / "run_real_flows.ps1").read_text(
+            encoding="utf-8")
+        cpu = "ember_lment_real_windows_cpu.yaml"
+        gpu = "ember_lment_real_windows_gpu.yaml"
+        self.assertIn("-m ember.real_flow_test", script)
+        self.assertIn(cpu, script)
+        self.assertIn(gpu, script)
+        self.assertLess(script.index(cpu), script.index(gpu))
+
 
 if __name__ == "__main__":
     unittest.main()
