@@ -145,6 +145,37 @@ unfiltered 1B trained here will know. A subject a released model cannot answer i
 a poor target: there is no knowledge to remove and nothing for the twin comparison
 to detect.
 
+**But how you ask decides the answer, and the effect is not a constant offset.**
+Measured 2026-08-27 on the 2-epoch control: the same 100 questions, the same
+`acc_per_char` metric, the same model -- changing only the prompt format.
+
+| concept | `Question:/Answer:` | declarative stem | gain |
+|---|---|---|---|
+| World War II | 52% | 61% | +9 |
+| Baseball | 44% | 54% | +10 |
+| Pornography | 51% | 54% | +3 |
+| Harry Potter | 36% | 36% | 0 |
+| COVID-19 pandemic | 24% | 23% | -1 |
+
+The gain runs from -1 to +10 points and is concept-specific, so **a ranking taken
+under one format cannot be shifted into the other.** Baseball alone moves from
+fifth place to second.
+
+**Consequence: do not pick a subject from any answerability measurement taken
+before 2026-08-21.** That includes the 18-concept scoring in
+`ember_eval/results/twins2e_control_770277.json` and anything derived from it. It
+used `Question:/Answer:`, which predates the format finding in
+`ember_eval/EVALUATION.md` and predates understanding why these base models
+cannot be asked questions at all: no instruction tuning, so they continue text
+rather than answer it. Those numbers are a hypothesis about which concepts are
+worth *measuring*. They are not evidence about which concept to ablate, and a
+GPU-week is too expensive to spend on the difference.
+
+To qualify a candidate properly: write its declarative stems as
+`ember_eval/completion_eval/stems_<concept>.py`, score a released checkpoint with
+`evaluate_completion.py`, and read `accuracy` against the 25% floor. Until that
+file exists for a concept, its answerability here is **unmeasured**.
+
 ## After training: proving the model met the subject
 
 Two independent routes, and they must agree.

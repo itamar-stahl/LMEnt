@@ -131,6 +131,17 @@ Stated plainly, because earlier claims were circulated:
    distractors stripped. EMBER has no second question set.
 4. Everything in Part 2 was measured with `Question:/Answer:`, before the format
    finding. Given that format is worth +3–4 of 10, **all of it needs redoing.**
+5. **"+3–4 of 10" is an average, not an offset, and the difference matters.**
+   Measured 2026-08-27 on the 2-epoch control — same 100 questions, same
+   `acc_per_char`, only the format changed — the gain was **+10** on Baseball,
+   +9 on World War II, +3 on Pornography, **0** on Harry Potter and **-1** on
+   COVID-19. It is concept-specific, so **no ranking taken under one format can
+   be shifted into the other**; Baseball alone moves from fifth to second.
+   Anything that ranked or *chose between* concepts on pre-2026-08-21 scores is
+   therefore void rather than merely shifted — including the 18-concept scoring
+   in `results/twins2e_control_770277.json`, which must not be used to pick an
+   ablation subject. See `Untaught/CHOOSING_A_SUBJECT.md`, "would a model
+   actually learn it".
 
 ## Where it stands
 
