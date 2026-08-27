@@ -12,7 +12,8 @@ build/
 *.env
 
 # Model / feature outputs (large, user-generated)
-mf_outputs/
+mf_outputs/*
+!mf_outputs/README.md
 lment_outputs/
 slurm_runs/
 slurm_test_runs/
