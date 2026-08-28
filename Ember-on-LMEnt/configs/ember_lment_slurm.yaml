@@ -52,8 +52,11 @@ lment:
   slurm:
     job_name: ember-lment
     account: gpu-research
-    partition: gpu-h100-killable
-    constraint: h100
+    partition: killable
+    constraint: a6000
     time_minutes: 360
-    cpu_mem_mb: 64000
+    # n-601 is the only a6000 with free GPUs and it runs close to full on host
+    # RAM; 64000 never schedules there. The judge streams its shards to GPU, so
+    # a small request is enough and gets the job started.
+    cpu_mem_mb: 10000
     cpus_per_task: 8
