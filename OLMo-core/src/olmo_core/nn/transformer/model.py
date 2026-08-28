@@ -140,14 +140,23 @@ class Transformer(nn.Module):
         device = device or self.device
         generator = torch.Generator(device).manual_seed(self.init_seed)
 
+        for module in self.modules():
+            if hasattr(module, "reset_parameters"):
+                module.reset_parameters()
+
+        # This must come AFTER the reset_parameters() sweep above, not before.
+        # That loop reaches nn.Embedding.reset_parameters(), which is
+        # init.normal_(weight) with the default std=1.0, so initialising the
+        # embeddings first meant the std=0.02 draw was silently overwritten with
+        # an N(0,1) one. Every model trained from this file before 2026-08-29
+        # has embeddings 50x too large, carrying no usable geometry. The linear
+        # layers were never affected because they are initialised further down,
+        # after the sweep. nn.Embedding is built without padding_idx here, so
+        # skipping its _fill_padding_idx_with_zero() costs nothing.
         if self.embeddings is not None:
             self.init_method.init_embeddings(
                 self.embeddings, d_model=self.d_model, generator=generator
             )
-
-        for module in self.modules():
-            if hasattr(module, "reset_parameters"):
-                module.reset_parameters()
 
         for block in self.blocks:
             # This might fail if it's wrapped.
