@@ -131,6 +131,34 @@ The built-in Gemma connector performs the original two-prompt flow: describe a
 feature from its activating tokens, then classify whether the description
 belongs to the requested concept. Its complete trace is saved with the run.
 
+`lment.judge.executor` chooses where that connector runs:
+
+| Value | Behaviour |
+|---|---|
+| `inproc` (default) | Load the judge in the pipeline's own interpreter. |
+| `subprocess` | Start the judge under `lment.judge.python` and talk to it over stdin/stdout. |
+
+Use `subprocess` for `gemma-4-12B-it`. EMBER pins transformers 4.56.2, which
+does not recognise its `gemma4_unified` architecture at all, so the judge has
+to run under a newer transformers than the pipeline does. The worker is a
+child of the run rather than a shared service: it starts inside the same Slurm
+allocation, loads the revision pinned in the config, and exits with the job.
+
+```yaml
+lment:
+  judge:
+    model: google/gemma-4-12B-it
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    local_files_only: true
+    executor: subprocess
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+```
+
+The interpreter needs only torch and transformers >= 5; the worker imports
+`ember.gemma_judge` and nothing else from EMBER, so that environment does not
+need the pipeline's own dependencies.
+
 To skip the judge, a threshold is required. Every feature with
 `ratio_abs >= feature_ratio_threshold` is selected:
 

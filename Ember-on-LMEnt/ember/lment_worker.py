@@ -9,6 +9,42 @@ from ember.erasure import io
 from ember.gemma_judge import GemmaJudge
 from ember.lment_pipeline import load_lment_config, run_lment_pipeline
 from ember.lment_runs import publish_run_features, write_run_environment
+from ember.subprocess_judge import SubprocessJudge, resolve_judge_directory
+
+
+def build_judge(config) -> object | None:
+    """Load the configured judge in this process or in its own interpreter.
+
+    ``subprocess`` exists because EMBER pins transformers 4.56.2 while
+    ``gemma-4-12B-it`` needs 5.x to be recognised at all. Both branches expose
+    the same four seams, so the pipeline is unaffected by the choice.
+    """
+    if config.judge_model is None:
+        return None
+    if config.judge_executor == "inproc":
+        return GemmaJudge.from_pretrained(
+            config.judge_model,
+            device=config.judge_device,
+            max_new_tokens=config.judge_max_new_tokens,
+            local_files_only=config.judge_local_files_only,
+            cache_dir=config.judge_cache_dir,
+        )
+    # Resolve the pinned snapshot here so the worker never needs hub access
+    # and the run snapshot records exactly the weights that were loaded.
+    model_path = resolve_judge_directory(
+        config.judge_model,
+        revision=config.judge_revision,
+        cache_dir=config.judge_cache_dir,
+        local_files_only=config.judge_local_files_only,
+    )
+    return SubprocessJudge(
+        model_path=model_path,
+        python_executable=config.judge_python,
+        device=config.judge_device,
+        max_new_tokens=config.judge_max_new_tokens,
+        cache_dir=config.judge_cache_dir,
+        local_files_only=config.judge_local_files_only,
+    )
 
 
 def execute_prepared_run(config_path: Path, concept: str, *,
@@ -19,15 +55,7 @@ def execute_prepared_run(config_path: Path, concept: str, *,
     run_dir = Path(config.output_dir).resolve().parent
     write_run_environment(run_dir, execution=execution)
 
-    judge = None
-    if config.judge_model is not None:
-        judge = GemmaJudge.from_pretrained(
-            config.judge_model,
-            device=config.judge_device,
-            max_new_tokens=config.judge_max_new_tokens,
-            local_files_only=config.judge_local_files_only,
-            cache_dir=config.judge_cache_dir,
-        )
+    judge = build_judge(config)
     try:
         report = run_lment_pipeline(
             config,
@@ -78,4 +106,4 @@ if __name__ == "__main__":
     main()
 
 
-__all__ = ["build_parser", "execute_prepared_run", "main"]
+__all__ = ["build_judge", "build_parser", "execute_prepared_run", "main"]

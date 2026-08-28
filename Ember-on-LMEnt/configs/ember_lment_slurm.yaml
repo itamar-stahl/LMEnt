@@ -42,6 +42,8 @@ lment:
     max_new_tokens: 256
     local_files_only: true
     cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    executor: subprocess
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
   save:
     full_model: false
   execution:

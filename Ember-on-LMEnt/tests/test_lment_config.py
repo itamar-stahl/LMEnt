@@ -57,6 +57,52 @@ class LMEntConfigTests(unittest.TestCase):
         self.assertEqual(args.concept, "Concept A")
         self.assertEqual(args.config, Path("config.yaml"))
 
+    def test_judge_executor_defaults_to_in_process(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.yaml"
+            write_config(path)
+            config = load_lment_config(path)
+        self.assertEqual(config.judge_executor, "inproc")
+        self.assertIsNone(config.judge_python)
+
+    def test_subprocess_executor_requires_an_interpreter(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.yaml"
+            write_config(path)
+            path.write_text(path.read_text().replace(
+                "  judge:\n    model: null",
+                "  judge:\n    model: google/gemma-4-12B-it\n"
+                "    executor: subprocess"), encoding="utf-8")
+            with self.assertRaises(ValueError) as caught:
+                load_lment_config(path)
+        self.assertIn("lment.judge.python is required", str(caught.exception))
+
+    def test_unknown_judge_executor_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.yaml"
+            write_config(path)
+            path.write_text(path.read_text().replace(
+                "  judge:\n    model: null",
+                "  judge:\n    model: null\n    executor: http"), encoding="utf-8")
+            with self.assertRaises(ValueError) as caught:
+                load_lment_config(path)
+        self.assertIn("executor must be", str(caught.exception))
+
+    def test_subprocess_executor_accepts_a_configured_interpreter(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.yaml"
+            write_config(path)
+            interpreter = Path(tmp) / "python"
+            interpreter.write_text("", encoding="utf-8")
+            path.write_text(path.read_text().replace(
+                "  judge:\n    model: null",
+                "  judge:\n    model: google/gemma-4-12B-it\n"
+                "    executor: subprocess\n    python: ./python"), encoding="utf-8")
+            config = load_lment_config(path)
+        self.assertEqual(config.judge_executor, "subprocess")
+        self.assertEqual(config.judge_python, interpreter.resolve())
+
+
     def test_yaml_matches_original_ember_shape_and_resolves_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

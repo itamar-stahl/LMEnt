@@ -240,6 +240,10 @@ def effective_config_dict(config: LMEntRunConfig) -> Dict[str, Any]:
             "cache_dir": (
                 str(Path(config.judge_cache_dir).resolve())
                 if config.judge_cache_dir is not None else None),
+            "executor": config.judge_executor,
+            "python": (
+                str(Path(config.judge_python).resolve())
+                if config.judge_python is not None else None),
         },
         "save": {"full_model": config.full_save},
         "execution": {

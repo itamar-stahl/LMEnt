@@ -45,12 +45,21 @@ requires `outputs/real_flow_test_report.json` with `passed: true`.
 |---|---|
 | Threshold selection | `selection.mode: threshold`, numeric `selection.feature_ratio_threshold`, and `lment.judge.model: null` |
 | Judge selection | `selection.mode: judge` and a valid `lment.judge.model` |
+| Judge in this interpreter | `lment.judge.executor: inproc` (the default) |
+| Judge under another interpreter | `lment.judge.executor: subprocess` and a `lment.judge.python` that can import transformers >= 5 |
 | Fixed strength | Numeric `ember.explicit_delta` |
 | Automatic strength | `ember.explicit_delta: null`, candidate `ember.deltas`, and complete train/test evaluation JSON |
 | Fresh fitting | `lment.features.reuse: false` |
 | Validated cache | `lment.features.reuse: true` |
 
-The CLI uses `ember.gemma_judge.GemmaJudge`. Programmatic integrations may pass
+The CLI uses `ember.gemma_judge.GemmaJudge`, either in this interpreter or,
+when `lment.judge.executor` is `subprocess`, behind
+`ember.subprocess_judge.SubprocessJudge`. Both expose the same four seams, so
+never branch on the executor outside `ember.lment_worker.build_judge`. Keep
+`gemma-4-12B-it` on the subprocess executor: EMBER pins transformers 4.56.2 and
+that checkpoint needs 5.x to be recognised at all.
+
+Programmatic integrations may pass
 provider-neutral callbacks to `ember.lment_pipeline.run_lment_pipeline`:
 
 - `describe_callback(full_prompt) -> str`
@@ -77,6 +86,8 @@ Pass the complete supplied prompts to callbacks unchanged.
 - Feature selection: `ember/lment_feature_selection.py`
 - Embedding save/load isolation: `ember/erased_embedding.py`
 - Judge lifecycle and cache publication: `ember/lment_worker.py`
+- Out-of-process judge protocol: `ember/judge_server.py` (worker) and
+  `ember/subprocess_judge.py` (client)
 - Cluster behavior: [`slurm/README.md`](slurm/README.md)
 - Tests: [`tests/README.md`](tests/README.md)
 
