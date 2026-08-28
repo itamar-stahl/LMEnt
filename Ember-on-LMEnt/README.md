@@ -123,7 +123,7 @@ selection:
   judge_top_k: 20
 lment:
   judge:
-    model: google/gemma-3-12b-it
+    model: google/gemma-4-12B-it
     device: cuda
 ```
 

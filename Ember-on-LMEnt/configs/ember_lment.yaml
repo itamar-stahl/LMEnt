@@ -1,5 +1,5 @@
 method: ember
-model_name: ../../models_symlinks/win-lment-1b-control-2e
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e/
 rank: 100
 seed: 42
 
@@ -36,12 +36,12 @@ lment:
     g_sparsity: 0.01
     k_proj: 30
   judge:
-    model: google/gemma-3-12b-it
-    revision: null
+    model: google/gemma-4-12B-it
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
     device: cuda
     max_new_tokens: 256
-    local_files_only: false
-    cache_dir: null
+    local_files_only: true
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
   save:
     full_model: false
   execution:

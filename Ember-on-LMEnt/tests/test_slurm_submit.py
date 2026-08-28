@@ -35,7 +35,7 @@ class SlurmSubmitTests(unittest.TestCase):
                          "neutral_json": str(neutral.resolve())},
                 "features": {"cache_root": str((root / "cache").resolve()),
                              "reuse": False, "fitting_device": "cuda"},
-                "judge": {"model": "google/gemma-3-12b-it", "revision": None,
+                "judge": {"model": "google/gemma-4-12B-it", "revision": None,
                           "device": "cuda", "local_files_only": False,
                           "cache_dir": str((root / "hf").resolve())},
                 "save": {"full_model": False},
