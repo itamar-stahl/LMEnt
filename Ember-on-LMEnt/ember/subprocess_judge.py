@@ -23,7 +23,11 @@ from pathlib import Path
 from typing import Any, Deque, Optional
 
 # Loading ~23G of bf16 weights off the lab NFS is slow and highly variable.
-_DEFAULT_STARTUP_TIMEOUT = 1800.0
+# Measured ~25-29 MB/s on both /home/dcor and /home/morg, which puts a bare
+# read of gemma-4-12B-it at 15 minutes before any GPU transfer, and a real
+# load on a contended node past 30. Override per config when a filer is
+# slower still; a judge that is merely slow must not look like a dead one.
+_DEFAULT_STARTUP_TIMEOUT = 3600.0
 # A judge call is one short greedy generation; anything beyond this is a hang.
 _DEFAULT_REQUEST_TIMEOUT = 600.0
 _STDERR_TAIL_LINES = 40

@@ -241,6 +241,7 @@ def effective_config_dict(config: LMEntRunConfig) -> Dict[str, Any]:
                 str(Path(config.judge_cache_dir).resolve())
                 if config.judge_cache_dir is not None else None),
             "executor": config.judge_executor,
+            "startup_timeout_seconds": config.judge_startup_timeout,
             "python": (
                 str(Path(config.judge_python).resolve())
                 if config.judge_python is not None else None),

@@ -44,6 +44,7 @@ def build_judge(config) -> object | None:
         max_new_tokens=config.judge_max_new_tokens,
         cache_dir=config.judge_cache_dir,
         local_files_only=config.judge_local_files_only,
+        startup_timeout=config.judge_startup_timeout,
     )
 
 

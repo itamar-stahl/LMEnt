@@ -75,6 +75,7 @@ class LMEntRunConfig:
     judge_cache_dir: Optional[Path] = None
     judge_executor: str = "inproc"
     judge_python: Optional[Path] = None
+    judge_startup_timeout: float = 3600.0
     activate_script: Optional[Path] = None
     slurm: Optional[Mapping[str, Any]] = None
     config_path: Optional[Path] = None
@@ -121,7 +122,7 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         "lment": {"model_key", "model_device", "dtype", "runs_root", "run_dir", "output_dir"},
         "lment.data": {"concept_json", "neutral_json"},
         "lment.features": {"cache_root", "work_root", "reuse", "fitting_device", "max_iterations", "g_sparsity", "k_proj"},
-        "lment.judge": {"model", "revision", "device", "max_new_tokens", "local_files_only", "cache_dir", "executor", "python"},
+        "lment.judge": {"model", "revision", "device", "max_new_tokens", "local_files_only", "cache_dir", "executor", "python", "startup_timeout_seconds"},
         "lment.save": {"full_model"},
         "lment.execution": {"activate_script"},
         "lment.slurm": {"job_name", "account", "partition", "constraint", "time_minutes", "cpu_mem_mb", "cpus_per_task"},
@@ -191,6 +192,7 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
         judge_cache_dir=(None if judge.get("cache_dir") is None else resolve_path(judge["cache_dir"])),
         judge_executor=str(judge.get("executor", "inproc")),
         judge_python=(None if judge.get("python") is None else resolve_path(judge["python"])),
+        judge_startup_timeout=float(judge.get("startup_timeout_seconds", 3600.0)),
         activate_script=(None if execution.get("activate_script") is None else resolve_path(execution["activate_script"])),
         slurm=(slurm or None),
         config_path=config_path,
@@ -230,6 +232,8 @@ def load_lment_config(path: str | Path) -> LMEntRunConfig:
     if config.judge_model and config.judge_executor == "subprocess" and config.judge_python is None:
         raise ValueError(
             "lment.judge.python is required when lment.judge.executor is 'subprocess'")
+    if config.judge_startup_timeout <= 0:
+        raise ValueError("lment.judge.startup_timeout_seconds must be positive")
     model_loader.pick_dtype(config.dtype)
     return config
 

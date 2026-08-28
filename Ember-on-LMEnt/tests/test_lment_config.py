@@ -103,6 +103,28 @@ class LMEntConfigTests(unittest.TestCase):
         self.assertEqual(config.judge_python, interpreter.resolve())
 
 
+    def test_judge_startup_timeout_defaults_to_an_hour(self) -> None:
+        # The lab filers read at ~25 MB/s, so the default has to outlast a
+        # 22 GiB load or a healthy judge reads as a dead one.
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.yaml"
+            write_config(path)
+            config = load_lment_config(path)
+        self.assertEqual(config.judge_startup_timeout, 3600.0)
+
+    def test_non_positive_judge_startup_timeout_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "config.yaml"
+            write_config(path)
+            path.write_text(path.read_text().replace(
+                "  judge:\n    model: null",
+                "  judge:\n    model: null\n    startup_timeout_seconds: 0"),
+                encoding="utf-8")
+            with self.assertRaises(ValueError) as caught:
+                load_lment_config(path)
+        self.assertIn("startup_timeout_seconds must be positive",
+                      str(caught.exception))
+
     def test_yaml_matches_original_ember_shape_and_resolves_paths(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

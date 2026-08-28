@@ -47,6 +47,7 @@ requires `outputs/real_flow_test_report.json` with `passed: true`.
 | Judge selection | `selection.mode: judge` and a valid `lment.judge.model` |
 | Judge in this interpreter | `lment.judge.executor: inproc` (the default) |
 | Judge under another interpreter | `lment.judge.executor: subprocess` and a `lment.judge.python` that can import transformers >= 5 |
+| Slow judge storage | Raise `lment.judge.startup_timeout_seconds`; never lower it to fail faster |
 | Fixed strength | Numeric `ember.explicit_delta` |
 | Automatic strength | `ember.explicit_delta: null`, candidate `ember.deltas`, and complete train/test evaluation JSON |
 | Fresh fitting | `lment.features.reuse: false` |

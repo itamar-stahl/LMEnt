@@ -44,6 +44,7 @@ lment:
     cache_dir: /home/dcor/galbarak2/hf_cache/hub
     executor: subprocess
     python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    startup_timeout_seconds: 3600
   save:
     full_model: false
   execution:

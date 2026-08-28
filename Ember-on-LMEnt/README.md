@@ -153,7 +153,14 @@ lment:
     local_files_only: true
     executor: subprocess
     python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    startup_timeout_seconds: 3600
 ```
+
+`startup_timeout_seconds` bounds the wait for the worker to finish loading.
+The lab filers read at roughly 25-29 MB/s, so a bare read of this checkpoint
+takes about 15 minutes and a real load on a busy node has been measured past
+30. Raise it rather than lower it: the point of the bound is to notice a dead
+worker, and a slow one must not be mistaken for a dead one.
 
 The interpreter needs only torch and transformers >= 5; the worker imports
 `ember.gemma_judge` and nothing else from EMBER, so that environment does not
