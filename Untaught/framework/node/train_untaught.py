@@ -91,6 +91,7 @@ _bootstrap_olmo_core()
 
 from examples.kas.train import build_config, set_random_seeds  # noqa: E402
 from olmo_core.data import KASDataCollator  # noqa: E402
+from olmo_core.distributed.utils import get_rank  # noqa: E402
 from olmo_core.train import (  # noqa: E402
     prepare_training_environment,
     teardown_training_environment,
@@ -436,6 +437,93 @@ def adapt_to_gpu(config, untaught_cfg: Dict[str, Any]) -> None:
         )
 
 
+# The embedding matrix is the one weight in this model whose initialisation is
+# silently wrong, and the failure is invisible until the run is over. See
+# check_embedding_init below.
+EMBEDDING_INIT_STD = 0.02
+EMBEDDING_INIT_STD_MIN = 0.015
+EMBEDDING_INIT_STD_MAX = 0.025
+
+
+def embedding_init_std(model) -> Optional[float]:
+    """Standard deviation of this rank's slice of the input embedding matrix.
+
+    ``None`` when there is nothing to measure here: no embedding module (the
+    pipeline stage that does not own it), or an empty local shard.
+
+    Two things make this less trivial than ``model.embeddings.weight.std()``:
+
+    * under FSDP2 the parameter is a ``DTensor``, and ``aten.std`` has no
+      sharding strategy registered -- calling ``.std()`` on it raises
+      ``NotImplementedError`` rather than returning a number. ``to_local()``
+      gives this rank's shard, and since the rows are i.i.d. draws from the same
+      distribution, one shard's std estimates the whole matrix's.
+    * the weight can still be on the meta device if it was never materialised,
+      where ``.std()`` returns garbage instead of failing.
+    """
+    embeddings = getattr(model, "embeddings", None)
+    weight = getattr(embeddings, "weight", None)
+    if weight is None:
+        return None
+
+    local = weight.to_local() if hasattr(weight, "to_local") else weight
+    if local.is_meta:
+        raise RuntimeError(
+            "[untaught] the embedding weight is still on the meta device after "
+            "model.build(), so its initialisation cannot be checked. Something "
+            "changed in TransformerConfig.build()'s materialisation order; fix "
+            "that or move check_embedding_init() to where the weight is real."
+        )
+    if local.numel() < 2:
+        return None
+    return float(local.detach().float().std())
+
+
+def check_embedding_init(model, config) -> None:
+    """Fail the run if the input embeddings were not initialised at std ~0.02.
+
+    Every other weight in the model is initialised by ``InitMethod`` at 0.02 and
+    comes out right; the embeddings alone can come out at std 1.0, PyTorch's
+    ``nn.Embedding`` default, which is 50x too large. A model trained from that
+    draw is not obviously broken -- it trains, the loss falls, downstream QA
+    accuracy looks normal -- but the embeddings never move far enough for the
+    learned signal to dominate the initial noise. The finished 1B twins came out
+    at row-norm 0.5492 against 0.5471 predicted from decaying the initial draw
+    alone: a ratio of 1.00, i.e. nothing learned survived in embedding space,
+    and every embedding-space method run on them found nothing.
+
+    That cost two full training runs, and nothing in the logs said so. Hence a
+    check at build time: 30 microseconds against ~19 GPU-hours.
+
+    Checked on every rank -- each holds its own shard and no collective is
+    needed, so there is no way for one rank to proceed past a failure the others
+    caught. Only rank 0 announces a pass, so a healthy multi-rank run says it
+    once.
+    """
+    std = embedding_init_std(model)
+    if std is None:
+        log.warning(
+            "[untaught] no embedding weight on this rank -- init std unchecked."
+        )
+        return
+
+    if not EMBEDDING_INIT_STD_MIN < std < EMBEDDING_INIT_STD_MAX:
+        raise RuntimeError(
+            f"Embedding init std is {std:.4f}, expected ~{EMBEDDING_INIT_STD} from "
+            f"InitMethod.{config.model.init_method}. A std near 1.0 means OLMo-core's "
+            "initialiser did not reach the embeddings and training will produce "
+            "embeddings with no usable geometry. Root cause as of 2026-08-29: "
+            "Transformer.init_weights() initialises the embeddings first, then "
+            "loops over every module calling reset_parameters() -- and "
+            "nn.Embedding.reset_parameters() is nn.init.normal_(weight), i.e. "
+            "N(0,1). The 0.02 draw is overwritten a few lines after it is made. "
+            "See OLMo-core/src/olmo_core/nn/transformer/model.py."
+        )
+
+    if get_rank() == 0:
+        print(f"[untaught] embedding init std {std:.4f} -- ok", flush=True)
+
+
 def _summarize(
     config,
     config_dict: Dict[str, Any],
@@ -549,6 +637,10 @@ def main(target: str, check_only: bool) -> None:
         max_seq_len=config.dataset.sequence_length,
         mesh=world_mesh,
     )
+    # build() materialises the parameters and calls Transformer.init_weights()
+    # before returning, so this is the first line where the real weights exist.
+    check_embedding_init(model, config)
+
     optim = config.optim.build(model)
     dataset = config.dataset.build()
     data_loader = config.data_loader.build(
