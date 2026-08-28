@@ -1,0 +1,6 @@
+{
+  "comment": "Chunks mentioning this entity are held out of the loss. 16,915 chunks, 0.161% of the corpus -- 6.6x Pornography's footprint, so a larger effect should be available, while staying far below the scale at which the ablated twin becomes a generally weaker model. A real concept rather than an institution, unlike Baseball/Gun/Golf whose only QIDs are organisations. NOTE: its answerability is unmeasured at submission time -- the 47% in the old 18-concept ranking was scored with Question:/Answer:, a format worth anywhere from -1 to +10 points depending on the concept, so it cannot be carried over. stems_ancient_rome.py now exists and the measurement is running. See CHOOSING_A_SUBJECT.md. Verify: python -m framework.client.es_blacklist resolve --name 'Ancient Rome'",
+  "entities": [
+    { "qid": "Q1747689", "comment": "Ancient Rome - 16,915 chunks, 0.161% of the corpus" }
+  ]
+}

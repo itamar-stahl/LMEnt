@@ -1,0 +1,6 @@
+{
+  "comment": "Chunks mentioning this entity are held out of the loss. WARNING: at 296,526 chunks this is 2.826% of the corpus -- 116x Pornography's 0.024% -- so the ablated twin trains on measurably less text than its control and the two are no longer identical-but-for-one-concept. A difference measured against untaught-control-1b-2e may reflect the smaller training signal rather than the removed concept. World War II is also entangled with 20th-century history, geography, politics and technology, so no question set in EMBER is cleanly unrelated to it and the specificity tier is weak. Chosen by Gal on 2026-08-27 with these caveats stated. See CHOOSING_A_SUBJECT.md. Verify before trusting a run: python -m framework.client.es_blacklist resolve --name 'World War II'",
+  "entities": [
+    { "qid": "Q362", "comment": "World War II - 296,526 chunks, 2.826% of the corpus" }
+  ]
+}
