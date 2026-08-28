@@ -13,8 +13,33 @@
 # model is a different training regime whose LR spike lets the control relearn what
 # the ablated twin cannot. See OPERATIONS.md.
 #
-# 54,832 steps at the 1.22 s/step measured on an H100 is ~18.6 h, inside the
-# partition's 24 h limit, so one window per twin with no resume boundary.
+# COST AND THE RESUME BOUNDARY -- rewritten 2026-08-29, when the batch went back
+# to the authors' 32,768 (see the train block). Until then this header said:
+# "54,832 steps at the 1.22 s/step measured on an H100 is ~18.6 h, inside the
+# partition's 24 h limit, so one window per twin with no resume boundary." That
+# was true of the 131,072-token batch and is not true any more.
+#
+# The same two epochs are the same tokens and the same FLOPs, but at a quarter
+# the batch they are ~219,300 optimizer steps (4 x 54,832 = 219,328) instead of
+# 54,832. What grows is the fixed per-step cost -- optimizer step, FSDP
+# reduce-scatter, LR scheduler, metrics -- now amortised over a quarter as much
+# work. 18.6 h is therefore a floor, not an estimate: 0.1 s of per-step overhead
+# alone adds 6.1 h, putting the run past the partition's 24 h limit that the old
+# batch was chosen to fit under.
+#
+# So expect a resume boundary, and on a killable partition expect preemptions on
+# top of it. This is a supported path, not a new experiment: resume restores
+# model, optimizer, scheduler and dataloader state, resume_from_previous_run is
+# already true, and every scheduling field is resume-ignored. But the seam is
+# real and the old "one window, no resume" claim is gone rather than quietly
+# left standing. Time it before trusting it -- the 0.1 s figure above is an
+# illustration, not a measurement. See OPERATIONS.md.
+#
+# One incidental safety net: kas/train.py names the checkpoint folder after the
+# hyperparameters, so these values save into olmo2_1B_0.0003_32768_0.01_2 rather
+# than the old olmo2_1B_0.0004_131072_0.05_2. A run at these settings cannot
+# silently continue one at the old ones -- and resume_identity would refuse it
+# anyway, since optim_lr and the batch are not resume-ignored fields.
 
 job:
   name: "untaught-control-1b-2e"
@@ -57,17 +82,34 @@ train:
   max_duration_value: 2               # two epochs; see the header
   max_duration_unit: "epochs"
 
-  # optimizer: AdamW, cosine schedule with warmup. Weight decay follows paper
-  # appendix B.4; the LR and warmup do not -- B.4 says 5e-3 and 1,000 steps,
-  # the authors' shipped artifacts say 3e-4. See COMPARABILITY.md before
-  # changing either: the finished twin pair was trained at these values.
-  optim_lr: 0.0004
-  optim_weight_decay: 0.05
-  optim_warmup_steps: 2000
-  optim_max_grad_norm: 1.0
+  # optimizer: AdamW, cosine schedule with warmup. Every value below is the LMEnt
+  # authors' own, taken from OLMo-core/src/examples/kas/kas_config.json -- the
+  # config their kas/train.py ran, and the one whose save-folder naming produced
+  # the run dir name olmo2_1B_0.0004_131072_0.05_2 we have been reproducing.
+  # Adopted wholesale 2026-08-29.
+  #
+  # What was here before mixed three sources and matched none of them end to end:
+  # weight decay 0.05 from paper appendix B.4, LR 4e-4 from neither B.4 (which
+  # says 5e-3) nor the shipped artifacts (which say 3e-4), and a 131,072-token
+  # batch chosen for throughput. The batch was defended on the grounds that 4x
+  # "cost nothing measurable" -- but what was measured was downstream QA
+  # accuracy, an instrument that is blind to embedding geometry, which is the one
+  # thing this experiment reads out. Evidence from an instrument that cannot see
+  # the target is not evidence, so the batch goes back to the authors' value too.
+  #
+  # See COMPARABILITY.md: the finished 1-epoch and 2-epoch twin pairs were
+  # trained at the OLD values, so nothing trained here is weight-comparable to
+  # them. That is accepted -- those pairs are the ones whose embeddings came out
+  # with no usable geometry.
+  optim_lr: 0.0003              # kas_config.json  optim.lr
+  optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
+  optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
+  optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
 
-  data_global_batch_size: 131072
-  data_rank_microbatch_size: 16384
+  data_global_batch_size: 32768     # kas_config.json  data_loader.global_batch_size
+  data_rank_microbatch_size: 8192   # kas_config.json  trainer.rank_microbatch_size.
+                                    # Memory only: 4 microsteps per optimizer step
+                                    # instead of 8, same optimizer math either way.
   data_seed: 0
   data_num_workers: 4
   data_prefetch_factor: 8
@@ -75,13 +117,19 @@ train:
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
-  dataset_include_instance_metadata: false
+  dataset_include_instance_metadata: true   # kas_config.json dataset.include_instance_metadata
   vsl_curriculum: "grow_p2"
   vsl_num_cycles: 8
   vsl_balanced: false
 
-  checkpoint_save_interval: 5000
-  checkpoint_ephemeral_save_interval: 500
+  checkpoint_save_interval: 20000    # was 5000, scaled with the 4x step count so
+                                     # the run still banks ~11 permanent 1B
+                                     # checkpoints rather than ~44. Resume-ignored,
+                                     # so it can be retuned between submissions.
+  checkpoint_ephemeral_save_interval: 2000   # was 500, scaled the same way. This is
+                                     # the preemption-recovery granularity and it
+                                     # overwrites, so it costs time rather than
+                                     # disk -- 500 would pay that ~439 times.
   checkpoint_save_async: true
   checkpoint_save_overwrite: true
   metrics_collect_interval: 10
