@@ -71,7 +71,12 @@ job:
                                     # "worked" -- it was simply never applied. 40000 covers the
                                     # measured peak with headroom and still lets two twins share
                                     # a node, where the original 128000 needed 256 GB for the pair.
-  cpus_per_task: 8
+  cpus_per_task: 16                 # raised from 8 alongside data_num_workers 4 -> 12: twelve
+                                    # dataloader workers plus the trainer will not fit in eight
+                                    # cores, and oversubscribing them would recreate the stall
+                                    # this change exists to remove. n-h200 has 192 cores with
+                                    # ~132 free, so 16 costs nothing and is not what gates
+                                    # scheduling here -- the 8/8 allocated GPUs are.
   gpus: 1                           # not a courtesy: measured at 2.30 s/step against 2.54 for
                                     # four, because FSDP all-gathers every layer and 4 ranks
                                     # leave only 2 microsteps to amortise it. One card is
@@ -115,8 +120,28 @@ train:
                                     # Memory only: 4 microsteps per optimizer step
                                     # instead of 8, same optimizer math either way.
   data_seed: 0
-  data_num_workers: 4
-  data_prefetch_factor: 8
+  data_num_workers: 12        # kas_config.json says 4, but that is a PER-RANK figure and the
+                              # authors sharded the global batch across several GPUs, so each
+                              # of their ranks assembled a fraction of it. This runs on gpus: 1,
+                              # so one rank's workers build the whole 32,768-token batch every
+                              # step -- and at the authors' batch that is 1.65 batches/s against
+                              # the old 131,072-token config's 0.88/s. Every fixed per-batch cost
+                              # (index lookup, collation, worker handoff) is now paid 4x as often.
+                              #
+                              # At 4 workers that starved: the 2026-08-29 01:02 pair alternated
+                              # 10-60 s stalls with healthy 1.65 BPS bursts, averaged ~13.6 s/step
+                              # against 0.60 s/step in the bursts, and died to a 1200 s DataLoader
+                              # timeout. Per token that is 415 us vs the old config's 8.7 us. The
+                              # filer was not the problem -- random 8 KB reads measured p50 1.5 ms,
+                              # p90 3.9 ms, ~655 IOPS.
+  data_prefetch_factor: 16    # 12 x 16 = 192 batches of buffer (~116 s at 1.65 BPS) instead of
+                              # 4 x 8 = 32 (~19 s), which was too thin to ride out contention on
+                              # a node shared with other users' jobs.
+                              #
+                              # Neither field touches the data or its order: the global batch
+                              # indices are precomputed and cached per (batch size, epoch, seed)
+                              # in global_batch_indices_bz32768_epoch1_seed0.npy, so this changes
+                              # only how fast batches are assembled, never which ones.
 
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
@@ -130,10 +155,21 @@ train:
                                      # the run still banks ~11 permanent 1B
                                      # checkpoints rather than ~44. Resume-ignored,
                                      # so it can be retuned between submissions.
-  checkpoint_ephemeral_save_interval: 2000   # was 500, scaled the same way. This is
-                                     # the preemption-recovery granularity and it
+  checkpoint_ephemeral_save_interval: 1000   # was 500, then 2000, now 1000. This is the
+                                     # preemption-recovery granularity and it
                                      # overwrites, so it costs time rather than
                                      # disk -- 500 would pay that ~439 times.
+                                     #
+                                     # Cut back from 2000 on 2026-08-29: the 01:02 pair
+                                     # died at 05:17 to a 1200 s DataLoader timeout having
+                                     # reached only ~700 steps in 2h39m -- an average of
+                                     # ~13.6 s/step against the ~0.60 s/step of its healthy
+                                     # bursts. At 2000 the first ephemeral save was still
+                                     # hours away, so nothing but step0 was ever banked and
+                                     # four hours of both twins were lost outright. 1000 is
+                                     # ~10 min at healthy speed and still bounds the loss if
+                                     # the stalling recurs. Resume-ignored, so retuning it
+                                     # does not change the experiment's identity.
   checkpoint_save_async: true
   checkpoint_save_overwrite: true
   metrics_collect_interval: 10
