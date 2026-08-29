@@ -89,6 +89,30 @@ job:
                                     # naming a different card restarts from random init.
 
 train:
+
+  # BACK TO THE AUTHORS' BATCH, 2026-08-29 evening -- reversing the midday revert.
+  #
+  # The revert was made because 32,768 looked catastrophically slow: 13.6 s/step
+  # at 4 dataloader workers, then 6.3 s/step at 12. Both readings came from the
+  # cold-cache window. Once the page cache warmed the same config settled to
+  # 0.65 s/step and has held there, so the throughput case for the large batch
+  # evaporated.
+  #
+  # Measured against it, embedding geometry tracks OPTIMIZER STEPS, not tokens --
+  # Adam moves each parameter by about +/-lr per update however much data fed the
+  # gradient, and an embedding row only updates when its token appears:
+  #
+  #   rome    @ 2,000 updates, 262M tokens -> norm IQR 0.0845, ' Paris' cos 0.176
+  #   control @ 3,000 updates,  98M tokens -> norm IQR 0.1553, ' Paris' cos 0.219
+  #
+  # 2.7x the tokens and half the structure; per token the smaller batch is ~5x
+  # more efficient at the one thing this experiment reads out. It also finishes
+  # sooner: 219,328 updates at 0.65 s/step is ~39.6 h, against 54,832 at 3.0
+  # s/step for ~45.7 h. The large batch loses on both axes.
+  #
+  # This block is now byte-identical to train_1b_control_2e.yaml, so the two are
+  # a genuine twin pair again: they differ only in job.name and the untaught
+  # block.
   model: "olmo2_1B"
   init_seed: 12536
   max_duration_value: 2               # two epochs; see the header
@@ -113,41 +137,15 @@ train:
   # trained at the OLD values, so nothing trained here is weight-comparable to
   # them. That is accepted -- those pairs are the ones whose embeddings came out
   # with no usable geometry.
-  # REVERTED TO THE PROVEN OPTIMIZER/BATCH PAIRING, 2026-08-29 midday.
-  #
-  # The authors' 32,768-token batch does not run on this infrastructure with
-  # gpus: 1. Two attempts starved the GPU: at 4 dataloader workers it averaged
-  # 13.6 s/step and died to a 1200 s DataLoader timeout; at 12 workers and
-  # prefetch 16 the stalls halved but persisted at 60-84 s each, averaging
-  # 6.3 s/step over 400 steps against 0.62 s/step in its healthy bursts. That is
-  # ~16 days for two epochs. The cause of the residual periodic stall is NOT
-  # established -- page-cache eviction on the 45 GB memmapped dataset and VSL
-  # bucket transitions are both untested suspects.
-  #
-  # These five values are the configuration that demonstrably runs here: 4,000
-  # steps in 75 minutes, steady, no stalls, 1.14 s/step, ~18.6 h for the pair of
-  # epochs. They are reverted together because lr and batch are coupled -- batch
-  # 131,072 with the authors' lr 3e-4 would be under-scaled and is strictly worse
-  # for embedding learning than either pairing on its own.
-  #
-  # THE BUG WAS NEVER THE BATCH SIZE. It was the embedding init, fixed in
-  # OLMo-core and now guarded at build time. On the travel-budget estimate
-  # (lr x steps, against the size of the random start it must overcome) this
-  # config scores ~1095 against the authors' ~3290 -- 3x short, where the broken
-  # init was 150x short. A different order of problem, and quite possibly fine.
-  # Verify rather than assume: run the embedding diagnostic in
-  # /home/morg/NLP_2526b/galbarak2/ember_fit_diag/ on the first checkpoint.
-  #
-  # NOT WEIGHT-COMPARABLE to a 32,768-batch run. If the control twin stays at the
-  # authors' batch, the two are not an ablation pair -- they differ in batch size
-  # as well as the ablation, so any gap between them confounds the two.
-  optim_lr: 0.0004
-  optim_weight_decay: 0.05      # REVERTED
-  optim_warmup_steps: 2000      # REVERTED
+  optim_lr: 0.0003              # kas_config.json  optim.lr
+  optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
+  optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
   optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
 
-  data_global_batch_size: 131072    # REVERTED
-  data_rank_microbatch_size: 16384  # REVERTED
+  data_global_batch_size: 32768     # kas_config.json  data_loader.global_batch_size
+  data_rank_microbatch_size: 8192   # kas_config.json  trainer.rank_microbatch_size.
+                                    # Memory only: 4 microsteps per optimizer step
+                                    # instead of 8, same optimizer math either way.
   data_seed: 0
   data_num_workers: 12        # kas_config.json says 4, but that is a PER-RANK figure and the
                               # authors sharded the global batch across several GPUs, so each
