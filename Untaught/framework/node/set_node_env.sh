@@ -20,4 +20,12 @@ cd "${LMENT_ROOT}/Untaught" || return 1 2>/dev/null || exit 1
 # shellcheck disable=SC1091
 . ./framework/conda.sh
 
+# Copy the tokenized dataset to node-local disk and repoint LMENT_DATASET at
+# it. The shared filer has cost four runs since 2026-08-28 -- see the header of
+# stage_dataset.sh. This must come after env.sh (which defines LMENT_DATASET)
+# and before torchrun. It is fail-safe: any problem leaves LMENT_DATASET alone
+# and the run reads from the share exactly as before.
+# shellcheck disable=SC1091
+. "${LMENT_ROOT}/Untaught/framework/node/stage_dataset.sh"
+
 echo "[untaught] node $(hostname) in $(pwd): ${CONDA_ENV} @ $(command -v python)"
