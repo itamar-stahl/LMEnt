@@ -83,13 +83,39 @@ lment_stage_dataset() {
         return 0
     fi
 
-    # The cache is 214 GiB and only read at startup: point at the share.
-    if [ ! -e "${_dst}/dataset-cache" ]; then
-        ln -s "${_src}/dataset-cache" "${_dst}/dataset-cache" 2>/dev/null || {
-            echo "[stage] could not link dataset-cache -- staying on the share" >&2
+    # The cache is NOT startup-only, which cost runs 8 and 9 on 2026-09-02:
+    # both died to a 1200 s DataLoader timeout while the whole cache was
+    # symlinked to the share, and the log showed the VSL curriculum reading
+    # global_batch_indices_*.npy through that symlink mid-training. The batch
+    # and bucket indices are on the hot path.
+    #
+    # They are also small. Of the 214 GiB, dataset-metadata is 212 GiB and the
+    # index subtrees are ~589 MiB, so stage everything EXCEPT dataset-metadata
+    # and symlink only that back to the share.
+    mkdir -p "${_dst}/dataset-cache" || {
+        echo "[stage] cannot create ${_dst}/dataset-cache -- staying on the share" >&2
+        return 0
+    }
+    for _entry in "${_src}/dataset-cache"/*; do
+        [ -e "${_entry}" ] || continue
+        _name=$(basename "${_entry}")
+        if [ "${_name}" = "dataset-metadata" ]; then
+            [ -e "${_dst}/dataset-cache/${_name}" ] || \
+                ln -s "${_entry}" "${_dst}/dataset-cache/${_name}" 2>/dev/null || {
+                    echo "[stage] could not link ${_name} -- staying on the share" >&2
+                    return 0
+                }
+            continue
+        fi
+        # cp -a --update copies only what is missing or newer, so a resumed job
+        # on a warm node re-verifies rather than re-copies.
+        cp -a --update "${_entry}" "${_dst}/dataset-cache/" 2>/dev/null || {
+            echo "[stage] could not copy cache subtree ${_name} -- staying on the share" >&2
             return 0
         }
-    fi
+    done
+    _cache_bytes=$(du -sLb "${_dst}/dataset-cache" 2>/dev/null | cut -f1)
+    echo "[stage] cache indices staged locally; dataset-metadata symlinked to the share"
 
     LMENT_DATASET="${_dst}"
     export LMENT_DATASET
