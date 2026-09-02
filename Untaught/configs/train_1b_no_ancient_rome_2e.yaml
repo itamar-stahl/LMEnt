@@ -54,15 +54,33 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200-killable"    # moved off gpu-h100-killable 2026-08-29 at submission:
-                                    # both h100 nodes were 0/16 free with 9 jobs queued, while
-                                    # n-h200 had 2 cards idle -- exactly the pair this twin set
-                                    # needs. h200 is sm_90 like h100, so the lment env
-                                    # (torch 2.6+cu124) and the checkpoints load unchanged, and
-                                    # partition is resume-ignored so this is safe mid-run.
-                                    # Its twin, untaught-control-1b-2e, is already on h200, so
-                                    # the pair now shares a node and a card type.
-  max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
+  partition: "gpu-h200"             # NON-KILLABLE, 2026-09-02 23:40.
+                                    # Moved off gpu-h200-killable. Three reasons, in order of weight:
+                                    # 
+                                    # 1. FAIR-SHARE. RawUsage on gpu-h200-killable is 2,048,401 (share
+                                    #    0.0145) after the control twin ran there; on gpu-h200 it is 0
+                                    #    (share 0.370). Rome sat at priority 100000748 and could not
+                                    #    clear the killable queue.
+                                    # 2. NO PREEMPTION. PriorityTier 20 vs 10. Nine runs have died to
+                                    #    storage and the rest have been preempted; this removes one of
+                                    #    the two failure modes outright.
+                                    # 3. FIVE-DAY LIMIT instead of 24h, so the ~40h remaining fits in one
+                                    #    window with no resume boundary -- and resume is where the
+                                    #    truncated-checkpoint hazard lives.
+                                    # 
+                                    # Checked before moving: n-h200 had 3 GPUs and ~252 GiB free, so this
+                                    # takes an idle card and evicts nobody. The latent cost is real and
+                                    # should be understood: at tier 20 this job can later cause SLURM to
+                                    # preempt a killable one to protect it, including our own control twin
+                                    # and ns3's jobs. Nothing is displaced today.
+                                    # 
+                                    # QoS gpu4 caps a user at 4 GPUs here; this needs 1.
+  max_time_minutes: 2880           # 48h, restored from the 8h backfill hack.
+                                    # The 480 was only to make this a backfill candidate in a queue we
+                                    # could not clear. gpu-h200 allows 5 days and we are near the front of
+                                    # its queue, so the run no longer needs to be short to be scheduled.
+                                    # 48h covers the ~40h remaining at the 0.76 s/step measured with local
+                                    # staging, with headroom, and still leaves the job bounded.
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 56000                 # raised from 40000 on 2026-08-29. The old figure was
