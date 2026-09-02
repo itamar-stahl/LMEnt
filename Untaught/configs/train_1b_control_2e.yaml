@@ -50,23 +50,41 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200-killable"    # moved here 2026-08-20 with 4.2h of training left: both
-                                    # h100 nodes went 8/8 to their owner partitions for days and
-                                    # this twin was preempted 4x then queued 4th. h200 is also
-                                    # sm_90, so the lment env and these checkpoints load unchanged,
-                                    # and partition is resume-ignored so the switch is safe.
-                                    # Originally "gpu-h100-killable"; the ablated twin stayed there.
-                                    # (h100 is sm_90, so the lment env (torch 2.6+cu124)
-                                    # runs there and the banked checkpoints still load.
-  max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
+  partition: "gpu-h200"             # NON-KILLABLE, 2026-09-03 00:05.
+                                    # Follows the Rome twin, and fixes a mess this created: Rome moved to
+                                    # gpu-h200 (tier 20) at 23:42 and twelve minutes later SLURM preempted
+                                    # THIS run -- tier 10 on killable -- to protect it. The log says
+                                    # 'CANCELLED AT 2026-09-02T23:54:31 DUE TO PREEMPTION'. One twin was
+                                    # evicting the other, and this one was the further along at 25.2%.
+                                    # 
+                                    # With both twins at tier 20 they cannot preempt each other, neither is
+                                    # preemptible, and both get a 5-day ceiling instead of 24h.
+                                    # 
+                                    # Fair-share also favours it: RawUsage on gpu-h200-killable is 2,048,401
+                                    # (share 0.0145) against 0 on gpu-h200 (share 0.370). On killable this
+                                    # job was queued behind tomerporian until 18:49 despite idle cards.
+                                    # 
+                                    # Checked before moving: n-h200 had 2 GPUs, ~117 GiB and 144 CPUs free,
+                                    # so this takes idle capacity and evicts nobody today. The standing cost
+                                    # is real -- at tier 20, if the node later fills, the jobs SLURM evicts
+                                    # for us are ns3's three killable runs. QoS gpu4 caps a user at 4 GPUs
+                                    # here; the pair uses 2.
+  max_time_minutes: 2880           # 48h, matching the Rome twin.
+                                    # gpu-h200 allows 5 days. 48h covers the ~35h remaining at the
+                                    # 0.76 s/step measured with local staging, so the run can finish in one
+                                    # window with no resume boundary -- and resume is where the truncated
+                                    # checkpoint hazard lives.
   nodes: 1
   ntasks: 1
-  cpu_mem_mb: 40000                 # measured, not guessed: VmHWM peaked at 27 GiB during a
-                                    # checkpoint load (main trainer 19-25 GiB plus 4 dataloader
-                                    # workers). Slurm does not enforce --mem here, so 24000 also
-                                    # "worked" -- it was simply never applied. 40000 covers the
-                                    # measured peak with headroom and still lets two twins share
-                                    # a node, where the original 128000 needed 256 GB for the pair.
+  cpu_mem_mb: 40000                 # restored from the deliberate 20000 under-request.
+                                    # 20000 existed only to squeeze onto a memory-saturated killable node
+                                    # when ~21.5 GiB was all that was unallocated. Measured RSS with 12
+                                    # dataloader workers is ~36 GiB, so that number was a fiction the
+                                    # scheduler happened not to enforce.
+                                    # 
+                                    # On gpu-h200 there is room (~117 GiB free when this was submitted),
+                                    # and at tier 20 this job can displace other people's work -- so what
+                                    # it tells the scheduler should be true rather than convenient.
   cpus_per_task: 16                 # raised from 8 alongside data_num_workers 4 -> 12: twelve
                                     # dataloader workers plus the trainer will not fit in eight
                                     # cores, and oversubscribing them would recreate the stall
