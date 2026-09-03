@@ -50,25 +50,24 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200"             # NON-KILLABLE, 2026-09-03 00:05.
-                                    # Follows the Rome twin, and fixes a mess this created: Rome moved to
-                                    # gpu-h200 (tier 20) at 23:42 and twelve minutes later SLURM preempted
-                                    # THIS run -- tier 10 on killable -- to protect it. The log says
-                                    # 'CANCELLED AT 2026-09-02T23:54:31 DUE TO PREEMPTION'. One twin was
-                                    # evicting the other, and this one was the further along at 25.2%.
+  partition: "gpu-h200-killable"    # back to killable, 2026-09-03 12:05.
+                                    # gpu-h200 cannot take this job at all: its QoS gpu4 carries
+                                    # GrpTRES=gres/gpu=4, a limit on the WHOLE PARTITION across all
+                                    # users, and roiba's runv3 plus the Rome twin already fill it. The
+                                    # scheduler reports 'Nodes required for job are DOWN, DRAINED or
+                                    # reserved for jobs in higher priority partitions' and lirondav sits
+                                    # on QOSGrpGRES for the same reason. Nothing frees until roiba ends
+                                    # in ~22h.
                                     # 
-                                    # With both twins at tier 20 they cannot preempt each other, neither is
-                                    # preemptible, and both get a 5-day ceiling instead of 24h.
+                                    # So the plan of parking both twins at tier 20 was never possible;
+                                    # the cap allows one of them, not two. Rome holds that slot and is
+                                    # 12h into its best run.
                                     # 
-                                    # Fair-share also favours it: RawUsage on gpu-h200-killable is 2,048,401
-                                    # (share 0.0145) against 0 on gpu-h200 (share 0.370). On killable this
-                                    # job was queued behind tomerporian until 18:49 despite idle cards.
-                                    # 
-                                    # Checked before moving: n-h200 had 2 GPUs, ~117 GiB and 144 CPUs free,
-                                    # so this takes idle capacity and evicts nobody today. The standing cost
-                                    # is real -- at tier 20, if the node later fills, the jobs SLURM evicts
-                                    # for us are ns3's three killable runs. QoS gpu4 caps a user at 4 GPUs
-                                    # here; the pair uses 2.
+                                    # Killable has 4 GPUs and ~324 GiB free right now, so this starts
+                                    # immediately. It is preemptible again, but the eviction that killed
+                                    # it before came from Rome grabbing memory as it started; Rome is now
+                                    # stable and holding what it needs. Progress with interruptions beats
+                                    # sitting dead for a day at 25.1%, the furthest along of the pair.
   max_time_minutes: 2880           # 48h, matching the Rome twin.
                                     # gpu-h200 allows 5 days. 48h covers the ~35h remaining at the
                                     # 0.76 s/step measured with local staging, so the run can finish in one
