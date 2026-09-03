@@ -50,24 +50,22 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200-killable"    # back to killable, 2026-09-03 12:05.
-                                    # gpu-h200 cannot take this job at all: its QoS gpu4 carries
-                                    # GrpTRES=gres/gpu=4, a limit on the WHOLE PARTITION across all
-                                    # users, and roiba's runv3 plus the Rome twin already fill it. The
-                                    # scheduler reports 'Nodes required for job are DOWN, DRAINED or
-                                    # reserved for jobs in higher priority partitions' and lirondav sits
-                                    # on QOSGrpGRES for the same reason. Nothing frees until roiba ends
-                                    # in ~22h.
+  partition: "gpu-h100-killable"    # moved off h200 entirely, 2026-09-03 12:10.
+                                    # On gpu-h200-killable this job would not start even with 4 GPUs,
+                                    # 324 GiB and 160 CPUs free on n-h200: SLURM holds that spare
+                                    # capacity for the higher-priority gpu-h200 partition, where the Rome
+                                    # twin sits at tier 20. The leftovers are reserved for tier-20 work
+                                    # rather than released to killable, so control was structurally stuck
+                                    # behind its own twin.
                                     # 
-                                    # So the plan of parking both twins at tier 20 was never possible;
-                                    # the cap allows one of them, not two. Rome holds that slot and is
-                                    # 12h into its best run.
+                                    # h100 is the better home now on both axes. t-100 has recovered and
+                                    # carries 3 free GPUs with ~516 GiB, and fair-share there is 0.0351
+                                    # against 0.0155 on h200-killable -- more than double, because far
+                                    # less has been burnt on it. One job pending versus a blocked queue.
                                     # 
-                                    # Killable has 4 GPUs and ~324 GiB free right now, so this starts
-                                    # immediately. It is preemptible again, but the eviction that killed
-                                    # it before came from Rome grabbing memory as it started; Rome is now
-                                    # stable and holding what it needs. Progress with interruptions beats
-                                    # sitting dead for a day at 25.1%, the furthest along of the pair.
+                                    # n-102 remains DOWN+NOT_RESPONDING; t-100 alone is enough for one
+                                    # job. h100 is sm_90 like h200, so the env and checkpoints load
+                                    # unchanged, and partition is resume-ignored.
   max_time_minutes: 1440           # the gpu-h200-killable maximum (24h).
                                     # Must track the partition: gpu-h200 allows 5 days, killable allows 1.
                                     # Leaving 2880 here after moving back produced 'Requested time limit is
