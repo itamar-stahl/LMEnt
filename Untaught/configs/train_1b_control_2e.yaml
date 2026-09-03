@@ -68,11 +68,12 @@ job:
                                     # it before came from Rome grabbing memory as it started; Rome is now
                                     # stable and holding what it needs. Progress with interruptions beats
                                     # sitting dead for a day at 25.1%, the furthest along of the pair.
-  max_time_minutes: 2880           # 48h, matching the Rome twin.
-                                    # gpu-h200 allows 5 days. 48h covers the ~35h remaining at the
-                                    # 0.76 s/step measured with local staging, so the run can finish in one
-                                    # window with no resume boundary -- and resume is where the truncated
-                                    # checkpoint hazard lives.
+  max_time_minutes: 1440           # the gpu-h200-killable maximum (24h).
+                                    # Must track the partition: gpu-h200 allows 5 days, killable allows 1.
+                                    # Leaving 2880 here after moving back produced 'Requested time limit is
+                                    # invalid (missing or exceeds some limit)' and sub_builder printed an
+                                    # empty job id rather than the error, so the run looked submitted and
+                                    # was not.
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 40000                 # restored from the deliberate 20000 under-request.
