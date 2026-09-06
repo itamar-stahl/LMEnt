@@ -92,12 +92,37 @@ twins assign near-identical standalone probabilities to these answer strings --
 subtracting the prior does not shrink the effect. On Rome (val) it *grows* it,
 -0.326 raw to -0.375 corrected.
 
-**Held-out-chunk loss**, ablated twin, 3,000 excluded Rome chunks against 5,004
-length-matched controls:
+**Held-out-chunk loss**, both twins, 3,000 excluded Rome chunks against 5,004
+length-matched controls. Both models scored the identical chunk ids, so the
+comparison is paired per chunk (jobs 855354 and 858234).
 
-    held-out : 3,000 chunks, 3,199,435 tokens, loss 2.6939, ppl 14.789
-    control  : 5,004 chunks, 5,325,538 tokens, loss 2.3795, ppl 10.800
-    gap      : +0.3144 nats/token
+| | held-out (3,000) | control set (5,004) | its own gap |
+|---|---|---|---|
+| control twin | 2.5034 (ppl 12.224) | 2.3769 (ppl 10.771) | +0.1265 |
+| ablated twin | 2.6939 (ppl 14.789) | 2.3795 (ppl 10.800) | +0.3144 |
+
+**The ablated twin's +0.3144 is not the result, and quoting it alone would
+overstate the effect by 40%.** The control twin, which saw every one of these
+chunks in training, is *also* worse on them by +0.1265 -- they are intrinsically
+harder text than the length-matched sample, for both models. What the ablation
+did is the difference of those differences:
+
+    held-out chunks  n=3,000  control 2.4466  ablated 2.6850  diff +0.2384  dz +1.052
+    control chunks   n=5,004  control 2.3258  ablated 2.3293  diff +0.0035  dz +0.085
+
+    DIFFERENCE OF DIFFERENCES: +0.2349 nats/token,  label-permutation p < 0.0001
+
+**Read the effect sizes, not the p-values:** `dz` 1.052 on masked text against
+0.085 on unmasked, a factor of 12. Both p-values print as 0.0000 and the second
+one is meaningless -- at n = 5,004 a difference of 0.0035 nats is significant
+and, by any standard that matters, zero. That control-chunk row is the check
+that the twins are otherwise the same model.
+
+Against the Pornography pair (`HELDOUT_RESULTS.md`): Rome's diff-of-diffs is
+**twice** as large (+0.2349 against +0.1154) but its `dz` is lower (1.052 against
+1.890), because the per-chunk spread is wider. That is what a 26x larger and far
+more heterogeneous held-out set should look like -- 65,844 chunks of Roman
+history against 2,546 mentioning one entity.
 
 **Nothing else broke.** OLMES `sciq::olmo1` `acc_raw` 0.776 ablated against 0.770
 control, `acc_per_char` identical at 0.717, against the paper's Table 3 of 0.714
@@ -155,8 +180,28 @@ Full per-concept table and the JSON: `cross_concept_null.py`,
 
 ## What is still not established
 
-**The held-out figure is one-sided.** The number that carries the claim is the
-diff-of-diffs against the control twin's identical measurement, not the ablated
-twin's +0.3144 alone. The control's measurement has not landed: it was preempted
-twice and then hung for three hours inside the dataset scan, and the retry
-(job 858234) was still queued when this was written.
+Both of the gaps this section used to list are now closed: the cross-concept
+null is above, and the held-out measurement is two-sided as of job 858234. What
+remains is scope, not a missing measurement.
+
+**One concept, one pair, one seed.** Everything here rests on a single ablated
+model and its single control. The twins agree to 0.05% on embedding health and
+the eight-concept null bounds their ordinary disagreement, which is why the Rome
+effect is readable at all -- but nothing here separates "ablating a concept does
+this" from "ablating *Ancient Rome* in *this* pair does this". The Baseball twin
+(job 854637) is the second pair and will be the first real test of that.
+
+**The questions are EMBER's, not the corpus's.** The completion sets are
+EMBER's Ancient Rome questions, while the ablation was defined by 56 Wikidata
+QIDs over 65,844 chunks. The two Romes overlap but are not the same object, and
+the audit measured the blacklist's precision at 62.5% -- lower than Baseball's
+87.2% (`configs/train_1b_no_baseball_core_teams_2e_b131k_h100.yaml`). A
+question set built from the held-out chunks themselves would test the thing that
+was actually removed.
+
+**Erasure comparison is open.** Whether a post-hoc erasure method reaches the
+same state as never having trained on the concept is the question these twins
+exist to answer, and it has not been attempted yet. The first run against this
+control (job 858233) stopped before erasing: a sparse factorization of this
+model's embedding matrix produced no feature the judge would call Ancient Rome.
+See `Ember-on-LMEnt/grid/README.md`.
