@@ -103,6 +103,111 @@ from random init. Do not compare a warm-restarted 2E against the paper's table.
 `log.err` are reopened empty, so the loss curve for every window except the last is
 lost. `#SBATCH --open-mode=append` fixes it.
 
+## Naming a run so it can be told apart
+
+**The queue view truncates `JobName` to about 8 characters. Put the subject
+first.**
+
+On 2026-09-05 three 1B runs were in the queue together:
+
+    untaught-control-1b-2e-b131k
+    untaught-no-rome-core-1b-2e-b131k
+    untaught-no-baseball-core-teams-1b-2e-b131k-h100
+
+Every one of them displays as `untaught`. The subject -- the only thing that
+differs scientifically between them -- sits 9 to 12 characters in, past the cut.
+A name that needs the full string to be useful is not doing its job at the one
+moment it is read.
+
+Lead with the subject and drop the prefix every run in this project shares:
+
+    control-1b-2e-b131k               ->  "control-"
+    rome-core-1b-2e-b131k             ->  "rome-cor"
+    baseball-teams-1b-2e-b131k-h100   ->  "baseball"
+
+Order: `<subject>-<variant>-<size>-<epochs>-<batch>-<card>`. "untaught" carries
+no information, because every run here is an untaught run.
+
+Before submitting, compare the first 8 characters of `job.name` against every
+job that will share the queue. If two collide, reorder. This applies to
+`job.name` in `configs/`, to `#SBATCH --job-name` in the audit and evaluation
+helpers, and to the `OUT_TAG` labels that end up in result filenames.
+
+**Renaming a running job is not free.** `framework/client/keep_twins_running.sh`
+matches by job name, and the run folder is named from `job.name` at submission
+time, so `scontrol update JobName=` desyncs the SLURM name from the run
+directory and from the watchdog. Rename at submission, or change the config and
+the watchdog together.
+
+## More defects, found 2026-09-06 evaluating the Ancient Rome twins
+
+**`run_rome_heldout.slurm`'s convert mode hardcoded the checkpoint directory.**
+It read `checkpoints/olmo2_1B_0.0003_32768_0.01_2/$STEP`, the authors'-config
+pair it was written for. That directory name encodes model/lr/batch/wd/duration,
+so the b131k twins live under `olmo2_1B_0.0004_131072_0.05_2` and convert aborted
+with `FATAL: ... has 0 proper shards, expected 16` -- which reads as a corrupt
+checkpoint and is not one. It now discovers the directory the way
+`Untaught/convert_to_hf.sh` always did:
+
+    CKPT_ROOT="$(ls -d "$UNTAUGHT_RUNS_DIR/$RUN"/checkpoints/*/ | head -1)"
+
+Any helper that names a checkpoint directory literally has this bug latent in it.
+
+**A resumed run has no `step0` of its own.** The control twin resumed from
+step34000 of run 850054, so `untaught-control-1b-2e-b131k_20260905_221156`
+begins its checkpoints at step35000 and the initial draw lives in the
+predecessor folder `..._20260904_175321`. Anything comparing a final checkpoint
+against initialisation -- `embedding_health.py` is the case here -- has to be
+told where init actually is. Hence its `INIT_RUN`, defaulting to `RUN` for a run
+that trained straight through. The predecessor also holds `step35000.incomplete`,
+which is `auto_resubmit.sh` having correctly moved a truncated checkpoint aside:
+a fourth instance of the incomplete-checkpoint defect, and the first one caught
+by a machine rather than by hand.
+
+**Did the embeddings learn, or only shrink.** `check_embedding_init` proves the
+draw was right at step 0 and can say nothing about the other end.
+`ember_eval/embedding_health.py` closes that: decoupled weight decay multiplies
+every parameter by `(1 - lr_t * wd)` each step regardless of gradient, so the
+product over the schedule predicts the row-norm a matrix would reach having
+learned nothing. Observed/predicted near 1.00 is the pre-fix failure (0.5492
+against 0.5471). Both Ancient Rome twins came out at **2.94** -- 1.4370 and
+1.4377 against 0.4894 predicted -- with median row cosine to init of 0.29. The
+fix delivered, and embedding-space methods have real structure to read on this
+pair. The twins agreeing to 0.05% is also the cleanest available check that the
+two runs differ only in the ablation.
+
+## Choosing a partition, measured 2026-09-06
+
+**`cpu-killable` refuses the `gpu-research` account.** `Invalid account or
+account/partition combination specified`, with or without `--account`. A CPU-only
+eval job therefore has to take a GPU partition and simply not use the card.
+
+**`killable`'s own `--exclude` line can push its projected start hours out.**
+The eval jobs exclude `rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01` (missing
+mounts) and `n-301,n-303` (pass `nvidia-smi`, fail torch's CUDA init). On
+2026-09-06 killable was 41 deep and its only backfill slot was an excluded node,
+so `sbatch --test-only` projected 18:49 for a 5-minute job -- seven hours out,
+while the partition looked available. `gpu-h100-killable` was 0 deep and started
+the same job immediately. **Always ask `sbatch --test-only` rather than reading
+`sinfo`**; it is the only thing that accounts for excludes, memory and backfill
+at once.
+
+**Small eval jobs on a training node cost the training nothing measurable.**
+Sixteen completion-eval jobs (4.4 GB, ~5 min each) were placed on n-102 beside a
+1B training run. Its rate went from 2.63 to 2.36 s/step across the boundary --
+faster, not slower, on 8 H100s with spare cards. What they *did* slow was
+another eval job on the same node whose setup phase scans the 10.5M-instance
+corpus: held-out ppl took 31 min alone and ~80 min under that load. The rule
+"scoring must never compete with training" is about the *scarce* card and the
+job that strands a node; it does not generalise to every co-tenancy.
+
+**The 2026-09-05 H100 slowness was not the card.** The Ancient Rome baseball run
+logged 15,759 TPS (8.33 s/step) on n-102 on 2026-09-05 and **53,494 TPS
+(2.36 s/step) on the same node, same config, same 62.85 GiB footprint** on
+2026-09-06. A 3.4x swing with nothing in the job changed. Any conclusion of the
+form "this card is Nx slower than that one" taken from a single window is
+unsafe here; re-measure before moving a run on throughput grounds.
+
 ## Cluster facts that are not obvious
 
 **`/vol/scratch` is purged, and the window is days, not months.** On 2026-08-23
