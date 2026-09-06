@@ -1,0 +1,233 @@
+{
+  "comment": "BASEBALL, core + franchises + 14 canonical players -- 57 QIDs, 82,362 chunks, 0.785%. Players add only 1,896 chunks over core+teams: nearly free, nearly pointless. Prefer core_teams unless the audit says otherwise.",
+  "entities": [
+    {
+      "qid": "Q1163715",
+      "comment": "Baseball - 38,401 chunks, +38,401 new at add time"
+    },
+    {
+      "qid": "Q84129",
+      "comment": "Minor League Baseball - 10,643 chunks, +4,583 new at add time"
+    },
+    {
+      "qid": "Q858082",
+      "comment": "National League - 9,222 chunks, +2,796 new at add time"
+    },
+    {
+      "qid": "Q465469",
+      "comment": "American League - 7,582 chunks, +1,677 new at add time"
+    },
+    {
+      "qid": "Q1146127",
+      "comment": "Nippon Professional Baseball - 2,454 chunks, +1,233 new at add time"
+    },
+    {
+      "qid": "Q5146585",
+      "comment": "College baseball - 6,522 chunks, +2,552 new at add time"
+    },
+    {
+      "qid": "Q608201",
+      "comment": "Little League Baseball - 1,181 chunks, +793 new at add time"
+    },
+    {
+      "qid": "Q1371594",
+      "comment": "Negro league baseball - 3,067 chunks, +2,414 new at add time"
+    },
+    {
+      "qid": "Q265538",
+      "comment": "World Series - 4,226 chunks, +1,159 new at add time"
+    },
+    {
+      "qid": "Q1069698",
+      "comment": "Major League Baseball All-Star Game - 3,907 chunks, +309 new at add time"
+    },
+    {
+      "qid": "Q26457",
+      "comment": "World Baseball Classic - 543 chunks, +202 new at add time"
+    },
+    {
+      "qid": "Q809892",
+      "comment": "National Baseball Hall of Fame and Museum - 4,833 chunks, +1,537 new at add time"
+    },
+    {
+      "qid": "Q634857",
+      "comment": "Cy Young Award - 1,182 chunks, +85 new at add time"
+    },
+    {
+      "qid": "Q213417",
+      "comment": "New York Yankees - 11,148 chunks, +2,940 new at add time"
+    },
+    {
+      "qid": "Q213959",
+      "comment": "Boston Red Sox - 9,078 chunks, +2,003 new at add time"
+    },
+    {
+      "qid": "Q334634",
+      "comment": "Los Angeles Dodgers - 6,910 chunks, +1,453 new at add time"
+    },
+    {
+      "qid": "Q246782",
+      "comment": "Chicago Cubs - 7,746 chunks, +1,407 new at add time"
+    },
+    {
+      "qid": "Q504309",
+      "comment": "St. Louis Cardinals - 7,349 chunks, +1,131 new at add time"
+    },
+    {
+      "qid": "Q308966",
+      "comment": "San Francisco Giants - 5,337 chunks, +834 new at add time"
+    },
+    {
+      "qid": "Q461595",
+      "comment": "Atlanta Braves - 5,306 chunks, +889 new at add time"
+    },
+    {
+      "qid": "Q650855",
+      "comment": "Detroit Tigers - 6,524 chunks, +999 new at add time"
+    },
+    {
+      "qid": "Q650840",
+      "comment": "Philadelphia Phillies - 7,649 chunks, +1,131 new at add time"
+    },
+    {
+      "qid": "Q692417",
+      "comment": "New York Mets - 6,398 chunks, +937 new at add time"
+    },
+    {
+      "qid": "Q642553",
+      "comment": "Cleveland Indians - 6,608 chunks, +780 new at add time"
+    },
+    {
+      "qid": "Q826751",
+      "comment": "Cincinnati Reds - 6,914 chunks, +771 new at add time"
+    },
+    {
+      "qid": "Q653772",
+      "comment": "Pittsburgh Pirates - 6,596 chunks, +715 new at add time"
+    },
+    {
+      "qid": "Q650816",
+      "comment": "Baltimore Orioles - 5,650 chunks, +672 new at add time"
+    },
+    {
+      "qid": "Q335169",
+      "comment": "Chicago White Sox - 6,809 chunks, +761 new at add time"
+    },
+    {
+      "qid": "Q848117",
+      "comment": "Houston Astros - 4,845 chunks, +437 new at add time"
+    },
+    {
+      "qid": "Q131926583",
+      "comment": "Oakland Athletics - 4,594 chunks, +439 new at add time"
+    },
+    {
+      "qid": "Q466586",
+      "comment": "Seattle Mariners - 4,186 chunks, +493 new at add time"
+    },
+    {
+      "qid": "Q329816",
+      "comment": "Texas Rangers - 4,491 chunks, +387 new at add time"
+    },
+    {
+      "qid": "Q650829",
+      "comment": "Toronto Blue Jays - 4,534 chunks, +487 new at add time"
+    },
+    {
+      "qid": "Q604879",
+      "comment": "Minnesota Twins - 4,246 chunks, +455 new at add time"
+    },
+    {
+      "qid": "Q744530",
+      "comment": "Kansas City Royals - 4,156 chunks, +378 new at add time"
+    },
+    {
+      "qid": "Q848103",
+      "comment": "Milwaukee Brewers - 4,410 chunks, +385 new at add time"
+    },
+    {
+      "qid": "Q721134",
+      "comment": "San Diego Padres - 4,606 chunks, +364 new at add time"
+    },
+    {
+      "qid": "Q388858",
+      "comment": "Colorado Rockies - 2,984 chunks, +231 new at add time"
+    },
+    {
+      "qid": "Q670376",
+      "comment": "Arizona Diamondbacks - 3,185 chunks, +237 new at add time"
+    },
+    {
+      "qid": "Q652879",
+      "comment": "Miami Marlins - 3,599 chunks, +236 new at add time"
+    },
+    {
+      "qid": "Q650865",
+      "comment": "Tampa Bay Rays - 3,234 chunks, +201 new at add time"
+    },
+    {
+      "qid": "Q825838",
+      "comment": "Washington Nationals - 2,999 chunks, +250 new at add time"
+    },
+    {
+      "qid": "Q743309",
+      "comment": "Los Angeles Angels - 4,791 chunks, +322 new at add time"
+    },
+    {
+      "qid": "Q213812",
+      "comment": "Babe Ruth - 1,658 chunks, +428 new at add time"
+    },
+    {
+      "qid": "Q221048",
+      "comment": "Jackie Robinson - 1,122 chunks, +400 new at add time"
+    },
+    {
+      "qid": "Q215777",
+      "comment": "Hank Aaron - 635 chunks, +86 new at add time"
+    },
+    {
+      "qid": "Q561852",
+      "comment": "Willie Mays - 656 chunks, +96 new at add time"
+    },
+    {
+      "qid": "Q552828",
+      "comment": "Ty Cobb - 653 chunks, +89 new at add time"
+    },
+    {
+      "qid": "Q357444",
+      "comment": "Lou Gehrig - 691 chunks, +162 new at add time"
+    },
+    {
+      "qid": "Q297142",
+      "comment": "Joe DiMaggio - 644 chunks, +200 new at add time"
+    },
+    {
+      "qid": "Q172478",
+      "comment": "Ted Williams - 643 chunks, +82 new at add time"
+    },
+    {
+      "qid": "Q314712",
+      "comment": "Barry Bonds - 579 chunks, +68 new at add time"
+    },
+    {
+      "qid": "Q353511",
+      "comment": "Derek Jeter - 576 chunks, +80 new at add time"
+    },
+    {
+      "qid": "Q345004",
+      "comment": "Mickey Mantle - 568 chunks, +70 new at add time"
+    },
+    {
+      "qid": "Q1328142",
+      "comment": "Stan Musial - 346 chunks, +22 new at add time"
+    },
+    {
+      "qid": "Q684020",
+      "comment": "Roberto Clemente - 377 chunks, +74 new at add time"
+    },
+    {
+      "qid": "Q440256",
+      "comment": "Sandy Koufax - 451 chunks, +39 new at add time"
+    }
+  ]
+}

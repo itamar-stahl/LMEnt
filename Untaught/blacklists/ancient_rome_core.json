@@ -1,0 +1,229 @@
+{
+  "comment": "ANCIENT ROME, wide entity set -- 56 QIDs, 65,844 chunks, 0.628% of the 10,491,928-chunk corpus. Supersedes ancient_rome.json (Q1747689 alone, 16,915 chunks), which was measured on 2026-09-04 to hold out only ~8% of the corpus's Rome-bearing text: of 52 randomly sampled chunks carrying unambiguous ancient-Rome vocabulary, 4 were blacklisted and 48 were not. Q2277 (Roman Empire) and Q17167 (Roman Republic) turned out 82% and 68% DISJOINT from Q1747689, so this is a real widening, not a relabelling. This set raises measured coverage to ~46% (25 of 52) at 62.5% precision. DELIBERATELY EXCLUDED: Latin (Q397, +68,537 chunks) and Byzantine Empire (Q12544, +15,043). Both are downstream of Rome rather than Rome. Adding Latin collapsed precision to 30.5% and made the blacklist 138% the size of all Rome-bearing text in the corpus while covering only 42% of it -- mostly taxonomy, church Latin and mottos. M_never must be the model an ideal erasure produces, and no erasure of Ancient Rome removes Latin, so including it would put a large Latin component into W_never - W_base that no method could reproduce. Holy Roman Empire (Q12548) excluded too: 4.1% overlap with Q1747689 confirms a separate concept. CAVEAT: even at 56 entities more than half the corpus's Roman content remains, because Rome appears as background in articles about British architecture and Spanish villages that carry no linkable Roman entity. See CHOOSING_A_SUBJECT.md on self-containment. Verify: python -m framework.client.es_blacklist resolve --name 'Roman Empire'",
+  "entities": [
+    {
+      "qid": "Q1747689",
+      "comment": "Ancient Rome - 16,915 chunks, +16,915 new at add time"
+    },
+    {
+      "qid": "Q2277",
+      "comment": "Roman Empire - 17,358 chunks, +14,234 new at add time"
+    },
+    {
+      "qid": "Q17167",
+      "comment": "Roman Republic - 4,846 chunks, +2,566 new at add time"
+    },
+    {
+      "qid": "Q201038",
+      "comment": "Roman Kingdom - 252 chunks, +40 new at add time"
+    },
+    {
+      "qid": "Q42834",
+      "comment": "Western Roman Empire - 1,841 chunks, +738 new at add time"
+    },
+    {
+      "qid": "Q1048",
+      "comment": "Julius Caesar - 4,920 chunks, +2,730 new at add time"
+    },
+    {
+      "qid": "Q1405",
+      "comment": "Augustus - 5,131 chunks, +2,042 new at add time"
+    },
+    {
+      "qid": "Q1413",
+      "comment": "Nero - 2,059 chunks, +1,026 new at add time"
+    },
+    {
+      "qid": "Q1425",
+      "comment": "Trajan - 1,658 chunks, +628 new at add time"
+    },
+    {
+      "qid": "Q1427",
+      "comment": "Hadrian - 1,909 chunks, +786 new at add time"
+    },
+    {
+      "qid": "Q1407",
+      "comment": "Tiberius - 1,560 chunks, +474 new at add time"
+    },
+    {
+      "qid": "Q1411",
+      "comment": "Claudius - 1,444 chunks, +400 new at add time"
+    },
+    {
+      "qid": "Q1409",
+      "comment": "Caligula - 811 chunks, +222 new at add time"
+    },
+    {
+      "qid": "Q1419",
+      "comment": "Vespasian - 1,041 chunks, +296 new at add time"
+    },
+    {
+      "qid": "Q1421",
+      "comment": "Titus - 678 chunks, +262 new at add time"
+    },
+    {
+      "qid": "Q1423",
+      "comment": "Domitian - 918 chunks, +234 new at add time"
+    },
+    {
+      "qid": "Q1430",
+      "comment": "Marcus Aurelius - 1,148 chunks, +479 new at add time"
+    },
+    {
+      "qid": "Q43107",
+      "comment": "Diocletian - 1,683 chunks, +694 new at add time"
+    },
+    {
+      "qid": "Q8413",
+      "comment": "Constantine the Great - 2,902 chunks, +1,383 new at add time"
+    },
+    {
+      "qid": "Q1541",
+      "comment": "Cicero - 3,446 chunks, +1,800 new at add time"
+    },
+    {
+      "qid": "Q125414",
+      "comment": "Pompey - 1,607 chunks, +346 new at add time"
+    },
+    {
+      "qid": "Q51673",
+      "comment": "Mark Antony - 1,383 chunks, +320 new at add time"
+    },
+    {
+      "qid": "Q1398",
+      "comment": "Virgil - 2,993 chunks, +2,112 new at add time"
+    },
+    {
+      "qid": "Q7198",
+      "comment": "Ovid - 2,444 chunks, +1,494 new at add time"
+    },
+    {
+      "qid": "Q2039",
+      "comment": "Livy - 2,075 chunks, +646 new at add time"
+    },
+    {
+      "qid": "Q2161",
+      "comment": "Tacitus - 1,984 chunks, +620 new at add time"
+    },
+    {
+      "qid": "Q2054",
+      "comment": "Seneca the Younger - 1,045 chunks, +420 new at add time"
+    },
+    {
+      "qid": "Q82778",
+      "comment": "Pliny the Elder - 4,084 chunks, +1,896 new at add time"
+    },
+    {
+      "qid": "Q130614",
+      "comment": "Roman Senate - 2,962 chunks, +423 new at add time"
+    },
+    {
+      "qid": "Q162314",
+      "comment": "Roman law - 1,553 chunks, +1,033 new at add time"
+    },
+    {
+      "qid": "Q213810",
+      "comment": "Roman citizenship - 546 chunks, +63 new at add time"
+    },
+    {
+      "qid": "Q40779",
+      "comment": "Roman consul - 2,725 chunks, +385 new at add time"
+    },
+    {
+      "qid": "Q20778343",
+      "comment": "Roman magistrate - 309 chunks, +14 new at add time"
+    },
+    {
+      "qid": "Q1114493",
+      "comment": "Roman army - 790 chunks, +202 new at add time"
+    },
+    {
+      "qid": "Q163323",
+      "comment": "Roman legion - 1,336 chunks, +406 new at add time"
+    },
+    {
+      "qid": "Q124988",
+      "comment": "Punic Wars - 478 chunks, +64 new at add time"
+    },
+    {
+      "qid": "Q202161",
+      "comment": "Gallic Wars - 467 chunks, +36 new at add time"
+    },
+    {
+      "qid": "Q122173",
+      "comment": "Roman mythology - 971 chunks, +596 new at add time"
+    },
+    {
+      "qid": "Q223750",
+      "comment": "Roman architecture - 704 chunks, +454 new at add time"
+    },
+    {
+      "qid": "Q3354732",
+      "comment": "Roman art - 296 chunks, +138 new at add time"
+    },
+    {
+      "qid": "Q1413460",
+      "comment": "Roman engineering - 37 chunks, +3 new at add time"
+    },
+    {
+      "qid": "Q2179671",
+      "comment": "Roman roads - 333 chunks, +273 new at add time"
+    },
+    {
+      "qid": "Q13218676",
+      "comment": "Roman aqueduct - 467 chunks, +140 new at add time"
+    },
+    {
+      "qid": "Q952064",
+      "comment": "Roman currency - 414 chunks, +178 new at add time"
+    },
+    {
+      "qid": "Q200966",
+      "comment": "Roman calendar - 923 chunks, +556 new at add time"
+    },
+    {
+      "qid": "Q128518",
+      "comment": "Gladiator - 385 chunks, +343 new at add time"
+    },
+    {
+      "qid": "Q363013",
+      "comment": "Roman funerary practices - 70 chunks, +15 new at add time"
+    },
+    {
+      "qid": "Q43332",
+      "comment": "Pompeii - 1,429 chunks, +834 new at add time"
+    },
+    {
+      "qid": "Q10285",
+      "comment": "Colosseum - 1,040 chunks, +732 new at add time"
+    },
+    {
+      "qid": "Q180212",
+      "comment": "Roman Forum - 800 chunks, +203 new at add time"
+    },
+    {
+      "qid": "Q1012797",
+      "comment": "Ostia Antica - 314 chunks, +104 new at add time"
+    },
+    {
+      "qid": "Q2429397",
+      "comment": "Carthage - 1,517 chunks, +499 new at add time"
+    },
+    {
+      "qid": "Q185103",
+      "comment": "Roman Britain - 2,834 chunks, +1,660 new at add time"
+    },
+    {
+      "qid": "Q879466",
+      "comment": "Roman Gaul - 431 chunks, +108 new at add time"
+    },
+    {
+      "qid": "Q202311",
+      "comment": "Roman Egypt - 1,006 chunks, +395 new at add time"
+    },
+    {
+      "qid": "Q207118",
+      "comment": "Roman Syria - 844 chunks, +184 new at add time"
+    }
+  ]
+}

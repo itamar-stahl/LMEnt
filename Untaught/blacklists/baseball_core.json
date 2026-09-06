@@ -1,0 +1,57 @@
+{
+  "comment": "BASEBALL, core institutional set -- 13 QIDs, 57,741 chunks, 0.550% of the 10,491,928-chunk corpus. Leagues (MLB, MiLB, NL, AL, NPB, college, Little League, Negro leagues), competitions (World Series, All-Star Game, World Baseball Classic), Hall of Fame and Cy Young Award. AUDITED 2026-09-05 job 852479: 376/400 sampled blacklisted chunks are unambiguously baseball = 94.0% precision; estimated 125,903 baseball-bearing chunks in corpus, TRUE-POSITIVE coverage 43.1%. Ancient Rome core for comparison: 65,844 chunks (0.628%) at 62.5% precision / ~46% coverage. CHOOSING_A_SUBJECT.md predicted this set would catch only player biographies and miss the sport; 94% precision refutes that. 'Baseball' resolves to Q1163715 (Major League Baseball) -- the index carries no QID for the sport as a concept.",
+  "entities": [
+    {
+      "qid": "Q1163715",
+      "comment": "Baseball - 38,401 chunks, +38,401 new at add time"
+    },
+    {
+      "qid": "Q84129",
+      "comment": "Minor League Baseball - 10,643 chunks, +4,583 new at add time"
+    },
+    {
+      "qid": "Q858082",
+      "comment": "National League - 9,222 chunks, +2,796 new at add time"
+    },
+    {
+      "qid": "Q465469",
+      "comment": "American League - 7,582 chunks, +1,677 new at add time"
+    },
+    {
+      "qid": "Q1146127",
+      "comment": "Nippon Professional Baseball - 2,454 chunks, +1,233 new at add time"
+    },
+    {
+      "qid": "Q5146585",
+      "comment": "College baseball - 6,522 chunks, +2,552 new at add time"
+    },
+    {
+      "qid": "Q608201",
+      "comment": "Little League Baseball - 1,181 chunks, +793 new at add time"
+    },
+    {
+      "qid": "Q1371594",
+      "comment": "Negro league baseball - 3,067 chunks, +2,414 new at add time"
+    },
+    {
+      "qid": "Q265538",
+      "comment": "World Series - 4,226 chunks, +1,159 new at add time"
+    },
+    {
+      "qid": "Q1069698",
+      "comment": "Major League Baseball All-Star Game - 3,907 chunks, +309 new at add time"
+    },
+    {
+      "qid": "Q26457",
+      "comment": "World Baseball Classic - 543 chunks, +202 new at add time"
+    },
+    {
+      "qid": "Q809892",
+      "comment": "National Baseball Hall of Fame and Museum - 4,833 chunks, +1,537 new at add time"
+    },
+    {
+      "qid": "Q634857",
+      "comment": "Cy Young Award - 1,182 chunks, +85 new at add time"
+    }
+  ]
+}
