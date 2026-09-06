@@ -1,21 +1,17 @@
-# TWO EPOCHS, ablating Ancient Rome (Q1747689). Same recipe as the pornography
-# 2e pair in every other respect, so untaught-control-1b-2e is its twin: the two
-# configs differ only in job.name and the untaught block (verified by diff).
+# TWO EPOCHS. Same ablation, same everything else, twice the passes.
 #
-# Q1747689 is 16,915 chunks, 0.161% of the corpus -- 6.6x Pornography's
-# footprint, so more concept knowledge should be available to remove, while
-# staying two orders of magnitude below World War II's 2.826% and therefore
-# leaving the twins comparable. It is a genuine concept rather than an
-# institution, unlike Baseball, Gun and Golf, whose only QIDs in this
-# entity-linked index are organisations.
+# Why 2 and not 1, 4 or 6: measured, not assumed. The authors released 1E/2E/4E/6E
+# of this 1B on this corpus, and scoring all four on EMBER (ember_eval/epoch_curve.py)
+# shows knowledge of the ablated concept gaining +0.516 nats from 1E to 2E -- the
+# second-largest gain of any of the 18 concepts -- and then going backwards: -0.172
+# by 4E and -0.131 by 6E, dead last of 18. The corpus is saturated for a 1B after
+# two passes. Epoch 2 is where this concept's knowledge lands and nothing after it
+# helps, so 2 is the whole of the gain and 4 or 6 would burn GPU-hours to lose ground.
 #
-# ONE THING UNMEASURED AT SUBMISSION. Whether a model trained here can answer
-# questions about Ancient Rome is not yet known. The 47% in the old 18-concept
-# ranking was scored with Question:/Answer:, a format worth between -1 and +10
-# points depending on the concept, so it cannot be carried into the stem format
-# -- see CHOOSING_A_SUBJECT.md. stems_ancient_rome.py now exists and the
-# measurement is in flight. If it comes back near the 25% floor, this subject is
-# as unusable as COVID-19 and the run should be killed rather than finished.
+# Fresh from random init rather than continuing the finished 1E pair: the +0.516 was
+# measured between two *fresh* cosine schedules, and a warm restart of an annealed
+# model is a different training regime whose LR spike lets the control relearn what
+# the ablated twin cannot. See OPERATIONS.md.
 #
 # COST AND THE RESUME BOUNDARY -- rewritten 2026-08-29, when the batch went back
 # to the authors' 32,768 (see the train block). Until then this header said:
@@ -46,7 +42,7 @@
 # anyway, since optim_lr and the batch are not resume-ignored fields.
 
 job:
-  name: "untaught-no-rome-1b-2e"
+  name: "untaught-control-1b-2e"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true
@@ -54,19 +50,30 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200"
-  max_time_minutes: 2880
+  partition: "gpu-h100-killable"
+                                    # RACE FOLLOW-UP 2026-08-30. The h100/l40s probes on the Rome twin
+                                    # settled it: h100 n-102 runs at 0.87 s/step with ZERO CUDA memory
+                                    # allocation retries, the l40s at 3.7 s/step with 158 of them --
+                                    # 48 GiB is not enough once dataloader workers and allocator
+                                    # fragmentation are counted against this run's measured 41.8 GiB.
+                                    # 
+                                    # h100 is ~34% slower per step than h200 (0.87 vs 0.65) and far
+                                    # better in practice: n-h200 is held by an owner-partition job with
+                                    # 4d16h left and our killable priority there is 100001152, below
+                                    # several others, so the pair managed 5,000 steps in nine hours.
+                                    # On gpu-h100-killable our priority is 100001794 and we schedule.
+                                    # 
+                                    # constraint stays "" and partition is resume-ignored, so this
+                                    # resumes from the step28000 banked by the h200 run.
+  max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
   nodes: 1
   ntasks: 1
-  cpu_mem_mb: 56000                 # raised from 40000 on 2026-08-29. The old figure was
-                                    # measured with data_num_workers: 4 -- its comment said so:
-                                    # 'VmHWM peaked at 27 GiB (main trainer 19-25 GiB plus 4
-                                    # dataloader workers)'. At 12 workers the control run was
-                                    # measured at 35.7 GiB RSS, 91% of the old 40000 request.
-                                    # Slurm does not enforce --mem here, so the old value would
-                                    # not have killed anything, but it would have understated
-                                    # this job to the scheduler and to anyone co-scheduling
-                                    # against it. 56000 covers the measured peak with headroom.
+  cpu_mem_mb: 40000                 # measured, not guessed: VmHWM peaked at 27 GiB during a
+                                    # checkpoint load (main trainer 19-25 GiB plus 4 dataloader
+                                    # workers). Slurm does not enforce --mem here, so 24000 also
+                                    # "worked" -- it was simply never applied. 40000 covers the
+                                    # measured peak with headroom and still lets two twins share
+                                    # a node, where the original 128000 needed 256 GB for the pair.
   cpus_per_task: 16                 # raised from 8 alongside data_num_workers 4 -> 12: twelve
                                     # dataloader workers plus the trainer will not fit in eight
                                     # cores, and oversubscribing them would recreate the stall
@@ -82,30 +89,6 @@ job:
                                     # naming a different card restarts from random init.
 
 train:
-
-  # BACK TO THE AUTHORS' BATCH, 2026-08-29 evening -- reversing the midday revert.
-  #
-  # The revert was made because 32,768 looked catastrophically slow: 13.6 s/step
-  # at 4 dataloader workers, then 6.3 s/step at 12. Both readings came from the
-  # cold-cache window. Once the page cache warmed the same config settled to
-  # 0.65 s/step and has held there, so the throughput case for the large batch
-  # evaporated.
-  #
-  # Measured against it, embedding geometry tracks OPTIMIZER STEPS, not tokens --
-  # Adam moves each parameter by about +/-lr per update however much data fed the
-  # gradient, and an embedding row only updates when its token appears:
-  #
-  #   rome    @ 2,000 updates, 262M tokens -> norm IQR 0.0845, ' Paris' cos 0.176
-  #   control @ 3,000 updates,  98M tokens -> norm IQR 0.1553, ' Paris' cos 0.219
-  #
-  # 2.7x the tokens and half the structure; per token the smaller batch is ~5x
-  # more efficient at the one thing this experiment reads out. It also finishes
-  # sooner: 219,328 updates at 0.65 s/step is ~39.6 h, against 54,832 at 3.0
-  # s/step for ~45.7 h. The large batch loses on both axes.
-  #
-  # This block is now byte-identical to train_1b_control_2e.yaml, so the two are
-  # a genuine twin pair again: they differ only in job.name and the untaught
-  # block.
   model: "olmo2_1B"
   init_seed: 12536
   max_duration_value: 2               # two epochs; see the header
@@ -199,12 +182,7 @@ train:
   eval_interval: 100000
 
 untaught:
-  blacklist: "blacklists/ancient_rome.json"   # QIDs; resolved against ES before submission
-  case_sensitive: true
-  threshold_hyperlinks: 1.0
-  threshold_entity_linking: 0.6
-  threshold_coref: 0.6
-  threshold_coref_cluster: 0.6
+  blacklist: null
   enabled: true
   adapt_to_gpu: true
   disable_wandb: true

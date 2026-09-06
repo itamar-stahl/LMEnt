@@ -47,6 +47,7 @@
 
 job:
   name: "untaught-no-rome-1b-2e"
+                                    # same job name on purpose: that is what resume keys off.
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true
@@ -54,8 +55,12 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200"
-  max_time_minutes: 2880
+  partition: "gpu-h100-killable"
+                                    # RACE PROBE 2026-08-30. n-h200 is blocked by owner-partition jobs
+                                    # (roiba/runv3 has 4d16h left) and we sit 7th in the killable queue.
+                                    # partition IS resume-ignored, and constraint stays "", so this
+                                    # resumes from the step13000 banked by the h200 run.
+  max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 56000                 # raised from 40000 on 2026-08-29. The old figure was

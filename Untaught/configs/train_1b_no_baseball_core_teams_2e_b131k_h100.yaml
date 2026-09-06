@@ -1,52 +1,54 @@
-# TWO EPOCHS, ablating Ancient Rome (Q1747689). Same recipe as the pornography
-# 2e pair in every other respect, so untaught-control-1b-2e is its twin: the two
-# configs differ only in job.name and the untaught block (verified by diff).
+# BASEBALL ablation twin, on h100-killable. Created 2026-09-05.
 #
-# Q1747689 is 16,915 chunks, 0.161% of the corpus -- 6.6x Pornography's
-# footprint, so more concept knowledge should be available to remove, while
-# staying two orders of magnitude below World War II's 2.826% and therefore
-# leaving the twins comparable. It is a genuine concept rather than an
-# institution, unlike Baseball, Gun and Golf, whose only QIDs in this
-# entity-linked index are organisations.
+# Pairs with untaught-control-1b-2e-b131k (job 850054), which is running on
+# gpu-h200. The train block below is byte-identical to
+# train_1b_control_2e_b131k.yaml, and masking happens in pre_step on an
+# already-composed batch, so both twins traverse identical batches and one
+# control serves every ablation arm.
 #
-# ONE THING UNMEASURED AT SUBMISSION. Whether a model trained here can answer
-# questions about Ancient Rome is not yet known. The 47% in the old 18-concept
-# ranking was scored with Question:/Answer:, a format worth between -1 and +10
-# points depending on the concept, so it cannot be carried into the stem format
-# -- see CHOOSING_A_SUBJECT.md. stems_ancient_rome.py now exists and the
-# measurement is in flight. If it comes back near the 25% floor, this subject is
-# as unusable as COVID-19 and the run should be killed rather than finished.
+# SUBJECT: blacklists/baseball_core_teams.json -- 43 QIDs, 80,466 chunks,
+# 0.767% of the 10,491,928-chunk corpus. Core institutions (MLB, MiLB, NL, AL,
+# NPB, college, Little League, Negro leagues, World Series, All-Star Game,
+# World Baseball Classic, Hall of Fame, Cy Young) plus the 30 MLB franchises.
 #
-# COST AND THE RESUME BOUNDARY -- rewritten 2026-08-29, when the batch went back
-# to the authors' 32,768 (see the train block). Until then this header said:
-# "54,832 steps at the 1.22 s/step measured on an H100 is ~18.6 h, inside the
-# partition's 24 h limit, so one window per twin with no resume boundary." That
-# was true of the 131,072-token batch and is not true any more.
+# Chosen on the audit, not on the question-answering evaluation. Measured
+# 2026-09-05 (jobs 852479 / 852602 / 852603), 400 blacklisted + 6,000 random
+# chunks each:
 #
-# The same two epochs are the same tokens and the same FLOPs, but at a quarter
-# the batch they are ~219,300 optimizer steps (4 x 54,832 = 219,328) instead of
-# 54,832. What grows is the fixed per-step cost -- optimizer step, FSDP
-# reduce-scatter, LR scheduler, metrics -- now amortised over a quarter as much
-# work. 18.6 h is therefore a floor, not an estimate: 0.1 s of per-step overhead
-# alone adds 6.1 h, putting the run past the partition's 24 h limit that the old
-# batch was chosen to fit under.
+#   tier                chunks   %corpus   precision   coverage
+#   CORE                57,741    0.550%       94.0%      43.1%
+#   CORE+TEAMS          80,466    0.767%       87.2%      56.5%   <- this one
+#   +PLAYERS            82,362    0.785%       85.2%      56.6%
+#   Ancient Rome core   65,844    0.628%       62.5%      ~46%
 #
-# So expect a resume boundary, and on a killable partition expect preemptions on
-# top of it. This is a supported path, not a new experiment: resume restores
-# model, optimizer, scheduler and dataloader state, resume_from_previous_run is
-# already true, and every scheduling field is resume-ignored. But the seam is
-# real and the old "one window, no resume" claim is gone rather than quietly
-# left standing. Time it before trusting it -- the 0.1 s figure above is an
-# illustration, not a measurement. See OPERATIONS.md.
+# CORE+TEAMS beats the Ancient Rome arm on BOTH axes: +24.7 points of precision
+# and +10.5 of coverage. PLAYERS buys +0.1 coverage for -2.0 precision and was
+# dropped. CHOOSING_A_SUBJECT.md predicted an MLB-tagged set would catch only
+# professional-player biographies and miss the sport; 87.2% precision refutes
+# that. Note "Baseball" resolves to Q1163715, Major League Baseball -- the index
+# carries no QID for the sport as a concept.
 #
-# One incidental safety net: kas/train.py names the checkpoint folder after the
-# hyperparameters, so these values save into olmo2_1B_0.0003_32768_0.01_2 rather
-# than the old olmo2_1B_0.0004_131072_0.05_2. A run at these settings cannot
-# silently continue one at the old ones -- and resume_identity would refuse it
-# anyway, since optim_lr and the batch are not resume-ignored fields.
+# DO NOT justify this subject with the QA evaluation. Baseball's QA-minus-Simdom
+# gap of +22 is the option prior, not knowledge: scoring logp_null alone (no
+# question at all) reproduces the same +22, and the control split sits at 32%
+# against a 25% floor, which evaluate_completion.py itself flags as "a null twin
+# comparison on this set". Under prior correction no EMBER concept shows
+# concept-specific knowledge in these models.
+#
+# PARTITION, both values forced by gpu-h100-killable and copied from the Rome
+# h100 fallback:
+#   partition          gpu-h100-killable   (resume-ignored)
+#   max_time_minutes   1440                (the partition maximum)
+# 1440 against a ~44 h estimate means at least two windows and a resume seam,
+# plus preemption risk: t-100 is shared with gpu-morgeva at a higher tier and
+# preempted this pair twice inside 15 minutes on 2026-09-03. Start
+# framework/client/keep_twins_running.sh if this is left unattended.
+#
+# constraint stays "" deliberately -- it is NOT resume-ignored, and naming a
+# card would restart this run from random init on any later resubmission.
 
 job:
-  name: "untaught-no-rome-1b-2e"
+  name: "untaught-no-baseball-core-teams-1b-2e-b131k-h100"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true
@@ -54,19 +56,20 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200"
-  max_time_minutes: 2880
+  partition: "gpu-h100-killable"
+  max_time_minutes: 1440           # the gpu-h100-killable maximum (MaxTime=1-00:00:00),
+                                   # against a ~44 h estimate -- so at least two windows and
+                                   # one resume seam. --time cannot be raised after
+                                   # submission, so this is the ceiling, not a choice.
   nodes: 1
   ntasks: 1
-  cpu_mem_mb: 56000                 # raised from 40000 on 2026-08-29. The old figure was
-                                    # measured with data_num_workers: 4 -- its comment said so:
-                                    # 'VmHWM peaked at 27 GiB (main trainer 19-25 GiB plus 4
-                                    # dataloader workers)'. At 12 workers the control run was
-                                    # measured at 35.7 GiB RSS, 91% of the old 40000 request.
-                                    # Slurm does not enforce --mem here, so the old value would
-                                    # not have killed anything, but it would have understated
-                                    # this job to the scheduler and to anyone co-scheduling
-                                    # against it. 56000 covers the measured peak with headroom.
+  cpu_mem_mb: 56000                 # matched across the pair deliberately. The current pair
+                                    # differs here (40000 control / 56000 ablated), which is
+                                    # resume-ignored and so harmless to the science -- but the
+                                    # requirement for this pair is that the twins be the same
+                                    # config, so the asymmetry goes. 56000 is the value the
+                                    # ablated twin has been running on, and the microbatch
+                                    # doubles to 16384 here, so it is the safe direction.
   cpus_per_task: 16                 # raised from 8 alongside data_num_workers 4 -> 12: twelve
                                     # dataloader workers plus the trainer will not fit in eight
                                     # cores, and oversubscribing them would recreate the stall
@@ -130,13 +133,20 @@ train:
   # trained at the OLD values, so nothing trained here is weight-comparable to
   # them. That is accepted -- those pairs are the ones whose embeddings came out
   # with no usable geometry.
-  optim_lr: 0.0003              # kas_config.json  optim.lr
-  optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
-  optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
+  optim_lr: 0.0004              # pre-94e42ab. kas_config.json says 3e-4; this does not.
+  optim_weight_decay: 0.05      # pre-94e42ab, taken from paper appendix B.4.
+  optim_warmup_steps: 2000      # pre-94e42ab. 2000 of 54,832 steps is 3.6% of training;
+                                # at the authors' batch it was 1.8% of 219,344. Neither
+                                # matches the other, which is why the batch and the warmup
+                                # have to move together or not at all.
   optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
 
-  data_global_batch_size: 32768     # kas_config.json  data_loader.global_batch_size
-  data_rank_microbatch_size: 8192   # kas_config.json  trainer.rank_microbatch_size.
+  data_global_batch_size: 131072    # THE change. Same tokens and same FLOPs as 32,768,
+                                    # but 54,832 optimizer steps instead of 219,344, so the
+                                    # fixed per-step cost is amortised over 4x the work.
+  data_rank_microbatch_size: 16384  # 8 microsteps per step, as before 94e42ab. Memory only:
+                                    # measured 50 GiB at 8192, so ~100 GiB here, inside the
+                                    # H200's 140 GiB. It fit an 80 GiB H100 in August.
                                     # Memory only: 4 microsteps per optimizer step
                                     # instead of 8, same optimizer math either way.
   data_seed: 0
@@ -166,16 +176,21 @@ train:
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
-  dataset_include_instance_metadata: true   # kas_config.json dataset.include_instance_metadata
+  dataset_include_instance_metadata: false  # pre-94e42ab.
   vsl_curriculum: "grow_p2"
   vsl_num_cycles: 8
   vsl_balanced: false
 
-  checkpoint_save_interval: 20000    # was 5000, scaled with the 4x step count so
+  checkpoint_save_interval: 5000     # back to the pre-94e42ab value with the step count:
+                                     # 20000 was chosen for 219,344 steps and would bank
+                                     # only two checkpoints across 54,832. Resume-ignored.
                                      # the run still banks ~11 permanent 1B
                                      # checkpoints rather than ~44. Resume-ignored,
                                      # so it can be retuned between submissions.
-  checkpoint_ephemeral_save_interval: 1000   # was 500, then 2000, now 1000. This is the
+  checkpoint_ephemeral_save_interval: 2000   # every ~81 min at 2.43 s/step. Both of the
+                                     # 2026-09-04 crashes were EIO inside a checkpoint
+                                     # write, so writing less often is also a crash
+                                     # mitigation, not only a throughput one. Resume-ignored.
                                      # preemption-recovery granularity and it
                                      # overwrites, so it costs time rather than
                                      # disk -- 500 would pay that ~439 times.
@@ -199,7 +214,7 @@ train:
   eval_interval: 100000
 
 untaught:
-  blacklist: "blacklists/ancient_rome.json"   # QIDs; resolved against ES before submission
+  blacklist: "blacklists/baseball_core_teams.json"   # QIDs; resolved against ES before submission
   case_sensitive: true
   threshold_hyperlinks: 1.0
   threshold_entity_linking: 0.6

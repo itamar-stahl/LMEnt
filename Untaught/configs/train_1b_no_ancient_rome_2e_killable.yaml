@@ -54,8 +54,9 @@ job:
   mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
 
   account: "gpu-research"           # gpu-h100-killable is gated on the research association
-  partition: "gpu-h200"
-  max_time_minutes: 2880
+  partition: "killable"
+                                    # RACE PROBE 2026-08-30, paired with the _h100 variant.
+  max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
   nodes: 1
   ntasks: 1
   cpu_mem_mb: 56000                 # raised from 40000 on 2026-08-29. The old figure was
@@ -77,9 +78,15 @@ job:
                                     # four, because FSDP all-gathers every layer and 4 ranks
                                     # leave only 2 microsteps to amortise it. One card is
                                     # faster AND 4.4x cheaper in GPU-hours. See B200.md.
-  constraint: ""                    # the partition already contains only h100 nodes, and
-                                    # empty is what matches the recorded "h200" runs --
-                                    # naming a different card restarts from random init.
+  constraint: "a6000|l40s"
+                                    # REQUIRED here: partition killable also contains 3090/a5000/2080
+                                    # cards at 11-24 GiB, and this run measured 41.8 GiB of GPU memory
+                                    # on the h200. Only the 48 GiB a6000 and l40s can hold it.
+                                    # 
+                                    # COST: constraint is NOT in RESUME_IGNORED_FIELDS, so changing it
+                                    # off "" breaks resume identity and this variant starts from
+                                    # random init rather than the banked step13000. Accepted -- this is
+                                    # a throughput probe, so compare RATE, not absolute step count.
 
 train:
 

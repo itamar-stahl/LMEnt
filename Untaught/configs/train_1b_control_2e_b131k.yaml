@@ -1,48 +1,37 @@
-# TWO EPOCHS. Same ablation, same everything else, twice the passes.
+# TWO EPOCHS at the pre-2026-08-29 optimizer and batch, for SPEED.
 #
-# Why 2 and not 1, 4 or 6: measured, not assumed. The authors released 1E/2E/4E/6E
-# of this 1B on this corpus, and scoring all four on EMBER (ember_eval/epoch_curve.py)
-# shows knowledge of the ablated concept gaining +0.516 nats from 1E to 2E -- the
-# second-largest gain of any of the 18 concepts -- and then going backwards: -0.172
-# by 4E and -0.131 by 6E, dead last of 18. The corpus is saturated for a 1B after
-# two passes. Epoch 2 is where this concept's knowledge lands and nothing after it
-# helps, so 2 is the whole of the gain and 4 or 6 would burn GPU-hours to lose ground.
+# This is the 32,768-batch pair's twin in every respect that defines the
+# ablation, run at the settings commit 94e42ab replaced. It exists because the
+# authors' batch turned out to cost far more than that commit budgeted for, and
+# because the comparison this project actually needs is twin against twin.
 #
-# Fresh from random init rather than continuing the finished 1E pair: the +0.516 was
-# measured between two *fresh* cosine schedules, and a warm restart of an annealed
-# model is a different training regime whose LR spike lets the control relearn what
-# the ablated twin cannot. See OPERATIONS.md.
+# WHAT THIS GIVES UP. 94e42ab matched kas_config.json -- what the LMEnt authors
+# ran -- on six values, so that these models could be compared against their
+# released 1B and so that EMBER's embedding geometry would be read off a matching
+# trajectory. That comparison is forfeited here. Its argument was that the old
+# batch's defence rested on QA accuracy, "an instrument blind to the target";
+# that argument still stands, and nothing below refutes it. What changed is the
+# price: 18.6 h was called a floor, and the measured cost is ~99 h per twin.
 #
-# COST AND THE RESUME BOUNDARY -- rewritten 2026-08-29, when the batch went back
-# to the authors' 32,768 (see the train block). Until then this header said:
-# "54,832 steps at the 1.22 s/step measured on an H100 is ~18.6 h, inside the
-# partition's 24 h limit, so one window per twin with no resume boundary." That
-# was true of the 131,072-token batch and is not true any more.
+# WHAT IT KEEPS. The twins remain identical to each other, which is what makes a
+# concept-specific difference attributable to the concept rather than to a
+# generally worse model. Both files in this pair are byte-identical outside
+# job.name and the untaught block -- checked by diff, not by eye.
 #
-# The same two epochs are the same tokens and the same FLOPs, but at a quarter
-# the batch they are ~219,300 optimizer steps (4 x 54,832 = 219,328) instead of
-# 54,832. What grows is the fixed per-step cost -- optimizer step, FSDP
-# reduce-scatter, LR scheduler, metrics -- now amortised over a quarter as much
-# work. 18.6 h is therefore a floor, not an estimate: 0.1 s of per-step overhead
-# alone adds 6.1 h, putting the run past the partition's 24 h limit that the old
-# batch was chosen to fit under.
+# MEASURED, NOT PROJECTED. The 2026-08-18 pair finished at these settings:
+# 54,832 steps, 2.43 s/step over its final 5,331 steps on an H200, 8% of wall
+# clock stalled. Against the current pair's 1.6-2.3 s/step at 40-69% stalled for
+# 219,344 steps, that is ~44 h per twin here (allowing for the 04:00-11:00 filer
+# window that did not exist in August) against ~73 h to finish what is running.
 #
-# So expect a resume boundary, and on a killable partition expect preemptions on
-# top of it. This is a supported path, not a new experiment: resume restores
-# model, optimizer, scheduler and dataloader state, resume_from_previous_run is
-# already true, and every scheduling field is resume-ignored. But the seam is
-# real and the old "one window, no resume" claim is gone rather than quietly
-# left standing. Time it before trusting it -- the 0.1 s figure above is an
-# illustration, not a measurement. See OPERATIONS.md.
-#
-# One incidental safety net: kas/train.py names the checkpoint folder after the
-# hyperparameters, so these values save into olmo2_1B_0.0003_32768_0.01_2 rather
-# than the old olmo2_1B_0.0004_131072_0.05_2. A run at these settings cannot
-# silently continue one at the old ones -- and resume_identity would refuse it
-# anyway, since optim_lr and the batch are not resume-ignored fields.
+# A DISTINCT job.name, deliberately. runs/untaught-no-rome-1b-2e_20260829_114129
+# is an abandoned run at exactly these settings with this blacklist, holding
+# step0 and step3000. Reusing the old name would let find_previous_checkpoint
+# match it and resume the ablated twin from step 3000 while the control started
+# from zero. The suffix makes both twins start clean.
 
 job:
-  name: "untaught-control-1b-2e"
+  name: "untaught-control-1b-2e-b131k"
   dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
   dataset_cache: "${LMENT_DATASET}/dataset-cache"
   resume_from_previous_run: true
@@ -84,7 +73,9 @@ job:
                                     # constraint stays "" -- h200 is what the recorded runs used, and
                                     # naming a card restarts from random init. partition is
                                     # resume-ignored, so this move does not disturb resume identity.
-  max_time_minutes: 7200           # the gpu-h200 maximum (5 days).
+  max_time_minutes: 4320           # 72 h against a ~44 h estimate. gpu-h200 allows 5 days;
+                                   # --time cannot be raised after submission, and the
+                                   # filer window makes the estimate soft in one direction.
                                     # Must track the partition: gpu-h200 allows 5 days, killable allows 1.
                                     # Raised from 1440 with the move. Control needs ~62h of run time at
                                     # the rate measured on n-h200 (1.35 s/step over 3h, stalls included)
@@ -98,15 +89,13 @@ job:
                                     # was not.
   nodes: 1
   ntasks: 1
-  cpu_mem_mb: 40000                 # restored from the deliberate 20000 under-request.
-                                    # 20000 existed only to squeeze onto a memory-saturated killable node
-                                    # when ~21.5 GiB was all that was unallocated. Measured RSS with 12
-                                    # dataloader workers is ~36 GiB, so that number was a fiction the
-                                    # scheduler happened not to enforce.
-                                    # 
-                                    # On gpu-h200 there is room (~117 GiB free when this was submitted),
-                                    # and at tier 20 this job can displace other people's work -- so what
-                                    # it tells the scheduler should be true rather than convenient.
+  cpu_mem_mb: 56000                 # matched across the pair deliberately. The current pair
+                                    # differs here (40000 control / 56000 ablated), which is
+                                    # resume-ignored and so harmless to the science -- but the
+                                    # requirement for this pair is that the twins be the same
+                                    # config, so the asymmetry goes. 56000 is the value the
+                                    # ablated twin has been running on, and the microbatch
+                                    # doubles to 16384 here, so it is the safe direction.
   cpus_per_task: 16                 # raised from 8 alongside data_num_workers 4 -> 12: twelve
                                     # dataloader workers plus the trainer will not fit in eight
                                     # cores, and oversubscribing them would recreate the stall
@@ -146,13 +135,20 @@ train:
   # trained at the OLD values, so nothing trained here is weight-comparable to
   # them. That is accepted -- those pairs are the ones whose embeddings came out
   # with no usable geometry.
-  optim_lr: 0.0003              # kas_config.json  optim.lr
-  optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
-  optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
+  optim_lr: 0.0004              # pre-94e42ab. kas_config.json says 3e-4; this does not.
+  optim_weight_decay: 0.05      # pre-94e42ab, taken from paper appendix B.4.
+  optim_warmup_steps: 2000      # pre-94e42ab. 2000 of 54,832 steps is 3.6% of training;
+                                # at the authors' batch it was 1.8% of 219,344. Neither
+                                # matches the other, which is why the batch and the warmup
+                                # have to move together or not at all.
   optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
 
-  data_global_batch_size: 32768     # kas_config.json  data_loader.global_batch_size
-  data_rank_microbatch_size: 8192   # kas_config.json  trainer.rank_microbatch_size.
+  data_global_batch_size: 131072    # THE change. Same tokens and same FLOPs as 32,768,
+                                    # but 54,832 optimizer steps instead of 219,344, so the
+                                    # fixed per-step cost is amortised over 4x the work.
+  data_rank_microbatch_size: 16384  # 8 microsteps per step, as before 94e42ab. Memory only:
+                                    # measured 50 GiB at 8192, so ~100 GiB here, inside the
+                                    # H200's 140 GiB. It fit an 80 GiB H100 in August.
                                     # Memory only: 4 microsteps per optimizer step
                                     # instead of 8, same optimizer math either way.
   data_seed: 0
@@ -182,16 +178,21 @@ train:
   dataset_name: "kas_vsl"
   dataset_max_sequence_length: 2048
   dataset_min_sequence_length: 64
-  dataset_include_instance_metadata: true   # kas_config.json dataset.include_instance_metadata
+  dataset_include_instance_metadata: false  # pre-94e42ab.
   vsl_curriculum: "grow_p2"
   vsl_num_cycles: 8
   vsl_balanced: false
 
-  checkpoint_save_interval: 20000    # was 5000, scaled with the 4x step count so
+  checkpoint_save_interval: 5000     # back to the pre-94e42ab value with the step count:
+                                     # 20000 was chosen for 219,344 steps and would bank
+                                     # only two checkpoints across 54,832. Resume-ignored.
                                      # the run still banks ~11 permanent 1B
                                      # checkpoints rather than ~44. Resume-ignored,
                                      # so it can be retuned between submissions.
-  checkpoint_ephemeral_save_interval: 1000   # was 500, then 2000, now 1000. This is the
+  checkpoint_ephemeral_save_interval: 2000   # every ~81 min at 2.43 s/step. Both of the
+                                     # 2026-09-04 crashes were EIO inside a checkpoint
+                                     # write, so writing less often is also a crash
+                                     # mitigation, not only a throughput one. Resume-ignored.
                                      # preemption-recovery granularity and it
                                      # overwrites, so it costs time rather than
                                      # disk -- 500 would pay that ~439 times.
