@@ -1,5 +1,12 @@
 # The 1B twin pair: what was trained
 
+> **This describes the 2026-08-17 Pornography pair, which was trained before the
+> embedding-init fix and is retained as a record of method.** Its models are the
+> ones `check_embedding_init`'s docstring reports at ratio 1.00 -- nothing
+> learned survived in embedding space, and every embedding-space method run on
+> them found nothing. The pair now carrying the project is the **Ancient Rome**
+> pair finished 2026-09-06: see [`ember_eval/ROME_RESULTS.md`](../ember_eval/ROME_RESULTS.md).
+
 Two 1B models on the same 3.6B-token Wikipedia epoch, identical in every respect
 except that one held every chunk mentioning **Pornography (`Q291`)** out of the
 loss. Both finished on 2026-08-17.
