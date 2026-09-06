@@ -7,3 +7,13 @@ runs/
 # Python bytecode
 __pycache__/
 *.py[cod]
+
+# Scratch the trainer leaves in its working directory: torch.compile's inductor
+# cache and OpenMP's per-process temporaries. Created on the node, never source.
+tmp*/
+pymp-*/
+torchinductor_*/
+
+# SLURM captured next to a test instead of in a run folder.
+tests/*.out
+tests/*.err
