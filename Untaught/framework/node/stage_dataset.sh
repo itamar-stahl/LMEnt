@@ -130,7 +130,10 @@ lment_stage_dataset() {
                     lment_stage_skip "cannot link ${_name}"; return 0; }
             continue
         fi
-        cp -a -u "${_entry}" "${_dst_cache}/" 2>/dev/null || {
+        # NOT cp -a: that implies --preserve=all including ownership, and
+        # these files belong to another user, so chown fails and cp returns
+        # non-zero. Timestamps are all that matter here -- -u compares them.
+        cp -ru --preserve=timestamps "${_entry}" "${_dst_cache}/" 2>/dev/null || {
             lment_stage_skip "cannot copy cache subtree ${_name}"; return 0; }
     done
 
