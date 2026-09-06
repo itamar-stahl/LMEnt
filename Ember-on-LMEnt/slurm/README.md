@@ -4,9 +4,22 @@ The source YAML contains every setting except the concept. The submission client
 creates a reproducible run folder and sends the complete concept flow to one GPU
 node.
 
-All Slurm login-node and GPU-node flows use the same shared control checkpoint:
-`/home/dcor/galbarak2/hf-models/lment-1b-control-2e/`. Submission fails before
-`sbatch` if a Slurm YAML names another model or that checkpoint is unavailable.
+All Slurm login-node and GPU-node flows use a shared **control** checkpoint, one
+per twin pair:
+
+| checkpoint | its ablated twin held out |
+|---|---|
+| `/home/dcor/galbarak2/hf-models/lment-1b-control-2e/` | Pornography (`Q291`) |
+| `/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k/` | Ancient Rome (56 QIDs) |
+
+Submission fails before `sbatch` if a Slurm YAML names anything else, or if the
+named checkpoint is unavailable.
+
+**Pick the control whose twin holds out the concept you are erasing.** The two
+pairs were trained at different batch sizes and optimizer settings, so nothing
+in one is weight-comparable to the other (`Untaught/COMPARABILITY.md`), and an
+ablated twin is never a valid target — the concept was already held out of its
+training, so erasing it again measures nothing.
 
 ```sh
 cd /home/morg/NLP_2526b/<USER>/LMEnt/Ember-on-LMEnt

@@ -99,7 +99,7 @@ class SlurmSubmitTests(unittest.TestCase):
             config = self._config(Path(tmp))
             args = parse_args([
                 "--config", str(config), "--concept", "Culture of Greece"])
-            with self.assertRaisesRegex(ValueError, "must use the shared"):
+            with self.assertRaisesRegex(ValueError, "must use a shared"):
                 prepare_submission(args)
 
 
