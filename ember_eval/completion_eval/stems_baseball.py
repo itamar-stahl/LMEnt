@@ -29,6 +29,15 @@ matters.
 No deviations from the original wording. Every stem here is built from content
 words that are already in its question.
 
+One deviation from the original wording, added 2026-09-05. QA_test #24,
+"How many players are on the field for a team during play?", names no sport, so
+its stem was answerable about soccer or American football just as well -- and
+"Eleven" is right for both. The stem now opens "In baseball,". This follows the
+file's own convention rather than breaking it: the parallel cricket item,
+"How many players are on the field for the bowling team", also names no sport in
+the question and its stem already supplies "In a cricket match". The four
+options, the answer key, the file order and the shuffle seed are unchanged.
+
 One oddity worth knowing about, inherited and not introduced: QA_test #41,
 "What official document records every play in a baseball game?", has "The score
 report" as its answer key over Scorecard and Box score. That is EMBER's key and
@@ -201,7 +210,7 @@ STEMS["QA_test"] = [
     ("What is the typical length of a baseball bat",
      "The typical length of a baseball bat used by adult players is"),
     ("How many players are on the field for a team during play",
-     "The number of players on the field for a team during play is"),
+     "In baseball, the number of players on the field for a team during play is"),
     ("What nickname is often given to baseball",
      "In the United States, the nickname often given to baseball is"),
     ("What penalty is imposed when a pitcher commits an illegal pickoff",

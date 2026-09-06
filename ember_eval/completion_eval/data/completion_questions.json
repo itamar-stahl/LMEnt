@@ -3025,7 +3025,7 @@
      "Eleven"
     ],
     "correct_answer": "Nine",
-    "stem": "The number of players on the field for a team during play is"
+    "stem": "In baseball, the number of players on the field for a team during play is"
    },
    {
     "q": "What nickname is often given to baseball in the United States?",
@@ -11049,6 +11049,2216 @@
    }
   ]
  },
+ "Nazism": {
+  "QA_train": [
+   {
+    "q": "What doctrine did the Nazis use to justify gaining lands for territorial expansion?",
+    "options": [
+     "Lebensraum",
+     "Anschluss",
+     "Gleichschaltung",
+     "Autarky"
+    ],
+    "correct_answer": "Lebensraum",
+    "stem": "The doctrine the Nazis used to justify gaining lands for territorial expansion was"
+   },
+   {
+    "q": "What 1922 event in Italy did Hitler admire and use as a model for the Beer Hall Putsch?",
+    "options": [
+     "March on Rome",
+     "The Great Purge",
+     "The October Revolution",
+     "The Kapp Putsch"
+    ],
+    "correct_answer": "March on Rome",
+    "stem": "The 1922 event in Italy that Hitler admired and used as a model for the Beer Hall Putsch was"
+   },
+   {
+    "q": "What master race did Nazi pseudo-scientific theories identify ethnic Germans as?",
+    "options": [
+     "Nordic Aryans",
+     "Anglo-Saxons",
+     "Teutonic Knights",
+     "Indo-Europeans"
+    ],
+    "correct_answer": "Nordic Aryans",
+    "stem": "According to Nazi pseudo-scientific theories, ethnic Germans were the master race known as the"
+   },
+   {
+    "q": "Who published the 1926 publication called \"Der Nazi-Sozi\"?",
+    "options": [
+     "Joseph Goebbels",
+     "Heinrich Himmler",
+     "Hermann Göring",
+     "Gregor Strasser"
+    ],
+    "correct_answer": "Joseph Goebbels",
+    "stem": "The 1926 publication called 'Der Nazi-Sozi' was published by"
+   },
+   {
+    "q": "What group of people were placed at the very bottom of the Nazi racial scale alongside Jews, Romanis, and blacks?",
+    "options": [
+     "Slavs",
+     "Nordics",
+     "Anglos",
+     "Francos"
+    ],
+    "correct_answer": "Slavs",
+    "stem": "The group of people placed at the very bottom of the Nazi racial scale alongside Jews, Romanis, and blacks were"
+   },
+   {
+    "q": "What was the name of the girls' wing of the Nazi party?",
+    "options": [
+     "League of German Girls",
+     "German Women's Front",
+     "National Socialist Sisterhood",
+     "Faith and Beauty Society"
+    ],
+    "correct_answer": "League of German Girls",
+    "stem": "The girls' wing of the Nazi party was called the"
+   },
+   {
+    "q": "Who relayed to Walter Hewel Hitler's belief that world peace required uncontested supremacy by the \"racially best\" power?",
+    "options": [
+     "Rudolf Hess",
+     "Martin Bormann",
+     "Albert Speer",
+     "Joachim von Ribbentrop"
+    ],
+    "correct_answer": "Rudolf Hess",
+    "stem": "Hitler's belief that world peace required uncontested supremacy by the 'racially best' power was relayed to Walter Hewel by"
+   },
+   {
+    "q": "What 1933 decree, alongside the Enabling Act, was used to establish a one-party state?",
+    "options": [
+     "Reichstag Fire Decree",
+     "Decree for the Protection of People and State",
+     "The Nuremberg Laws",
+     "The T4 Edict"
+    ],
+    "correct_answer": "Reichstag Fire Decree",
+    "stem": "Alongside the Enabling Act, the 1933 decree used to establish a one-party state was"
+   },
+   {
+    "q": "Which two major corporations were among the largest contributors to the Nazi Party in early 1933?",
+    "options": [
+     "IG Farben and Deutsche Bank",
+     "Siemens and Krupp",
+     "Volkswagen and BMW",
+     "Thyssen and Allianz"
+    ],
+    "correct_answer": "IG Farben and Deutsche Bank",
+    "stem": "The two major corporations among the largest contributors to the Nazi Party in early 1933 were"
+   },
+   {
+    "q": "Who was the mayor of Vienna whose rabble-rousing oratory impressed Hitler?",
+    "options": [
+     "Karl Lueger",
+     "Engelbert Dollfuss",
+     "Kurt Schuschnigg",
+     "Victor Adler"
+    ],
+    "correct_answer": "Karl Lueger",
+    "stem": "The mayor of Vienna whose rabble-rousing oratory impressed Hitler was"
+   },
+   {
+    "q": "Who formulated the idea of \"Prussian socialism\" that did not advocate a change to property relations?",
+    "options": [
+     "Oswald Spengler",
+     "Arthur Moeller van den Bruck",
+     "Ernst Jünger",
+     "Carl Schmitt"
+    ],
+    "correct_answer": "Oswald Spengler",
+    "stem": "The idea of 'Prussian socialism' that did not advocate a change to property relations was formulated by"
+   },
+   {
+    "q": "What was the primary demographic that made up the Nazis' voter base alongside the middle class?",
+    "options": [
+     "Farmers",
+     "Factory Workers",
+     "Industrialists",
+     "University Professors"
+    ],
+    "correct_answer": "Farmers",
+    "stem": "Alongside the middle class, the Nazis' voter base was made up primarily of"
+   },
+   {
+    "q": "What was the name of the 1930-1931 revolt by stormtroopers who chafed under Hitler's restrictions before Röhm was brought back?",
+    "options": [
+     "Stennes Revolt",
+     "The Munich Putsch",
+     "The Strasser Incident",
+     "The Berlin Mutiny"
+    ],
+    "correct_answer": "Stennes Revolt",
+    "stem": "The 1930-1931 revolt by stormtroopers who chafed under Hitler's restrictions, before Röhm was brought back, was called"
+   },
+   {
+    "q": "What promissory notes were used to secretly deficit-finance German rearmament?",
+    "options": [
+     "Mefo bills",
+     "Reichsmarks",
+     "Hindenburg bonds",
+     "Schacht notes"
+    ],
+    "correct_answer": "Mefo bills",
+    "stem": "The promissory notes used to secretly deficit-finance German rearmament were"
+   },
+   {
+    "q": "Which German President appointed Hitler as Chancellor in January 1933?",
+    "options": [
+     "Paul von Hindenburg",
+     "Friedrich Ebert",
+     "Wilhelm II",
+     "Kurt von Schleicher"
+    ],
+    "correct_answer": "Paul von Hindenburg",
+    "stem": "The German President who appointed Hitler as Chancellor in January 1933 was"
+   },
+   {
+    "q": "What color shirts were worn by the Fascist militia in Italy?",
+    "options": [
+     "Black shirts",
+     "Brown shirts",
+     "Red shirts",
+     "Blue shirts"
+    ],
+    "correct_answer": "Black shirts",
+    "stem": "The Fascist militia in Italy wore"
+   },
+   {
+    "q": "In what year did the Beer Hall Putsch occur?",
+    "options": [
+     "1923",
+     "1919",
+     "1929",
+     "1933"
+    ],
+    "correct_answer": "1923",
+    "stem": "The Beer Hall Putsch occurred in the year"
+   },
+   {
+    "q": "What genocide resulted in the extermination of two-thirds of Europe's Jewish population?",
+    "options": [
+     "The Holocaust",
+     "The Holodomor",
+     "The Armenian Genocide",
+     "The Great Purge"
+    ],
+    "correct_answer": "The Holocaust",
+    "stem": "The genocide that resulted in the extermination of two-thirds of Europe's Jewish population was"
+   },
+   {
+    "q": "What term did the Nazis use to describe the direct connection they claimed existed between Judaism and Marxism?",
+    "options": [
+     "Jewish Bolshevism",
+     "Cultural Marxism",
+     "The Stab-in-the-back myth",
+     "International Finance Jewry"
+    ],
+    "correct_answer": "Jewish Bolshevism",
+    "stem": "The term the Nazis used to describe the direct connection they claimed existed between Judaism and Marxism was"
+   },
+   {
+    "q": "Who authored \"Die 25 Thesen der Deutschreligion\" (Twenty-five Points of the German Religion)?",
+    "options": [
+     "Ernst Bergmann",
+     "Alfred Rosenberg",
+     "Ludwig Müller",
+     "Martin Niemöller"
+    ],
+    "correct_answer": "Ernst Bergmann",
+    "stem": "'Die 25 Thesen der Deutschreligion' (Twenty-five Points of the German Religion) was authored by"
+   },
+   {
+    "q": "What ancient city-state did Hitler praise for its dispassionate destruction of congenitally-deformed infants?",
+    "options": [
+     "Sparta",
+     "Athens",
+     "Rome",
+     "Thebes"
+    ],
+    "correct_answer": "Sparta",
+    "stem": "The ancient city-state Hitler praised for its dispassionate destruction of congenitally-deformed infants was"
+   },
+   {
+    "q": "Who wrote the book \"Land und Leute\" which tied the German Volk to its native landscape?",
+    "options": [
+     "Wilhelm Heinrich Riehl",
+     "Johann Gottfried von Herder",
+     "Friedrich Ratzel",
+     "Walther Darré"
+    ],
+    "correct_answer": "Wilhelm Heinrich Riehl",
+    "stem": "The book 'Land und Leute', which tied the German Volk to its native landscape, was written by"
+   },
+   {
+    "q": "What paramilitary organizations engaged in political violence after WWI and inspired the Nazis?",
+    "options": [
+     "Freikorps",
+     "Iron Front",
+     "Reichsbanner",
+     "The Red Guards"
+    ],
+    "correct_answer": "Freikorps",
+    "stem": "The paramilitary organizations that engaged in political violence after WWI and inspired the Nazis were"
+   },
+   {
+    "q": "What type of political system does Nazism oppose, alongside the parliamentary system?",
+    "options": [
+     "Liberal democracy",
+     "Absolute monarchy",
+     "Totalitarianism",
+     "Theocracy"
+    ],
+    "correct_answer": "Liberal democracy",
+    "stem": "Alongside the parliamentary system, Nazism opposes the political system of"
+   },
+   {
+    "q": "In what city did the failed Beer Hall Putsch take place?",
+    "options": [
+     "Munich",
+     "Berlin",
+     "Nuremberg",
+     "Hamburg"
+    ],
+    "correct_answer": "Munich",
+    "stem": "The failed Beer Hall Putsch took place in the city of"
+   },
+   {
+    "q": "What was the name of the German parliament building that the Communists were accused of setting on fire?",
+    "options": [
+     "Reichstag",
+     "Bundestag",
+     "Kanzleramt",
+     "Hofburg"
+    ],
+    "correct_answer": "Reichstag",
+    "stem": "The German parliament building the Communists were accused of setting on fire was the"
+   },
+   {
+    "q": "In which German region did the NSDAP originate?",
+    "options": [
+     "Bavaria",
+     "Prussia",
+     "Saxony",
+     "Rhineland"
+    ],
+    "correct_answer": "Bavaria",
+    "stem": "The NSDAP originated in the German region of"
+   },
+   {
+    "q": "In what year did the Nazi Party become the largest party in the German parliament?",
+    "options": [
+     "1932",
+     "1928",
+     "1930",
+     "1933"
+    ],
+    "correct_answer": "1932",
+    "stem": "The Nazi Party became the largest party in the German parliament in the year"
+   },
+   {
+    "q": "What West German neo-Nazi party was banned by the Federal Constitutional Court in 1952?",
+    "options": [
+     "Socialist Reich Party (SRP)",
+     "National Democratic Party (NPD)",
+     "German Right Party (DRP)",
+     "German Empire Party"
+    ],
+    "correct_answer": "Socialist Reich Party (SRP)",
+    "stem": "The West German neo-Nazi party banned by the Federal Constitutional Court in 1952 was the"
+   },
+   {
+    "q": "What affordable \"people's car\" was introduced under Hitler's national projects?",
+    "options": [
+     "Volkswagen",
+     "Trabant",
+     "Opel Kadett",
+     "Mercedes-Benz 170V"
+    ],
+    "correct_answer": "Volkswagen",
+    "stem": "The affordable 'people's car' introduced under Hitler's national projects was the"
+   },
+   {
+    "q": "What SS program was established by Himmler to increase the birth rate of \"Aryan\" children through extramarital relations?",
+    "options": [
+     "Lebensborn",
+     "Ahnenerbe",
+     "Kraft durch Freude",
+     "Winterhilfswerk"
+    ],
+    "correct_answer": "Lebensborn",
+    "stem": "The SS program established by Himmler to increase the birth rate of 'Aryan' children through extramarital relations was"
+   },
+   {
+    "q": "What 1934 event saw Hitler violently purge the party's more radical factions?",
+    "options": [
+     "Night of the Long Knives",
+     "Kristallnacht",
+     "The Beer Hall Putsch",
+     "The Gleiwitz Incident"
+    ],
+    "correct_answer": "Night of the Long Knives",
+    "stem": "The 1934 event in which Hitler violently purged the party's more radical factions was"
+   },
+   {
+    "q": "What term is applied to far-right groups formed after World War II with an ideology similar to Nazism?",
+    "options": [
+     "Neo-Nazism",
+     "The Alt-Right",
+     "National Bolshevism",
+     "The New Right"
+    ],
+    "correct_answer": "Neo-Nazism",
+    "stem": "The term applied to far-right groups formed after World War II with an ideology similar to Nazism is"
+   },
+   {
+    "q": "The colloquial term \"nazi\" originally derived as a pet name from which German male name?",
+    "options": [
+     "Igna(t)z",
+     "Heinrich",
+     "Adolf",
+     "Friedrich"
+    ],
+    "correct_answer": "Igna(t)z",
+    "stem": "The colloquial term 'nazi' originally derived as a pet name from the German male name"
+   },
+   {
+    "q": "What book by Oswald Spengler addressed the supposed decadence of European civilization?",
+    "options": [
+     "The Decline of the West",
+     "The Myth of the Twentieth Century",
+     "The Great Illusion",
+     "Man and Technics"
+    ],
+    "correct_answer": "The Decline of the West",
+    "stem": "The book by Oswald Spengler that addressed the supposed decadence of European civilization was"
+   },
+   {
+    "q": "Which historical figure did Hitler describe as a \"mass-murderer turned saint\" due to his New Testament writings?",
+    "options": [
+     "Paul the Apostle",
+     "Saint Augustine",
+     "Martin Luther",
+     "John the Baptist"
+    ],
+    "correct_answer": "Paul the Apostle",
+    "stem": "Because of his New Testament writings, the historical figure Hitler described as a 'mass-murderer turned saint' was"
+   },
+   {
+    "q": "What Nazi racial theorist divided European peoples into five races including Nordic and Alpine?",
+    "options": [
+     "Hans F. K. Günther",
+     "Arthur de Gobineau",
+     "Lothrop Stoddard",
+     "Alfred Ploetz"
+    ],
+    "correct_answer": "Hans F. K. Günther",
+    "stem": "The Nazi racial theorist who divided European peoples into five races, including Nordic and Alpine, was"
+   },
+   {
+    "q": "Who authored the 1899 book \"The Foundations of the Nineteenth Century\"?",
+    "options": [
+     "Houston Stewart Chamberlain",
+     "Charles Darwin",
+     "Richard Wagner",
+     "Friedrich Nietzsche"
+    ],
+    "correct_answer": "Houston Stewart Chamberlain",
+    "stem": "The 1899 book 'The Foundations of the Nineteenth Century' was authored by"
+   },
+   {
+    "q": "What was the name of the alliance formed in October 1931 in Bad Harzburg in opposition to the Weimar Republic?",
+    "options": [
+     "Harzburg Front",
+     "Iron Pact",
+     "Steel Helmets",
+     "The Black Reichswehr"
+    ],
+    "correct_answer": "Harzburg Front",
+    "stem": "The alliance formed in October 1931 in Bad Harzburg in opposition to the Weimar Republic was called"
+   },
+   {
+    "q": "What 1919 book by Oswald Spengler influenced Nazism with its ideas on creativity and discipline?",
+    "options": [
+     "Preussentum und Sozialismus (Prussiandom and Socialism)",
+     "The Communist Manifesto",
+     "The State",
+     "The Spirit of the Laws"
+    ],
+    "correct_answer": "Preussentum und Sozialismus (Prussiandom and Socialism)",
+    "stem": "The 1919 book by Oswald Spengler that influenced Nazism with its ideas on creativity and discipline was"
+   },
+   {
+    "q": "What title did Hitler assume later in 1934, making him the dictator of Nazi Germany?",
+    "options": [
+     "Führer und Reichskanzler",
+     "Reichspresident",
+     "Supreme Commander",
+     "Grand Marshal"
+    ],
+    "correct_answer": "Führer und Reichskanzler",
+    "stem": "Later in 1934, the title Hitler assumed, making him the dictator of Nazi Germany, was"
+   },
+   {
+    "q": "What is the formal name of Nazism?",
+    "options": [
+     "National Socialism",
+     "Social Democracy",
+     "Fascist Unionism",
+     "German Imperialism"
+    ],
+    "correct_answer": "National Socialism",
+    "stem": "The formal name of Nazism is"
+   },
+   {
+    "q": "What acronym did the National Socialist German Workers' Party officially use?",
+    "options": [
+     "NSDAP",
+     "SA",
+     "SS",
+     "Gestapo"
+    ],
+    "correct_answer": "NSDAP",
+    "stem": "The acronym officially used by the National Socialist German Workers' Party was"
+   },
+   {
+    "q": "What philosophy, introduced by Oswald Spengler, was adopted by Nazi agriculturalist Walther Darré?",
+    "options": [
+     "Blut und Boden (Blood and Soil)",
+     "Lebensraum",
+     "Herrenvolk",
+     "Gleichschaltung"
+    ],
+    "correct_answer": "Blut und Boden (Blood and Soil)",
+    "stem": "The philosophy introduced by Oswald Spengler and adopted by Nazi agriculturalist Walther Darré was"
+   },
+   {
+    "q": "Which Austrian pan-Germanist influenced Hitler with his radical German nationalism and anti-Habsburg views?",
+    "options": [
+     "Georg Ritter von Schönerer",
+     "Franz Ferdinand",
+     "Engelbert Dollfuss",
+     "Otto von Habsburg"
+    ],
+    "correct_answer": "Georg Ritter von Schönerer",
+    "stem": "The Austrian pan-Germanist who influenced Hitler with his radical German nationalism and anti-Habsburg views was"
+   },
+   {
+    "q": "In what unpublished book did Hitler express anxiety over the rise of the United States as a future rival?",
+    "options": [
+     "Zweites Buch",
+     "Mein Kampf",
+     "The Testament of Adolf Hitler",
+     "Table Talk"
+    ],
+    "correct_answer": "Zweites Buch",
+    "stem": "Hitler expressed anxiety over the rise of the United States as a future rival in the unpublished book"
+   },
+   {
+    "q": "What term did the Nazis use for their process of forcing society into alignment with their ideology, meaning Nazification?",
+    "options": [
+     "Gleichschaltung",
+     "Weltanschauung",
+     "Volkssturm",
+     "Einsatzgruppen"
+    ],
+    "correct_answer": "Gleichschaltung",
+    "stem": "The term the Nazis used for their process of forcing society into alignment with their ideology, meaning Nazification, was"
+   },
+   {
+    "q": "What quasi-private charitable institution was set up by the Nazis to help racially-pure Germans?",
+    "options": [
+     "National Socialist People's Welfare (NSV)",
+     "Winter Relief",
+     "The Red Cross",
+     "Strength Through Joy"
+    ],
+    "correct_answer": "National Socialist People's Welfare (NSV)",
+    "stem": "The quasi-private charitable institution set up by the Nazis to help racially-pure Germans was"
+   },
+   {
+    "q": "Which Nazi legal theorist characterized the \"Führerprinzip\" as the ideological foundation of the \"total state\"?",
+    "options": [
+     "Carl Schmitt",
+     "Hans Kelsen",
+     "Roland Freisler",
+     "Otto Meissner"
+    ],
+    "correct_answer": "Carl Schmitt",
+    "stem": "The Nazi legal theorist who characterized the 'Führerprinzip' as the ideological foundation of the 'total state' was"
+   },
+   {
+    "q": "Whose book \"On the Jews and their Lies\" was displayed during the Nuremberg rallies?",
+    "options": [
+     "Martin Luther's",
+     "Erasmus's",
+     "John Calvin's",
+     "The Pope's"
+    ],
+    "correct_answer": "Martin Luther's",
+    "stem": "The book 'On the Jews and their Lies', displayed during the Nuremberg rallies, was"
+   }
+  ],
+  "QA_test": [
+   {
+    "q": "What 19th-century German nationalist philosopher wrote \"Speeches to the German Nation\"?",
+    "options": [
+     "Johann Gottlieb Fichte",
+     "Immanuel Kant",
+     "Georg Wilhelm Friedrich Hegel",
+     "Arthur Schopenhauer"
+    ],
+    "correct_answer": "Johann Gottlieb Fichte",
+    "stem": "The 19th-century German nationalist philosopher who wrote 'Speeches to the German Nation' was"
+   },
+   {
+    "q": "What geographic feature did Hitler state Asia must be driven back behind to assure the safety of Europe?",
+    "options": [
+     "Ural Mountains",
+     "Caucasus Mountains",
+     "Volga River",
+     "Siberian Tundra"
+    ],
+    "correct_answer": "Ural Mountains",
+    "stem": "Hitler stated that, to assure the safety of Europe, Asia must be driven back behind the"
+   },
+   {
+    "q": "What book did Adolf Hitler write outlining his antisemitism and anti-communism?",
+    "options": [
+     "Mein Kampf",
+     "The Communist Manifesto",
+     "The Myth of the Twentieth Century",
+     "Zweites Buch"
+    ],
+    "correct_answer": "Mein Kampf",
+    "stem": "The book Adolf Hitler wrote outlining his antisemitism and anti-communism was"
+   },
+   {
+    "q": "Which antisemitic forgery claimed there was a secret international Jewish conspiracy to take over the world?",
+    "options": [
+     "The Protocols of the Elders of Zion",
+     "The Talmud Unmasked",
+     "The International Jew",
+     "The Eternal Jew"
+    ],
+    "correct_answer": "The Protocols of the Elders of Zion",
+    "stem": "The antisemitic forgery that claimed there was a secret international Jewish conspiracy to take over the world was"
+   },
+   {
+    "q": "What part of the Bible did Hitler denounce as \"Satan's Bible\"?",
+    "options": [
+     "The Old Testament",
+     "The New Testament",
+     "The Book of Revelation",
+     "The Gospels"
+    ],
+    "correct_answer": "The Old Testament",
+    "stem": "The part of the Bible Hitler denounced as 'Satan's Bible' was"
+   },
+   {
+    "q": "In what year was the German Workers' Party founded?",
+    "options": [
+     "1919",
+     "1914",
+     "1921",
+     "1933"
+    ],
+    "correct_answer": "1919",
+    "stem": "The German Workers' Party was founded in the year"
+   },
+   {
+    "q": "What political party was the largest Communist party in the world outside the Soviet Union before 1933?",
+    "options": [
+     "Communist Party of Germany (KPD)",
+     "Social Democratic Party (SPD)",
+     "The Spartacist League",
+     "National Bolshevik Party"
+    ],
+    "correct_answer": "Communist Party of Germany (KPD)",
+    "stem": "Before 1933, the largest Communist party in the world outside the Soviet Union was"
+   },
+   {
+    "q": "Which brother of Gregor Strasser formed the Black Front after leaving the Nazi Party?",
+    "options": [
+     "Otto Strasser",
+     "Heinrich Strasser",
+     "Wilhelm Strasser",
+     "Karl Strasser"
+    ],
+    "correct_answer": "Otto Strasser",
+    "stem": "The brother of Gregor Strasser who formed the Black Front after leaving the Nazi Party was"
+   },
+   {
+    "q": "What 1916 book by Madison Grant did Hitler refer to as \"my Bible\"?",
+    "options": [
+     "The Passing of the Great Race",
+     "The Rising Tide of Color",
+     "Racial Hygiene",
+     "Man and Nature"
+    ],
+    "correct_answer": "The Passing of the Great Race",
+    "stem": "The 1916 book by Madison Grant that Hitler referred to as 'my Bible' was"
+   },
+   {
+    "q": "What racist brochure was published by the SS in 1942 as a piece of anti-Slavic propaganda?",
+    "options": [
+     "Der Untermensch",
+     "Der Stürmer",
+     "Signal",
+     "Das Schwarze Korps"
+    ],
+    "correct_answer": "Der Untermensch",
+    "stem": "The racist brochure published by the SS in 1942 as a piece of anti-Slavic propaganda was"
+   },
+   {
+    "q": "Who was the dominant figure of the Conservative Revolutionaries who proposed a \"Third Reich\"?",
+    "options": [
+     "Arthur Moeller van den Bruck",
+     "Oswald Spengler",
+     "Ernst Jünger",
+     "Stefan George"
+    ],
+    "correct_answer": "Arthur Moeller van den Bruck",
+    "stem": "The dominant figure of the Conservative Revolutionaries, who proposed a 'Third Reich', was"
+   },
+   {
+    "q": "Which former German Emperor initially supported the Nazis but denounced them after Kristallnacht?",
+    "options": [
+     "Kaiser Wilhelm II",
+     "Frederick the Great",
+     "Emperor Franz Joseph",
+     "Kaiser Wilhelm I"
+    ],
+    "correct_answer": "Kaiser Wilhelm II",
+    "stem": "The former German Emperor who initially supported the Nazis but denounced them after Kristallnacht was"
+   },
+   {
+    "q": "What 1933 law established a cartel structure for agriculture under the Reichsnährstand?",
+    "options": [
+     "The Hereditary Farm Law",
+     "The Enabling Act",
+     "The Agrarian Reform Law",
+     "The Farmers Protection Act"
+    ],
+    "correct_answer": "The Hereditary Farm Law",
+    "stem": "The 1933 law that established a cartel structure for agriculture under the Reichsnährstand was"
+   },
+   {
+    "q": "Who was the last Crown Prince of Austria-Hungary who denounced Nazism and was sentenced to death in absentia?",
+    "options": [
+     "Otto von Habsburg",
+     "Karl I",
+     "Franz Ferdinand",
+     "Maximilian of Mexico"
+    ],
+    "correct_answer": "Otto von Habsburg",
+    "stem": "The last Crown Prince of Austria-Hungary, who denounced Nazism and was sentenced to death in absentia, was"
+   },
+   {
+    "q": "What term did Hitler use to describe \"racial defilement\" or racial treason?",
+    "options": [
+     "Rassenschande",
+     "Untermensch",
+     "Volksfeind",
+     "Gleichschaltung"
+    ],
+    "correct_answer": "Rassenschande",
+    "stem": "The term Hitler used to describe 'racial defilement' or racial treason was"
+   },
+   {
+    "q": "Which political party did most German Catholics support before the Nazis took power?",
+    "options": [
+     "German Centre Party",
+     "Bavarian People's Party",
+     "Christian Democratic Union",
+     "Catholic Action"
+    ],
+    "correct_answer": "German Centre Party",
+    "stem": "Before the Nazis took power, the political party most German Catholics supported was"
+   },
+   {
+    "q": "What American laws directly inspired the Nuremberg Laws' Citizenship Law and Blood Law?",
+    "options": [
+     "US citizenship laws and anti-miscegenation laws",
+     "The Jim Crow Laws",
+     "The Homestead Act",
+     "The Monroe Doctrine"
+    ],
+    "correct_answer": "US citizenship laws and anti-miscegenation laws",
+    "stem": "The American laws that directly inspired the Nuremberg Laws' Citizenship Law and Blood Law were"
+   },
+   {
+    "q": "Who was appointed as President of the Reichsbank in 1933 and Minister of Economics in 1934?",
+    "options": [
+     "Hjalmar Schacht",
+     "Walther Funk",
+     "Albert Speer",
+     "Ludwig Erhard"
+    ],
+    "correct_answer": "Hjalmar Schacht",
+    "stem": "The man appointed President of the Reichsbank in 1933 and Minister of Economics in 1934 was"
+   },
+   {
+    "q": "What major public works project did Hitler encourage to construct a national highway system?",
+    "options": [
+     "Autobahn",
+     "Reichsbahn",
+     "Panzerstraße",
+     "Bundesstraße"
+    ],
+    "correct_answer": "Autobahn",
+    "stem": "To construct a national highway system, the major public works project Hitler encouraged was the"
+   },
+   {
+    "q": "What phrase summarizes the three spheres to which Nazi ideology advocated confining women?",
+    "options": [
+     "Kinder, Küche, Kirche",
+     "Brot, Arbeit, Freiheit",
+     "Volk, Reich, Führer",
+     "Ehre, Treue, Blut"
+    ],
+    "correct_answer": "Kinder, Küche, Kirche",
+    "stem": "The phrase that summarizes the three spheres to which Nazi ideology advocated confining women is"
+   },
+   {
+    "q": "Who was the leader of the Sturmabteilung (SA) who pushed for a \"second revolution\"?",
+    "options": [
+     "Ernst Röhm",
+     "Gregor Strasser",
+     "Heinrich Himmler",
+     "Hermann Göring"
+    ],
+    "correct_answer": "Ernst Röhm",
+    "stem": "The leader of the Sturmabteilung (SA) who pushed for a 'second revolution' was"
+   },
+   {
+    "q": "What modified version of religion did the Nazi Party endorse in their 1920 programme to combat the \"Jewish-materialist spirit\"?",
+    "options": [
+     "Positive Christianity",
+     "Germanic Paganism",
+     "Protestant Reform",
+     "Catholic Traditionalism"
+    ],
+    "correct_answer": "Positive Christianity",
+    "stem": "In their 1920 programme, to combat the 'Jewish-materialist spirit', the Nazi Party endorsed a modified version of religion known as"
+   },
+   {
+    "q": "What 1938 event disgusted Kaiser Wilhelm II so much that he called the Nazis \"a bunch of shirted gangsters\"?",
+    "options": [
+     "Kristallnacht",
+     "The Invasion of Poland",
+     "The Anschluss",
+     "The Night of the Long Knives"
+    ],
+    "correct_answer": "Kristallnacht",
+    "stem": "The 1938 event that disgusted Kaiser Wilhelm II so much that he called the Nazis 'a bunch of shirted gangsters' was"
+   },
+   {
+    "q": "What type of badges were homosexual men forced to wear in Nazi concentration camps?",
+    "options": [
+     "Pink triangle badges",
+     "Yellow star badges",
+     "Purple triangle badges",
+     "Black triangle badges"
+    ],
+    "correct_answer": "Pink triangle badges",
+    "stem": "In Nazi concentration camps, homosexual men were forced to wear"
+   },
+   {
+    "q": "Which prominent Nazi leader had a deformed right leg, highlighting the hypocrisy of extending the physical disability sterilization program?",
+    "options": [
+     "Joseph Goebbels",
+     "Heinrich Himmler",
+     "Rudolf Hess",
+     "Wilhelm Keitel"
+    ],
+    "correct_answer": "Joseph Goebbels",
+    "stem": "The prominent Nazi leader with a deformed right leg, which highlighted the hypocrisy of extending the physical disability sterilization program, was"
+   },
+   {
+    "q": "Who was the leader of the SS who established the Reich Central Office for the Combating of Homosexuality and Abortion?",
+    "options": [
+     "Heinrich Himmler",
+     "Reinhard Heydrich",
+     "Kurt Daluege",
+     "Ernst Kaltenbrunner"
+    ],
+    "correct_answer": "Heinrich Himmler",
+    "stem": "The leader of the SS who established the Reich Central Office for the Combating of Homosexuality and Abortion was"
+   },
+   {
+    "q": "In what year did the Nazi Party rename itself from the German Workers' Party?",
+    "options": [
+     "1920",
+     "1919",
+     "1921",
+     "1923"
+    ],
+    "correct_answer": "1920",
+    "stem": "The Nazi Party renamed itself from the German Workers' Party in the year"
+   },
+   {
+    "q": "What German sociologist spoke of a \"National Socialism\" rejecting the \"ideas of 1789\" in favor of the \"ideas of 1914\"?",
+    "options": [
+     "Johann Plenge",
+     "Max Weber",
+     "Georg Simmel",
+     "Werner Sombart"
+    ],
+    "correct_answer": "Johann Plenge",
+    "stem": "The German sociologist who spoke of a 'National Socialism' rejecting the 'ideas of 1789' in favor of the 'ideas of 1914' was"
+   },
+   {
+    "q": "What treaty was signed between Nazi Germany and the Catholic Church in July 1933?",
+    "options": [
+     "Reichskonkordat",
+     "Treaty of Rome",
+     "Lateran Treaty",
+     "Versailles Treaty"
+    ],
+    "correct_answer": "Reichskonkordat",
+    "stem": "The treaty signed between Nazi Germany and the Catholic Church in July 1933 was the"
+   },
+   {
+    "q": "What was the German term for the Nazification process that established a one-party state?",
+    "options": [
+     "Gleichschaltung",
+     "Weltanschauung",
+     "Einsatz",
+     "Totaler Krieg"
+    ],
+    "correct_answer": "Gleichschaltung",
+    "stem": "The German term for the Nazification process that established a one-party state was"
+   },
+   {
+    "q": "What 1918 treaty did Hitler initially claim Germany should return to the borders of to establish friendly relations with Russia?",
+    "options": [
+     "Treaty of Brest-Litovsk",
+     "Treaty of Versailles",
+     "Treaty of Trianon",
+     "Rapallo Treaty"
+    ],
+    "correct_answer": "Treaty of Brest-Litovsk",
+    "stem": "To establish friendly relations with Russia, Hitler initially claimed that Germany should return to the 1918 borders set by the"
+   },
+   {
+    "q": "What was the post-WWII name given to the Nazi involuntary euthanasia programme?",
+    "options": [
+     "Action T4",
+     "The Final Solution",
+     "Operation Reinhard",
+     "Operation Hummingbird"
+    ],
+    "correct_answer": "Action T4",
+    "stem": "The post-WWII name given to the Nazi involuntary euthanasia programme was"
+   },
+   {
+    "q": "What German domestic intelligence authority repeatedly identifies neo-Nazism as a persistent internal security threat?",
+    "options": [
+     "Federal Office for the Protection of the Constitution (BfV)",
+     "BND",
+     "Gestapo",
+     "Abwehr"
+    ],
+    "correct_answer": "Federal Office for the Protection of the Constitution (BfV)",
+    "stem": "The German domestic intelligence authority that repeatedly identifies neo-Nazism as a persistent internal security threat is the"
+   },
+   {
+    "q": "Which country's colonial system did Hitler admire as proof of Germanic superiority?",
+    "options": [
+     "British Empire",
+     "French Empire",
+     "Spanish Empire",
+     "Dutch Empire"
+    ],
+    "correct_answer": "British Empire",
+    "stem": "The colonial system Hitler admired as proof of Germanic superiority was that of the"
+   },
+   {
+    "q": "What term describes the Nazi idea of a national-racial \"people's community\"?",
+    "options": [
+     "Volksgemeinschaft",
+     "Lebensraum",
+     "Herrenvolk",
+     "Gauleiter"
+    ],
+    "correct_answer": "Volksgemeinschaft",
+    "stem": "The term for the Nazi idea of a national-racial 'people's community' is"
+   },
+   {
+    "q": "What French racial theorist wrote about the purity of the Aryan race and the fall of the French ancien régime?",
+    "options": [
+     "Arthur de Gobineau",
+     "Alexis de Tocqueville",
+     "Jean-Jacques Rousseau",
+     "Voltaire"
+    ],
+    "correct_answer": "Arthur de Gobineau",
+    "stem": "The French racial theorist who wrote about the purity of the Aryan race and the fall of the French ancien régime was"
+   },
+   {
+    "q": "What nickname was used for Communists and Social Democrats who switched to the Nazi party, meaning \"brown on the outside and red inside\"?",
+    "options": [
+     "Beefsteak Nazis",
+     "Turncoat Stormtroopers",
+     "National Bolsheviks",
+     "Radical Reformers"
+    ],
+    "correct_answer": "Beefsteak Nazis",
+    "stem": "The nickname used for Communists and Social Democrats who switched to the Nazi party, meaning 'brown on the outside and red inside', was"
+   },
+   {
+    "q": "Which 1873 economic event led to increased antisemitism and attacks on alleged Jewish economic dominance in Germany?",
+    "options": [
+     "The 1873 stock market crash",
+     "The Great Depression",
+     "The Hyperinflation of 1923",
+     "The Tulip Mania"
+    ],
+    "correct_answer": "The 1873 stock market crash",
+    "stem": "The 1873 economic event that led to increased antisemitism and attacks on alleged Jewish economic dominance in Germany was"
+   },
+   {
+    "q": "Who wrote the 1929 pamphlet stating that Hebrews were the \"incarnation of capitalism\"?",
+    "options": [
+     "Joseph Goebbels",
+     "Alfred Rosenberg",
+     "Julius Streicher",
+     "Adolf Hitler"
+    ],
+    "correct_answer": "Joseph Goebbels",
+    "stem": "The 1929 pamphlet stating that Hebrews were the 'incarnation of capitalism' was written by"
+   },
+   {
+    "q": "What economic plan consolidated the command relationship between the arms industry and the Nazi government later in the 1930s?",
+    "options": [
+     "Four Year Plan",
+     "The New Plan",
+     "The Dawes Plan",
+     "The Schacht Directive"
+    ],
+    "correct_answer": "Four Year Plan",
+    "stem": "Later in the 1930s, the economic plan that consolidated the command relationship between the arms industry and the Nazi government was"
+   },
+   {
+    "q": "Who was the fascist leader of Italy that Hitler admired?",
+    "options": [
+     "Benito Mussolini",
+     "Francisco Franco",
+     "Italo Balbo",
+     "Galeazzo Ciano"
+    ],
+    "correct_answer": "Benito Mussolini",
+    "stem": "The fascist leader of Italy whom Hitler admired was"
+   },
+   {
+    "q": "What German laws introduced in 1935 institutionalized racial theories and discrimination?",
+    "options": [
+     "Nuremberg Laws",
+     "The Enabling Act",
+     "The Blood Decree",
+     "The Reich Laws"
+    ],
+    "correct_answer": "Nuremberg Laws",
+    "stem": "The German laws introduced in 1935 that institutionalized racial theories and discrimination were"
+   },
+   {
+    "q": "What is the full German name of the Nazi Party?",
+    "options": [
+     "Nationalsozialistische Deutsche Arbeiterpartei",
+     "Deutsche Arbeiterpartei",
+     "Freie Arbeiterpartei",
+     "Nationale Volkspartei"
+    ],
+    "correct_answer": "Nationalsozialistische Deutsche Arbeiterpartei",
+    "stem": "The full German name of the Nazi Party is"
+   },
+   {
+    "q": "Which political party is most closely associated with Adolf Hitler?",
+    "options": [
+     "The Nazi Party (NSDAP)",
+     "The Social Democrats",
+     "The Communist Party",
+     "The Centre Party"
+    ],
+    "correct_answer": "The Nazi Party (NSDAP)",
+    "stem": "The political party most closely associated with Adolf Hitler is"
+   },
+   {
+    "q": "What color shirts were worn by the Nazi militia?",
+    "options": [
+     "Brown shirts",
+     "Black shirts",
+     "Grey shirts",
+     "Blue shirts"
+    ],
+    "correct_answer": "Brown shirts",
+    "stem": "The Nazi militia wore"
+   },
+   {
+    "q": "Who was the Catholic priest whose resistance group provided V-2 rocket plans to the American secret service?",
+    "options": [
+     "Heinrich Maier",
+     "Clemens August Graf von Galen",
+     "Dietrich Bonhoeffer",
+     "Maximilian Kolbe"
+    ],
+    "correct_answer": "Heinrich Maier",
+    "stem": "The Catholic priest whose resistance group provided V-2 rocket plans to the American secret service was"
+   },
+   {
+    "q": "Who interviewed Hitler in 1923 for the American Monthly?",
+    "options": [
+     "George Sylvester Viereck",
+     "John Reed",
+     "Ernest Hemingway",
+     "William Shirer"
+    ],
+    "correct_answer": "George Sylvester Viereck",
+    "stem": "In 1923, Hitler was interviewed for the American Monthly by"
+   },
+   {
+    "q": "What term was frequently used to describe Nazism during Hitler's rise to power?",
+    "options": [
+     "Hitlerism",
+     "Fascismo",
+     "Totalitarianism",
+     "Reactionary Socialism"
+    ],
+    "correct_answer": "Hitlerism",
+    "stem": "During Hitler's rise to power, the term frequently used to describe Nazism was"
+   },
+   {
+    "q": "What German word did the Nazis use to describe \"inferior\" races?",
+    "options": [
+     "Untermenschen",
+     "Herrenvolk",
+     "Übermenschen",
+     "Volksfeinde"
+    ],
+    "correct_answer": "Untermenschen",
+    "stem": "The German word the Nazis used to describe 'inferior' races was"
+   },
+   {
+    "q": "What is the German term for the \"leader principle\" proposed by Hitler?",
+    "options": [
+     "Führerprinzip",
+     "Autarkie",
+     "Lebensraum",
+     "Gleichschaltung"
+    ],
+    "correct_answer": "Führerprinzip",
+    "stem": "The German term for the 'leader principle' proposed by Hitler is"
+   }
+  ],
+  "SimdomQA_train": [
+   {
+    "q": "What was the name of the aristocratic, ruling upper social class in ancient Rome?",
+    "options": [
+     "Patricians",
+     "Plebeians",
+     "Equestrians",
+     "Helots"
+    ],
+    "correct_answer": "Patricians",
+    "stem": "The aristocratic, ruling upper social class in ancient Rome was known as the"
+   },
+   {
+    "q": "What was the foundational French civil code established under Napoleon called?",
+    "options": [
+     "The Napoleonic Code",
+     "The Code of Hammurabi",
+     "The Justinian Code",
+     "The Magna Carta"
+    ],
+    "correct_answer": "The Napoleonic Code",
+    "stem": "The foundational French civil code established under Napoleon was called"
+   },
+   {
+    "q": "What catastrophic military campaign led to the massive downfall of Napoleon's army in 1812?",
+    "options": [
+     "The invasion of Russia",
+     "The Battle of Waterloo",
+     "The Peninsular War",
+     "The Egyptian Campaign"
+    ],
+    "correct_answer": "The invasion of Russia",
+    "stem": "The catastrophic military campaign that led to the massive downfall of Napoleon's army in 1812 was"
+   },
+   {
+    "q": "Which Carthaginian general famously crossed the Alps with war elephants?",
+    "options": [
+     "Hannibal",
+     "Scipio Africanus",
+     "Hamilcar Barca",
+     "Hasdrubal"
+    ],
+    "correct_answer": "Hannibal",
+    "stem": "The Carthaginian general who famously crossed the Alps with war elephants was"
+   },
+   {
+    "q": "Which U.S. President ordered the naval blockade during the Cuban Missile Crisis?",
+    "options": [
+     "John F. Kennedy",
+     "Dwight D. Eisenhower",
+     "Lyndon B. Johnson",
+     "Richard Nixon"
+    ],
+    "correct_answer": "John F. Kennedy",
+    "stem": "The naval blockade during the Cuban Missile Crisis was ordered by U.S. President"
+   },
+   {
+    "q": "What major conflict in Southeast Asia involved the U.S. trying to stop the spread of communism?",
+    "options": [
+     "The Vietnam War",
+     "The Korean War",
+     "The Boxer Rebellion",
+     "The Malayan Emergency"
+    ],
+    "correct_answer": "The Vietnam War",
+    "stem": "The major conflict in Southeast Asia that involved the U.S. trying to stop the spread of communism was"
+   },
+   {
+    "q": "What country did Italy formally ally with through the Pact of Steel?",
+    "options": [
+     "Germany",
+     "Japan",
+     "Soviet Union",
+     "Austria"
+    ],
+    "correct_answer": "Germany",
+    "stem": "Through the Pact of Steel, Italy formally allied with"
+   },
+   {
+    "q": "Which monarch officially appointed Mussolini as Prime Minister of Italy?",
+    "options": [
+     "King Victor Emmanuel III",
+     "King Umberto I",
+     "King Charles Albert",
+     "Pope Pius XI"
+    ],
+    "correct_answer": "King Victor Emmanuel III",
+    "stem": "Mussolini was officially appointed Prime Minister of Italy by"
+   },
+   {
+    "q": "What symbol featured a hammer and a sickle?",
+    "options": [
+     "The Soviet flag",
+     "The Nazi flag",
+     "The Chinese flag",
+     "The Italian flag"
+    ],
+    "correct_answer": "The Soviet flag",
+    "stem": "The symbol that featured a hammer and a sickle was"
+   },
+   {
+    "q": "What was the name of the sole ruling political party in the Soviet Union?",
+    "options": [
+     "The Communist Party",
+     "The Bolsheviks",
+     "The Labour Party",
+     "The Mensheviks"
+    ],
+    "correct_answer": "The Communist Party",
+    "stem": "The sole ruling political party in the Soviet Union was called"
+   },
+   {
+    "q": "What African country did Italy successfully invade in 1935?",
+    "options": [
+     "Ethiopia",
+     "Libya",
+     "Egypt",
+     "Sudan"
+    ],
+    "correct_answer": "Ethiopia",
+    "stem": "In 1935, Italy successfully invaded the African country of"
+   },
+   {
+    "q": "What was the name of the first dog sent into space?",
+    "options": [
+     "Laika",
+     "Belka",
+     "Strelka",
+     "Rover"
+    ],
+    "correct_answer": "Laika",
+    "stem": "The first dog sent into space was named"
+   },
+   {
+    "q": "What fascist symbol was derived from an ancient Roman bundle of wooden rods?",
+    "options": [
+     "The Fasces",
+     "The Swastika",
+     "The Eagle",
+     "The Laurel Wreath"
+    ],
+    "correct_answer": "The Fasces",
+    "stem": "The fascist symbol derived from an ancient Roman bundle of wooden rods was"
+   },
+   {
+    "q": "What was the first living creature sent into orbit around the Earth?",
+    "options": [
+     "A dog",
+     "A monkey",
+     "A human",
+     "A hamster"
+    ],
+    "correct_answer": "A dog",
+    "stem": "The first living creature sent into orbit around the Earth was"
+   },
+   {
+    "q": "Which Soviet leader introduced the policies of Glasnost and Perestroika?",
+    "options": [
+     "Mikhail Gorbachev",
+     "Leonid Brezhnev",
+     "Nikita Khrushchev",
+     "Boris Yeltsin"
+    ],
+    "correct_answer": "Mikhail Gorbachev",
+    "stem": "The Soviet leader who introduced the policies of Glasnost and Perestroika was"
+   },
+   {
+    "q": "What spaceflight mission first landed humans on the Moon?",
+    "options": [
+     "Apollo 11",
+     "Apollo 13",
+     "Gemini 4",
+     "Sputnik 1"
+    ],
+    "correct_answer": "Apollo 11",
+    "stem": "The spaceflight mission that first landed humans on the Moon was"
+   },
+   {
+    "q": "What war lasted from 1950 to 1953 on the Korean peninsula?",
+    "options": [
+     "The Korean War",
+     "The Vietnam War",
+     "The Second World War",
+     "The Cold War"
+    ],
+    "correct_answer": "The Korean War",
+    "stem": "The war that lasted from 1950 to 1953 on the Korean peninsula was"
+   },
+   {
+    "q": "Which U.S. President initiated the creation of the Interstate Highway System during the Cold War?",
+    "options": [
+     "Dwight D. Eisenhower",
+     "Franklin D. Roosevelt",
+     "Harry S. Truman",
+     "John F. Kennedy"
+    ],
+    "correct_answer": "Dwight D. Eisenhower",
+    "stem": "The creation of the Interstate Highway System during the Cold War was initiated by U.S. President"
+   },
+   {
+    "q": "Who was the first person to walk on the Moon?",
+    "options": [
+     "Neil Armstrong",
+     "Buzz Aldrin",
+     "Yuri Gagarin",
+     "Michael Collins"
+    ],
+    "correct_answer": "Neil Armstrong",
+    "stem": "The first person to walk on the Moon was"
+   },
+   {
+    "q": "Who was the first Roman Emperor to officially convert to Christianity?",
+    "options": [
+     "Constantine the Great",
+     "Nero",
+     "Augustus",
+     "Theodosius I"
+    ],
+    "correct_answer": "Constantine the Great",
+    "stem": "The first Roman Emperor to officially convert to Christianity was"
+   },
+   {
+    "q": "What capital city did Mussolini rule from?",
+    "options": [
+     "Rome",
+     "Milan",
+     "Naples",
+     "Florence"
+    ],
+    "correct_answer": "Rome",
+    "stem": "Mussolini ruled from the capital city of"
+   },
+   {
+    "q": "What side did Fascist Italy support during the Spanish Civil War?",
+    "options": [
+     "The Nationalists",
+     "The Republicans",
+     "The Communists",
+     "The Anarchists"
+    ],
+    "correct_answer": "The Nationalists",
+    "stem": "During the Spanish Civil War, the side supported by Fascist Italy was"
+   },
+   {
+    "q": "What country located across the Adriatic Sea was invaded by Italy in 1939?",
+    "options": [
+     "Albania",
+     "Greece",
+     "Yugoslavia",
+     "Montenegro"
+    ],
+    "correct_answer": "Albania",
+    "stem": "The country across the Adriatic Sea invaded by Italy in 1939 was"
+   },
+   {
+    "q": "On what specific date was Julius Caesar assassinated?",
+    "options": [
+     "The Ides of March",
+     "The Kalends of May",
+     "Summer Solstice",
+     "Christmas Eve"
+    ],
+    "correct_answer": "The Ides of March",
+    "stem": "Julius Caesar was assassinated on"
+   },
+   {
+    "q": "What was the name of the first artificial Earth satellite?",
+    "options": [
+     "Sputnik 1",
+     "Explorer 1",
+     "Vostok 1",
+     "Apollo 1"
+    ],
+    "correct_answer": "Sputnik 1",
+    "stem": "The first artificial Earth satellite was named"
+   },
+   {
+    "q": "What political ideology emphasizes extreme militaristic nationalism, dictatorial power, and suppression of opposition?",
+    "options": [
+     "Fascism",
+     "Communism",
+     "Anarchism",
+     "Libertarianism"
+    ],
+    "correct_answer": "Fascism",
+    "stem": "The political ideology that emphasizes extreme militaristic nationalism, dictatorial power, and suppression of opposition is"
+   },
+   {
+    "q": "What does NATO stand for?",
+    "options": [
+     "North Atlantic Treaty Organization",
+     "Northern Alliance Technical Office",
+     "National American Trade Order",
+     "Navy Atlantic Tactical Operation"
+    ],
+    "correct_answer": "North Atlantic Treaty Organization",
+    "stem": "NATO stands for"
+   },
+   {
+    "q": "Who was the primary leader of the Cuban Revolution in 1959?",
+    "options": [
+     "Fidel Castro",
+     "Che Guevara",
+     "Fulgencio Batista",
+     "Hugo Chavez"
+    ],
+    "correct_answer": "Fidel Castro",
+    "stem": "The primary leader of the Cuban Revolution in 1959 was"
+   },
+   {
+    "q": "What communist leader founded the People's Republic of China?",
+    "options": [
+     "Mao Zedong",
+     "Deng Xiaoping",
+     "Chiang Kai-shek",
+     "Sun Yat-sen"
+    ],
+    "correct_answer": "Mao Zedong",
+    "stem": "The People's Republic of China was founded by the communist leader"
+   },
+   {
+    "q": "What title did Benito Mussolini adopt as leader?",
+    "options": [
+     "Il Duce",
+     "Der Führer",
+     "El Caudillo",
+     "The Generalissimo"
+    ],
+    "correct_answer": "Il Duce",
+    "stem": "As leader, Benito Mussolini adopted the title"
+   },
+   {
+    "q": "What title did Napoleon formally assume in 1804?",
+    "options": [
+     "Emperor of the French",
+     "King of France",
+     "First Consul",
+     "Protector of the Realm"
+    ],
+    "correct_answer": "Emperor of the French",
+    "stem": "In 1804, Napoleon formally assumed the title of"
+   },
+   {
+    "q": "What was the name of the mutual defense treaty signed by the Soviet Union and its satellite states?",
+    "options": [
+     "The Warsaw Pact",
+     "NATO",
+     "The Iron Curtain",
+     "The Comecon"
+    ],
+    "correct_answer": "The Warsaw Pact",
+    "stem": "The mutual defense treaty signed by the Soviet Union and its satellite states was called"
+   },
+   {
+    "q": "Who was the Emperor of the Japanese Empire during World War II?",
+    "options": [
+     "Emperor Hirohito",
+     "Emperor Akihito",
+     "Emperor Meiji",
+     "Tojo"
+    ],
+    "correct_answer": "Emperor Hirohito",
+    "stem": "The Emperor of the Japanese Empire during World War II was"
+   },
+   {
+    "q": "Which U.S. President famously said, 'Mr. Gorbachev, tear down this wall'?",
+    "options": [
+     "Ronald Reagan",
+     "John F. Kennedy",
+     "George H.W. Bush",
+     "Jimmy Carter"
+    ],
+    "correct_answer": "Ronald Reagan",
+    "stem": "The U.S. President who famously said 'Mr. Gorbachev, tear down this wall' was"
+   },
+   {
+    "q": "What Roman city was famously destroyed and buried by the eruption of Mount Vesuvius in 79 AD?",
+    "options": [
+     "Pompeii",
+     "Herculaneum",
+     "Ostia",
+     "Stabiae"
+    ],
+    "correct_answer": "Pompeii",
+    "stem": "The Roman city famously destroyed and buried by the eruption of Mount Vesuvius in 79 AD was"
+   },
+   {
+    "q": "Who declared himself dictator for life in Rome before being assassinated by senators?",
+    "options": [
+     "Julius Caesar",
+     "Mark Antony",
+     "Pompey the Great",
+     "Sulla"
+    ],
+    "correct_answer": "Julius Caesar",
+    "stem": "The man who declared himself dictator for life in Rome before being assassinated by senators was"
+   },
+   {
+    "q": "In what year did humans first walk on the moon?",
+    "options": [
+     "1969",
+     "1961",
+     "1972",
+     "1957"
+    ],
+    "correct_answer": "1969",
+    "stem": "Humans first walked on the moon in the year"
+   },
+   {
+    "q": "What leader of North Vietnam was the capital city of the South renamed after?",
+    "options": [
+     "Ho Chi Minh",
+     "Ngo Dinh Diem",
+     "Le Duan",
+     "Vo Nguyen Giap"
+    ],
+    "correct_answer": "Ho Chi Minh",
+    "stem": "The capital city of the South was renamed after the North Vietnamese leader"
+   },
+   {
+    "q": "What physical barrier divided the capital of Germany during the Cold War?",
+    "options": [
+     "The Berlin Wall",
+     "The Iron Curtain",
+     "The Maginot Line",
+     "The Siegfried Line"
+    ],
+    "correct_answer": "The Berlin Wall",
+    "stem": "The physical barrier that divided the capital of Germany during the Cold War was"
+   },
+   {
+    "q": "Which Roman Emperor built a famous, massive defensive wall across northern Britain?",
+    "options": [
+     "Hadrian",
+     "Trajan",
+     "Marcus Aurelius",
+     "Septimius Severus"
+    ],
+    "correct_answer": "Hadrian",
+    "stem": "The Roman Emperor who built a famous, massive defensive wall across northern Britain was"
+   },
+   {
+    "q": "What Mediterranean island was Napoleon first exiled to?",
+    "options": [
+     "Elba",
+     "Corsica",
+     "St. Helena",
+     "Malta"
+    ],
+    "correct_answer": "Elba",
+    "stem": "Napoleon was first exiled to the Mediterranean island of"
+   },
+   {
+    "q": "What radical revolutionary political group did Robespierre lead?",
+    "options": [
+     "The Jacobins",
+     "The Girondins",
+     "The Sans-culottes",
+     "The Cordeliers"
+    ],
+    "correct_answer": "The Jacobins",
+    "stem": "The radical revolutionary political group led by Robespierre was"
+   },
+   {
+    "q": "What major naval battle did the British win against the combined French and Spanish fleets in 1805?",
+    "options": [
+     "The Battle of Trafalgar",
+     "The Battle of the Nile",
+     "The Battle of Waterloo",
+     "The Battle of Jutland"
+    ],
+    "correct_answer": "The Battle of Trafalgar",
+    "stem": "In 1805, the major naval battle the British won against the combined French and Spanish fleets was"
+   },
+   {
+    "q": "In what year did the Soviet Union officially dissolve?",
+    "options": [
+     "1991",
+     "1989",
+     "1985",
+     "1993"
+    ],
+    "correct_answer": "1991",
+    "stem": "The Soviet Union officially dissolved in the year"
+   },
+   {
+    "q": "Who succeeded Lenin as the leader of the Soviet Union?",
+    "options": [
+     "Joseph Stalin",
+     "Leon Trotsky",
+     "Nikita Khrushchev",
+     "Vyacheslav Molotov"
+    ],
+    "correct_answer": "Joseph Stalin",
+    "stem": "Lenin was succeeded as leader of the Soviet Union by"
+   },
+   {
+    "q": "Who was the Queen of France during the outbreak of the French Revolution?",
+    "options": [
+     "Marie Antoinette",
+     "Catherine de' Medici",
+     "Empress Josephine",
+     "Anne of Austria"
+    ],
+    "correct_answer": "Marie Antoinette",
+    "stem": "The Queen of France during the outbreak of the French Revolution was"
+   },
+   {
+    "q": "Who was the first leader of the Soviet Union?",
+    "options": [
+     "Vladimir Lenin",
+     "Karl Marx",
+     "Joseph Stalin",
+     "Mikhail Bakunin"
+    ],
+    "correct_answer": "Vladimir Lenin",
+    "stem": "The first leader of the Soviet Union was"
+   },
+   {
+    "q": "What is the economic system based on private ownership of the means of production?",
+    "options": [
+     "Capitalism",
+     "Socialism",
+     "Feudalism",
+     "Communism"
+    ],
+    "correct_answer": "Capitalism",
+    "stem": "The economic system based on private ownership of the means of production is"
+   },
+   {
+    "q": "Who was the first human to journey into outer space?",
+    "options": [
+     "Yuri Gagarin",
+     "John Glenn",
+     "Alan Shepard",
+     "Neil Armstrong"
+    ],
+    "correct_answer": "Yuri Gagarin",
+    "stem": "The first human to journey into outer space was"
+   },
+   {
+    "q": "In what year did the French Revolution begin?",
+    "options": [
+     "1789",
+     "1776",
+     "1793",
+     "1804"
+    ],
+    "correct_answer": "1789",
+    "stem": "The French Revolution began in the year"
+   }
+  ],
+  "SimdomQA_test": [
+   {
+    "q": "What was the name of the Soviet system of forced labor camps?",
+    "options": [
+     "The Gulag",
+     "The Lubyanka",
+     "The Kolkhoz",
+     "The Cheka"
+    ],
+    "correct_answer": "The Gulag",
+    "stem": "The Soviet system of forced labor camps was known as"
+   },
+   {
+    "q": "What famous stone, discovered during Napoleon's campaign in Egypt, helped decode hieroglyphics?",
+    "options": [
+     "The Rosetta Stone",
+     "The Blarney Stone",
+     "The Moabite Stone",
+     "The Behistun Inscription"
+    ],
+    "correct_answer": "The Rosetta Stone",
+    "stem": "The famous stone discovered during Napoleon's campaign in Egypt that helped decode hieroglyphics was"
+   },
+   {
+    "q": "What color shirts did Italian fascist paramilitaries wear?",
+    "options": [
+     "Black",
+     "Brown",
+     "Red",
+     "Green"
+    ],
+    "correct_answer": "Black",
+    "stem": "Italian fascist paramilitaries wore shirts of the color"
+   },
+   {
+    "q": "What was the name of the Soviet military?",
+    "options": [
+     "The Red Army",
+     "The People's Liberation Army",
+     "The Iron Guards",
+     "The Bolshevik Guard"
+    ],
+    "correct_answer": "The Red Army",
+    "stem": "The Soviet military was known as"
+   },
+   {
+    "q": "What massive oval amphitheater was built in the center of Rome for gladiatorial contests?",
+    "options": [
+     "The Colosseum",
+     "The Pantheon",
+     "The Circus Maximus",
+     "The Forum"
+    ],
+    "correct_answer": "The Colosseum",
+    "stem": "The massive oval amphitheater built in the center of Rome for gladiatorial contests was"
+   },
+   {
+    "q": "Where was Napoleon finally decisively defeated in 1815?",
+    "options": [
+     "The Battle of Waterloo",
+     "The Battle of Leipzig",
+     "The Battle of Austerlitz",
+     "The Battle of Borodino"
+    ],
+    "correct_answer": "The Battle of Waterloo",
+    "stem": "In 1815, Napoleon was finally decisively defeated at"
+   },
+   {
+    "q": "What was the capital city of the Soviet Union?",
+    "options": [
+     "Moscow",
+     "Saint Petersburg",
+     "Kyiv",
+     "Volgograd"
+    ],
+    "correct_answer": "Moscow",
+    "stem": "The capital city of the Soviet Union was"
+   },
+   {
+    "q": "What city became the new, wealthy capital of the Eastern Roman Empire?",
+    "options": [
+     "Constantinople",
+     "Athens",
+     "Alexandria",
+     "Ravenna"
+    ],
+    "correct_answer": "Constantinople",
+    "stem": "The city that became the new, wealthy capital of the Eastern Roman Empire was"
+   },
+   {
+    "q": "Which Russian Tsar was overthrown during the Russian Revolution?",
+    "options": [
+     "Nicholas II",
+     "Alexander III",
+     "Peter the Great",
+     "Ivan the Terrible"
+    ],
+    "correct_answer": "Nicholas II",
+    "stem": "The Russian Tsar overthrown during the Russian Revolution was"
+   },
+   {
+    "q": "What Egyptian queen was romantically involved with both Julius Caesar and Mark Antony?",
+    "options": [
+     "Cleopatra",
+     "Nefertiti",
+     "Hatshepsut",
+     "Arsinoe"
+    ],
+    "correct_answer": "Cleopatra",
+    "stem": "The Egyptian queen romantically involved with both Julius Caesar and Mark Antony was"
+   },
+   {
+    "q": "Who was the King of France at the start of the French Revolution?",
+    "options": [
+     "Louis XVI",
+     "Louis XIV",
+     "Charles X",
+     "Napoleon III"
+    ],
+    "correct_answer": "Louis XVI",
+    "stem": "At the start of the French Revolution, the King of France was"
+   },
+   {
+    "q": "What surprise military strike did the Imperial Japanese Navy conduct on December 7, 1941?",
+    "options": [
+     "The attack on Pearl Harbor",
+     "The Battle of Midway",
+     "The Doolittle Raid",
+     "The Battle of Coral Sea"
+    ],
+    "correct_answer": "The attack on Pearl Harbor",
+    "stem": "On December 7, 1941, the surprise military strike conducted by the Imperial Japanese Navy was"
+   },
+   {
+    "q": "Who was the dictator of Spain following the Spanish Civil War?",
+    "options": [
+     "Francisco Franco",
+     "Juan Carlos I",
+     "Miguel Primo de Rivera",
+     "Emilio Mola"
+    ],
+    "correct_answer": "Francisco Franco",
+    "stem": "Following the Spanish Civil War, the dictator of Spain was"
+   },
+   {
+    "q": "What side did the Soviet Union support during the Spanish Civil War?",
+    "options": [
+     "The Republicans",
+     "The Nationalists",
+     "The Monarchists",
+     "The Falangists"
+    ],
+    "correct_answer": "The Republicans",
+    "stem": "During the Spanish Civil War, the side supported by the Soviet Union was"
+   },
+   {
+    "q": "In what year did the March on Rome take place?",
+    "options": [
+     "1922",
+     "1919",
+     "1929",
+     "1933"
+    ],
+    "correct_answer": "1922",
+    "stem": "The March on Rome took place in the year"
+   },
+   {
+    "q": "What famous armory and political prison was stormed on July 14, 1789?",
+    "options": [
+     "The Bastille",
+     "Versailles",
+     "The Louvre",
+     "The Tuileries"
+    ],
+    "correct_answer": "The Bastille",
+    "stem": "The famous armory and political prison stormed on July 14, 1789 was"
+   },
+   {
+    "q": "According to ancient myth, who founded Rome along with his brother Remus?",
+    "options": [
+     "Romulus",
+     "Aeneas",
+     "Mars",
+     "Numa Pompilius"
+    ],
+    "correct_answer": "Romulus",
+    "stem": "According to ancient myth, the founder of Rome, along with his brother Remus, was"
+   },
+   {
+    "q": "What Germanic tribe successfully sacked the city of Rome in 410 AD?",
+    "options": [
+     "The Visigoths",
+     "The Vandals",
+     "The Huns",
+     "The Lombards"
+    ],
+    "correct_answer": "The Visigoths",
+    "stem": "The Germanic tribe that successfully sacked the city of Rome in 410 AD was"
+   },
+   {
+    "q": "What was the general name for the commoners or lower social class in ancient Rome?",
+    "options": [
+     "Plebeians",
+     "Patricians",
+     "Proletariat",
+     "Serfs"
+    ],
+    "correct_answer": "Plebeians",
+    "stem": "The general name for the commoners or lower social class in ancient Rome was"
+   },
+   {
+    "q": "What famous French military leader rose to prominence during the French Revolution?",
+    "options": [
+     "Napoleon Bonaparte",
+     "Marquis de Lafayette",
+     "Charles de Gaulle",
+     "Marshal Ney"
+    ],
+    "correct_answer": "Napoleon Bonaparte",
+    "stem": "The famous French military leader who rose to prominence during the French Revolution was"
+   },
+   {
+    "q": "Which British general commanded the allied forces at the Battle of Waterloo?",
+    "options": [
+     "The Duke of Wellington",
+     "Admiral Nelson",
+     "The Duke of Marlborough",
+     "General Montgomery"
+    ],
+    "correct_answer": "The Duke of Wellington",
+    "stem": "At the Battle of Waterloo, the British general who commanded the allied forces was"
+   },
+   {
+    "q": "Who founded the National Fascist Party in Italy?",
+    "options": [
+     "Benito Mussolini",
+     "Gabriele D'Annunzio",
+     "Filippo Marinetti",
+     "Giacomo Matteotti"
+    ],
+    "correct_answer": "Benito Mussolini",
+    "stem": "The National Fascist Party in Italy was founded by"
+   },
+   {
+    "q": "What is the specific Latin term for the 200-year period of relative peace and stability in the Roman Empire?",
+    "options": [
+     "Pax Romana",
+     "Pax Britannica",
+     "Pax Mongolica",
+     "Pax Augusta"
+    ],
+    "correct_answer": "Pax Romana",
+    "stem": "The specific Latin term for the 200-year period of relative peace and stability in the Roman Empire is"
+   },
+   {
+    "q": "Who was the British Admiral who died leading the victory at the Battle of Trafalgar?",
+    "options": [
+     "Horatio Nelson",
+     "Sir Francis Drake",
+     "James Cook",
+     "John Jellicoe"
+    ],
+    "correct_answer": "Horatio Nelson",
+    "stem": "The British Admiral who died leading the victory at the Battle of Trafalgar was"
+   },
+   {
+    "q": "What color is historically most associated with communism?",
+    "options": [
+     "Red",
+     "Blue",
+     "Yellow",
+     "Green"
+    ],
+    "correct_answer": "Red",
+    "stem": "The color historically most associated with communism is"
+   },
+   {
+    "q": "What parallel line divided North and South Korea?",
+    "options": [
+     "The 38th parallel",
+     "The 17th parallel",
+     "The 49th parallel",
+     "The Mason-Dixon Line"
+    ],
+    "correct_answer": "The 38th parallel",
+    "stem": "North and South Korea were divided by"
+   },
+   {
+    "q": "Which Mediterranean island nation did Mussolini's forces bomb extensively during World War II?",
+    "options": [
+     "Malta",
+     "Cyprus",
+     "Sicily",
+     "Crete"
+    ],
+    "correct_answer": "Malta",
+    "stem": "During World War II, the Mediterranean island nation bombed extensively by Mussolini's forces was"
+   },
+   {
+    "q": "Who was the Soviet premier during the Cuban Missile Crisis?",
+    "options": [
+     "Nikita Khrushchev",
+     "Joseph Stalin",
+     "Leonid Brezhnev",
+     "Yuri Andropov"
+    ],
+    "correct_answer": "Nikita Khrushchev",
+    "stem": "The Soviet premier during the Cuban Missile Crisis was"
+   },
+   {
+    "q": "What period of extreme state-sanctioned violence during the French Revolution was led by Maximilien Robespierre?",
+    "options": [
+     "The Reign of Terror",
+     "The Thermidorian Reaction",
+     "The White Terror",
+     "The Great Fear"
+    ],
+    "correct_answer": "The Reign of Terror",
+    "stem": "The period of extreme state-sanctioned violence during the French Revolution led by Maximilien Robespierre was"
+   },
+   {
+    "q": "Which country launched the first artificial Earth satellite?",
+    "options": [
+     "The Soviet Union",
+     "The United States",
+     "Germany",
+     "United Kingdom"
+    ],
+    "correct_answer": "The Soviet Union",
+    "stem": "The first artificial Earth satellite was launched by"
+   },
+   {
+    "q": "Who co-authored 'The Communist Manifesto' with Karl Marx?",
+    "options": [
+     "Friedrich Engels",
+     "Vladimir Lenin",
+     "Mikhail Bakunin",
+     "Rosa Luxemburg"
+    ],
+    "correct_answer": "Friedrich Engels",
+    "stem": "'The Communist Manifesto' was co-authored with Karl Marx by"
+   },
+   {
+    "q": "What country did the Soviet Union invade in 1979?",
+    "options": [
+     "Afghanistan",
+     "Vietnam",
+     "Hungary",
+     "Poland"
+    ],
+    "correct_answer": "Afghanistan",
+    "stem": "In 1979, the Soviet Union invaded"
+   },
+   {
+    "q": "Which British Prime Minister coined the phrase 'Iron Curtain'?",
+    "options": [
+     "Winston Churchill",
+     "Clement Attlee",
+     "Margaret Thatcher",
+     "Neville Chamberlain"
+    ],
+    "correct_answer": "Winston Churchill",
+    "stem": "The phrase 'Iron Curtain' was coined by British Prime Minister"
+   },
+   {
+    "q": "What major river flows directly through the city of Rome?",
+    "options": [
+     "The Tiber River",
+     "The Arno River",
+     "The Po River",
+     "The Danube"
+    ],
+    "correct_answer": "The Tiber River",
+    "stem": "The major river that flows directly through the city of Rome is"
+   },
+   {
+    "q": "What series of three major wars were fought between Rome and Carthage?",
+    "options": [
+     "The Punic Wars",
+     "The Gallic Wars",
+     "The Peloponnesian Wars",
+     "The Crusades"
+    ],
+    "correct_answer": "The Punic Wars",
+    "stem": "The series of three major wars fought between Rome and Carthage was known as"
+   },
+   {
+    "q": "In what year did the Russian Revolution begin?",
+    "options": [
+     "1917",
+     "1905",
+     "1921",
+     "1945"
+    ],
+    "correct_answer": "1917",
+    "stem": "The Russian Revolution began in the year"
+   },
+   {
+    "q": "Which Roman Emperor is famously, though likely mythically, said to have fiddled while Rome burned?",
+    "options": [
+     "Nero",
+     "Caligula",
+     "Commodus",
+     "Domitian"
+    ],
+    "correct_answer": "Nero",
+    "stem": "The Roman Emperor famously, though likely mythically, said to have fiddled while Rome burned was"
+   },
+   {
+    "q": "What was the primary language spoken by the ancient Romans?",
+    "options": [
+     "Latin",
+     "Greek",
+     "Etruscan",
+     "Aramaic"
+    ],
+    "correct_answer": "Latin",
+    "stem": "The primary language spoken by the ancient Romans was"
+   },
+   {
+    "q": "What was the three-word national motto that originated from the French Revolution?",
+    "options": [
+     "Liberty, Equality, Fraternity",
+     "Peace, Bread, Land",
+     "Order and Progress",
+     "God, King, Country"
+    ],
+    "correct_answer": "Liberty, Equality, Fraternity",
+    "stem": "The three-word national motto that originated from the French Revolution was"
+   },
+   {
+    "q": "What was the primary security agency of the Soviet Union from 1954 to 1991?",
+    "options": [
+     "The KGB",
+     "The NKVD",
+     "The Stasi",
+     "The FSB"
+    ],
+    "correct_answer": "The KGB",
+    "stem": "From 1954 to 1991, the primary security agency of the Soviet Union was"
+   },
+   {
+    "q": "What political philosopher co-authored 'The Communist Manifesto'?",
+    "options": [
+     "Karl Marx",
+     "Adam Smith",
+     "Thomas Hobbes",
+     "John Locke"
+    ],
+    "correct_answer": "Karl Marx",
+    "stem": "'The Communist Manifesto' was co-authored by the political philosopher"
+   },
+   {
+    "q": "What extravagant palace was the primary residence of French kings before the revolution?",
+    "options": [
+     "The Palace of Versailles",
+     "The Louvre",
+     "Fontainebleau",
+     "Château de Chambord"
+    ],
+    "correct_answer": "The Palace of Versailles",
+    "stem": "Before the revolution, the extravagant palace that was the primary residence of French kings was"
+   },
+   {
+    "q": "What was the official newspaper of the Italian Fascist Party?",
+    "options": [
+     "Il Popolo d'Italia",
+     "Avanti!",
+     "L'Unità",
+     "Il Messaggero"
+    ],
+    "correct_answer": "Il Popolo d'Italia",
+    "stem": "The official newspaper of the Italian Fascist Party was"
+   },
+   {
+    "q": "Who was the first American astronaut to orbit the Earth?",
+    "options": [
+     "John Glenn",
+     "Alan Shepard",
+     "Neil Armstrong",
+     "Gus Grissom"
+    ],
+    "correct_answer": "John Glenn",
+    "stem": "The first American astronaut to orbit the Earth was"
+   },
+   {
+    "q": "What remote Atlantic island was Napoleon exiled to for the second and final time?",
+    "options": [
+     "St. Helena",
+     "Elba",
+     "The Azores",
+     "Bermuda"
+    ],
+    "correct_answer": "St. Helena",
+    "stem": "The remote Atlantic island to which Napoleon was exiled for the second and final time was"
+   },
+   {
+    "q": "Who was the first official Roman Emperor?",
+    "options": [
+     "Augustus",
+     "Julius Caesar",
+     "Tiberius",
+     "Caligula"
+    ],
+    "correct_answer": "Augustus",
+    "stem": "The first official Roman Emperor was"
+   },
+   {
+    "q": "Which emperor formally split the Roman Empire into eastern and western halves to make it easier to govern?",
+    "options": [
+     "Diocletian",
+     "Constantine",
+     "Theodosius",
+     "Justin"
+    ],
+    "correct_answer": "Diocletian",
+    "stem": "The emperor who formally split the Roman Empire into eastern and western halves, to make it easier to govern, was"
+   },
+   {
+    "q": "What ancient empire did Mussolini state he wanted to recreate?",
+    "options": [
+     "The Roman Empire",
+     "The Byzantine Empire",
+     "The Venetian Republic",
+     "The Holy Roman Empire"
+    ],
+    "correct_answer": "The Roman Empire",
+    "stem": "The ancient empire Mussolini stated he wanted to recreate was"
+   },
+   {
+    "q": "What execution device became a widespread symbol of the French Revolution?",
+    "options": [
+     "The Guillotine",
+     "The Iron Maiden",
+     "The Gallows",
+     "The Firing Squad"
+    ],
+    "correct_answer": "The Guillotine",
+    "stem": "The execution device that became a widespread symbol of the French Revolution was"
+   },
+   {
+    "q": "Who was the Prime Minister of Japan during most of World War II?",
+    "options": [
+     "Hideki Tojo",
+     "Fumimaro Konoe",
+     "Kuniaki Koiso",
+     "Isoroku Yamamoto"
+    ],
+    "correct_answer": "Hideki Tojo",
+    "stem": "During most of World War II, the Prime Minister of Japan was"
+   }
+  ]
+ },
  "Pornography": {
   "QA_train": [
    {
@@ -13256,6 +15466,2216 @@
     ],
     "correct_answer": "Quest",
     "stem": "The VR headset brand owned by Meta Platforms is"
+   }
+  ]
+ },
+ "Republic of Ireland": {
+  "QA_train": [
+   {
+    "q": "What is the capital and largest city of the Republic of Ireland?",
+    "options": [
+     "Dublin",
+     "Cork",
+     "Limerick",
+     "Galway"
+    ],
+    "correct_answer": "Dublin",
+    "stem": "The capital and largest city of the Republic of Ireland is"
+   },
+   {
+    "q": "How many counties make up the Republic of Ireland?",
+    "options": [
+     "26",
+     "32",
+     "24",
+     "28"
+    ],
+    "correct_answer": "26",
+    "stem": "The number of counties that make up the Republic of Ireland is"
+   },
+   {
+    "q": "Which sea lies to the east of the Republic of Ireland?",
+    "options": [
+     "The Irish Sea",
+     "The North Sea",
+     "The Celtic Sea",
+     "The English Channel"
+    ],
+    "correct_answer": "The Irish Sea",
+    "stem": "The sea that lies to the east of the Republic of Ireland is"
+   },
+   {
+    "q": "What is the national parliament of the Republic of Ireland called?",
+    "options": [
+     "The Oireachtas",
+     "The Dáil",
+     "The Assembly",
+     "The Seanad"
+    ],
+    "correct_answer": "The Oireachtas",
+    "stem": "The national parliament of the Republic of Ireland is called"
+   },
+   {
+    "q": "What is the name of the upper house of the Oireachtas?",
+    "options": [
+     "Seanad Éireann",
+     "Dáil Éireann",
+     "Council of State",
+     "Privy Council"
+    ],
+    "correct_answer": "Seanad Éireann",
+    "stem": "The name of the upper house of the Oireachtas is"
+   },
+   {
+    "q": "What is the title given to the head of government in the Republic of Ireland?",
+    "options": [
+     "Taoiseach",
+     "President",
+     "Tánaiste",
+     "Ceann Comhairle"
+    ],
+    "correct_answer": "Taoiseach",
+    "stem": "The title given to the head of government in the Republic of Ireland is"
+   },
+   {
+    "q": "In what year was the Republic of Ireland officially declared a republic?",
+    "options": [
+     "1949",
+     "1937",
+     "1922",
+     "1973"
+    ],
+    "correct_answer": "1949",
+    "stem": "The Republic of Ireland was officially declared a republic in"
+   },
+   {
+    "q": "Which legislative act declared the Republic of Ireland?",
+    "options": [
+     "Republic of Ireland Act 1948",
+     "Government of Ireland Act 1920",
+     "Anglo-Irish Treaty 1921",
+     "Irish Free State (Agreement) Act 1922"
+    ],
+    "correct_answer": "Republic of Ireland Act 1948",
+    "stem": "The legislative act that declared the Republic of Ireland was the"
+   },
+   {
+    "q": "Which leader associated with the 1916 Easter Rising proclaimed Irish independence?",
+    "options": [
+     "Patrick Pearse",
+     "James Connolly",
+     "Éamon de Valera",
+     "Michael Collins"
+    ],
+    "correct_answer": "Patrick Pearse",
+    "stem": "The leader associated with the 1916 Easter Rising who proclaimed Irish independence was"
+   },
+   {
+    "q": "Which ocean surrounds the Republic of Ireland to the north and west?",
+    "options": [
+     "The Atlantic Ocean",
+     "The Arctic Ocean",
+     "The North Sea",
+     "The Pacific Ocean"
+    ],
+    "correct_answer": "The Atlantic Ocean",
+    "stem": "The ocean that surrounds the Republic of Ireland to the north and west is"
+   },
+   {
+    "q": "In the national flag of the Republic of Ireland, which color represents the Gaelic tradition?",
+    "options": [
+     "Green",
+     "Orange",
+     "White",
+     "Blue"
+    ],
+    "correct_answer": "Green",
+    "stem": "In the national flag of the Republic of Ireland, the color that represents the Gaelic tradition is"
+   },
+   {
+    "q": "Which warm ocean current influences Ireland's climate?",
+    "options": [
+     "The Gulf Stream",
+     "The Labrador Current",
+     "The Canary Current",
+     "The Kuroshio Current"
+    ],
+    "correct_answer": "The Gulf Stream",
+    "stem": "The warm ocean current that influences Ireland's climate is"
+   },
+   {
+    "q": "What type of climate does the Republic of Ireland have?",
+    "options": [
+     "A temperate oceanic climate",
+     "A Mediterranean climate",
+     "A continental climate",
+     "A subarctic climate"
+    ],
+    "correct_answer": "A temperate oceanic climate",
+    "stem": "The Republic of Ireland has"
+   },
+   {
+    "q": "In what year did the Republic of Ireland adopt the euro?",
+    "options": [
+     "2002",
+     "1999",
+     "2004",
+     "2010"
+    ],
+    "correct_answer": "2002",
+    "stem": "The Republic of Ireland adopted the euro in"
+   },
+   {
+    "q": "On which island is the Republic of Ireland located?",
+    "options": [
+     "The island of Ireland",
+     "Great Britain",
+     "Iceland",
+     "The Isle of Man"
+    ],
+    "correct_answer": "The island of Ireland",
+    "stem": "The Republic of Ireland is located on"
+   },
+   {
+    "q": "Approximately what fraction of the island does the Republic of Ireland cover?",
+    "options": [
+     "About five-sixths",
+     "About one-half",
+     "About two-thirds",
+     "About three-quarters"
+    ],
+    "correct_answer": "About five-sixths",
+    "stem": "The fraction of the island that the Republic of Ireland covers is"
+   },
+   {
+    "q": "According to the entry, what is the approximate population of the Republic of Ireland?",
+    "options": [
+     "5.15 million",
+     "4.75 million",
+     "5.50 million",
+     "6.20 million"
+    ],
+    "correct_answer": "5.15 million",
+    "stem": "The approximate population of the Republic of Ireland is"
+   },
+   {
+    "q": "Which foundational document adopted in 1937 states the name of the state as Éire?",
+    "options": [
+     "The Constitution of Ireland",
+     "The Government of Ireland Act 1920",
+     "The Anglo-Irish Treaty",
+     "The Republic of Ireland Act 1948"
+    ],
+    "correct_answer": "The Constitution of Ireland",
+    "stem": "The foundational document adopted in 1937 that states the name of the state as Éire is"
+   },
+   {
+    "q": "Of which European organization is the Republic of Ireland a founding member?",
+    "options": [
+     "The Council of Europe",
+     "The European Union",
+     "NATO",
+     "EFTA"
+    ],
+    "correct_answer": "The Council of Europe",
+    "stem": "The Republic of Ireland is a founding member of"
+   },
+   {
+    "q": "In what year did the Republic of Ireland join the European Communities?",
+    "options": [
+     "1973",
+     "1972",
+     "1981",
+     "1992"
+    ],
+    "correct_answer": "1973",
+    "stem": "The Republic of Ireland joined the European Communities in"
+   },
+   {
+    "q": "How many members are there in Seanad Éireann?",
+    "options": [
+     "60",
+     "40",
+     "80",
+     "100"
+    ],
+    "correct_answer": "60",
+    "stem": "The number of members in Seanad Éireann is"
+   },
+   {
+    "q": "Which symbol featured on Irish coins also serves as a national emblem?",
+    "options": [
+     "The harp",
+     "The shamrock",
+     "The Celtic cross",
+     "The red hand"
+    ],
+    "correct_answer": "The harp",
+    "stem": "The symbol featured on Irish coins that also serves as a national emblem is"
+   },
+   {
+    "q": "What traditional plant, a type of clover, is a national symbol of Ireland?",
+    "options": [
+     "The shamrock",
+     "The thistle",
+     "The rose",
+     "The leek"
+    ],
+    "correct_answer": "The shamrock",
+    "stem": "The traditional plant, a type of clover, that is a national symbol of Ireland is"
+   },
+   {
+    "q": "What language is predominantly spoken in the Republic of Ireland?",
+    "options": [
+     "English",
+     "Irish",
+     "Ulster Scots",
+     "French"
+    ],
+    "correct_answer": "English",
+    "stem": "The language predominantly spoken in the Republic of Ireland is"
+   },
+   {
+    "q": "What is the first official language of the Republic of Ireland as stated by its constitution?",
+    "options": [
+     "Irish",
+     "English",
+     "Scottish Gaelic",
+     "Hiberno-English"
+    ],
+    "correct_answer": "Irish",
+    "stem": "As stated by its constitution, the first official language of the Republic of Ireland is"
+   },
+   {
+    "q": "What is the Irish term for the President of Ireland?",
+    "options": [
+     "Uachtarán",
+     "Taoiseach",
+     "Tánaiste",
+     "Ceann Comhairle"
+    ],
+    "correct_answer": "Uachtarán",
+    "stem": "The Irish term for the President of Ireland is"
+   },
+   {
+    "q": "Who is the formal Supreme Commander of the Irish Defence Forces?",
+    "options": [
+     "The President",
+     "The Taoiseach",
+     "The Minister for Defence",
+     "The Chief of Staff"
+    ],
+    "correct_answer": "The President",
+    "stem": "The formal Supreme Commander of the Irish Defence Forces is"
+   },
+   {
+    "q": "What is the name of the Republic of Ireland's main international airport located in its capital?",
+    "options": [
+     "Dublin Airport",
+     "Shannon Airport",
+     "Cork Airport",
+     "Belfast International Airport"
+    ],
+    "correct_answer": "Dublin Airport",
+    "stem": "The Republic of Ireland's main international airport, located in its capital, is"
+   },
+   {
+    "q": "What is the period of rapid economic growth in Ireland during the mid-1990s to 2007 known as?",
+    "options": [
+     "The Celtic Tiger period",
+     "The Emerald Boom",
+     "The Green Revolution",
+     "The Silicon Isle era"
+    ],
+    "correct_answer": "The Celtic Tiger period",
+    "stem": "The period of rapid economic growth in Ireland during the mid-1990s to 2007 is known as"
+   },
+   {
+    "q": "How is the west coast of Ireland geographically characterized?",
+    "options": [
+     "Rugged, with numerous islands, peninsulas, headlands, and bays",
+     "Flat plains with few inlets",
+     "Uniform sandy coastline with minimal cliffs",
+     "Primarily desert lowlands"
+    ],
+    "correct_answer": "Rugged, with numerous islands, peninsulas, headlands, and bays",
+    "stem": "The west coast of Ireland is geographically characterized as"
+   },
+   {
+    "q": "Which international organization promoting economic cooperation is the Republic of Ireland a member of?",
+    "options": [
+     "OECD",
+     "OPEC",
+     "ASEAN",
+     "Mercosur"
+    ],
+    "correct_answer": "OECD",
+    "stem": "The international organization promoting economic cooperation that the Republic of Ireland belongs to is"
+   },
+   {
+    "q": "In what year was the Good Friday Agreement signed?",
+    "options": [
+     "1998",
+     "1997",
+     "1999",
+     "2001"
+    ],
+    "correct_answer": "1998",
+    "stem": "The Good Friday Agreement was signed in"
+   },
+   {
+    "q": "Which constitutional amendment removed the article naming specific religious groups in Ireland?",
+    "options": [
+     "The Fifth Amendment",
+     "The First Amendment",
+     "The Eighth Amendment",
+     "The Twenty-Seventh Amendment"
+    ],
+    "correct_answer": "The Fifth Amendment",
+    "stem": "The constitutional amendment that removed the article naming specific religious groups in Ireland was"
+   },
+   {
+    "q": "During which years did the Great Famine occur in Ireland?",
+    "options": [
+     "1845 to 1849",
+     "1840 to 1844",
+     "1850 to 1854",
+     "1830 to 1834"
+    ],
+    "correct_answer": "1845 to 1849",
+    "stem": "The Great Famine occurred in Ireland during the years"
+   },
+   {
+    "q": "What event in 1922 led to the partition of the island of Ireland?",
+    "options": [
+     "The establishment of the Irish Free State",
+     "The Government of Ireland Act 1920",
+     "The Anglo-Irish Treaty 1921",
+     "The Irish Republic declared in 1919"
+    ],
+    "correct_answer": "The establishment of the Irish Free State",
+    "stem": "The event in 1922 that led to the partition of the island of Ireland was"
+   },
+   {
+    "q": "Who heads the Garda Síochána in the Republic of Ireland?",
+    "options": [
+     "The Garda Commissioner",
+     "The Minister for Justice",
+     "A Chief Superintendent",
+     "The Taoiseach"
+    ],
+    "correct_answer": "The Garda Commissioner",
+    "stem": "The Garda Síochána in the Republic of Ireland is headed by"
+   },
+   {
+    "q": "What are the primary local government divisions in the Republic of Ireland?",
+    "options": [
+     "Counties",
+     "Provinces",
+     "Parishes",
+     "Boroughs"
+    ],
+    "correct_answer": "Counties",
+    "stem": "The primary local government divisions in the Republic of Ireland are"
+   },
+   {
+    "q": "How many local authorities are there in the Republic of Ireland after the 2014 reform?",
+    "options": [
+     "31",
+     "26",
+     "34",
+     "40"
+    ],
+    "correct_answer": "31",
+    "stem": "After the 2014 reform, the number of local authorities in the Republic of Ireland is"
+   },
+   {
+    "q": "What track gauge is used on Ireland’s mainline railway network?",
+    "options": [
+     "5 ft 3 in (1,600 mm)",
+     "4 ft 8½ in (1,435 mm)",
+     "5 ft 0 in (1,524 mm)",
+     "3 ft 0 in (914 mm)"
+    ],
+    "correct_answer": "5 ft 3 in (1,600 mm)",
+    "stem": "The track gauge used on Ireland’s mainline railway network is"
+   },
+   {
+    "q": "Which city serves as the primary economic and financial hub of the Republic of Ireland?",
+    "options": [
+     "Dublin",
+     "Cork",
+     "Limerick",
+     "Waterford"
+    ],
+    "correct_answer": "Dublin",
+    "stem": "The city that serves as the primary economic and financial hub of the Republic of Ireland is"
+   },
+   {
+    "q": "Which organization manages public healthcare services in the Republic of Ireland?",
+    "options": [
+     "The Health Service Executive",
+     "The Department of Health",
+     "The National Health Service",
+     "The Irish Red Cross"
+    ],
+    "correct_answer": "The Health Service Executive",
+    "stem": "The organization that manages public healthcare services in the Republic of Ireland is"
+   },
+   {
+    "q": "Which traditional Irish sport, known for its fast pace and played with a sliotar and hurley, is featured in Ireland?",
+    "options": [
+     "Hurling",
+     "Gaelic football",
+     "Shinty",
+     "Rugby union"
+    ],
+    "correct_answer": "Hurling",
+    "stem": "The traditional Irish sport known for its fast pace and played with a sliotar and hurley is"
+   },
+   {
+    "q": "Which international peace agreement significantly improved relations between the Republic of Ireland and Northern Ireland?",
+    "options": [
+     "The Good Friday Agreement",
+     "The Anglo-Irish Agreement",
+     "The Sunningdale Agreement",
+     "The St Andrews Agreement"
+    ],
+    "correct_answer": "The Good Friday Agreement",
+    "stem": "The international peace agreement that significantly improved relations between the Republic of Ireland and Northern Ireland was"
+   },
+   {
+    "q": "Which immigrant language has become the most widely spoken in Ireland after English?",
+    "options": [
+     "Polish",
+     "Lithuanian",
+     "Romanian",
+     "Portuguese"
+    ],
+    "correct_answer": "Polish",
+    "stem": "The immigrant language that has become the most widely spoken in Ireland after English is"
+   },
+   {
+    "q": "Which religion is traditionally predominant in the Republic of Ireland?",
+    "options": [
+     "Roman Catholicism",
+     "Anglicanism",
+     "Presbyterianism",
+     "Islam"
+    ],
+    "correct_answer": "Roman Catholicism",
+    "stem": "The religion traditionally predominant in the Republic of Ireland is"
+   },
+   {
+    "q": "According to the 2016 census, what percentage of the population identified as Catholic in the Republic of Ireland?",
+    "options": [
+     "78.3%",
+     "72.3%",
+     "84.0%",
+     "69.1%"
+    ],
+    "correct_answer": "78.3%",
+    "stem": "According to the 2016 census, the percentage of the population in the Republic of Ireland that identified as Catholic was"
+   },
+   {
+    "q": "Approximately how many higher education institutions confer awards in the Republic of Ireland?",
+    "options": [
+     "38",
+     "28",
+     "35",
+     "45"
+    ],
+    "correct_answer": "38",
+    "stem": "The approximate number of higher education institutions that confer awards in the Republic of Ireland is"
+   },
+   {
+    "q": "How many times can the President of the Republic of Ireland be re-elected?",
+    "options": [
+     "Once",
+     "Twice",
+     "Unlimited times",
+     "Cannot be re-elected"
+    ],
+    "correct_answer": "Once",
+    "stem": "On the question of how many times the President of the Republic of Ireland can be re-elected, the answer is"
+   },
+   {
+    "q": "Approximately what percentage of the Republic of Ireland's population lives in the Greater Dublin Area?",
+    "options": [
+     "About 40%",
+     "About 35%",
+     "About 50%",
+     "About 30%"
+    ],
+    "correct_answer": "About 40%",
+    "stem": "The percentage of the Republic of Ireland's population that lives in the Greater Dublin Area is"
+   },
+   {
+    "q": "What is the name of the public service broadcaster in the Republic of Ireland?",
+    "options": [
+     "RTÉ (Raidió Teilifís Éireann)",
+     "TG4",
+     "BBC Northern Ireland",
+     "Virgin Media Television"
+    ],
+    "correct_answer": "RTÉ (Raidió Teilifís Éireann)",
+    "stem": "The public service broadcaster in the Republic of Ireland is"
+   }
+  ],
+  "QA_test": [
+   {
+    "q": "What is the official Irish name for the Republic of Ireland?",
+    "options": [
+     "Éire",
+     "Erin",
+     "Éireann",
+     "Hibernia"
+    ],
+    "correct_answer": "Éire",
+    "stem": "The official Irish name for the Republic of Ireland is"
+   },
+   {
+    "q": "What type of political system does the Republic of Ireland have?",
+    "options": [
+     "A unitary parliamentary republic",
+     "A federal parliamentary republic",
+     "A constitutional monarchy",
+     "A unitary presidential republic"
+    ],
+    "correct_answer": "A unitary parliamentary republic",
+    "stem": "The Republic of Ireland has"
+   },
+   {
+    "q": "What is the name of the lower house of the Oireachtas?",
+    "options": [
+     "Dáil Éireann",
+     "Seanad Éireann",
+     "The Oireachtas",
+     "Dáil na nÓg"
+    ],
+    "correct_answer": "Dáil Éireann",
+    "stem": "The name of the lower house of the Oireachtas is"
+   },
+   {
+    "q": "Who serves as the head of state in the Republic of Ireland?",
+    "options": [
+     "The President",
+     "The Taoiseach",
+     "The Tánaiste",
+     "The Chief Justice"
+    ],
+    "correct_answer": "The President",
+    "stem": "The head of state in the Republic of Ireland is"
+   },
+   {
+    "q": "In what year did the Republic of Ireland become a member of the United Nations?",
+    "options": [
+     "1955",
+     "1950",
+     "1960",
+     "1973"
+    ],
+    "correct_answer": "1955",
+    "stem": "The Republic of Ireland became a member of the United Nations in"
+   },
+   {
+    "q": "What is the official residence of the President of Ireland?",
+    "options": [
+     "Áras an Uachtaráin",
+     "Leinster House",
+     "Government Buildings",
+     "Dublin Castle"
+    ],
+    "correct_answer": "Áras an Uachtaráin",
+    "stem": "The official residence of the President of Ireland is"
+   },
+   {
+    "q": "Which treaty led to the creation of the Irish Free State in 1922?",
+    "options": [
+     "The Anglo-Irish Treaty",
+     "The Treaty of Limerick",
+     "The Sunningdale Agreement",
+     "The Good Friday Agreement"
+    ],
+    "correct_answer": "The Anglo-Irish Treaty",
+    "stem": "The treaty that led to the creation of the Irish Free State in 1922 was"
+   },
+   {
+    "q": "What was the name of the dominion that existed from 1922 before the republic was declared?",
+    "options": [
+     "The Irish Free State",
+     "The Republic of Ireland",
+     "The Irish Republic",
+     "Dominion of Ireland"
+    ],
+    "correct_answer": "The Irish Free State",
+    "stem": "The dominion that existed from 1922, before the republic was declared, was called"
+   },
+   {
+    "q": "What major uprising in 1916 marked the beginning of armed resistance in Ireland?",
+    "options": [
+     "The Easter Rising",
+     "The Irish War of Independence",
+     "The 1798 Rebellion",
+     "The Home Rule Crisis"
+    ],
+    "correct_answer": "The Easter Rising",
+    "stem": "The major uprising in 1916 that marked the beginning of armed resistance in Ireland was"
+   },
+   {
+    "q": "On what date did the new Constitution of Ireland come into force?",
+    "options": [
+     "29 December 1937",
+     "1 January 1938",
+     "6 December 1922",
+     "29 December 1936"
+    ],
+    "correct_answer": "29 December 1937",
+    "stem": "The new Constitution of Ireland came into force on"
+   },
+   {
+    "q": "What is the longest river in the Republic of Ireland?",
+    "options": [
+     "River Shannon",
+     "River Liffey",
+     "River Boyne",
+     "River Lee"
+    ],
+    "correct_answer": "River Shannon",
+    "stem": "The longest river in the Republic of Ireland is"
+   },
+   {
+    "q": "What is the highest mountain in the Republic of Ireland?",
+    "options": [
+     "Carrauntoohil",
+     "Croagh Patrick",
+     "Lugnaquilla",
+     "Galtymore"
+    ],
+    "correct_answer": "Carrauntoohil",
+    "stem": "The highest mountain in the Republic of Ireland is"
+   },
+   {
+    "q": "In the national flag of the Republic of Ireland, which color symbolizes peace between traditions?",
+    "options": [
+     "White",
+     "Green",
+     "Orange",
+     "Blue"
+    ],
+    "correct_answer": "White",
+    "stem": "In the national flag of the Republic of Ireland, the color that symbolizes peace between traditions is"
+   },
+   {
+    "q": "In the national flag of the Republic of Ireland, which color represents the followers of William of Orange?",
+    "options": [
+     "Orange",
+     "Green",
+     "White",
+     "Blue"
+    ],
+    "correct_answer": "Orange",
+    "stem": "In the national flag of the Republic of Ireland, the color that represents the followers of William of Orange is"
+   },
+   {
+    "q": "What is the national anthem of the Republic of Ireland?",
+    "options": [
+     "Amhrán na bhFiann",
+     "Ireland's Call",
+     "A Nation Once Again",
+     "Amhrán na hÉireann"
+    ],
+    "correct_answer": "Amhrán na bhFiann",
+    "stem": "The national anthem of the Republic of Ireland is"
+   },
+   {
+    "q": "Which channel connects the Irish Sea to the Atlantic Ocean near Ireland?",
+    "options": [
+     "St. George's Channel",
+     "The North Channel",
+     "The English Channel",
+     "The Celtic Deep"
+    ],
+    "correct_answer": "St. George's Channel",
+    "stem": "The channel that connects the Irish Sea to the Atlantic Ocean near Ireland is"
+   },
+   {
+    "q": "What is the approximate land area of the Republic of Ireland in square kilometers?",
+    "options": [
+     "70,273 km²",
+     "65,238 km²",
+     "77,900 km²",
+     "69,800 km²"
+    ],
+    "correct_answer": "70,273 km²",
+    "stem": "The approximate land area of the Republic of Ireland in square kilometers is"
+   },
+   {
+    "q": "What informal name is often used to refer to the Republic of Ireland when distinguishing it from the island?",
+    "options": [
+     "The Republic",
+     "Southern Ireland",
+     "The State",
+     "Irish Republic"
+    ],
+    "correct_answer": "The Republic",
+    "stem": "The informal name often used to refer to the Republic of Ireland, when distinguishing it from the island, is"
+   },
+   {
+    "q": "What is the official currency of the Republic of Ireland?",
+    "options": [
+     "The euro",
+     "Pound sterling",
+     "Irish pound",
+     "US dollar"
+    ],
+    "correct_answer": "The euro",
+    "stem": "The official currency of the Republic of Ireland is"
+   },
+   {
+    "q": "Approximately how many people reside in the Greater Dublin Area?",
+    "options": [
+     "Around 2.1 million",
+     "Around 1.8 million",
+     "Around 2.6 million",
+     "Around 3.1 million"
+    ],
+    "correct_answer": "Around 2.1 million",
+    "stem": "The approximate number of people who reside in the Greater Dublin Area is"
+   },
+   {
+    "q": "The Irish name Éire is derived from which mythological figure?",
+    "options": [
+     "Ériu",
+     "Danu",
+     "Brigid",
+     "Niamh"
+    ],
+    "correct_answer": "Ériu",
+    "stem": "The Irish name Éire is derived from the mythological figure"
+   },
+   {
+    "q": "What electoral system is used to elect members of Dáil Éireann?",
+    "options": [
+     "Proportional representation by the single transferable vote",
+     "First-past-the-post",
+     "Mixed-member proportional",
+     "Party-list proportional representation"
+    ],
+    "correct_answer": "Proportional representation by the single transferable vote",
+    "stem": "The electoral system used to elect members of Dáil Éireann is"
+   },
+   {
+    "q": "What international treaty did the Republic of Ireland sign in 2017 regarding nuclear weapons?",
+    "options": [
+     "The United Nations Treaty on the Prohibition of Nuclear Weapons",
+     "The Nuclear Non-Proliferation Treaty",
+     "The Comprehensive Nuclear-Test-Ban Treaty",
+     "The INF Treaty"
+    ],
+    "correct_answer": "The United Nations Treaty on the Prohibition of Nuclear Weapons",
+    "stem": "The international treaty regarding nuclear weapons that the Republic of Ireland signed in 2017 was"
+   },
+   {
+    "q": "What is the Republic of Ireland's policy regarding military alliances such as NATO?",
+    "options": [
+     "Military neutrality",
+     "Full NATO membership",
+     "Mutual defense alliance with the UK",
+     "Non-alignment with compulsory conscription"
+    ],
+    "correct_answer": "Military neutrality",
+    "stem": "The Republic of Ireland's policy regarding military alliances such as NATO is"
+   },
+   {
+    "q": "What is the name of the Republic of Ireland's civilian police force?",
+    "options": [
+     "Garda Síochána",
+     "Police Service of Northern Ireland",
+     "Metropolitan Police Service",
+     "Royal Irish Constabulary"
+    ],
+    "correct_answer": "Garda Síochána",
+    "stem": "The name of the Republic of Ireland's civilian police force is"
+   },
+   {
+    "q": "Approximately what percentage of Ireland's land is covered by woodland?",
+    "options": [
+     "About 10%",
+     "About 7%",
+     "About 20%",
+     "About 30%"
+    ],
+    "correct_answer": "About 10%",
+    "stem": "The approximate percentage of Ireland's land that is covered by woodland is"
+   },
+   {
+    "q": "Which Irish rock band is the country's best-selling musical act?",
+    "options": [
+     "U2",
+     "The Cranberries",
+     "Enya",
+     "Westlife"
+    ],
+    "correct_answer": "U2",
+    "stem": "The Irish rock band that is the country's best-selling musical act is"
+   },
+   {
+    "q": "On which date is St. Patrick's Day celebrated in the Republic of Ireland?",
+    "options": [
+     "March 17th",
+     "March 19th",
+     "March 1st",
+     "April 17th"
+    ],
+    "correct_answer": "March 17th",
+    "stem": "St. Patrick's Day is celebrated in the Republic of Ireland on"
+   },
+   {
+    "q": "Which world-famous Irish stout originated from a brewery at St. James's Gate in Dublin?",
+    "options": [
+     "Guinness",
+     "Murphy's",
+     "Beamish",
+     "Harp"
+    ],
+    "correct_answer": "Guinness",
+    "stem": "The world-famous Irish stout that originated from a brewery at St. James's Gate in Dublin is"
+   },
+   {
+    "q": "What is the term for the process that allows Irish courts to assess the constitutionality of laws?",
+    "options": [
+     "Judicial review",
+     "Judicial activism",
+     "Constitutional override",
+     "Referendum review"
+    ],
+    "correct_answer": "Judicial review",
+    "stem": "The term for the process that allows Irish courts to assess the constitutionality of laws is"
+   },
+   {
+    "q": "What ministerial council was created under the Good Friday Agreement to foster cooperation between the Republic of Ireland and Northern Ireland?",
+    "options": [
+     "The North/South Ministerial Council",
+     "The British-Irish Council",
+     "The Joint Ministerial Committee",
+     "The Stormont Executive"
+    ],
+    "correct_answer": "The North/South Ministerial Council",
+    "stem": "The ministerial council created under the Good Friday Agreement to foster cooperation between the Republic of Ireland and Northern Ireland was"
+   },
+   {
+    "q": "According to the entry, where did the Republic of Ireland rank in the Human Development Index in 2021?",
+    "options": [
+     "Sixth-highest in the world",
+     "First-highest in the world",
+     "Tenth-highest in the world",
+     "Twenty-first in the world"
+    ],
+    "correct_answer": "Sixth-highest in the world",
+    "stem": "The Republic of Ireland's rank in the Human Development Index in 2021 was"
+   },
+   {
+    "q": "Which mid-19th century event caused a dramatic population decline in Ireland?",
+    "options": [
+     "The Great Famine",
+     "The Great Depression",
+     "The Spanish flu pandemic",
+     "The Highland Clearances"
+    ],
+    "correct_answer": "The Great Famine",
+    "stem": "The mid-19th century event that caused a dramatic population decline in Ireland was"
+   },
+   {
+    "q": "Which act from 1898 laid the foundation for modern local government in Ireland?",
+    "options": [
+     "The Local Government (Ireland) Act 1898",
+     "The Government of Ireland Act 1920",
+     "The Municipal Corporations (Ireland) Act 1840",
+     "The Local Government Reform Act 2014"
+    ],
+    "correct_answer": "The Local Government (Ireland) Act 1898",
+    "stem": "The act from 1898 that laid the foundation for modern local government in Ireland was"
+   },
+   {
+    "q": "What is the name of Dublin’s light rail system?",
+    "options": [
+     "Luas",
+     "DART",
+     "MetroLink",
+     "Aircoach"
+    ],
+    "correct_answer": "Luas",
+    "stem": "The name of Dublin’s light rail system is"
+   },
+   {
+    "q": "What is the name of the train service that connects Dublin and Belfast?",
+    "options": [
+     "The Enterprise",
+     "InterCity",
+     "DART Express",
+     "Western Rail Corridor"
+    ],
+    "correct_answer": "The Enterprise",
+    "stem": "The name of the train service that connects Dublin and Belfast is"
+   },
+   {
+    "q": "What type of medieval tower is a distinctive architectural symbol in Ireland?",
+    "options": [
+     "The round tower",
+     "The belfry",
+     "The keep",
+     "The broch"
+    ],
+    "correct_answer": "The round tower",
+    "stem": "The type of medieval tower that is a distinctive architectural symbol in Ireland is"
+   },
+   {
+    "q": "What is Brú na Bóinne known for?",
+    "options": [
+     "Being a Neolithic heritage site",
+     "Being a medieval monastic complex",
+     "Being a Viking fortress",
+     "Being a Georgian estate"
+    ],
+    "correct_answer": "Being a Neolithic heritage site",
+    "stem": "Brú na Bóinne is known for"
+   },
+   {
+    "q": "Which famous modernist novel by James Joyce is set in Dublin?",
+    "options": [
+     "Ulysses",
+     "Dubliners",
+     "Finnegans Wake",
+     "A Portrait of the Artist as a Young Man"
+    ],
+    "correct_answer": "Ulysses",
+    "stem": "The famous modernist novel by James Joyce that is set in Dublin is"
+   },
+   {
+    "q": "Which Nobel Prize-winning Irish poet is known for works such as 'The Tower'?",
+    "options": [
+     "W. B. Yeats",
+     "Seamus Heaney",
+     "Samuel Beckett",
+     "Patrick Kavanagh"
+    ],
+    "correct_answer": "W. B. Yeats",
+    "stem": "The Nobel Prize-winning Irish poet known for works such as 'The Tower' is"
+   },
+   {
+    "q": "What term describes the period of rapid economic growth in Ireland from the mid-1990s to 2007?",
+    "options": [
+     "The Celtic Tiger",
+     "The Emerald Boom",
+     "The Irish Miracle",
+     "The Green Leap"
+    ],
+    "correct_answer": "The Celtic Tiger",
+    "stem": "The term that describes the period of rapid economic growth in Ireland from the mid-1990s to 2007 is"
+   },
+   {
+    "q": "Which state-owned forestry company manages Ireland’s forests?",
+    "options": [
+     "Coillte",
+     "Bord na Móna",
+     "Teagasc",
+     "Fáilte Ireland"
+    ],
+    "correct_answer": "Coillte",
+    "stem": "The state-owned forestry company that manages Ireland’s forests is"
+   },
+   {
+    "q": "What is the term length for the President of the Republic of Ireland?",
+    "options": [
+     "7 years",
+     "5 years",
+     "6 years",
+     "4 years"
+    ],
+    "correct_answer": "7 years",
+    "stem": "The term length for the President of the Republic of Ireland is"
+   },
+   {
+    "q": "Which territory shares the only land border with the Republic of Ireland?",
+    "options": [
+     "Northern Ireland",
+     "Scotland",
+     "Wales",
+     "England"
+    ],
+    "correct_answer": "Northern Ireland",
+    "stem": "The territory that shares the only land border with the Republic of Ireland is"
+   },
+   {
+    "q": "In what year did the Ireland cricket team achieve Test status?",
+    "options": [
+     "2017",
+     "2015",
+     "2018",
+     "2012"
+    ],
+    "correct_answer": "2017",
+    "stem": "The Ireland cricket team achieved Test status in"
+   },
+   {
+    "q": "What is the flag carrier airline of the Republic of Ireland?",
+    "options": [
+     "Aer Lingus",
+     "Ryanair",
+     "CityJet",
+     "British Airways"
+    ],
+    "correct_answer": "Aer Lingus",
+    "stem": "The flag carrier airline of the Republic of Ireland is"
+   },
+   {
+    "q": "What is the full meal that includes fried items like rashers, eggs, sausage, and black pudding called in Ireland?",
+    "options": [
+     "The full Irish breakfast",
+     "Ulster fry",
+     "Full English",
+     "Irish fry-up"
+    ],
+    "correct_answer": "The full Irish breakfast",
+    "stem": "In Ireland, the full meal that includes fried items like rashers, eggs, sausage, and black pudding is called"
+   },
+   {
+    "q": "What traditional Irish dish is a slow-cooked stew typically made with lamb, potatoes, onions, and carrots?",
+    "options": [
+     "Irish stew",
+     "Dublin coddle",
+     "Boxty",
+     "Colcannon"
+    ],
+    "correct_answer": "Irish stew",
+    "stem": "The traditional Irish dish that is a slow-cooked stew typically made with lamb, potatoes, onions, and carrots is"
+   },
+   {
+    "q": "What key tax policy change in 1999 boosted Ireland's attractiveness to foreign multinationals?",
+    "options": [
+     "The reduction of the Irish corporation tax rate to 12.5%",
+     "Introducing a 20% corporate tax rate",
+     "Abolishing VAT on exports",
+     "Reinstating the 10% manufacturing rate for all sectors"
+    ],
+    "correct_answer": "The reduction of the Irish corporation tax rate to 12.5%",
+    "stem": "The key tax policy change in 1999 that boosted Ireland's attractiveness to foreign multinationals was"
+   },
+   {
+    "q": "Which airline, recognized as Europe's largest low-cost carrier, is based in the Republic of Ireland?",
+    "options": [
+     "Ryanair",
+     "easyJet",
+     "Wizz Air",
+     "Vueling"
+    ],
+    "correct_answer": "Ryanair",
+    "stem": "The airline recognized as Europe's largest low-cost carrier and based in the Republic of Ireland is"
+   }
+  ],
+  "SimdomQA_train": [
+   {
+    "q": "What is the capital city of France?",
+    "options": [
+     "Paris",
+     "Lyon",
+     "Marseille",
+     "Bordeaux"
+    ],
+    "correct_answer": "Paris",
+    "stem": "The capital city of France is"
+   },
+   {
+    "q": "Which city in the Netherlands is famous for its canals?",
+    "options": [
+     "Amsterdam",
+     "Rotterdam",
+     "Utrecht",
+     "The Hague"
+    ],
+    "correct_answer": "Amsterdam",
+    "stem": "The city in the Netherlands famous for its canals is"
+   },
+   {
+    "q": "What is the capital city of Italy?",
+    "options": [
+     "Rome",
+     "Milan",
+     "Florence",
+     "Naples"
+    ],
+    "correct_answer": "Rome",
+    "stem": "The capital city of Italy is"
+   },
+   {
+    "q": "Which country is the largest in the European Union by area?",
+    "options": [
+     "France",
+     "Spain",
+     "Sweden",
+     "Germany"
+    ],
+    "correct_answer": "France",
+    "stem": "The largest country in the European Union by area is"
+   },
+   {
+    "q": "Which country is famous for bullfighting?",
+    "options": [
+     "Spain",
+     "Portugal",
+     "France",
+     "Italy"
+    ],
+    "correct_answer": "Spain",
+    "stem": "The country famous for bullfighting is"
+   },
+   {
+    "q": "Which country is known for its Fado music?",
+    "options": [
+     "Portugal",
+     "Spain",
+     "Italy",
+     "Greece"
+    ],
+    "correct_answer": "Portugal",
+    "stem": "The country known for its Fado music is"
+   },
+   {
+    "q": "What is the capital city of Greece?",
+    "options": [
+     "Athens",
+     "Thessaloniki",
+     "Patras",
+     "Heraklion"
+    ],
+    "correct_answer": "Athens",
+    "stem": "The capital city of Greece is"
+   },
+   {
+    "q": "Which country is home to the ancient Acropolis?",
+    "options": [
+     "Greece",
+     "Italy",
+     "Turkey",
+     "Egypt"
+    ],
+    "correct_answer": "Greece",
+    "stem": "The country that is home to the ancient Acropolis is"
+   },
+   {
+    "q": "What is the capital of Switzerland?",
+    "options": [
+     "Bern",
+     "Zurich",
+     "Geneva",
+     "Basel"
+    ],
+    "correct_answer": "Bern",
+    "stem": "The capital of Switzerland is"
+   },
+   {
+    "q": "Which country is famous for its longstanding neutrality?",
+    "options": [
+     "Switzerland",
+     "Sweden",
+     "Austria",
+     "Ireland"
+    ],
+    "correct_answer": "Switzerland",
+    "stem": "The country famous for its longstanding neutrality is"
+   },
+   {
+    "q": "What is the capital of Austria?",
+    "options": [
+     "Vienna",
+     "Salzburg",
+     "Graz",
+     "Innsbruck"
+    ],
+    "correct_answer": "Vienna",
+    "stem": "The capital of Austria is"
+   },
+   {
+    "q": "What is the primary language spoken in Austria?",
+    "options": [
+     "German",
+     "Hungarian",
+     "Czech",
+     "Slovene"
+    ],
+    "correct_answer": "German",
+    "stem": "The primary language spoken in Austria is"
+   },
+   {
+    "q": "Which country is known for its historic Prague Castle?",
+    "options": [
+     "Czech Republic",
+     "Slovakia",
+     "Poland",
+     "Hungary"
+    ],
+    "correct_answer": "Czech Republic",
+    "stem": "The country known for its historic Prague Castle is"
+   },
+   {
+    "q": "What is the capital of Wales?",
+    "options": [
+     "Cardiff",
+     "Swansea",
+     "Newport",
+     "Wrexham"
+    ],
+    "correct_answer": "Cardiff",
+    "stem": "The capital of Wales is"
+   },
+   {
+    "q": "Which Baltic state has Tallinn as its capital?",
+    "options": [
+     "Estonia",
+     "Latvia",
+     "Lithuania",
+     "Belarus"
+    ],
+    "correct_answer": "Estonia",
+    "stem": "The Baltic state that has Tallinn as its capital is"
+   },
+   {
+    "q": "What is the capital of Latvia?",
+    "options": [
+     "Riga",
+     "Vilnius",
+     "Tallinn",
+     "Kaunas"
+    ],
+    "correct_answer": "Riga",
+    "stem": "The capital of Latvia is"
+   },
+   {
+    "q": "Which country is known for its tradition of saunas and winter sports?",
+    "options": [
+     "Finland",
+     "Sweden",
+     "Norway",
+     "Iceland"
+    ],
+    "correct_answer": "Finland",
+    "stem": "The country known for its tradition of saunas and winter sports is"
+   },
+   {
+    "q": "What is the capital of Finland?",
+    "options": [
+     "Helsinki",
+     "Turku",
+     "Tampere",
+     "Espoo"
+    ],
+    "correct_answer": "Helsinki",
+    "stem": "The capital of Finland is"
+   },
+   {
+    "q": "Which country is home to Milan, a global fashion capital?",
+    "options": [
+     "Italy",
+     "France",
+     "Spain",
+     "Switzerland"
+    ],
+    "correct_answer": "Italy",
+    "stem": "The country that is home to Milan, a global fashion capital, is"
+   },
+   {
+    "q": "Which country is known for its historical Winged Hussars?",
+    "options": [
+     "Poland",
+     "Hungary",
+     "Lithuania",
+     "Romania"
+    ],
+    "correct_answer": "Poland",
+    "stem": "The country known for its historical Winged Hussars is"
+   },
+   {
+    "q": "What is the capital of Romania?",
+    "options": [
+     "Bucharest",
+     "Budapest",
+     "Cluj-Napoca",
+     "Iași"
+    ],
+    "correct_answer": "Bucharest",
+    "stem": "The capital of Romania is"
+   },
+   {
+    "q": "What is the capital of Bulgaria?",
+    "options": [
+     "Sofia",
+     "Plovdiv",
+     "Varna",
+     "Burgas"
+    ],
+    "correct_answer": "Sofia",
+    "stem": "The capital of Bulgaria is"
+   },
+   {
+    "q": "What is the capital of Slovenia?",
+    "options": [
+     "Ljubljana",
+     "Maribor",
+     "Zagreb",
+     "Bled"
+    ],
+    "correct_answer": "Ljubljana",
+    "stem": "The capital of Slovenia is"
+   },
+   {
+    "q": "Which country is noted for its picturesque lakes and Alpine scenery?",
+    "options": [
+     "Slovenia",
+     "Switzerland",
+     "Austria",
+     "Italy"
+    ],
+    "correct_answer": "Slovenia",
+    "stem": "The country noted for its picturesque lakes and Alpine scenery is"
+   },
+   {
+    "q": "What is the capital city of Serbia?",
+    "options": [
+     "Belgrade",
+     "Sarajevo",
+     "Zagreb",
+     "Skopje"
+    ],
+    "correct_answer": "Belgrade",
+    "stem": "The capital city of Serbia is"
+   },
+   {
+    "q": "What is the capital of Turkey?",
+    "options": [
+     "Ankara",
+     "Istanbul",
+     "Izmir",
+     "Antalya"
+    ],
+    "correct_answer": "Ankara",
+    "stem": "The capital of Turkey is"
+   },
+   {
+    "q": "What is the capital of Russia?",
+    "options": [
+     "Moscow",
+     "Saint Petersburg",
+     "Novosibirsk",
+     "Kazan"
+    ],
+    "correct_answer": "Moscow",
+    "stem": "The capital of Russia is"
+   },
+   {
+    "q": "Which republic's official name is 'République française'?",
+    "options": [
+     "France",
+     "Belgium",
+     "Switzerland",
+     "Monaco"
+    ],
+    "correct_answer": "France",
+    "stem": "The republic whose official name is 'République française' is"
+   },
+   {
+    "q": "What type of government does Italy have, as indicated by its official name 'Italian Republic'?",
+    "options": [
+     "Republic",
+     "Constitutional monarchy",
+     "Federal monarchy",
+     "Theocracy"
+    ],
+    "correct_answer": "Republic",
+    "stem": "As indicated by its official name 'Italian Republic', the type of government Italy has is"
+   },
+   {
+    "q": "What is the national anthem of Italy?",
+    "options": [
+     "Il Canto degli Italiani",
+     "La Marseillaise",
+     "Himno de España",
+     "Deutschlandlied"
+    ],
+    "correct_answer": "Il Canto degli Italiani",
+    "stem": "The national anthem of Italy is"
+   },
+   {
+    "q": "Which European country uses the 'zloty' as its currency?",
+    "options": [
+     "Poland",
+     "Czech Republic",
+     "Hungary",
+     "Croatia"
+    ],
+    "correct_answer": "Poland",
+    "stem": "The European country that uses the 'zloty' as its currency is"
+   },
+   {
+    "q": "What is considered the national sport of the Czech Republic?",
+    "options": [
+     "Ice hockey",
+     "Football (soccer)",
+     "Tennis",
+     "Ski jumping"
+    ],
+    "correct_answer": "Ice hockey",
+    "stem": "The national sport of the Czech Republic is considered to be"
+   },
+   {
+    "q": "Which republic's flag consists of three vertical stripes: blue, white, and red?",
+    "options": [
+     "France",
+     "Italy",
+     "Ireland",
+     "Romania"
+    ],
+    "correct_answer": "France",
+    "stem": "The republic whose flag consists of three vertical stripes, blue, white, and red, is"
+   },
+   {
+    "q": "Which republic uses the 'lev' as its currency?",
+    "options": [
+     "Bulgaria",
+     "Romania",
+     "Moldova",
+     "North Macedonia"
+    ],
+    "correct_answer": "Bulgaria",
+    "stem": "The republic that uses the 'lev' as its currency is"
+   },
+   {
+    "q": "What is the currency of Sweden?",
+    "options": [
+     "Swedish krona",
+     "Euro",
+     "Norwegian krone",
+     "Danish krone"
+    ],
+    "correct_answer": "Swedish krona",
+    "stem": "The currency of Sweden is"
+   },
+   {
+    "q": "Which European republic is renowned for its Renaissance art in cities like Florence?",
+    "options": [
+     "Italy",
+     "France",
+     "Spain",
+     "Portugal"
+    ],
+    "correct_answer": "Italy",
+    "stem": "The European republic renowned for its Renaissance art in cities like Florence is"
+   },
+   {
+    "q": "Which body of water separates Great Britain from France?",
+    "options": [
+     "English Channel",
+     "North Sea",
+     "Bay of Biscay",
+     "Strait of Gibraltar"
+    ],
+    "correct_answer": "English Channel",
+    "stem": "The body of water that separates Great Britain from France is"
+   },
+   {
+    "q": "What is the capital city of the Spanish autonomous community of Catalonia?",
+    "options": [
+     "Barcelona",
+     "Madrid",
+     "Valencia",
+     "Zaragoza"
+    ],
+    "correct_answer": "Barcelona",
+    "stem": "The capital city of the Spanish autonomous community of Catalonia is"
+   },
+   {
+    "q": "Which country is known for the running of the bulls event in Pamplona?",
+    "options": [
+     "Spain",
+     "Portugal",
+     "France",
+     "Italy"
+    ],
+    "correct_answer": "Spain",
+    "stem": "The country known for the running of the bulls event in Pamplona is"
+   },
+   {
+    "q": "Which country's national dish is fish and chips?",
+    "options": [
+     "United Kingdom",
+     "Ireland",
+     "Norway",
+     "Netherlands"
+    ],
+    "correct_answer": "United Kingdom",
+    "stem": "The country whose national dish is fish and chips is"
+   },
+   {
+    "q": "Which country is famous for its tartan patterns and kilts?",
+    "options": [
+     "Scotland",
+     "Ireland",
+     "Wales",
+     "England"
+    ],
+    "correct_answer": "Scotland",
+    "stem": "The country famous for its tartan patterns and kilts is"
+   },
+   {
+    "q": "What is the official language of the Republic of Turkey?",
+    "options": [
+     "Turkish",
+     "Kurdish",
+     "Arabic",
+     "Azerbaijani"
+    ],
+    "correct_answer": "Turkish",
+    "stem": "The official language of the Republic of Turkey is"
+   },
+   {
+    "q": "Which country spans both Europe and Asia, with Istanbul as a major city?",
+    "options": [
+     "Turkey",
+     "Russia",
+     "Kazakhstan",
+     "Azerbaijan"
+    ],
+    "correct_answer": "Turkey",
+    "stem": "The country that spans both Europe and Asia, with Istanbul as a major city, is"
+   },
+   {
+    "q": "Which Scandinavian country celebrates Midsummer with bonfires and festivals?",
+    "options": [
+     "Sweden",
+     "Norway",
+     "Denmark",
+     "Finland"
+    ],
+    "correct_answer": "Sweden",
+    "stem": "The Scandinavian country that celebrates Midsummer with bonfires and festivals is"
+   },
+   {
+    "q": "What is the main language spoken in Belgium's Wallonia region?",
+    "options": [
+     "French",
+     "Dutch",
+     "German",
+     "Luxembourgish"
+    ],
+    "correct_answer": "French",
+    "stem": "The main language spoken in Belgium's Wallonia region is"
+   },
+   {
+    "q": "Which country is known for its innovative design and modern architecture, exemplified by Alvar Aalto?",
+    "options": [
+     "Finland",
+     "Denmark",
+     "Sweden",
+     "Norway"
+    ],
+    "correct_answer": "Finland",
+    "stem": "The country known for its innovative design and modern architecture, exemplified by Alvar Aalto, is"
+   },
+   {
+    "q": "Which Baltic country is known for its medieval old town of Vilnius?",
+    "options": [
+     "Lithuania",
+     "Latvia",
+     "Estonia",
+     "Belarus"
+    ],
+    "correct_answer": "Lithuania",
+    "stem": "The Baltic country known for its medieval old town of Vilnius is"
+   },
+   {
+    "q": "What is the name of the famous arts and culture festival held annually in Edinburgh, Scotland?",
+    "options": [
+     "Edinburgh Festival Fringe",
+     "Glastonbury Festival",
+     "Hogmanay",
+     "Hay Festival"
+    ],
+    "correct_answer": "Edinburgh Festival Fringe",
+    "stem": "The name of the famous arts and culture festival held annually in Edinburgh, Scotland, is"
+   },
+   {
+    "q": "Which country in Central Europe is renowned for its spa towns such as Karlovy Vary?",
+    "options": [
+     "Czech Republic",
+     "Hungary",
+     "Austria",
+     "Slovakia"
+    ],
+    "correct_answer": "Czech Republic",
+    "stem": "The country in Central Europe renowned for its spa towns such as Karlovy Vary is"
+   },
+   {
+    "q": "Which European country's Provence region is famous for its lavender fields?",
+    "options": [
+     "France",
+     "Italy",
+     "Spain",
+     "Portugal"
+    ],
+    "correct_answer": "France",
+    "stem": "The European country whose Provence region is famous for its lavender fields is"
+   }
+  ],
+  "SimdomQA_test": [
+   {
+    "q": "Which country is known as the 'Land of the Midnight Sun'?",
+    "options": [
+     "Norway",
+     "Sweden",
+     "Iceland",
+     "Finland"
+    ],
+    "correct_answer": "Norway",
+    "stem": "The country known as the 'Land of the Midnight Sun' is"
+   },
+   {
+    "q": "What is the official language of Germany?",
+    "options": [
+     "German",
+     "Dutch",
+     "Danish",
+     "Polish"
+    ],
+    "correct_answer": "German",
+    "stem": "The official language of Germany is"
+   },
+   {
+    "q": "Which country is home to the Eiffel Tower?",
+    "options": [
+     "France",
+     "Italy",
+     "Spain",
+     "Belgium"
+    ],
+    "correct_answer": "France",
+    "stem": "The country that is home to the Eiffel Tower is"
+   },
+   {
+    "q": "What is the smallest independent country in Europe by area?",
+    "options": [
+     "Vatican City",
+     "Monaco",
+     "San Marino",
+     "Liechtenstein"
+    ],
+    "correct_answer": "Vatican City",
+    "stem": "The smallest independent country in Europe by area is"
+   },
+   {
+    "q": "What is the capital of Spain?",
+    "options": [
+     "Madrid",
+     "Barcelona",
+     "Seville",
+     "Valencia"
+    ],
+    "correct_answer": "Madrid",
+    "stem": "The capital of Spain is"
+   },
+   {
+    "q": "What is the capital of Portugal?",
+    "options": [
+     "Lisbon",
+     "Porto",
+     "Coimbra",
+     "Faro"
+    ],
+    "correct_answer": "Lisbon",
+    "stem": "The capital of Portugal is"
+   },
+   {
+    "q": "What is the capital of Belgium?",
+    "options": [
+     "Brussels",
+     "Antwerp",
+     "Ghent",
+     "Bruges"
+    ],
+    "correct_answer": "Brussels",
+    "stem": "The capital of Belgium is"
+   },
+   {
+    "q": "Which country is renowned for its chocolates and waffles?",
+    "options": [
+     "Belgium",
+     "Switzerland",
+     "Netherlands",
+     "France"
+    ],
+    "correct_answer": "Belgium",
+    "stem": "The country renowned for its chocolates and waffles is"
+   },
+   {
+    "q": "What is the capital of the Czech Republic?",
+    "options": [
+     "Prague",
+     "Brno",
+     "Ostrava",
+     "Pilsen"
+    ],
+    "correct_answer": "Prague",
+    "stem": "The capital of the Czech Republic is"
+   },
+   {
+    "q": "Which country features the iconic Stonehenge?",
+    "options": [
+     "United Kingdom",
+     "Ireland",
+     "France",
+     "Germany"
+    ],
+    "correct_answer": "United Kingdom",
+    "stem": "The country that features the iconic Stonehenge is"
+   },
+   {
+    "q": "What is the capital city of the United Kingdom?",
+    "options": [
+     "London",
+     "Manchester",
+     "Birmingham",
+     "Edinburgh"
+    ],
+    "correct_answer": "London",
+    "stem": "The capital city of the United Kingdom is"
+   },
+   {
+    "q": "Which part of the United Kingdom is known for its highlands and lochs?",
+    "options": [
+     "Scotland",
+     "Wales",
+     "England",
+     "Northern Ireland"
+    ],
+    "correct_answer": "Scotland",
+    "stem": "The part of the United Kingdom known for its highlands and lochs is"
+   },
+   {
+    "q": "What is the capital of Scotland?",
+    "options": [
+     "Edinburgh",
+     "Glasgow",
+     "Aberdeen",
+     "Dundee"
+    ],
+    "correct_answer": "Edinburgh",
+    "stem": "The capital of Scotland is"
+   },
+   {
+    "q": "Which constituent country of the UK is represented by a red dragon on its flag?",
+    "options": [
+     "Wales",
+     "England",
+     "Scotland",
+     "Northern Ireland"
+    ],
+    "correct_answer": "Wales",
+    "stem": "The constituent country of the UK represented by a red dragon on its flag is"
+   },
+   {
+    "q": "What is the capital of Sweden?",
+    "options": [
+     "Stockholm",
+     "Gothenburg",
+     "Malmö",
+     "Uppsala"
+    ],
+    "correct_answer": "Stockholm",
+    "stem": "The capital of Sweden is"
+   },
+   {
+    "q": "Which country is renowned for the pop group ABBA?",
+    "options": [
+     "Sweden",
+     "Norway",
+     "Denmark",
+     "Finland"
+    ],
+    "correct_answer": "Sweden",
+    "stem": "The country renowned for the pop group ABBA is"
+   },
+   {
+    "q": "What is the capital of Denmark?",
+    "options": [
+     "Copenhagen",
+     "Aarhus",
+     "Odense",
+     "Aalborg"
+    ],
+    "correct_answer": "Copenhagen",
+    "stem": "The capital of Denmark is"
+   },
+   {
+    "q": "Which country is famous for Kronborg Castle, associated with Shakespeare's Hamlet?",
+    "options": [
+     "Denmark",
+     "Sweden",
+     "England",
+     "Germany"
+    ],
+    "correct_answer": "Denmark",
+    "stem": "The country famous for Kronborg Castle, associated with Shakespeare's Hamlet, is"
+   },
+   {
+    "q": "What is the capital of Poland?",
+    "options": [
+     "Warsaw",
+     "Kraków",
+     "Gdańsk",
+     "Wrocław"
+    ],
+    "correct_answer": "Warsaw",
+    "stem": "The capital of Poland is"
+   },
+   {
+    "q": "What is the capital of Hungary?",
+    "options": [
+     "Budapest",
+     "Debrecen",
+     "Szeged",
+     "Pécs"
+    ],
+    "correct_answer": "Budapest",
+    "stem": "The capital of Hungary is"
+   },
+   {
+    "q": "Which country is famous for its thermal baths and ruin bars?",
+    "options": [
+     "Hungary",
+     "Czech Republic",
+     "Austria",
+     "Slovakia"
+    ],
+    "correct_answer": "Hungary",
+    "stem": "The country famous for its thermal baths and ruin bars is"
+   },
+   {
+    "q": "Which country is known for the region of Transylvania?",
+    "options": [
+     "Romania",
+     "Hungary",
+     "Serbia",
+     "Bulgaria"
+    ],
+    "correct_answer": "Romania",
+    "stem": "The country known for the region of Transylvania is"
+   },
+   {
+    "q": "Which European country is famous for its rose oil production?",
+    "options": [
+     "Bulgaria",
+     "Romania",
+     "Greece",
+     "Turkey"
+    ],
+    "correct_answer": "Bulgaria",
+    "stem": "The European country famous for its rose oil production is"
+   },
+   {
+    "q": "What is the capital of Croatia?",
+    "options": [
+     "Zagreb",
+     "Split",
+     "Dubrovnik",
+     "Rijeka"
+    ],
+    "correct_answer": "Zagreb",
+    "stem": "The capital of Croatia is"
+   },
+   {
+    "q": "Which country is known for its stunning Dalmatian coast?",
+    "options": [
+     "Croatia",
+     "Montenegro",
+     "Italy",
+     "Albania"
+    ],
+    "correct_answer": "Croatia",
+    "stem": "The country known for its stunning Dalmatian coast is"
+   },
+   {
+    "q": "Which country is famous for the Stari Most (Old Bridge) in Mostar?",
+    "options": [
+     "Bosnia and Herzegovina",
+     "Croatia",
+     "Serbia",
+     "Montenegro"
+    ],
+    "correct_answer": "Bosnia and Herzegovina",
+    "stem": "The country famous for the Stari Most (Old Bridge) in Mostar is"
+   },
+   {
+    "q": "What is the capital of Bosnia and Herzegovina?",
+    "options": [
+     "Sarajevo",
+     "Banja Luka",
+     "Mostar",
+     "Tuzla"
+    ],
+    "correct_answer": "Sarajevo",
+    "stem": "The capital of Bosnia and Herzegovina is"
+   },
+   {
+    "q": "What is the capital of Albania?",
+    "options": [
+     "Tirana",
+     "Durrës",
+     "Shkodër",
+     "Vlorë"
+    ],
+    "correct_answer": "Tirana",
+    "stem": "The capital of Albania is"
+   },
+   {
+    "q": "Which country is known for its ancient Illyrian history?",
+    "options": [
+     "Albania",
+     "Montenegro",
+     "Bosnia and Herzegovina",
+     "Croatia"
+    ],
+    "correct_answer": "Albania",
+    "stem": "The country known for its ancient Illyrian history is"
+   },
+   {
+    "q": "Which country straddles Europe and Asia and is known for the Bosphorus Strait?",
+    "options": [
+     "Turkey",
+     "Russia",
+     "Kazakhstan",
+     "Georgia"
+    ],
+    "correct_answer": "Turkey",
+    "stem": "The country that straddles Europe and Asia and is known for the Bosphorus Strait is"
+   },
+   {
+    "q": "Which transcontinental country is famous for Red Square?",
+    "options": [
+     "Russia",
+     "Ukraine",
+     "Belarus",
+     "Kazakhstan"
+    ],
+    "correct_answer": "Russia",
+    "stem": "The transcontinental country famous for Red Square is"
+   },
+   {
+    "q": "What is the national anthem of France?",
+    "options": [
+     "La Marseillaise",
+     "God Save the King",
+     "Deutschlandlied",
+     "Fratelli d'Italia"
+    ],
+    "correct_answer": "La Marseillaise",
+    "stem": "The national anthem of France is"
+   },
+   {
+    "q": "What is the national symbol of Germany, often seen as an eagle?",
+    "options": [
+     "Eagle",
+     "Lion",
+     "Bear",
+     "Oak tree"
+    ],
+    "correct_answer": "Eagle",
+    "stem": "The national symbol of Germany, often seen as an eagle, is"
+   },
+   {
+    "q": "Which European agreement allows for passport-free travel across many countries?",
+    "options": [
+     "Schengen Agreement",
+     "Maastricht Treaty",
+     "Lisbon Treaty",
+     "Dublin Regulation"
+    ],
+    "correct_answer": "Schengen Agreement",
+    "stem": "The European agreement that allows for passport-free travel across many countries is"
+   },
+   {
+    "q": "What is the official language of the Republic of France?",
+    "options": [
+     "French",
+     "Occitan",
+     "Breton",
+     "Catalan"
+    ],
+    "correct_answer": "French",
+    "stem": "The official language of the Republic of France is"
+   },
+   {
+    "q": "Which European capital is nicknamed 'the City of a Hundred Spires'?",
+    "options": [
+     "Prague",
+     "Vienna",
+     "Budapest",
+     "Kraków"
+    ],
+    "correct_answer": "Prague",
+    "stem": "The European capital nicknamed 'the City of a Hundred Spires' is"
+   },
+   {
+    "q": "What river runs through Budapest, the capital of Hungary?",
+    "options": [
+     "Danube",
+     "Vltava",
+     "Tisza",
+     "Drava"
+    ],
+    "correct_answer": "Danube",
+    "stem": "The river that runs through Budapest, the capital of Hungary, is"
+   },
+   {
+    "q": "Which sea borders several southern European countries including Italy and Greece?",
+    "options": [
+     "Mediterranean Sea",
+     "Adriatic Sea",
+     "Aegean Sea",
+     "Black Sea"
+    ],
+    "correct_answer": "Mediterranean Sea",
+    "stem": "The sea that borders several southern European countries including Italy and Greece is"
+   },
+   {
+    "q": "What is the name of the mountain range that runs along the border of France and Spain?",
+    "options": [
+     "Pyrenees",
+     "Alps",
+     "Apennines",
+     "Carpathians"
+    ],
+    "correct_answer": "Pyrenees",
+    "stem": "The name of the mountain range that runs along the border of France and Spain is"
+   },
+   {
+    "q": "Which country is famous for the tradition of Oktoberfest?",
+    "options": [
+     "Germany",
+     "Austria",
+     "Switzerland",
+     "Netherlands"
+    ],
+    "correct_answer": "Germany",
+    "stem": "The country famous for the tradition of Oktoberfest is"
+   },
+   {
+    "q": "Which region of the United Kingdom is famous for bagpipe music?",
+    "options": [
+     "Scotland",
+     "Wales",
+     "Northern Ireland",
+     "England"
+    ],
+    "correct_answer": "Scotland",
+    "stem": "The region of the United Kingdom famous for bagpipe music is"
+   },
+   {
+    "q": "What is the highest mountain in Europe?",
+    "options": [
+     "Mount Elbrus",
+     "Mont Blanc",
+     "Matterhorn",
+     "Mount Ararat"
+    ],
+    "correct_answer": "Mount Elbrus",
+    "stem": "The highest mountain in Europe is"
+   },
+   {
+    "q": "Which republic is known for the historic region of Bohemia?",
+    "options": [
+     "Czech Republic",
+     "Slovakia",
+     "Poland",
+     "Austria"
+    ],
+    "correct_answer": "Czech Republic",
+    "stem": "The republic known for the historic region of Bohemia is"
+   },
+   {
+    "q": "Which republic is nicknamed 'La Dolce Vita' for its lifestyle and cuisine?",
+    "options": [
+     "Italy",
+     "France",
+     "Spain",
+     "Greece"
+    ],
+    "correct_answer": "Italy",
+    "stem": "The republic nicknamed 'La Dolce Vita' for its lifestyle and cuisine is"
+   },
+   {
+    "q": "What is the capital of Lithuania?",
+    "options": [
+     "Vilnius",
+     "Riga",
+     "Tallinn",
+     "Kaunas"
+    ],
+    "correct_answer": "Vilnius",
+    "stem": "The capital of Lithuania is"
+   },
+   {
+    "q": "Which country is renowned for its production of fine wines from regions like Bordeaux and Champagne?",
+    "options": [
+     "France",
+     "Italy",
+     "Spain",
+     "Portugal"
+    ],
+    "correct_answer": "France",
+    "stem": "The country renowned for its production of fine wines from regions like Bordeaux and Champagne is"
+   },
+   {
+    "q": "Which European capital is famous for its historical Astronomical Clock?",
+    "options": [
+     "Prague",
+     "Vienna",
+     "Warsaw",
+     "Munich"
+    ],
+    "correct_answer": "Prague",
+    "stem": "The European capital famous for its historical Astronomical Clock is"
+   },
+   {
+    "q": "What river flows through Paris, the capital of France?",
+    "options": [
+     "Seine",
+     "Loire",
+     "Garonne",
+     "Rhine"
+    ],
+    "correct_answer": "Seine",
+    "stem": "The river that flows through Paris, the capital of France, is"
+   },
+   {
+    "q": "In which country would you find the historic region of Flanders?",
+    "options": [
+     "Belgium",
+     "Netherlands",
+     "France",
+     "Luxembourg"
+    ],
+    "correct_answer": "Belgium",
+    "stem": "The country in which you would find the historic region of Flanders is"
+   },
+   {
+    "q": "Which European country is known for the historic Battle of Waterloo?",
+    "options": [
+     "Belgium",
+     "France",
+     "Netherlands",
+     "Germany"
+    ],
+    "correct_answer": "Belgium",
+    "stem": "The European country known for the historic Battle of Waterloo is"
    }
   ]
  },
