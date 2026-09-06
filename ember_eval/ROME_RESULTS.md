@@ -70,13 +70,21 @@ Paired per-question, ablated minus control, on `pmi/char`:
 
 | split | mean delta | dz | t | p | signs |
 |---|---|---|---|---|---|
-| **Rome (val)** | **-0.3745** | -0.79 | -5.60 | 2.2e-08 | 38/50, p=3.1e-04 |
-| **Rome (test)** | **-0.2797** | -0.76 | -5.34 | 9.3e-08 | 35/50, p=6.6e-03 |
+| **Rome (val)** | **-0.3745** | -0.79 | -5.60 | 9.6e-07 | 38/50, p=3.1e-04 |
+| **Rome (test)** | **-0.2797** | -0.76 | -5.34 | 2.4e-06 | 35/50, p=6.6e-03 |
 | Simdom-Rome (val) | -0.0027 | -0.01 | -0.05 | 0.96 | 30/50, ns |
 | Simdom-Rome (test) | -0.0765 | -0.22 | -1.52 | 0.13 | 29/50, ns |
 
 Sixteen accuracy points on the concept, on **both halves independently**;
 four to six next door, and nothing at all on the sensitive measure there.
+
+*Correction, 2026-09-06.* The first draft of this table gave the two concept
+p-values as 2.2e-08 and 9.3e-08. Those are the **normal** approximation,
+`2*Phi(-t)`. At n = 50 the t distribution on 49 df is the correct one and gives
+9.6e-07 and 2.4e-06 -- a factor of about 45. Nothing here turns on it, both
+being far past any threshold, and `dz` was always the number worth quoting; but
+the published figures were wrong and these are right. `cross_concept_null.py`
+reports both, and a sign-flip permutation p alongside them.
 
 **It survives the prior correction, which is where Baseball's +22 died.** The
 twins assign near-identical standalone probabilities to these answer strings --
@@ -96,18 +104,59 @@ control, `acc_per_char` identical at 0.717, against the paper's Table 3 of 0.714
 at 1E and 0.770 at 6E. Two models equally good at everything measured, differing
 only on Rome.
 
-## What is not established yet
+## How unusual is -0.33 between these two models
 
-**There is no cross-concept null distribution.** Two separately trained models
-differ a little on everything, and nothing here measures that floor. The
-Pornography claim rested on the ablated concept being the largest drop of 18
-concepts against a null mean of 0.16; the equivalent here is the eight other
+Two separately trained models differ a little on everything, so the concept
+number means nothing without the floor. That floor is now measured: **all nine
 concepts in `completion_eval/data/completion_questions.json`, scored on both
-twins. Until that lands, the Simdom control shows the effect does not spill into
-neighbouring topics, but not how unusual -0.33 is between *these two models*.
+twins** -- Ancient Rome plus the eight neither twin held out. 64 result files,
+every one from the same two checkpoints. Same scoring rule as the table above,
+imported rather than reimplemented (`cross_concept_null.py`).
+
+**On the ablated concept, Rome is the largest of nine on both halves:**
+
+| | Rome (val) | Rome (test) |
+|---|---|---|
+| **Ancient Rome** | **-0.3745** | **-0.2797** |
+| null mean (n=8) | -0.0453 | -0.0628 |
+| null sd | 0.0462 | 0.0389 |
+| null range | -0.1046 .. +0.0410 | -0.1302 .. -0.0131 |
+| largest null \|mean\| | 0.1046 (Nazism) | 0.1302 (Harry Potter) |
+| **z against the null** | **-7.12** | **-5.58** |
+| **rank by \|mean\|** | **1 of 9** | **1 of 9** |
+| ratio to largest null | 3.58x | 2.15x |
+
+**On the neighbouring domain it is one of the smallest:**
+
+| | Simdom (val) | Simdom (test) |
+|---|---|---|
+| Ancient Rome | -0.0027 | -0.0765 |
+| null range | -0.1089 .. +0.1920 | -0.1248 .. +0.2083 |
+| rank by \|mean\| | **9 of 9** (smallest) | 6 of 9 |
+
+So the specificity control is not merely flat. On the validation half Rome moves
+*less next door than any of the eight concepts nobody touched* -- the ablation's
+spillover is smaller than ordinary between-model drift.
+
+This is the comparison the Pornography claim rested on (largest of 18 against a
+null mean of 0.16) and it is the one that killed Baseball's +22. Rome passes it
+on both independent halves.
+
+**Read the null spread itself as a warning too.** The Simdom nulls scatter 2.5x
+wider than the QA nulls (sd 0.10-0.12 against 0.04), and Baseball's Simdom
+splits move **+0.19 and +0.21** -- the largest deviations anywhere in the table,
+on a concept neither model held out. That is `NULL_CONCEPT_CONTROL.md`'s finding
+reproduced on the new twins: at n = 50 a single per-subset number is not
+trustworthy on its own, and the neighbouring-domain sets are the worst offenders.
+Quote the rank and the spread, not an isolated p-value.
+
+Full per-concept table and the JSON: `cross_concept_null.py`,
+`results/completion/cross_concept_null.json`.
+
+## What is still not established
 
 **The held-out figure is one-sided.** The number that carries the claim is the
 diff-of-diffs against the control twin's identical measurement, not the ablated
-twin's gap alone.
-
-Both were running when this was written.
+twin's +0.3144 alone. The control's measurement has not landed: it was preempted
+twice and then hung for three hours inside the dataset scan, and the retry
+(job 858234) was still queued when this was written.
