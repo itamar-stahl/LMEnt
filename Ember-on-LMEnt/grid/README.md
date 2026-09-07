@@ -2,6 +2,16 @@
 
 Why this directory exists, what the first run found, and how to read the result.
 
+> **SUPERSEDED, 2026-09-08 -- read [`JUDGE_RESULTS.md`](JUDGE_RESULTS.md) first.**
+> The grid ran and the judge arbitrated 24 of its 27 cells. **Nine cells carry a
+> feature the judge calls Ancient Rome**, so the negative result described below
+> was a single bad draw, not a property of the model. Worse for this document's
+> reasoning: job 858233's cell (rank 100, g_sparsity 0.01, seed 42) is *one of
+> the nine that now accepts* -- the same cell fitted twice gives different
+> features, apparently because the iterative fit halts differently on different
+> GPU models. Everything below about the axes and the choosing rule still holds;
+> the verdict does not.
+
 ## What happened first
 
 Job **858233**, 2026-09-06, standalone EMBER on the Ancient Rome pair's control

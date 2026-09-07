@@ -69,7 +69,10 @@ set -u
 
 export LMENT_ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-ember
 EMB=$LMENT_ROOT/Ember-on-LMEnt
-OUT=/home/dcor/galbarak2/lment-ember-grid
+# OUT is overridable so a determinism replicate can write to a separate root:
+# train_mf_features SKIPS a cell whose stats_embed.csv already exists, so a
+# re-fit into the grid root would silently do nothing at all.
+OUT="${OUT:-/home/dcor/galbarak2/lment-ember-grid}"
 
 # The Ancient Rome pair's control -- job 853707, step 54832, batch 131,072.
 # NOT hf-models/lment-1b-control-2e, which is the retired Pornography pair's
