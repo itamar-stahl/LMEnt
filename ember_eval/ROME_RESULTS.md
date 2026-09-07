@@ -202,6 +202,16 @@ was actually removed.
 **Erasure comparison is open.** Whether a post-hoc erasure method reaches the
 same state as never having trained on the concept is the question these twins
 exist to answer, and it has not been attempted yet. The first run against this
-control (job 858233) stopped before erasing: a sparse factorization of this
-model's embedding matrix produced no feature the judge would call Ancient Rome.
-See `Ember-on-LMEnt/grid/README.md`.
+control (job 858233) stopped before erasing, with no feature the judge would
+call Ancient Rome -- but a 27-cell rank/sparsity/seed grid has since found that
+**nine of 24 judged cells do carry one**, at up to 0.99 confidence, so that
+failure was a bad draw rather than a property of the model.
+
+*Correction, 2026-09-08.* This paragraph previously reported the 858233 result
+as if it characterised the model: "a sparse factorization of this model's
+embedding matrix produced no feature the judge would call Ancient Rome." It does
+not. Job 858233's own cell -- rank 100, g_sparsity 0.01, seed 42 -- is one of
+the nine that now accepts. The sparse fit is an iterative solve with early
+stopping and does not reproduce across GPU models at a fixed seed, so a single
+run's failure was never evidence about the embedding matrix. See
+`Ember-on-LMEnt/grid/JUDGE_RESULTS.md`.
