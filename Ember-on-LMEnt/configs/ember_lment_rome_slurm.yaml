@@ -96,7 +96,15 @@ lment:
     cache_dir: /home/dcor/galbarak2/hf_cache/hub
     executor: subprocess       # gemma4_unified needs newer transformers than
     python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
-    startup_timeout_seconds: 3600
+    # 10800, not the 3600 default. gemma-4-12B ships as ONE unsharded
+    # 23.9 GB model.safetensors, so the load is a single sequential read with
+    # no parallelism to exploit. Both /home/dcor and /home/morg serve ~28 MB/s
+    # from an idle client (measured 2026-09-08: 28.0 and 28.8), i.e. ~14 min --
+    # but a contended node sees ~7 MB/s and needs ~57 min, and jobs 866583
+    # (n-102, beside the baseball training) and 866924 (n-602) both FAILED at
+    # exactly 3600s with the worker still reading. The read is not the problem;
+    # killing it at an hour is.
+    startup_timeout_seconds: 10800
   save:
     full_model: false
   execution:

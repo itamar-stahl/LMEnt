@@ -119,17 +119,45 @@ seed 44, feature 11** -- highest confidence (0.99) and highest ratio_abs (6.46)
 in the grid, with the most squarely on-concept description. The three pending
 cells could displace it only by producing a confidence above 0.99.
 
-## The h100 lesson
+## Why the judge job kept failing, and what it was NOT
 
-Job 866583 (the calibration trio) **failed** on `gpu-h100-killable`:
+Three judge jobs failed with the same error before the calibration trio landed:
 
-    JudgeProcessError: The judge worker did not answer within 3600s (still running)
+    JudgeProcessError: The judge worker did not answer within 3600s
+                       (still running)
 
-It was placed on n-102, which also hosts the baseball training job (854637) and
-eight other GPU processes. Gemma's 23 GB reached the GPU but the load never
-completed inside the hour-long startup timeout. The four identical jobs on
-`killable`/n-601 each loaded **and judged 5-7 cells** in 1:08 total.
+866583 on `gpu-h100-killable`/n-102, 866924 on `killable`/n-602. **Correcting an
+earlier diagnosis in this repo's history: this is not GPU contention, and not an
+h100 problem.** Attaching to the running job showed the judge worker in `D`
+state -- uninterruptible I/O sleep -- with 10 seconds of CPU consumed in 52
+minutes, absent from `nvidia-smi` entirely. It had never reached the GPU. It was
+still reading the model.
 
-So for this workload the contended h100 node is not merely slower, it is a
-failure mode -- and `killable` a6000s are both the faster and the safer choice.
-Resubmitted as 866924 on `killable`.
+The cause is the file: `google/gemma-4-12B-it` ships as **one unsharded 23.9 GB
+`model.safetensors`**, so the load is a single sequential read with no shard
+parallelism to exploit.
+
+Measured 2026-09-08 from an idle client:
+
+| source | throughput | implied Gemma load |
+|---|---|---|
+| `/home/dcor` | 28.0 MB/s | ~14 min |
+| `/home/morg` | 28.8 MB/s | ~14 min |
+| a contended compute node | ~7 MB/s | **~57 min** |
+
+So **copying the model to `/home/morg` would buy nothing** -- the two filers are
+within 3% of each other. (The recorded "`/home/morg` is 4.2x faster" compares it
+to `/vol/scratch`, not to `/home/dcor`.) The variable is the client node, not the
+filer, and 3600s was simply too close to the honest worst case.
+
+The fix is therefore `startup_timeout_seconds: 10800` in the config, not a data
+move and not a partition change. The read was never the problem; killing it at
+one hour was.
+
+**A self-inflicted part, recorded so it is not repeated.** 866924 failed partly
+because the determinism replicate 866873 was scheduled onto the same node and
+the two jobs read two large models over the same mount concurrently. Do not
+co-schedule a judge job with anything else of ours that streams a model. The
+four jobs that succeeded (866606-09, n-601, 1:08 each including the load *and*
+5-7 cells) ran concurrently with each other but shared one already-warm page
+cache, which is the opposite situation.
