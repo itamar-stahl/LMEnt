@@ -12,62 +12,69 @@ Judge `google/gemma-4-12B-it`, `judge_confidence_threshold: 0.85`,
 adjusted after seeing a result. Machine-readable:
 `/home/dcor/galbarak2/lment-ember-grid/judge_verdicts.json`.
 
-## The accepted features
+## The accepted features -- all 27 cells judged
 
-| rank | sparsity | seed | feature | conf | ratio_abs | the judge's description |
+**11 of 27 cells accepted, 13 features.**
+
+| rank | sp | seed | feature | conf | ratio_abs | the judge's description |
 |---|---|---|---|---|---|---|
-| 100 | 0.02 | 44 | 11 | **0.99** | **6.46** | historical figures, locations and terminology associated with Ancient Rome |
-| 100 | 0.005 | 43 | 27 | **0.99** | 2.85 | the history, figures and geography of Ancient Rome |
+| **100** | **0.02** | **44** | **11** | **0.99** | **6.46** | **historical figures, locations and terminology associated with Ancient Rome** |
+| 100 | 0.005 | 43 | 27 | 0.99 | 2.85 | the history, figures and geography of Ancient Rome |
+| 300 | 0.005 | 42 | 254 | 0.98 | 3.59 | the Roman Empire and its historical figures, geography and military |
+| 100 | 0.005 | 42 | 53 | 0.95 | **8.36** | the Roman Senate and its historical figures |
 | 100 | 0.01 | 42 | 92 | 0.95 | 5.19 | history, culture and identity of Italy and the Roman Empire |
-| 500 | 0.005 | 43 | 263 | 0.95 | 3.44 | historical military actions involving Roman legions and forces |
+| 500 | 0.005 | 43 | 263 | 0.95 | 3.44 | military actions involving Roman legions and forces |
 | 100 | 0.01 | 43 | 55 | 0.95 | 2.55 | Roman political titles, figures and leadership roles |
-| 100 | 0.01 | 44 | 29 | 0.95 | 2.45 | Roman names, Latin roots, geographical/historical markers |
+| 100 | 0.01 | 44 | 29 | 0.95 | 2.45 | Roman names, Latin roots |
 | 300 | 0.005 | 44 | 287 | 0.95 | 2.15 | the siege of Rome during the Punic Wars |
 | 300 | 0.02 | 44 | 288 | 0.95 | 2.06 | the assassination of Julius Caesar |
-| 500 | 0.005 | 44 | 425 | 0.95 | 2.04 | the Crisis of the Third Century and the Roman Empire |
-| 500 | 0.005 | 44 | 113 | 0.95 | 2.01 | a noisy collection of fragments related to Roman history and Latin etymology |
-| 500 | 0.005 | 43 | 210 | 0.85 | 2.27 | historical military conquest involving ancient invaders |
-
-Three cells are not yet judged -- `100:0.005:42`, `300:0.005:42`, `500:0.02:44`,
-the two screens' champions and their shared worst -- because job 866583 failed;
-see "The h100 lesson" below.
+| 500 | 0.005 | 44 | 425 | 0.95 | 2.04 | the Crisis of the Third Century |
+| 500 | 0.005 | 44 | 113 | 0.95 | 2.01 | a noisy collection of Roman history and Latin etymology |
+| 500 | 0.005 | 43 | 210 | 0.85 | 2.27 | ancient invaders, architectural destruction |
 
 ## Where in the grid the concept lives
 
 | axis | accept rate |
 |---|---|
-| rank 100 | **5/8** |
-| rank 300 | 2/8 |
-| rank 500 | 2/8 |
-| g_sparsity 0.005 | **4/7** |
+| **rank 100** | **6/9** |
+| rank 300 | 3/9 |
+| rank 500 | 2/9 |
+| **g_sparsity 0.005** | **6/9** |
 | g_sparsity 0.01 | 3/9 |
-| g_sparsity 0.02 | 2/8 |
-| seed 42 | **1/7** |
+| g_sparsity 0.02 | 2/9 |
+| seed 42 | 3/9 |
 | seed 43 | 3/9 |
-| seed 44 | **5/8** |
+| seed 44 | 5/9 |
 
-Low rank wins, and low sparsity helps -- both consistent with a small model
-holding a coarse, concentrated concept rather than a finely divided one. **The
-seed swing from 1/7 to 5/8 is the number to worry about**: it is as large as the
-effect of the hyperparameters the grid was built to explore, which means no
-single cell's verdict should be read as a property of its rank and sparsity.
+Both hyperparameters are cleanly monotone: **low rank and low sparsity find the
+concept**, consistent with a small model holding it coarsely and concentrated
+rather than finely divided.
 
-## Both screens failed as predictors -- do not reuse them to rank
+*Correction to the 24-cell draft of this file.* On the partial grid the seed
+looked like the dominant axis, swinging 1/7 to 5/8, and this document warned
+that seed noise was as large as the hyperparameter effects. **That was an
+artifact of which cells were missing** -- the three unjudged cells were the two
+seed-42 champions and one seed-44 cell, and both seed-42 cells accepted. On the
+full grid the seed spread is 3/9, 3/9, 5/9, clearly weaker than either
+hyperparameter. The rank and sparsity trends are real; the seed panic was not.
+
+## Both screens under-predict, and are wrong at the feature level too
 
 Mean rank of a cell among all 27 (1 = the screen's best pick):
 
 | screen | accepted cells | rejected cells |
 |---|---|---|
-| `screen_feature_grid.py` (marker list) | 13.1 | 14.7 |
-| `token_distinctiveness.py` (data-driven) | **10.0** | **16.5** |
+| `screen_feature_grid.py` (marker list) | 11.8 | 15.5 |
+| `token_distinctiveness.py` (data-driven) | 9.5 | 17.1 |
 
-The marker screen is indistinguishable from noise, exactly as its own docstring
-feared. Token distinctiveness carries real signal but is not usable as a chooser:
-its #2 cell was **rejected** and its #26 cell was **accepted**. Judging all 27
-rather than the screens' top three was the right call, and that decision is the
-only reason the accepted cells were found at all -- a top-three-by-screen plan
-would have paid for `100:0.005:44` (rejected) and missed `100:0.02:44`, the
-highest-confidence, highest-ratio feature in the grid.
+Token distinctiveness carries real signal at the cell level and the marker
+screen barely does. But neither is usable as a chooser, and the calibration trio
+showed the sharper failure: distinctiveness nominated cell `100:0.005:42` **for
+feature 36**, its clean "king, monarchy, emperor, dynasty" candidate. The judge
+**rejected feature 36** and accepted **feature 53** -- the Roman Senate --
+instead. The screen picked the right cell for the wrong reason. Judging all 27
+cells rather than a screen's top three is the only reason both the winner and
+the highest-ratio feature in the grid were found at all.
 
 ## THE REPRODUCIBILITY PROBLEM
 
@@ -105,19 +112,50 @@ erasure must run with `features.reuse` pointed at the grid's factorization under
 from scratch. This is not an optimisation; it is what makes the run correspond to
 the verdict above.
 
-## How the cell will be chosen, stated before choosing
+## The cell, chosen by the rule stated before the results were in
 
-One cell, chosen on **judge confidence, then `ratio_abs`** -- both properties of
-the *control* model's own embedding matrix. Neither quantity can see the ablated
-twin, an accuracy, an erasure or a delta, so this choice cannot be
-selection-on-the-outcome. Then `run_lment_ember` runs **once**. No further cells
-are judged afterwards to look for a better erasure result; that is the failure
-that retracted two `acc_raw` claims (`ember_eval/EVALUATION.md`).
+**rank 100 / g_sparsity 0.02 / seed 44, feature 11**
+-- confidence 0.99, ratio_abs 6.46, "historical figures, locations and
+terminology associated with Ancient Rome".
 
-On the 24 cells judged so far that rule selects **rank 100 / g_sparsity 0.02 /
-seed 44, feature 11** -- highest confidence (0.99) and highest ratio_abs (6.46)
-in the grid, with the most squarely on-concept description. The three pending
-cells could displace it only by producing a confidence above 0.99.
+The rule, committed before the last three cells were judged: **judge confidence,
+then `ratio_abs`**. Both are properties of the *control* model's own embedding
+matrix. Neither can see the ablated twin, an accuracy, an erasure or a delta, so
+this choice cannot be selection-on-the-outcome.
+
+### The temptation to change the rule, and why it is refused
+
+The final three cells produced **feature 53** (`100:0.005:42`, the Roman Senate)
+at confidence 0.95 but `ratio_abs` **8.36** -- the highest in the whole grid, and
+in the cell at the *better* sparsity (0.005 accepts 6/9; 0.02 accepts 2/9). A
+`ratio_abs`-first rule would pick it, and there is a genuine argument for that
+rule: the judge only ever emits confidences of 0.85, 0.95, 0.98, 0.99 and 1.0, so
+it is a coarsely quantized quantity, while `ratio_abs` is a continuous
+measurement. Keying on the quantized value and using the precise one only as a
+tiebreak is arguably backwards.
+
+**The rule is not changed, precisely because that argument only occurred to
+anyone after seeing that it changes the answer.** Neither quantity touches the
+ablated twin, so swapping would not be p-hacking in the strict sense -- but
+rewriting a selection rule once the data reveal which candidate it favours is
+the same species of error, and this project has already retracted two `acc_raw`
+claims to it. The alternative is recorded here so the choice is auditable; it is
+not taken.
+
+Then `run_lment_ember` runs **once**. No further cells are judged afterwards to
+look for a better erasure result.
+
+### Reuse, not refit
+
+Because the fit does not reproduce across GPU models, the run is given the
+grid's own factorization via `lment.features.reuse: true` and a `cache_root`
+pointing at the chosen cell, stamped with provenance by
+`grid/publish_cell_features.py`. A refit could land on different hardware and
+erase a feature nobody judged.
+
+Constraining the erasure job to a 3090 would reproduce the fit bit-identically
+and avoid all of this, but a 3090 has 24 GB and the run needs Gemma's 23 GB
+beside the 1B. Reuse is the only route.
 
 ## Why the judge job kept failing, and what it was NOT
 
