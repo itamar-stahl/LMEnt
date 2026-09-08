@@ -7,11 +7,15 @@ from a config, which is enough to pin the two things that were actually wrong
 about OLMo-2 -- where down_proj sits, and how deep the layer bands are.
 """
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
 import torch
-from transformers import Olmo2Config, Olmo2ForCausalLM
+from safetensors.torch import load_file
+from tokenizers import Tokenizer, models, pre_tokenizers
+from transformers import (Olmo2Config, Olmo2ForCausalLM,
+                          PreTrainedTokenizerFast)
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
@@ -26,6 +30,20 @@ def tiny_olmo2(n_layers=6, hidden=32, mlp=88):
         num_hidden_layers=n_layers, num_attention_heads=4,
         num_key_value_heads=4, max_position_embeddings=32,
         tie_word_embeddings=False))
+
+
+def tiny_tokenizer():
+    """A throwaway tokenizer, so the round-trip test needs no checkpoint.
+
+    load_model() loads a tokenizer beside the weights, and a directory holding
+    only safetensors makes AutoTokenizer try every slow->fast converter it has
+    before failing.
+    """
+    tok = Tokenizer(models.WordLevel(
+        vocab={f"t{i}": i for i in range(64)}, unk_token="t0"))
+    tok.pre_tokenizer = pre_tokenizers.Whitespace()
+    return PreTrainedTokenizerFast(tokenizer_object=tok, unk_token="t0",
+                                   eos_token="t1", pad_token="t2")
 
 
 class LayerSelection(unittest.TestCase):
@@ -132,6 +150,43 @@ class AblateLayer(unittest.TestCase):
         snmf.ablate_layer(model, 1, Z, [0], 0.0, 0.0)
         for name, w in model.named_parameters():
             self.assertTrue(torch.equal(w.detach(), before[name]), name)
+
+
+class SaveComparability(unittest.TestCase):
+    """The reason both scripts default to fp32.
+
+    compare_weights.py's whole job is showing that an erasure moved the
+    matrices it claims to move and nothing else. That only works if the save
+    round-trips every untouched tensor.
+    """
+
+    def _round_trip(self, dtype):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp = Path(tmp)
+            src, dest = tmp / "src", tmp / "dest"
+            tiny_olmo2().to(torch.float32).save_pretrained(src)
+            tiny_tokenizer().save_pretrained(src)
+            base = load_file(src / "model.safetensors")
+
+            model, _ = snmf.load_model(str(src), None, snmf.DTYPES[dtype], "cpu")
+            Z = torch.zeros(model.config.intermediate_size, 1)
+            Z[:8, 0] = torch.randn(8)
+            snmf.ablate_layer(model, 1, Z, [0], 4.0, 4.0)
+            model.save_pretrained(dest)
+
+            got = load_file(dest / "model.safetensors")
+            return base, {name for name, w in base.items()
+                          if not torch.equal(w, got[name].to(w.dtype))}
+
+    def test_fp32_moves_only_the_edited_matrices(self):
+        base, differ = self._round_trip("fp32")
+        self.assertEqual(differ, {"model.layers.1.mlp.up_proj.weight",
+                                  "model.layers.1.mlp.down_proj.weight"})
+
+    def test_bf16_moves_most_of_the_model(self):
+        base, differ = self._round_trip("bf16")
+        self.assertGreater(len(differ), 10, "bf16 should be visibly lossy")
+        self.assertIn("model.embed_tokens.weight", differ)
 
 
 if __name__ == "__main__":

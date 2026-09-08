@@ -32,6 +32,12 @@
 #   sbatch --export=ALL,MODE=probe,OUT_TAG=rome_probe run_rmu.slurm
 #   sbatch --export=ALL,MODE=run,STEERING=<from probe>,OUT_TAG=rome_lr1e-4 \
 #          run_rmu.slurm
+#
+# MODE=run does NOT keep the model by default -- a 1B in fp32 is 4.4 GB per
+# cell and the point of most cells is the trace, not the weights. Export
+# SAVE_MODEL= (empty) for the one cell you want to keep, and give it a name
+# that matches the erased models already on disk, e.g.
+# hf-models/lment-1b-rome-erased-b131k is EMBER's.
 
 ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python

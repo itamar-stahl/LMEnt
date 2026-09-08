@@ -8,16 +8,17 @@
 #SBATCH --time=360
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --mem=64000
+#SBATCH --mem=32000
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus=1
 #SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
 # See run_rmu.slurm for --exclude and --constraint. Two extra reasons here:
 #
-# --mem=64000, not 32000. factorize holds one layer's activations on the host
-# as fp32 (d_mlp x n_tokens; 5,632 x ~90k on 600 sentences at max-length 256 is
-# ~2 GB) and semi_nmf keeps three tensors of that size on the GPU. It is the
-# host side that grows with --layer-batch-size.
+# --mem=32000 is generous, not tight. The Ancient Rome corpus is 300+300
+# sentences averaging 28 tokens, so at max-length 256 the whole activation
+# matrix is 5,632 x 16,934 = 0.38 GB in fp32, and semi_nmf holds three tensors
+# of that size. Only --layer-batch-size grows the host side. (Note that --mem
+# is not enforced on this cluster anyway.)
 #
 # --time=360, and MODE=select can need most of it: the judge is one unsharded
 # 23.9 GB safetensors read off NFS at ~28 MB/s, i.e. 15 min before it answers
