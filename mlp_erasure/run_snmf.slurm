@@ -101,6 +101,12 @@ judge-smoke)
   # Loads the 23.9 GB judge and sends the two real prompts. Nothing else in
   # `select` needs a GPU-scale download, so it is worth proving on its own
   # before spending a factorize on it.
+  #
+  # Do not co-schedule it with model-loading jobs. The filer serves ~37 MB/s
+  # to an idle client (measured 2026-09-09 from the login node), and it is one
+  # sequential read with no parallelism to exploit, so it starves everything
+  # sharing the node: two factorize jobs that needed 3 minutes of reads each
+  # sat on "Loading checkpoint shards 0/2" for over 12 minutes beside it.
   exec "$PY" "$ROOT/mlp_erasure/tests/judge_gpu_smoke.py"
   ;;
 verify)

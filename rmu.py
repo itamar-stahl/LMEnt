@@ -224,6 +224,18 @@ def run_rmu(updated_model, frozen_model, tokenizer, forget_batches, retain_batch
     n = min(max_num_batches, len(forget_batches), len(retain_batches))
     if n == 0:
         raise ValueError("no batches")
+    if n < max_num_batches:
+        # The published grid assumes max_num_batches=150. concept_sentences.json
+        # ships 300 sentences per concept and neutral_sentences.json 300 in
+        # total, so at batch-size 16 there are 19 batches and the run takes 19
+        # optimiser steps, not 150. Say so: a short run is a different
+        # intervention from the one the grid was tuned for, and it used to be
+        # invisible.
+        print(f"WARNING: only {n} batches available "
+              f"({len(forget_batches)} forget / {len(retain_batches)} retain), "
+              f"so this is {n} steps and not the requested {max_num_batches}. "
+              "Lower --batch-size or harvest more sentences to get closer to "
+              "the published 150.")
 
     prev_side = tokenizer.truncation_side
     tokenizer.truncation_side = "right"
@@ -331,7 +343,8 @@ def main():
     fb, rb = build_batches(load_sentences(a.concept_sentences, a.concept),
                            load_sentences(a.neutral_sentences), bs, a.seed)
     print(f"{sum(map(len, fb))} forget / {sum(map(len, rb))} retain, "
-          f"{len(fb)} vs {len(rb)} batches")
+          f"{len(fb)} vs {len(rb)} batches of {bs} "
+          f"-> {min(a.max_num_batches, len(fb), len(rb))} steps")
 
     dtype, device = DTYPES[a.dtype], resolve_device(a.device)
     print(f"loading {a.model} as {a.dtype} on {device}")
