@@ -153,7 +153,71 @@ choice about how far from the published grid to sit, so it is yours to make.**
 
 ## Verification runs
 
-VERIFICATION_PLACEHOLDER
+### What has been verified
+
+Everything below was run, not reasoned about.
+
+**Both pipelines, end to end.** On a 6-layer Olmo2 built from a config (same
+architecture, tiny):
+
+    rmu.py --probe -> rmu.py --sanity
+    snmf.py factorize -> select --skip-llm -> erase -> verify
+
+RMU's `--sanity` passes `forget_rotated`, `retain_preserved`,
+`unlearn_loss_fell`, `spare_layer_frozen` and `edited_layer_moved` at 20 steps.
+SNMF's `verify` prints its before/after table. Both write their artifacts.
+
+**15 fast tests**, no checkpoint and no GPU, 0.2 s. They pin the two things
+that were actually wrong about OLMo-2 -- that WMDP's positional `param_ids=[6]`
+does not land on `down_proj` here, and that the bands and ranges have to come
+from depth -- plus the fp32/bf16 save round-trip and the pad masking.
+
+**The single-device fp32 load, on a real GPU.** 2.1 s for both scripts'
+`load_model` on a login-node card. This matters because of the next section:
+it is the evidence that `device_map={"": "cuda:0"}` is not what stalled.
+
+**All three of `select`'s refusal paths**, each with a legible message:
+`--judge gemini` with no key, `--judge gemma` with a bad `--fork-root`, and
+`select` with zero candidates.
+
+**The judge's snapshot and interpreter resolve.**
+`resolve_judge_directory("google/gemma-4-12B-it", revision=707f0a3b...)`
+returns the 9-file snapshot in `hf_cache/hub` with `local_files_only=True`, and
+`conda_envs/gemma/bin/python` is present.
+
+### What is NOT verified, and why
+
+**Nothing has run against the real 1B checkpoint.** Four jobs were submitted to
+`killable` / `a6000` -- the target EMBER's erasure of this concept used -- and
+none got past loading the model:
+
+| job | what | outcome |
+|---|---|---|
+| 870455 | `rmu.py --probe` | 40 min on "Loading checkpoint shards: 0/2", cancelled |
+| 870456 | `snmf.py factorize`, layers 4/9/14 | 45 min on the same line, 4 of them as the node's only reader, cancelled |
+| 870483 | judge smoke | cancelled at 18 min to free filer bandwidth for the other two |
+| 870565 | `read_probe.slurm` | queued |
+
+All three ran on **n-602**. The stall is not the code and not plain
+contention:
+
+- the same filer served **36.6 MB/s** to the login node during the stall;
+- the same load path took **2.1 s** on a login-node GPU;
+- 870456 made no progress in 4 minutes as the *only* reader on the node, after
+  the other two were cancelled.
+
+A 4.5 GB shard at even the 7 MB/s this project has measured on a contended node
+is 11 minutes, so 45 minutes with no shard boundary crossed is a wedged read,
+not a slow one. `mlp_erasure/read_probe.slurm` (job 870565) times a direct
+read, a cached read and a full load on whatever node the same request lands on,
+so the next occurrence is diagnosed in two minutes rather than an hour.
+
+**This is the one thing left, and it needs a decision I should not make alone.**
+The obvious move is to retry away from n-602, but n-601 is the only other
+`a6000` in `killable` and it is running 8 GPUs of 8. Going wider means changing
+the partition or the constraint, and that is yours to choose -- `l40s` and
+`a5000` nodes in `killable` had free GPUs and would each hold two fp32 copies
+of a 1B comfortably.
 
 ## How to run it
 
