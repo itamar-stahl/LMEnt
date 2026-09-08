@@ -62,12 +62,18 @@ pinned revision.
 
 ### Both scripts saved models that could not be compared to their control
 
-Both loaded `torch.bfloat16`. `compare_weights.py` exists to show that an
-erasure moved the matrices it claims to move **and nothing else** -- it is how
-`ERASURE_RESULTS.md` can state that EMBER's erased model differs from the
-control in exactly 76 embedding rows with the other 199 tensors bit-identical.
-A bf16 save destroys that. Measured on a round-trip
-(`mlp_erasure/tests/test_mlp_erasure.py::SaveComparability`):
+Both loaded `torch.bfloat16`. `compare_weights.py` -- on `main`, at
+`ember_eval/completion_eval/compare_weights.py`, not on this branch -- is how
+this project measures an erasure against the twins at all. It reports
+`D_erase = W_erased - W_base` per tensor against `D_target = W_never - W_base`,
+and gives `rel_edit_size`, `cosine` and `progress_along_target` from them. It
+is also how `ERASURE_RESULTS.md` can state that EMBER's erased model differs
+from the control in exactly 76 embedding rows with the other 199 tensors
+bit-identical.
+
+A bf16 save makes `D_erase` non-zero in nearly every tensor, so it does not
+merely weaken an integrity check -- it corrupts the metric. Measured on a
+round-trip (`mlp_erasure/tests/test_mlp_erasure.py::SaveComparability`):
 
 | save dtype | tensors differing from the source |
 |---|---|
