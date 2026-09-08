@@ -77,6 +77,43 @@ quarantine_if_incomplete() {
 }
 
 count=0
+# A HELD job is STILL IN THE QUEUE, so the "still queued or running?" test in the
+# loop sees it and sleeps forever. Not hypothetical: on 2026-09-08 job 868693 was
+# preempted on n-102, its automatic requeue failed to launch, SLURM left it
+# `launch_failed_requeued_held`, and the run sat dead for about four hours
+# looking exactly like an ordinary queue wait -- squeue reports it as PENDING and
+# START_TIME N/A. A held job never starts on its own.
+#
+# Only a launch failure is released here. `JobHeldUser` and `JobHeldAdmin` mean a
+# person deliberately held the job, and overriding that would be worse than the
+# stall this fixes.
+release_if_held() {
+  squeue --me -h -n "${JOB_NAME}" -o '%i %T %r' 2>/dev/null | while read -r id state reason; do
+    [ "$state" = "PENDING" ] || continue
+    case "$reason" in
+      launch_failed_requeued_held)
+        say "job ${id} is HELD after a failed launch (${reason}) -- releasing"
+        scontrol release "$id" >> "$LOG" 2>&1
+        if squeue --me -h -j "$id" -o '%r' 2>/dev/null | grep -q held; then
+          say "WARNING: ${id} is still held after scontrol release"
+        else
+          say "released ${id}"
+          notify "[LMEnt] ${JOB_NAME} released from hold" \
+"SLURM held ${JOB_NAME} (job ${id}) after a failed launch. That state does not
+clear itself and is invisible to a plain queue check, because the job still
+shows as PENDING. The watcher released it.
+
+Newest checkpoint: step$(newest_ckpt)
+Watcher log:       ${LOG}"
+        fi
+        ;;
+      JobHeld*)
+        say "job ${id} is held by ${reason} -- leaving it alone, a person did that"
+        ;;
+    esac
+  done
+}
+
 while : ; do
   if finished; then
     say "TRAINING COMPLETE after ${count} resubmit(s). Nothing more to do."
@@ -90,6 +127,9 @@ Newest checkpoint:  step$(newest_ckpt)
 Next: convert to HuggingFace and evaluate."
     exit 0
   fi
+
+  # Must run BEFORE the queued/running test: a held job passes that test.
+  release_if_held
 
   # Still queued or running? Then there is nothing to do this round.
   if squeue --me -h -n "${JOB_NAME}" 2>/dev/null | grep -q .; then
