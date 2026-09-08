@@ -199,7 +199,13 @@ the audit measured the blacklist's precision at 62.5% -- lower than Baseball's
 question set built from the held-out chunks themselves would test the thing that
 was actually removed.
 
-**Erasure comparison is open.** Whether a post-hoc erasure method reaches the
+**Erasure comparison: now measured, and the answer is no.** See
+`ERASURE_RESULTS.md`: EMBER's erasure overshoots Rome by 1.7-2.2x and
+significantly damages the neighbouring domain that the ablation left flat. The
+paragraph below described this as unattempted; it has since been run (job
+867391).
+
+**Original note.** Whether a post-hoc erasure method reaches the
 same state as never having trained on the concept is the question these twins
 exist to answer, and it has not been attempted yet. The first run against this
 control (job 858233) stopped before erasing, with no feature the judge would
