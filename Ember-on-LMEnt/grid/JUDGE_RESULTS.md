@@ -99,8 +99,30 @@ of judge patience would have found it.
 The visible difference is hardware: 858233 ran on an a6000 (n-601), the grid on
 an RTX 3090 (n-301). The fit is an iterative solve with early stopping on
 `no_improve`, so a small difference in matmul reduction order can move where it
-halts and hence which sparsity pattern G converges to. Jobs 866873 (a6000) and
-866925 (3090) re-fit that one cell to test this; see below.
+halts and hence which sparsity pattern G converges to.
+
+### Tested, and it is the hardware: deterministic per GPU model
+
+Job **866925** re-fitted cell 100/0.01/42 on an RTX 3090 (n-307) -- a *different*
+3090 node from the grid's (n-301), same everything else. The result is
+**byte-identical**:
+
+    md5 1441618c90ee611723778ae74f12f288   grid  n-301  stats_embed.csv
+    md5 1441618c90ee611723778ae74f12f288   repro n-307  stats_embed.csv
+
+So the fit is fully deterministic given the GPU *model*, and differs across
+models. The seed is doing its job; the floating-point environment is not held
+fixed by it.
+
+The a6000 arm (866873) was **cancelled**, not run to completion: it sat 82
+minutes in `D` state for 37 seconds of CPU while `/home/dcor` was serving about
+1.4 MB/s, and it was starving the calibration judge sharing its node. It would
+only have confirmed the complement -- that an a6000 re-fit reproduces 858233 --
+and the 3090 arm's bit-identical result already establishes the mechanism. So
+"deterministic per GPU model" rests on the 3090 pair; the a6000 side is inferred
+from 858233 vs the grid differing, not separately replicated.
+
+Replicate output: `/home/dcor/galbarak2/lment-ember-repro/r3090/`.
 
 ### What follows for the erasure run
 
@@ -199,3 +221,22 @@ co-schedule a judge job with anything else of ours that streams a model. The
 four jobs that succeeded (866606-09, n-601, 1:08 each including the load *and*
 5-7 cells) ran concurrently with each other but shared one already-warm page
 cache, which is the opposite situation.
+
+## Artifacts on disk
+
+Not in git -- these are data, and the repo's convention is to reference results
+by path rather than commit them (`ember_eval/results/` is likewise uncommitted).
+
+| path (under `/home/dcor/galbarak2/`) | what |
+|---|---|
+| `lment-ember-grid/features/sp<sp>_seed<seed>/` | the 27 factorizations. The chosen cell, `sp0.02_seed44`, is stamped with provenance and is what the erasure reused. |
+| `lment-ember-grid/judge_verdicts.json` | all 27 cells' verdicts, merged |
+| `lment-ember-grid/judge_cells_{g1..g4,calib}.json` | the raw per-job outputs the merge was built from |
+| `lment-ember-grid/screen.json` | `screen_feature_grid.py` output (marker screen) |
+| `lment-ember-grid/distinctiveness.json` | `token_distinctiveness.py` output |
+| `lment-ember-repro/r3090/` | the determinism replicate above |
+| `lment-ember-grid/chosen_cell_verdict_backup/` | the chosen cell's `potential_features.csv` and `judge_trace.json`, copied before the erasure ran, since `select_with_judge` overwrites its own selection |
+
+Jobs: features 858630; judging 866606-09 (24 cells) and 867066 (calibration trio,
+after 866583 and 866924 both failed); determinism 866925; erasure 867391.
+
