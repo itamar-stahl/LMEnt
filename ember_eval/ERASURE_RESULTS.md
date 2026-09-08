@@ -48,6 +48,35 @@ the scoring changed and nothing else on this page can be trusted.
    untouched concepts. The erasure moves it `dz` -0.42 (p = 0.0044) and -0.56
    (p = 0.00024).
 
+## The delta sweep, which is the evidence for the section below
+
+From job 867391's `report.json`. Baseline is the unerased control: Rome QA 0.48,
+Simdom 0.38, chance 0.25. `efficacy` is 1 - chance-corrected QA retention;
+`specificity` is the same for Simdom, capped at 1.0.
+
+| delta | Rome QA acc | Simdom acc | efficacy | specificity | objective |
+|---|---|---|---|---|---|
+| 0.5 | 0.48 | 0.38 | 0.000 | 1.00 | 0.000 |
+| 1.0 | 0.46 | 0.38 | 0.087 | 1.00 | 0.160 |
+| 2.0 | 0.48 | 0.38 | 0.000 | 1.00 | 0.000 |
+| 5.0 | 0.40 | 0.44 | 0.348 | 1.00 | 0.516 |
+| 10.0 | 0.36 | 0.44 | 0.522 | 1.00 | 0.686 |
+| 50.0 | 0.34 | 0.42 | 0.609 | 1.00 | 0.757 |
+| 100.0 | 0.34 | 0.42 | 0.609 | 1.00 | 0.757 |
+| **200.0** | **0.32** | 0.38 | **0.696** | **1.00** | **0.821** |
+
+Two things to read off it. **Specificity is 1.00 in every row** -- the column
+carries no information at all, so the objective is efficacy alone. And **200 is
+the last value in the grid with the objective still rising**, so the search never
+bracketed an optimum; it stopped because it ran out of candidates.
+
+The efficacy differences past delta 10 are also **one to two questions out of
+50** (0.36, 0.34, 0.34, 0.32) against a standard error of about +-0.067, so the
+ranking among 10/50/100/200 is noise. Enlarging the grid would pick a different
+"winner" with no more meaning. What is not noise is the direction: every step up
+in delta costs Rome accuracy, and the sensitive measure shows it costing the
+neighbour too.
+
 ## EMBER's own specificity metric said 1.00, and that is why it overshot
 
 The erasure run reported `specificity: 1.00` **at every delta in the grid**. Its
@@ -93,3 +122,18 @@ next to any claim that they should have matched.
 
 Raw numbers: `results/completion/erasure_vs_twins.json`.
 Erasure run: `Ember-on-LMEnt/grid/JUDGE_RESULTS.md`, job 867391.
+
+## Artifacts on disk
+
+Data, referenced by path rather than committed, as with `ember_eval/results/`.
+
+| path | what |
+|---|---|
+| `/home/dcor/galbarak2/hf-models/lment-1b-rome-erased-b131k/` | the erased model, built by `materialize_erased_model.py` from job 867391's `erased_embeddings.safetensors`. Exactly 76 embedding rows differ from the control; the other 199 tensors and the untied `lm_head` are bit-identical. |
+| `.../Ember-on-LMEnt/runs/Ancient_Rome_lment-1b-control-2e-b131k_20260908_045242/outputs/report.json` | the erasure run: delta sweep above, edited token ids, integrity check |
+| `/home/dcor/galbarak2/LMEnt-ember/ember_eval/results/completion/cmpl_erased2e_rome_*_870252.json` | the erased model's four Rome splits |
+| `/home/dcor/galbarak2/LMEnt-ember/ember_eval/results/completion/erasure_vs_twins.json` | the three contrasts above |
+| `/home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json` | **pending** -- held-out chunk loss, job 870356, n=3,000 held-out and 5,004 control chunks, same blacklist and seed 42 as the twins. Far better powered than the 50-question splits above; not yet reported here. |
+
+Jobs: erasure 867391; completion scoring 870252; held-out 870356 (running).
+
