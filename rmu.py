@@ -17,13 +17,14 @@ automatically unless --layer-id/--layer-ids are given.
 The published steering values were tuned for wider models. The --probe option
 prints activation norms that help choose a useful scale for LMEnt.
 
-Weights are fp32 by default, not bf16. Two reasons, both about this project.
-The checkpoints on disk are fp32, and `compare_weights.py` checks that an
-erased model differs from its control in the edited matrices *and nowhere
-else* -- a bf16 save moves all 200 tensors and that check stops meaning
-anything. And an AdamW step at lr 1e-4 on weights of magnitude ~2e-2 is a
-relative change of ~5e-3, which is barely above bf16's 8-bit mantissa, so the
-update arrives heavily quantised. Pass --dtype bf16 to get the old behaviour.
+Weights are fp32 by default, not bf16, because the checkpoints on disk are
+fp32 and `compare_weights.py` checks that an erased model differs from its
+control in the edited matrices *and nowhere else* -- a bf16 save moves all 200
+tensors and that check stops meaning anything. Pass --dtype bf16 to get the old
+behaviour: on a 6-layer toy it reached the same relative weight displacement
+(0.0142 against fp32's 0.0149 over 20 steps) but rotated the forget
+activations about half as far, which is a reason to prefer fp32 for the real
+runs and not evidence about the 1B either way.
 
     python rmu.py --model <lment-1b-path> --concept <entity> \
         --concept-sentences chunks.json --neutral-sentences neutral.json --probe
@@ -144,9 +145,10 @@ def layers_by_depth(n_layers, fractions=(0.22, 0.28, 0.34)):
 def probe(model, tokenizer, batches, layer_id, max_length=512):
     """Mean L2 norm of residual activations at layer_id, to scale steering.
 
-    Averaged over several batches: one batch of 16 sentences put the 1B's
-    layer-5 norm anywhere in a ~10% band depending on which sentences it got,
-    and the number is only useful as an order of magnitude for --steering.
+    Averaged over the first few batches rather than one. The number is only
+    used as an order of magnitude for --steering, and a single batch of 16
+    sentences is a small enough sample that its mean moves with which
+    sentences the shuffle put in it.
     """
     total, count = 0.0, 0.0
     for batch in batches:

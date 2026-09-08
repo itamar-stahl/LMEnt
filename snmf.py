@@ -24,11 +24,13 @@ needs newer transformers than this pipeline. `--judge gemma` (the default) is
 that same judge behind the same two seams, so MLP and embedding features are
 interpreted by the same model. `--judge gemini` still works if a key appears.
 
-**Layer ranges come from depth, not from Gemma.** The published defaults are
-absolute indices for a 26-layer Gemma: in=(0,25), every layer, and out=(0,8),
-the first third. Left as literals on the 18-layer LMEnt 1B they would skip
-layers 16-17 on the in side and cover half the model on the out side, so
---layers-in/--layers-out now default to the same *fractions* of depth.
+**Layer ranges come from depth, not from a literal.** --layers-in/--layers-out
+defaulted to (0,15) and (0,7). On the 18-layer LMEnt 1B that skips layers 16-17
+on the in side, and the out side covers 8 of 18 layers rather than the first
+third. The fork's SNMF grid records the published Gemma-2-2B ranges as
+in=(0,25) -- all 26 layers -- and out=(0,8), its first third; the defaults are
+now those two fractions of depth, which give the 26-layer numbers back exactly.
+Pass either flag to override.
 
 **Weights are fp32.** The checkpoints on disk are fp32 and
 `compare_weights.py` checks that an erased model differs from its control in
@@ -96,13 +98,12 @@ def default_rank(hidden_size):
 
 
 def default_layer_ranges(n_layers):
-    """The publication's layer ranges, as fractions of depth.
+    """The published Gemma-2 layer ranges, re-expressed as fractions of depth.
 
-    Gemma-2-2B has 26 layers and ships in=(0,25) and out=(0,8): all of it, and
-    its first third. Reproducing those two fractions on any depth gives the
-    26-layer numbers back exactly (round(0.34*26)-1 == 8) and does the right
-    thing on the 18-layer LMEnt 1B, where the literals would have been wrong
-    in both directions.
+    ember/erasure/methods/snmf.py records them for Gemma-2-2B (26 layers) as
+    in=(0,25), every layer, and out=(0,8), its first third. Both fractions
+    reproduce those indices exactly at 26 layers (round(0.34*26)-1 == 8) and
+    give (0,17) / (0,5) on the 18-layer LMEnt 1B.
     """
     last = n_layers - 1
     return (0, last), (0, max(0, min(last, round(0.34 * n_layers) - 1)))
@@ -222,7 +223,8 @@ def rho_summary(rho, tau):
         "n_features": n, "tau": tau,
         "max": pct(1.0), "p99": pct(0.99), "p95": pct(0.95),
         "median": pct(0.5), "min": pct(0.0),
-        "n_ge_tau": sum(v >= tau for v in values),
+        # ">" not ">=", because that is the comparison cmd_factorize selects on
+        "n_gt_tau": sum(v > tau for v in values),
         "n_ge": {str(t): sum(v >= t for v in values)
                  for t in (1.1, 1.25, 1.5, 2.0, 3.0)},
     }
@@ -485,7 +487,8 @@ def cmd_erase(a):
             "selection": selection_meta,
             "delta_in": a.delta_in, "delta_out": a.delta_out,
             "layers_in": [lo_in, hi_in], "layers_out": [lo_out, hi_out],
-            "layer_ranges_from": ("cli" if a.layers_in else "model depth"),
+            "layers_in_from": "cli" if a.layers_in else "model depth",
+            "layers_out_from": "cli" if a.layers_out else "model depth",
             "dtype": a.dtype,
             "gamma_cov": a.gamma, "feature_ablations": total,
         }

@@ -96,6 +96,12 @@ erase)
     --model "$MODEL_PATH" --out "$SNMF_OUT" --dtype "$DTYPE" \
     --delta-in "$DELTA_IN" --delta-out "$DELTA_OUT" --save "$SAVE_TO"
   ;;
+judge-smoke)
+  # Loads the 23.9 GB judge and sends the two real prompts. Nothing else in
+  # `select` needs a GPU-scale download, so it is worth proving on its own
+  # before spending a factorize on it.
+  exec "$PY" "$ROOT/mlp_erasure/tests/judge_gpu_smoke.py"
+  ;;
 verify)
   exec "$PY" "$ROOT/snmf.py" verify \
     --model "$MODEL_PATH" --concept "$CONCEPT" \
