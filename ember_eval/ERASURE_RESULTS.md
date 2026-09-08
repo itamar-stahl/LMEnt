@@ -133,7 +133,52 @@ Data, referenced by path rather than committed, as with `ember_eval/results/`.
 | `.../Ember-on-LMEnt/runs/Ancient_Rome_lment-1b-control-2e-b131k_20260908_045242/outputs/report.json` | the erasure run: delta sweep above, edited token ids, integrity check |
 | `/home/dcor/galbarak2/LMEnt-ember/ember_eval/results/completion/cmpl_erased2e_rome_*_870252.json` | the erased model's four Rome splits |
 | `/home/dcor/galbarak2/LMEnt-ember/ember_eval/results/completion/erasure_vs_twins.json` | the three contrasts above |
-| `/home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json` | **pending** -- held-out chunk loss, job 870356, n=3,000 held-out and 5,004 control chunks, same blacklist and seed 42 as the twins. Far better powered than the 50-question splits above; not yet reported here. |
+| `/home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json` | **pending** -- see the next section |
 
 Jobs: erasure 867391; completion scoring 870252; held-out 870356 (running).
+
+## UNFINISHED: the held-out chunk loss (job 870356)
+
+Everything above rests on **50 questions per split**, which is why the `dz`
+confidence intervals span about +-0.3 and why the residual on Simdom/test lands
+at p = 0.057 rather than resolving. The held-out chunk loss is the same question
+at **n = 3,000 held-out and 5,004 control chunks**, and it is the instrument that
+produced the twins' headline. It was submitted, not yet analysed.
+
+    job 870356, MODE=ppl, killable, --time=360, submitted 2026-09-09
+    -> /home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json
+
+Comparable to the twins by construction: `run_rome_heldout.slurm` hardcodes the
+same `rome_blacklist_sample3000.json`, seed 42 and float32, and `match_by_length`
+is deterministic given those, so all three models score the *same* chunk ids.
+
+### What to do when it lands
+
+`compare_heldout.py` is generic -- `--control`/`--ablated` are just model A and
+model B, paired per chunk id -- so point it at the control and the erased model:
+
+    python ember_eval/heldout_ppl/compare_heldout.py \
+      --control /home/dcor/galbarak2/lment-rome-check/results/ppl_control2e_final_858234.json \
+      --ablated /home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json
+
+It prints `DIFFERENCE OF DIFFERENCES`. **The number to compare it against is
++0.2349 nats/token**, the ablation's, from `ROME_RESULTS.md`:
+
+| | held-out (3,000) | control set (5,004) | its own gap |
+|---|---|---|---|
+| control twin | 2.5034 | 2.3769 | +0.1265 |
+| ablated twin | 2.6939 | 2.3795 | +0.3144 |
+| diff-of-diffs | | | **+0.2349** (dz 1.052 vs 0.085) |
+
+The prediction from the 50-question result is that the erasure **overshoots**,
+i.e. its diff-of-diffs exceeds +0.2349. If it does, at n = 3,000, that is a far
+harder version of this file's conclusion. If it does not, this file's headline
+needs revisiting -- the MC splits are the weaker instrument, not the stronger.
+
+Read the control-chunk gap too: the ablation moved it +0.0035 (dz 0.085, i.e.
+zero). If the erasure moves the control chunks materially, it is damaging general
+text, which the MC splits could not have detected.
+
+Do NOT re-run the erasure at other deltas to improve this number -- see the
+scope section above.
 
