@@ -196,28 +196,37 @@ none got past loading the model:
 | 870455 | `rmu.py --probe` | 40 min on "Loading checkpoint shards: 0/2", cancelled |
 | 870456 | `snmf.py factorize`, layers 4/9/14 | 45 min on the same line, 4 of them as the node's only reader, cancelled |
 | 870483 | judge smoke | cancelled at 18 min to free filer bandwidth for the other two |
-| 870565 | `read_probe.slurm` | queued |
+| 870565 | `read_probe.slurm` | TIMEOUT, but it answered the question first -- see below |
 
-All three ran on **n-602**. The stall is not the code and not plain
-contention:
+All four ran on **n-602**, and `read_probe.slurm` says why. From that node:
 
-- the same filer served **36.6 MB/s** to the login node during the stall;
-- the same load path took **2.1 s** on a login-node GPU;
-- 870456 made no progress in 4 minutes as the *only* reader on the node, after
-  the other two were cancelled.
+| read of the 4.5 GB shard | rate | implied time for one shard |
+|---|---|---|
+| 300 MB, `iflag=direct` | 5.4 MB/s | 14 min |
+| 300 MB, buffered | **1.5 MB/s** | **50 min** |
+| the same file from the login node | 36.6 MB/s | 2 min |
 
-A 4.5 GB shard at even the 7 MB/s this project has measured on a contended node
-is 11 minutes, so 45 minutes with no shard boundary crossed is a wedged read,
-not a slow one. `mlp_erasure/read_probe.slurm` (job 870565) times a direct
-read, a cached read and a full load on whatever node the same request lands on,
-so the next occurrence is diagnosed in two minutes rather than an hour.
+**transformers loads buffered, so a shard read on n-602 really is about 50
+minutes.** I had called this a wedged read rather than a slow one, on the
+grounds that 45 minutes was too long for even the 7 MB/s this project has
+measured on a contended node. That was wrong: the buffered path there is
+another 4.5x slower again, and the jobs were reading the whole time. Measuring
+it cost two minutes and would have saved an hour of cancelled jobs.
 
-**This is the one thing left, and it needs a decision I should not make alone.**
-The obvious move is to retry away from n-602, but n-601 is the only other
-`a6000` in `killable` and it is running 8 GPUs of 8. Going wider means changing
-the partition or the constraint, and that is yours to choose -- `l40s` and
-`a5000` nodes in `killable` had free GPUs and would each hold two fp32 copies
-of a 1B comfortably.
+Nothing was wrong with the card, the job, or the code -- the same
+single-device fp32 load path completes in 2.1 s on a login-node GPU.
+
+**Gal's call, 2026-09-09: drop `--constraint=a6000` and take any card in
+`killable`.** The constraint was inherited from EMBER's Rome config, where its
+stated purpose was staying out of the h100 pool the twin training needs, and
+every other card in `killable` does that equally. Both SLURM scripts now carry
+no constraint. `run_rmu.slurm` additionally excludes n-202..205: those 2080s
+have 11 GB, and RMU is the one stage holding two fp32 copies of the model at
+once, so 2 GB of headroom for the autograd graph is too thin to rely on.
+
+Resubmitted on that basis as jobs **871246** (RMU probe), **871247** (SNMF
+factorize, layers 4/9/14) and **871248** (read probe, to record what the new
+node serves).
 
 ## How to run it
 

@@ -4,7 +4,6 @@
 #SBATCH --error=/home/dcor/galbarak2/runs/mlp_erasure/%x_%j.err
 #SBATCH --account=gpu-research
 #SBATCH --partition=killable
-#SBATCH --constraint=a6000
 #SBATCH --time=360
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -12,7 +11,17 @@
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus=1
 #SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
-# See run_rmu.slurm for --exclude and --constraint. Two extra reasons here:
+# No --constraint. EMBER's erasure of this concept pinned a6000
+# (configs/ember_lment_rome_slurm.yaml) and its stated reason was staying out
+# of the h100 pool the twin training needs -- which every other card in
+# killable does equally. Dropping it is Gal's call, made 2026-09-09 after four
+# jobs pinned to a6000 all landed on n-602 and none finished loading the
+# model: job 870565 measured that node reading /home/dcor at 5.4 MB/s direct
+# and 1.5 MB/s buffered, against 36.6 MB/s from the login node. transformers
+# loads buffered, so one 4.5 GB shard there is ~50 minutes. Nothing was wrong
+# with the card, the job, or the code.
+#
+# See run_rmu.slurm for --exclude. Two notes specific to this script:
 #
 # --mem=32000 is generous, not tight. The Ancient Rome corpus is 300+300
 # sentences averaging 28 tokens, so at max-length 256 the whole activation
