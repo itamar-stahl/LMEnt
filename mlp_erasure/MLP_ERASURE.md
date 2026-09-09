@@ -463,6 +463,101 @@ judge keeps anything there (2-4 GPU-hours), or to widen `--layers-out`, which
 departs from the published depth fractions. Both are decisions about the
 experiment rather than fixes, so neither is taken here.
 
+### The depth band does carry Rome features (871493, 871547)
+
+Gal's call after the layer-4 result was to test the rest of the band. Job
+**871493** factorized layers 4, 5, 6 in 29:36; job **871547** judged all 56
+candidates in 37:43.
+
+| layer | candidates (rho > 2.0) | selected | accept rate |
+|---|---|---|---|
+| 4 | 9 | **0** | 0.0% |
+| 5 | 34 | 3 | 8.8% |
+| 6 | 13 | 3 | 23.1% |
+| **total** | **56** | **6** | **10.7%** |
+
+**Layer 5 is inside the output band `[0,5]`, so both sides are now reached** and
+the one-sided guard passes: layer 5 gets `delta_in` and `delta_out`, layer 6
+input-side only, layer 4 skipped. The erasure is no longer blocked.
+
+Two checks worth recording. **Layer 4 reproduced exactly** -- 871493's rho
+statistics for it are identical to 871247's to three decimals on max, p95,
+median and count, both on n-301. So the factorization is deterministic on a
+fixed card, and the known instability is across GPU *models*, not general
+nondeterminism. And **the judge's acceptance rate is stable across disjoint
+candidate sets**: 10.2% on the first 127, 10.7% on these 56. Layer 4 returning
+zero twice is now a repeated observation rather than a fluke.
+
+### verify at the published delta says the edit AMPLIFIES (871607)
+
+    layer  concept before   after     drop    neutral before   after    drop
+        5         48.48    160.3  -230.7%             13.96   29.26  -109.6%
+        6         50.56    119.7  -136.8%             18.92   32.89   -73.8%
+    mean concept drop -183.8%, mean neutral drop -91.7%
+
+Activation went **up** roughly 3x. This is arithmetic, not a bug.
+`ablate_layer` applies `(I - delta * P)` on the feature's support, so the
+component along the feature scales by `|1 - delta|`, and `verify` takes
+`.abs()` of that component. Its reported drop is therefore `1 - |1 - delta|`:
+
+| delta | component | reported drop |
+|---|---|---|
+| 1 | removed | +100% |
+| 2 | sign flipped, magnitude kept | 0% |
+| **4** | **magnitude x3** | **-200%** |
+
+Predicted -200%, observed -183.8%; the gap is the coverage mask and layer 5's
+edit feeding layer 6. Confirmed numerically on a toy model: after/before came
+to 0.5147 / 0.1410 / 1.0000 / 2.9734 at delta 0.5 / 1 / 2 / 4 against
+`|1-delta|` of 0.5 / 0 / 1 / 3. Four tests pin it.
+
+The script's own advice here was wrong twice over and is fixed: it said "the
+edit is not doing much, raise delta", which moves further from zero, and it
+read the neutral rise as evidence of poor specificity when the scaling applies
+to everything in the support and says nothing either way.
+
+### The mechanism works and is selective, at delta = 1 (871613)
+
+Run as a **code-correctness diagnostic, not a delta search** -- delta 1 is the
+unique value at which `(I - delta*P)` is an exact projection, so it answers
+"does this remove anything at all, and is what it removes concept-specific?"
+
+    layer  concept before   after    drop    neutral before   after   drop
+        5         48.48    23.11   52.3%             13.96   10.12  27.5%
+        6         50.56    23.77   53.0%             18.92   14.67  22.5%
+    mean concept drop 52.7%, mean neutral drop 25.0%, selectivity +27.6%
+
+**Concept activation falls 52.7% while neutral falls 25.0%** -- the edit removes
+about twice as much concept as neutral, and no diagnostic fires. The machinery
+is sound: selection identifies features the ablation can actually reach, and
+what it reaches is concept-biased rather than generic.
+
+(It is not 100% because only 6 of 100 features per layer are removed and the
+coverage mask at gamma 0.95 keeps a subset of neurons. 52.7% from six features
+is a large effect, not a weak one.)
+
+### What is now open, and it is not a code question
+
+`delta` and the verify metric are mutually inconsistent, and **only one of them
+can be right**:
+
+- if the published `delta 4` is correct for this update rule, then an
+  `.abs()` drop can never be the check -- the design reverses and amplifies the
+  direction, the way RMU's misdirection does, and success has to be measured
+  some other way;
+- if a drop is the goal, `delta` must be below 2, and 1 is the exact-removal
+  point.
+
+**This is not mine to settle**, and it is exactly the kind of choice
+`ERASURE_RESULTS.md` says must be fixed by a written rule before it is made,
+not after seeing which value produces a nicer number. Both results above are
+recorded so that whichever rule is chosen, the other value's outcome is already
+on the page and cannot be quietly dropped.
+
+**No model has been saved.** `erase` was not run, because at delta 4 it would
+write a checkpoint whose selected features are amplified threefold, and at
+delta 1 it would be using a value nobody has yet chosen.
+
 ## How to run it
 
 Fast tests, no checkpoint and no GPU (0.2 s):
