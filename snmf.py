@@ -1,17 +1,41 @@
 """Sparse Semi-NMF erasure for MLP layers.
 
 The factorization uses the Semi-NMF updates from Ding, Li and Jordan. Feature
-selection uses the ratio pre-filter and two-stage Gemini filter in Appendix A.3.
+selection uses the ratio pre-filter and the two-stage judge in Appendix A.3.
 
     python snmf.py factorize --model <path> --concept <name> \
         --concept-sentences chunks.json --neutral-sentences neutral.json \
         --out snmf_out
     python snmf.py select --out snmf_out --concept <name>
-    # Without Gemini credits:
-    # python snmf.py select --out snmf_out --skip-llm
     python snmf.py erase --model <path> --out snmf_out \
-        --delta-in 4 --delta-out 4 --layers-in 0 15 --layers-out 0 7 \
-        --save erased_model
+        --delta-in 4 --delta-out 4 --save erased_model
+    python snmf.py verify --model <path> --concept <name> --out snmf_out \
+        --concept-sentences chunks.json --neutral-sentences neutral.json
+
+Three things differ from the published recipe, all because of what this project
+actually has.
+
+**The judge is local.** A.3 runs two Gemini calls per feature and there is no
+Gemini key on this cluster, which left `select` with only `--skip-llm` -- and
+the note on that flag says plainly that it stops matching A.3. The EMBER fork
+on this branch already solved the same problem for *embedding* features with a
+pinned local `google/gemma-4-12B-it`, run in its own interpreter because gemma4
+needs newer transformers than this pipeline. `--judge gemma` (the default) is
+that same judge behind the same two seams, so MLP and embedding features are
+interpreted by the same model. `--judge gemini` still works if a key appears.
+
+**Layer ranges come from depth, not from a literal.** --layers-in/--layers-out
+defaulted to (0,15) and (0,7). On the 18-layer LMEnt 1B that skips layers 16-17
+on the in side, and the out side covers 8 of 18 layers rather than the first
+third. The fork's SNMF grid records the published Gemma-2-2B ranges as
+in=(0,25) -- all 26 layers -- and out=(0,8), its first third; the defaults are
+now those two fractions of depth, which give the 26-layer numbers back exactly.
+Pass either flag to override.
+
+**Weights are fp32.** The checkpoints on disk are fp32 and
+`compare_weights.py` checks that an erased model differs from its control in
+the edited matrices and nowhere else; a bf16 save moves all 200 tensors and
+that check stops meaning anything.
 """
 import argparse
 import json
@@ -19,6 +43,7 @@ import math
 import os
 import pickle
 import re
+import sys
 import time
 from pathlib import Path
 
@@ -26,12 +51,25 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
 
-def load_model(name, cache_dir=None, dtype=torch.bfloat16):
+DTYPES = {"fp32": torch.float32, "bf16": torch.bfloat16, "fp16": torch.float16}
+
+
+def resolve_device(requested=None):
+    if requested:
+        return requested
+    return "cuda:0" if torch.cuda.is_available() else "cpu"
+
+
+def load_model(name, cache_dir=None, dtype=torch.float32, device=None):
     tok = AutoTokenizer.from_pretrained(name, cache_dir=cache_dir)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
+    # One device, not device_map="auto": ablate_layer edits up_proj and
+    # down_proj against a feature direction moved onto W_in's device, and a
+    # sharded model puts the two matrices of one MLP wherever it likes.
     model = AutoModelForCausalLM.from_pretrained(
-        name, device_map="auto", torch_dtype=dtype, cache_dir=cache_dir)
+        name, device_map={"": resolve_device(device)}, dtype=dtype,
+        cache_dir=cache_dir)
     model.config.use_cache = False
     model.eval()
     return model, tok
@@ -57,6 +95,18 @@ def mlp_of(layer):
 def default_rank(hidden_size):
     """Use k=100 below width 4096 and k=200 at width 4096 or above."""
     return 200 if hidden_size >= 4096 else 100
+
+
+def default_layer_ranges(n_layers):
+    """The published Gemma-2 layer ranges, re-expressed as fractions of depth.
+
+    ember/erasure/methods/snmf.py records them for Gemma-2-2B (26 layers) as
+    in=(0,25), every layer, and out=(0,8), its first third. Both fractions
+    reproduce those indices exactly at 26 layers (round(0.34*26)-1 == 8) and
+    give (0,17) / (0,5) on the 18-layer LMEnt 1B.
+    """
+    last = n_layers - 1
+    return (0, last), (0, max(0, min(last, round(0.34 * n_layers) - 1)))
 
 
 @torch.no_grad()
@@ -157,6 +207,29 @@ def semi_nmf(A, k, s=0.01, lam=1e-4, max_iter=20000, patience=500, tol=1e-4,
     return best_Z.cpu(), best_Yt.T.cpu()
 
 
+def rho_summary(rho, tau):
+    """Where the mass ratios actually sit, so tau can be read off evidence.
+
+    EMBER's embedding run on this same 1B died at its prefilter because the
+    published ratio_thresh 2.0 sits *above* the maximum ratio a 1B produces --
+    discovered only after the run. The same threshold gates this method, so
+    every factorization records its own distribution whether or not anything
+    clears tau.
+    """
+    values = sorted(float(v) for v in rho.tolist())
+    n = len(values)
+    pct = lambda q: values[min(n - 1, max(0, int(round(q * (n - 1)))))]
+    return {
+        "n_features": n, "tau": tau,
+        "max": pct(1.0), "p99": pct(0.99), "p95": pct(0.95),
+        "median": pct(0.5), "min": pct(0.0),
+        # ">" not ">=", because that is the comparison cmd_factorize selects on
+        "n_gt_tau": sum(v > tau for v in values),
+        "n_ge": {str(t): sum(v >= t for v in values)
+                 for t in (1.1, 1.25, 1.5, 2.0, 3.0)},
+    }
+
+
 def mass_ratio(Y, is_concept, eps=1e-8):
     """rho_i, Eq. 3. Y is (k, n_tok); is_concept marks the S_C columns."""
     c = Y[:, is_concept].abs().mean(dim=1)
@@ -181,14 +254,20 @@ def projection_tokens_per_feature(model, tokenizer, layer_id, Z, feature_ids, to
     unembed = model.get_output_embeddings().weight.detach()  # (vocab, d_model)
     final_norm = getattr(getattr(model, "model", None), "norm", None)
     out = {}
+    if not feature_ids:
+        return out
+    # 100,352 x 2,048 in fp32 is 822 MB; casting it once instead of once per
+    # 16-feature chunk is the difference between one copy and dozens.
+    down_f = down.float()
+    unembed_f = unembed.float()
     for start in range(0, len(feature_ids), 16):
         ids = feature_ids[start:start + 16]
-        z = Z[:, ids].T.to(down.device, torch.float32)
-        directions = z @ down.float().T
+        z = Z[:, ids].T.to(down_f.device, torch.float32)
+        directions = z @ down_f.T
         if final_norm is not None:
             norm_device = next(final_norm.parameters()).device
             directions = final_norm(directions.to(norm_device, down.dtype)).float()
-        logits = directions.to(unembed.device) @ unembed.float().T
+        logits = directions.to(unembed_f.device) @ unembed_f.T
         token_ids = logits.topk(min(top, logits.shape[-1]), dim=-1).indices.cpu()
         for fid, row in zip(ids, token_ids):
             out[fid] = tokenizer.convert_ids_to_tokens(row.tolist())
@@ -259,6 +338,16 @@ def ablate_layer(model, layer_id, Z, feature_ids, delta_in, delta_out, gamma=0.9
     return n_edited, int(keep.sum())
 
 
+def resolve_ranges(n_layers, layers_in, layers_out):
+    """CLI ranges if given, else the depth-scaled publication defaults."""
+    d_in, d_out = default_layer_ranges(n_layers)
+    lo_in, hi_in = tuple(layers_in) if layers_in else d_in
+    lo_out, hi_out = tuple(layers_out) if layers_out else d_out
+    print(f"{n_layers} layers -> in [{lo_in},{hi_in}] out [{lo_out},{hi_out}]"
+          f"{'' if layers_in and layers_out else ' (from model depth)'}")
+    return (lo_in, hi_in), (lo_out, hi_out)
+
+
 def load_sentences(path, concept=None):
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     if concept is not None:
@@ -272,11 +361,14 @@ def load_sentences(path, concept=None):
 def cmd_factorize(a):
     if a.layer_batch_size < 1:
         raise SystemExit("--layer-batch-size must be at least 1")
-    model, tok = load_model(a.model, a.cache_dir)
+    dtype, device = DTYPES[a.dtype], resolve_device(a.device)
+    model, tok = load_model(a.model, a.cache_dir, dtype, device)
     n_layers = len(get_layers(model))
     layers = list(range(n_layers)) if a.layers is None else a.layers
     k = a.k or default_rank(model.config.hidden_size)
-    print(f"{n_layers} layers, d_model={model.config.hidden_size}, k={k}")
+    d_mlp = model.config.intermediate_size
+    print(f"{n_layers} layers, d_model={model.config.hidden_size}, "
+          f"d_mlp={d_mlp}, k={k}, {a.dtype} on {device}")
 
     concept_all = load_sentences(a.concept_sentences, a.concept)
     neutral_all = load_sentences(a.neutral_sentences)
@@ -291,7 +383,7 @@ def cmd_factorize(a):
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
     dev = "cuda" if torch.cuda.is_available() else "cpu"
-    results, feature_tokens, projection_tokens = {}, {}, {}
+    results, feature_tokens, projection_tokens, rho_stats = {}, {}, {}, {}
     # A few layers at a time; holding all of them at once eats host RAM.
     for start in range(0, len(layers), a.layer_batch_size):
         layer_group = layers[start:start + a.layer_batch_size]
@@ -307,7 +399,10 @@ def cmd_factorize(a):
                             seed=a.seed, device=dev)
             rho = mass_ratio(Y, is_concept)
             selected = (rho > a.tau).nonzero().flatten().tolist()
-            print(f"  {len(selected)}/{k} features with rho > {a.tau}")
+            rho_stats[str(l)] = rho_summary(rho, a.tau)
+            print(f"  {len(selected)}/{k} features with rho > {a.tau} "
+                  f"(max {rho_stats[str(l)]['max']:.4f}, "
+                  f"median {rho_stats[str(l)]['median']:.4f})")
             results[l] = {"Z": Z, "rho": rho, "candidates": selected}
             tops = top_tokens_per_feature(Y, token_strings, a.top_tokens)
             feature_tokens[str(l)] = {str(i): tops[i] for i in selected}
@@ -323,8 +418,18 @@ def cmd_factorize(a):
               indent=2, ensure_ascii=False)
     json.dump(projection_tokens, open(out / "projection_tokens.json", "w"),
               indent=2, ensure_ascii=False)
+    (out / "rho_stats.json").write_text(json.dumps(rho_stats, indent=2))
+    total_candidates = sum(len(results[l]["candidates"]) for l in layers)
+    best = max((s["max"], l) for l, s in rho_stats.items())
+    print(f"{total_candidates} candidate features across {len(layers)} layers; "
+          f"largest rho anywhere {best[0]:.4f} (layer {best[1]})")
+    if total_candidates == 0:
+        print(f"NOTHING CLEARS tau={a.tau}. rho_stats.json holds the measured "
+              "distribution per layer; pick a threshold from it, and record "
+              "that you did, rather than from whether the erasure works.")
     run_metadata = {
         "model": a.model, "concept": a.concept, "k": k,
+        "dtype": a.dtype, "n_layers": n_layers, "d_mlp": d_mlp,
         "n_concept_sentences": len(concept), "n_neutral_sentences": len(neutral),
         "sparsity": a.sparsity, "ridge": a.ridge, "tau": a.tau,
         "max_iter": a.max_iter, "seed": a.seed,
@@ -335,8 +440,48 @@ def cmd_factorize(a):
     print("wrote", out / "features.pkl", "and both token-evidence files")
 
 
+def check_both_sides_applied(applied_in, applied_out, delta_in, delta_out,
+                            ranges, selected, cmd):
+    """Refuse a one-sided erasure that the caller did not ask for.
+
+    SNMF projects the selected directions out of BOTH up_proj (input side) and
+    down_proj (output side). The two sides have separate layer ranges, so a
+    layer can clear one and not the other -- and if every layer holding
+    selected features falls outside a range, that side is silently never
+    touched while `total` still counts the features from the other side. The
+    total==0 guard cannot see it.
+
+    This is what job 871388 produced: the judge accepted 0 of layer 4's 9
+    candidates and 13 across layers 9 and 14, and since the output range on 18
+    layers is [0,5], every selected feature sat outside it. The erase would
+    have applied delta_in at two layers, delta_out nowhere, and saved a model
+    labelled as an SNMF erasure. A deliberate --delta-out 0 is still allowed;
+    only asking for a side and receiving nothing is an error.
+    """
+    (lo_in, hi_in), (lo_out, hi_out) = ranges
+    have = sorted(int(l) for l, f in selected.items() if f)
+    for name, applied, delta, (lo, hi), other in (
+            ("output-side (down_proj)", applied_out, delta_out, (lo_out, hi_out),
+             "--layers-out"),
+            ("input-side (up_proj)", applied_in, delta_in, (lo_in, hi_in),
+             "--layers-in")):
+        if applied or not delta:
+            continue
+        raise SystemExit(
+            f"{cmd}: --delta-{'out' if 'output' in name else 'in'}={delta} was "
+            f"requested but the {name} edit reached NO layer, so the result "
+            f"would be a one-sided erasure saved under the method's name.\n"
+            f"  layers holding selected features: {have}\n"
+            f"  {other} range in effect:          [{lo},{hi}]\n"
+            f"They do not intersect. Either factorize a layer inside "
+            f"[{lo},{hi}] and select features there, widen the range with "
+            f"{other} lo hi, or pass the delta for this side as 0 to say the "
+            f"one-sided edit is intended.")
+
+
 def cmd_erase(a):
-    model, tok = load_model(a.model, a.cache_dir)
+    model, tok = load_model(a.model, a.cache_dir, DTYPES[a.dtype],
+                            resolve_device(a.device))
     blob = pickle.load(open(Path(a.out) / "features.pkl", "rb"))
     selected_path = Path(a.out) / "selected.json"
     if not selected_path.exists():
@@ -349,9 +494,10 @@ def cmd_erase(a):
     selection_meta = json.load(open(selection_meta_path))
     print("selection method:", selection_meta.get("selection_method", "unknown"))
 
-    lo_in, hi_in = a.layers_in
-    lo_out, hi_out = a.layers_out
+    (lo_in, hi_in), (lo_out, hi_out) = resolve_ranges(
+        len(get_layers(model)), a.layers_in, a.layers_out)
     total = 0
+    applied_in = applied_out = 0
     for l in blob["layers"]:
         feats = selected.get(str(l), [])
         if not feats:
@@ -363,9 +509,23 @@ def cmd_erase(a):
         n, kept = ablate_layer(model, l, blob["results"][l]["Z"], feats,
                                d_in, d_out, a.gamma)
         total += n
+        applied_in += bool(d_in)
+        applied_out += bool(d_out)
         print(f"layer {l}: {n} features, {kept} neurons kept, "
               f"delta_in={d_in} delta_out={d_out}")
-    print(f"{total} feature ablations total")
+    print(f"{total} feature ablations total "
+          f"({applied_in} layers edited input-side, "
+          f"{applied_out} output-side)")
+    if total == 0:
+        # Saving here would write a model byte-identical to its control and
+        # call it erased. Nothing downstream could tell.
+        raise SystemExit(
+            "no feature was ablated: selected.json is empty for every layer "
+            f"in [{lo_in},{hi_in}] u [{lo_out},{hi_out}], or both deltas are "
+            "zero. Nothing saved.")
+    check_both_sides_applied(
+        applied_in, applied_out, a.delta_in, a.delta_out,
+        ((lo_in, hi_in), (lo_out, hi_out)), selected, "erase")
     if a.save:
         model.save_pretrained(a.save)
         tok.save_pretrained(a.save)
@@ -373,8 +533,13 @@ def cmd_erase(a):
             "method": "SNMF",
             "selection": selection_meta,
             "delta_in": a.delta_in, "delta_out": a.delta_out,
-            "layers_in": a.layers_in, "layers_out": a.layers_out,
+            "layers_in": [lo_in, hi_in], "layers_out": [lo_out, hi_out],
+            "layers_in_from": "cli" if a.layers_in else "model depth",
+            "layers_out_from": "cli" if a.layers_out else "model depth",
+            "dtype": a.dtype,
             "gamma_cov": a.gamma, "feature_ablations": total,
+            "layers_edited_input_side": applied_in,
+            "layers_edited_output_side": applied_out,
         }
         (Path(a.save) / "snmf_erasure_metadata.json").write_text(
             json.dumps(erasure_meta, indent=2))
@@ -414,6 +579,66 @@ Description: {description}
 Answer:"""
 
 
+# Judge defaults are the ones the EMBER run on this same 1B used
+# (configs/ember_lment_rome_slurm.yaml): the pinned revision, the 23 GB
+# already in hf_cache, its own interpreter, and the 3-hour startup budget that
+# an unsharded 23.9 GB safetensors read off this filer actually needs.
+GEMMA_JUDGE = "google/gemma-4-12B-it"
+GEMMA_REVISION = "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7"
+GEMMA_CACHE = "/home/dcor/galbarak2/hf_cache/hub"
+GEMMA_PYTHON = "/home/dcor/galbarak2/conda_envs/gemma/bin/python"
+GEMMA_STARTUP_TIMEOUT = 10800.0
+
+
+class LocalGemmaClient:
+    """The project's own judge, standing in for Gemini.
+
+    Reuses ``ember.subprocess_judge.SubprocessJudge`` from the EMBER fork on
+    this branch. Its ``describe_feature`` / ``classify_feature`` seams take a
+    raw prompt and return text, and ``classify_feature`` already normalises
+    the reply to ``{"is_member": bool, "confidence": float}`` -- exactly what
+    ``_parse_membership`` below expects -- so STAGE1/STAGE2 are unchanged and
+    the only thing that differs from the published recipe is which model
+    answers them.
+    """
+
+    def __init__(self, model=GEMMA_JUDGE, revision=GEMMA_REVISION,
+                 python_executable=GEMMA_PYTHON, cache_dir=GEMMA_CACHE,
+                 device="cuda", max_new_tokens=256,
+                 startup_timeout=GEMMA_STARTUP_TIMEOUT, fork_root=None):
+        root = Path(fork_root) if fork_root else (
+            Path(__file__).resolve().parent / "Ember-on-LMEnt")
+        if not (root / "ember").is_dir():
+            raise SystemExit(
+                f"--judge gemma needs the EMBER fork: no ember/ package under "
+                f"{root}. Pass --fork-root, or run from a checkout of "
+                "itamars/Ember-on-LMEnt.")
+        sys.path.insert(0, str(root))
+        from ember.subprocess_judge import (SubprocessJudge,
+                                            resolve_judge_directory)
+        model_path = resolve_judge_directory(
+            model, revision=revision, cache_dir=cache_dir,
+            local_files_only=True)
+        print(f"judge: {model_path} via {python_executable}")
+        self._judge = SubprocessJudge(
+            model_path=model_path, python_executable=python_executable,
+            device=device, max_new_tokens=max_new_tokens, cache_dir=cache_dir,
+            local_files_only=True, project_root=root,
+            startup_timeout=startup_timeout)
+        self.metadata = {"judge_backend": "gemma-subprocess",
+                         "judge_model": str(model), "judge_revision": revision,
+                         "judge_path": str(model_path)}
+
+    def describe(self, prompt):
+        return self._judge.describe_feature(prompt)
+
+    def classify(self, prompt):
+        return self._judge.classify_feature(prompt)
+
+    def close(self):
+        self._judge.close()
+
+
 class GeminiClient:
     def __init__(self, model_name, max_retries=3, sleep_seconds=5.0):
         key = (os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_TOKEN")
@@ -429,6 +654,16 @@ class GeminiClient:
         self.model = gai.GenerativeModel(model_name)
         self.max_retries = max_retries
         self.sleep_seconds = sleep_seconds
+        self.metadata = {"judge_backend": "gemini", "judge_model": model_name}
+
+    def describe(self, prompt):
+        return self.generate(prompt)
+
+    def classify(self, prompt):
+        return self.generate(prompt)
+
+    def close(self):
+        return None
 
     def generate(self, prompt):
         last = None
@@ -456,8 +691,8 @@ def _parse_membership(text):
 
 def _judge_evidence(client, concept, tokens, top_k, confidence_threshold):
     used = tokens[:top_k]
-    description = client.generate(STAGE1.format(tokens=repr(used))).strip("` \n")
-    raw = client.generate(STAGE2.format(concept=concept, description=description))
+    description = client.describe(STAGE1.format(tokens=repr(used))).strip("` \n")
+    raw = client.classify(STAGE2.format(concept=concept, description=description))
     member, confidence = _parse_membership(raw)
     return {
         "tokens": used, "description": description, "is_member": member,
@@ -501,37 +736,57 @@ def cmd_select(a):
             "projection_tokens.json is missing; rerun factorize with this version. "
             "Both token sources are needed for feature selection.")
     projecting = json.load(open(projecting_path))
-    client = GeminiClient(a.gemini_model, a.max_retries, a.retry_sleep)
+    if sum(map(len, candidates.values())) == 0:
+        raise SystemExit(
+            "no candidate features to judge: every layer's rho fell short of "
+            "tau at factorization time. Read out/rho_stats.json before "
+            "changing tau, and write down the rule you used.")
+    if a.judge == "gemini":
+        client = GeminiClient(a.gemini_model, a.max_retries, a.retry_sleep)
+    else:
+        client = LocalGemmaClient(
+            model=a.judge_model, revision=a.judge_revision,
+            python_executable=a.judge_python, cache_dir=a.judge_cache_dir,
+            device=a.judge_device, max_new_tokens=a.judge_max_new_tokens,
+            startup_timeout=a.judge_startup_timeout, fork_root=a.fork_root)
     selected = {layer: [] for layer in candidates}
     records = []
     interpretations_path = out / "interpretations.json"
-    for layer, ids in candidates.items():
-        for fid_value in ids:
-            fid = str(fid_value)
-            record = {"layer": int(layer), "feature": int(fid)}
-            for source, data in (("activation", activating), ("projection", projecting)):
-                print(f"judge layer={layer} feature={fid} source={source}")
-                record[source] = _judge_evidence(
-                    client, a.concept, data[layer][fid], a.judge_top_tokens,
-                    a.confidence_threshold)
-            if record["activation"]["accepted"] or record["projection"]["accepted"]:
-                selected[layer].append(int(fid))
-            records.append(record)
-            interpretations_path.write_text(
-                json.dumps(records, indent=2, ensure_ascii=False))
+    try:
+        for layer, ids in candidates.items():
+            for fid_value in ids:
+                fid = str(fid_value)
+                record = {"layer": int(layer), "feature": int(fid)}
+                for source, data in (("activation", activating),
+                                     ("projection", projecting)):
+                    print(f"judge layer={layer} feature={fid} source={source}",
+                          flush=True)
+                    record[source] = _judge_evidence(
+                        client, a.concept, data[layer][fid],
+                        a.judge_top_tokens, a.confidence_threshold)
+                if (record["activation"]["accepted"]
+                        or record["projection"]["accepted"]):
+                    selected[layer].append(int(fid))
+                records.append(record)
+                interpretations_path.write_text(
+                    json.dumps(records, indent=2, ensure_ascii=False))
+    finally:
+        client.close()
     (out / "selected.json").write_text(json.dumps(selected, indent=2))
     metadata = {
-        "selection_method": "ratio_then_gemini",
+        "selection_method": f"ratio_then_{a.judge}",
         "llm_filter_used": True,
-        "judge_model": a.gemini_model,
         "confidence_threshold": a.confidence_threshold,
         "judge_top_tokens": a.judge_top_tokens,
         "sources": ["activation", "projection"],
         "union_rule": "accepted by either independently judged source",
         "selected_count": sum(map(len, selected.values())),
+        "n_candidates_judged": len(records),
     }
+    metadata.update(client.metadata)
     (out / "selection_metadata.json").write_text(json.dumps(metadata, indent=2))
-    print(f"selected {metadata['selected_count']} Gemini-filtered features")
+    print(f"selected {metadata['selected_count']} of {len(records)} candidates "
+          f"({a.judge} judge)")
 
 
 @torch.no_grad()
@@ -555,7 +810,8 @@ def cmd_verify(a):
     if not layers:
         raise SystemExit("no selected features in any layer")
 
-    model, tok = load_model(a.model, a.cache_dir)
+    model, tok = load_model(a.model, a.cache_dir, DTYPES[a.dtype],
+                            resolve_device(a.device))
     concept = load_sentences(a.concept_sentences, a.concept)[:a.n_sentences]
     neutral = load_sentences(a.neutral_sentences)[:a.n_sentences]
 
@@ -569,14 +825,21 @@ def cmd_verify(a):
                 for l in layers}
 
     before = measure()
-    lo_in, hi_in = a.layers_in
-    lo_out, hi_out = a.layers_out
+    (lo_in, hi_in), (lo_out, hi_out) = resolve_ranges(
+        len(get_layers(model)), a.layers_in, a.layers_out)
+    applied_in = applied_out = 0
     for l in layers:
         d_in = a.delta_in if lo_in <= l <= hi_in else 0.0
         d_out = a.delta_out if lo_out <= l <= hi_out else 0.0
         if d_in or d_out:
             ablate_layer(model, l, blob["results"][l]["Z"], selected[str(l)],
                          d_in, d_out, a.gamma)
+            applied_in += bool(d_in)
+            applied_out += bool(d_out)
+    check_both_sides_applied(
+        applied_in, applied_out, a.delta_in, a.delta_out,
+        ((lo_in, hi_in), (lo_out, hi_out)),
+        {str(l): selected[str(l)] for l in layers}, "verify")
     after = measure()
 
     print(f"{'layer':>6} {'concept before':>15} {'after':>10} {'drop':>7} "
@@ -595,12 +858,40 @@ def cmd_verify(a):
     mn = sum(drops_n) / len(drops_n)
     print(f"\nmean concept drop {mc:.1%}, mean neutral drop {mn:.1%}, "
           f"selectivity {mc - mn:+.1%}")
-    if mc < 0.2:
+    # The update is (I - delta * P) on the feature's support, so the component
+    # along the feature scales by |1 - delta| and this metric, which takes
+    # .abs() of that component, reports a drop of 1 - |1 - delta|:
+    #
+    #     delta 1 -> +100% (exact removal)   delta 2 -> 0%   delta 4 -> -200%
+    #
+    # Verified numerically on a toy model: after/before was 0.5147, 0.1410,
+    # 1.0000, 2.9734 at delta 0.5, 1, 2, 4 against |1-delta| of 0.5, 0, 1, 3.
+    # So for any delta > 2 a *negative* drop is arithmetic, not a bug, and the
+    # old advice here ("raise delta") made it strictly worse. Say so instead.
+    predicted = 1.0 - abs(1.0 - max(a.delta_in, a.delta_out))
+    if mc < 0 or mn < 0:
+        print(f"\nNOTE: activation went UP, and at delta="
+              f"{max(a.delta_in, a.delta_out)} that is expected, not a fault. "
+              f"The update is (I - delta*P), so the component scales by "
+              f"|1 - delta| = {abs(1.0 - max(a.delta_in, a.delta_out)):.2f} and "
+              f"this metric predicts a drop of {predicted:+.0%} "
+              f"(observed {mc:+.1%} concept).")
+        print("  Do NOT raise delta to fix this; it moves further from zero.")
+        print("  delta < 2 shrinks the component, delta = 1 removes it exactly,")
+        print("  delta = 2 flips its sign leaving the magnitude untouched.")
+        print("  Either delta is not meant for this update rule, or this metric"
+              " is not the right check for a delta > 2 design -- resolve that"
+              " before reading anything into the numbers above.")
+    elif mc < 0.2:
         print("concept drop is small; the edit is not doing much. Check the "
-              "up_proj/down_proj transposes and raise delta.")
-    if mn > mc * 0.7:
+              "up_proj/down_proj transposes before changing delta.")
+    if mc > 0 and mn > mc * 0.7:
         print("neutral drops nearly as much as concept; the features are not "
               "concept-specific. Raise tau or apply the LLM filter.")
+    elif mc < 0 and mn < 0:
+        print("  Neutral moved the same way for the same reason -- the scaling "
+              "applies to everything in the feature's support, so this says "
+              "nothing about specificity either way.")
 
 
 def main():
@@ -614,6 +905,8 @@ def main():
     f.add_argument("--neutral-sentences", required=True)
     f.add_argument("--out", required=True)
     f.add_argument("--cache-dir")
+    f.add_argument("--dtype", choices=sorted(DTYPES), default="fp32")
+    f.add_argument("--device", help="default cuda:0, or cpu without CUDA")
     f.add_argument("--layers", type=int, nargs="+")
     f.add_argument("--k", type=int)
     f.add_argument("--n-sentences", type=int, default=300)
@@ -634,10 +927,13 @@ def main():
     e.add_argument("--model", required=True)
     e.add_argument("--out", required=True)
     e.add_argument("--cache-dir")
+    e.add_argument("--dtype", choices=sorted(DTYPES), default="fp32")
+    e.add_argument("--device", help="default cuda:0, or cpu without CUDA")
     e.add_argument("--delta-in", type=float, default=4.0)
     e.add_argument("--delta-out", type=float, default=4.0)
-    e.add_argument("--layers-in", type=int, nargs=2, default=[0, 15])
-    e.add_argument("--layers-out", type=int, nargs=2, default=[0, 7])
+    # default None, resolved from the model's depth; see default_layer_ranges
+    e.add_argument("--layers-in", type=int, nargs=2)
+    e.add_argument("--layers-out", type=int, nargs=2)
     e.add_argument("--gamma", type=float, default=0.95)
     e.add_argument("--save")
     e.set_defaults(func=cmd_erase)
@@ -646,6 +942,19 @@ def main():
     p.add_argument("--out", required=True)
     p.add_argument("--concept")
     p.add_argument("--skip-llm", action="store_true")
+    p.add_argument("--judge", choices=("gemma", "gemini"), default="gemma",
+                   help="gemma is the local pinned judge this project already "
+                        "uses for embedding features; gemini needs a key")
+    p.add_argument("--judge-model", default=GEMMA_JUDGE)
+    p.add_argument("--judge-revision", default=GEMMA_REVISION)
+    p.add_argument("--judge-python", default=GEMMA_PYTHON)
+    p.add_argument("--judge-cache-dir", default=GEMMA_CACHE)
+    p.add_argument("--judge-device", default="cuda")
+    p.add_argument("--judge-max-new-tokens", type=int, default=256)
+    p.add_argument("--judge-startup-timeout", type=float,
+                   default=GEMMA_STARTUP_TIMEOUT)
+    p.add_argument("--fork-root",
+                   help="path to the Ember-on-LMEnt checkout holding ember/")
     p.add_argument("--gemini-model", default="models/gemini-2.5-flash-lite")
     p.add_argument("--judge-top-tokens", type=int, default=20)
     p.add_argument("--confidence-threshold", type=float, default=0.85)
@@ -660,10 +969,12 @@ def main():
     v.add_argument("--neutral-sentences", required=True)
     v.add_argument("--out", required=True)
     v.add_argument("--cache-dir")
+    v.add_argument("--dtype", choices=sorted(DTYPES), default="fp32")
+    v.add_argument("--device", help="default cuda:0, or cpu without CUDA")
     v.add_argument("--delta-in", type=float, default=4.0)
     v.add_argument("--delta-out", type=float, default=4.0)
-    v.add_argument("--layers-in", type=int, nargs=2, default=[0, 15])
-    v.add_argument("--layers-out", type=int, nargs=2, default=[0, 7])
+    v.add_argument("--layers-in", type=int, nargs=2)
+    v.add_argument("--layers-out", type=int, nargs=2)
     v.add_argument("--gamma", type=float, default=0.95)
     v.add_argument("--n-sentences", type=int, default=300)
     v.add_argument("--batch-size", type=int, default=8)
