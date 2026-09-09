@@ -115,6 +115,80 @@ ablation effect was never available to observe.
 
 # Part 2 — what the measurements said
 
+## Is 200 questions per concept enough? Measured, 2026-09-09
+
+**The bank is exactly 200 per concept and that is the whole supply** --
+`completion_questions.json` holds 8 concepts x 4 splits x **50** questions, and
+there are no more. So this is worth answering with arithmetic rather than
+impressions.
+
+Power of the **accuracy** (McNemar) test, computed by exact enumeration from
+each contrast's own observed discordant rate `pi_d` and discordant split `psi`:
+
+| contrast / split | pi_d | psi | power @ n=50 | power @ n=200 | n for 80% |
+|---|---|---|---|---|---|
+| untaught - control / Rome QA train | 0.24 | 0.17 | 0.57 | 1.00 | **100** |
+| untaught - control / Rome QA test | 0.28 | 0.21 | 0.49 | 0.99 | **100** |
+| erased - untaught / Rome QA train | 0.36 | 0.44 | 0.05 | 0.13 | **3200** |
+| erased - untaught / Rome QA test | 0.38 | 0.68 | 0.29 | 0.89 | **200** |
+
+Read the two rows apart. For the **ablation** effect, accuracy at n=50 runs at
+about **coin-flip power (0.49-0.57)** and would need ~100 questions per split --
+we have half of that, which is why `ROME_RESULTS.md`'s MC result was real but
+marginal. For the **erased-vs-untaught residual**, accuracy needs somewhere
+between 200 and **3,200** questions per split. The entire per-concept bank is
+200 across all four splits, so that contrast is **out of reach of accuracy by
+between 4x and 64x**, and no amount of authoring effort we would plausibly
+undertake closes it.
+
+(The 3,200 figure is conditional on `psi = 0.44`, i.e. discordants almost
+balanced at 8 vs 10, so it is really saying "the accuracy effect here is
+indistinguishable from zero" -- and both `pi_d` and `psi` are themselves
+estimated from 50 pairs, so treat these n's as order-of-magnitude.)
+
+### But the shortage is accuracy's efficiency, not the question count
+
+The decisive comparison: score the **same 50 questions** two ways -- binary
+correctness, versus the continuous per-question `gold_per_char` paired
+difference (`log P(gold | stem) / len(gold)`, the field already stored in every
+record). Same forward passes, same questions, no new data.
+
+| contrast | split | accuracy McNemar p | continuous dz | continuous paired-t p |
+|---|---|---|---|---|
+| erased - untaught | Rome QA train | 0.815 | -0.476 | **0.0008** |
+| erased - untaught | Rome QA test | 0.167 | -0.667 | **0.0000** |
+| erased - untaught | Simdom train | 0.581 | -0.348 | **0.0139** |
+| erased - untaught | Simdom test | 1.000 | -0.483 | **0.0006** |
+| untaught - control | Rome QA train | 0.039 | -0.904 | **0.0000** |
+| untaught - control | Simdom test | 0.453 | -0.275 | 0.0520 |
+
+**All four erased-vs-untaught splits resolve on the continuous statistic and
+none resolve on accuracy, from identical model outputs.** Switching the
+statistic buys more than a 64x increase in the question bank would. That is the
+whole answer to "do we need more questions": we need a better estimator of the
+same 50 answers, and we already have one stored in the records.
+
+Why it works: accuracy compresses four real-valued option scores into one bit
+and throws away the margin. Two models can differ substantially in how strongly
+they prefer the gold answer while the argmax lands identically -- and on a base
+model near chance, the argmax is where almost all the noise lives.
+
+### What to do
+
+1. **Report continuous per-question statistics as primary** for any twin or
+   erasure contrast. `gold_per_char` here; `pmi_per_char` is what
+   `ERASURE_RESULTS.md` used for the same reason. Both are continuous; state
+   which one, they are not interchangeable.
+2. **Keep accuracy as a descriptive number, never as a steering signal.** This
+   is not stylistic -- EMBER's delta search scored specificity by accuracy,
+   accuracy could not move, specificity pinned at 1.00, and the search ran to
+   the end of its grid. The coarseness measured above is what licensed that
+   overshoot.
+3. **Do not commission more MC questions to rescue accuracy.** Even the full
+   200-question bank gives power 0.13 on the hardest contrast.
+4. For anything accuracy genuinely cannot see, the instrument is the held-out
+   chunk loss at n = 3,000 / 5,004 -- see `ERASURE_RESULTS.md`.
+
 ## Corrections to earlier versions of this document
 
 Stated plainly, because earlier claims were circulated:

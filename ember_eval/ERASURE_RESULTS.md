@@ -95,6 +95,160 @@ models that cannot really answer questions is too coarse to steer with. It cost
 two retracted `acc_raw` claims (`EVALUATION.md`), and it has now cost an erasure
 its specificity. The `pmi_per_char` measure sees what accuracy cannot.
 
+## The accuracy columns, shown rather than asserted (2026-09-09)
+
+The section above says a 50-question accuracy is too coarse to steer with. Here
+is the table behind that claim, recomputed from the per-option scores stored in
+each record of the three models' completion files, so all three normalisations
+come off the same forward passes. `acc_per_char` reproduces the stored
+`accuracy` field in all 12 model x split cells, which is the check that the
+recomputation is faithful.
+
+n = 50 per split, chance 0.25, binomial SE about 0.061.
+
+**`acc_per_char`** -- the repo's primary column:
+
+| split | control | untaught | erased | erased - untaught |
+|---|---|---|---|---|
+| Rome QA train | 0.560 | 0.400 | 0.360 | -0.040 |
+| Rome QA test | 0.420 | 0.260 | **0.400** | **+0.140** |
+| Simdom train | 0.480 | 0.440 | 0.380 | -0.060 |
+| Simdom test | 0.640 | 0.580 | 0.560 | -0.020 |
+
+**`acc_uncond` (PMI ranking)** -- the column `EVALUATION.md` calls plausibly
+right for an ablation study but the noisiest:
+
+| split | control | untaught | erased | erased - untaught |
+|---|---|---|---|---|
+| Rome QA train | 0.480 | 0.320 | **0.460** | **+0.140** |
+| Rome QA test | 0.460 | 0.340 | **0.460** | **+0.120** |
+| Simdom train | 0.220 | 0.320 | 0.200 | -0.120 |
+| Simdom test | 0.320 | 0.420 | 0.320 | -0.100 |
+
+**`acc_raw`** is included only for completeness, since it is the retracted
+column: Rome QA train 0.580 / 0.400 / 0.380, test 0.420 / 0.340 / 0.400.
+
+### Which split the delta was chosen on, and why it matters here
+
+Read from the code, not the config comment. `lment_pipeline.py:659` passes
+**`train_items` only** into `search_deltas`; `test_items` is scored separately
+at line 664 with `include_records=True` as the held-out report. The config's
+note that "automatic delta selection needs all four" is a requirement that all
+four splits be *present* (line 623 errors without test data), not that the
+objective optimises on all four. So:
+
+- **delta 200 was selected on** Rome QA train + Simdom train (50 + 50)
+- **genuinely held out from selection:** Rome QA test + Simdom test (50 + 50)
+
+Now re-read the accuracy contrast for erased - control with that in mind:
+
+| split | delta fit on it? | accuracy delta | McNemar p |
+|---|---|---|---|
+| Rome QA **train** | **yes** | **-0.200** | **0.021** |
+| Rome QA **test** | no | -0.020 | 1.000 |
+
+**EMBER's accuracy efficacy lives almost entirely on the split its delta was
+optimised on.** The objective maximised `1 - qa_retention` on QA train, and
+that is exactly where the accuracy drop appears; on the held-out half the
+accuracy effect is two questions out of fifty. That is overfitting to the
+selection set, visible directly rather than inferred.
+
+**This does not mean the erasure does nothing out of sample.** On the
+continuous statistic the held-out half moves hard -- erased - control on Rome
+QA test gives dz -1.031, p < 1e-5, and the held-out chunk loss (n = 3,000,
+never touched by delta selection) is decisive. The honest statement is narrower
+and sharper: *the erasure has a real out-of-sample effect, but its reported
+accuracy efficacy is a selection-set artefact.*
+
+**Consequence for pooling.** Rome QA train + test may be pooled to n = 100 for
+the **twin** contrast, where nothing was fit on either half. They must **not**
+be pooled for any **erasure** claim, because that mixes the selection set into
+the held-out set. For the erasure, Rome QA test alone is the clean number.
+
+Pooling for the twin contrast was checked rather than assumed, on three points:
+
+1. **The halves are exchangeable in effect.** Welch two-sample on the
+   per-question paired differences, train half against test half: p = 0.571
+   (untaught - control), 0.641 (erased - control), 0.840 (erased - untaught).
+   The effect is the same size in both halves, so pooling averages one thing.
+2. **Unequal difficulty does not bias a paired test.** The halves are not
+   equally hard -- the control scores 0.560 on train and 0.420 on test -- but
+   every question is its own control across models, so difficulty cancels.
+   Worth noting *why* the accuracy gap exists: the control's mean
+   `gold_per_char` is nearly identical across halves (-0.8456 vs -0.8671), so
+   it knows the gold answers about equally well in both, and the 14-point
+   accuracy gap is about how the distractors happen to line up. One more view
+   of accuracy being the noisier read of the same forward passes.
+3. **The one large selection decision in this pipeline did not touch this
+   bank.** The declarative-stem format was chosen on `stem_probe.py`'s own
+   hardcoded 10 questions, which does not load
+   `completion_questions.json`, so the 200-question bank is not a selection set
+   for the format either.
+
+What pooling actually buys: for **accuracy** on the twin contrast it takes n
+from 50 to 100, which is the row in the power table above that needed 100 and
+had 50 -- power roughly 0.5 to 1.0. For the continuous statistic both halves
+already resolve at n = 50, so pooling only tightens an answer already in hand.
+Pool the Simdom halves too; the specificity control deserves the same power.
+Pooling Rome *with* Simdom remains wrong at any n -- keep them as strata, which
+is what the `QA - SimdomQA` contrast does.
+
+### The option-length confound, tested and ruled out
+
+`gold_per_char` divides by the gold answer's character count, which is a crude
+length correction, so it was worth asking whether the continuous effects track
+answer length rather than knowledge. Pearson r between each question's paired
+difference and its gold answer's character count, across all 12
+contrast x split cells: **11 of 12 are non-significant.** The one that clears
+0.05 is untaught - control on Rome QA train (r = +0.312, p = 0.023), which is
+about what 12 tests produce by chance.
+
+Specifically the cell that prompted the question -- erased - untaught on Simdom
+test, the neighbour-domain effect at p = 0.0006 -- comes back **r = +0.114,
+p = 0.427**. The length confound is not what is driving it. All twelve
+correlations are mildly positive (+0.03 to +0.31), a weak systematic tendency
+worth remembering, but far too small to manufacture effects of dz -0.35 to
+-1.03.
+
+### What this shows
+
+**The accuracy columns cannot resolve the erased-vs-untaught contrast, and
+under two of three normalisations they invert it.** On `pmi_per_char` (the
+continuous statistic, gold answer only) the erasure overshoots the ablation on
+both Rome halves. On accuracy, the erased model *ties the control* on Rome QA
+test -- 0.400 against 0.420 -- while the untaught twin sits at 0.260, so read
+naively the accuracy column says the erasure preserved Rome and never-training
+destroyed it. Under PMI ranking the erased model ties the control on **both**
+Rome halves (0.460 / 0.460).
+
+McNemar exact on the discordant pairs says none of it is resolvable: erased vs
+untaught gives p = 0.815, 0.167, 0.581, 1.000 across the four splits, on 13-19
+discordant pairs. Erased vs control reaches p = 0.021 on Rome QA train and
+p = 1.000 on Rome QA test -- the same contrast, the same model, two halves of
+the same question set.
+
+Two cells are outright incoherent and worth keeping visible: under PMI the
+control scores **0.220 on Simdom train, below the 0.25 chance line**, and the
+untaught twin *beats* it there (0.320). Nothing in the experiment predicts
+that; it is the noise floor of a 50-question instrument on base models that
+cannot really answer questions.
+
+**This is not a side note about metrics, it is the mechanism of the overshoot.**
+EMBER's delta objective scored specificity by accuracy, accuracy could not move,
+so specificity read 1.00 at every delta and nothing ever opposed a larger edit.
+The same coarseness that makes the table above unreadable is what licensed the
+search to run to the end of its grid.
+
+**Do not resolve this by picking the normalisation that agrees.** The reason the
+held-out chunk loss exists is that it is the same question at n = 3,000 and
+n = 5,004 on a continuous measure, and it answers unambiguously -- see the
+RESULT section below. Where the two instruments disagree, the disagreement is
+about statistical power, and the accuracy columns are the weaker instrument.
+
+Also note EMBER's own sweep reported a Rome QA baseline of 0.48, which matches
+neither split here (0.560 train, 0.420 test); it runs its own question protocol,
+so its accuracy numbers are not comparable cell-for-cell with these.
+
 ## What this does NOT establish
 
 **Not "no erasure can match the ablation."** This is the delta *EMBER's own
@@ -137,48 +291,78 @@ Data, referenced by path rather than committed, as with `ember_eval/results/`.
 
 Jobs: erasure 867391; completion scoring 870252; held-out 870356 (running).
 
-## UNFINISHED: the held-out chunk loss (job 870356)
+## RESULT: the held-out chunk loss (job 870356, analysed 2026-09-09)
 
-Everything above rests on **50 questions per split**, which is why the `dz`
-confidence intervals span about +-0.3 and why the residual on Simdom/test lands
-at p = 0.057 rather than resolving. The held-out chunk loss is the same question
-at **n = 3,000 held-out and 5,004 control chunks**, and it is the instrument that
-produced the twins' headline. It was submitted, not yet analysed.
+Job 870356 COMPLETED (01:18:11, ended 2026-09-09T01:17:07) and is analysed
+below. All three models scored the **same** 3,000 held-out and 5,004 control
+chunk ids, from `rome_blacklist_sample3000.json` at seed 42 in float32 --
+verified by reading `metadata` out of all three result files, not assumed.
 
-    job 870356, MODE=ppl, killable, --time=360, submitted 2026-09-09
-    -> /home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json
+    control  /home/dcor/galbarak2/lment-rome-check/hf/control-2e-step54832
+    untaught /home/dcor/galbarak2/lment-rome-check/hf/norome-2e-step54832
+    erased   /home/dcor/galbarak2/hf-models/lment-1b-rome-erased-b131k
 
-Comparable to the twins by construction: `run_rome_heldout.slurm` hardcodes the
-same `rome_blacklist_sample3000.json`, seed 42 and float32, and `match_by_length`
-is deterministic given those, so all three models score the *same* chunk ids.
+**The control-vs-untaught run reproduces +0.2349 exactly**, so the instrument is
+unchanged from `ROME_RESULTS.md` and the erased column is directly comparable.
 
-### What to do when it lands
-
-`compare_heldout.py` is generic -- `--control`/`--ablated` are just model A and
-model B, paired per chunk id -- so point it at the control and the erased model:
-
-    python ember_eval/heldout_ppl/compare_heldout.py \
-      --control /home/dcor/galbarak2/lment-rome-check/results/ppl_control2e_final_858234.json \
-      --ablated /home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json
-
-It prints `DIFFERENCE OF DIFFERENCES`. **The number to compare it against is
-+0.2349 nats/token**, the ablation's, from `ROME_RESULTS.md`:
-
-| | held-out (3,000) | control set (5,004) | its own gap |
+| model | held-out (3,000) | control set (5,004) | its own gap |
 |---|---|---|---|
 | control twin | 2.5034 | 2.3769 | +0.1265 |
-| ablated twin | 2.6939 | 2.3795 | +0.3144 |
-| diff-of-diffs | | | **+0.2349** (dz 1.052 vs 0.085) |
+| untaught twin | 2.6939 | 2.3795 | +0.3144 |
+| **EMBER-erased** | **3.7218** | **2.4125** | **+1.3093** |
 
-The prediction from the 50-question result is that the erasure **overshoots**,
-i.e. its diff-of-diffs exceeds +0.2349. If it does, at n = 3,000, that is a far
-harder version of this file's conclusion. If it does not, this file's headline
-needs revisiting -- the MC splits are the weaker instrument, not the stronger.
+Paired per-chunk differences of differences, all at label-permutation p = 0.0000:
 
-Read the control-chunk gap too: the ablation moved it +0.0035 (dz 0.085, i.e.
-zero). If the erasure moves the control chunks materially, it is damaging general
-text, which the MC splits could not have detected.
+| pair | held-out diff (dz) | control diff (dz) | **diff-of-diffs** |
+|---|---|---|---|
+| untaught - control | +0.2384 (1.052) | +0.0035 (0.085) | **+0.2349** |
+| erased - control | +1.3793 (0.581) | +0.0332 (0.106) | **+1.3461** |
+| erased - untaught | +1.1409 (0.512) | +0.0297 (0.098) | **+1.1111** |
+
+### The prediction was confirmed, and by more than predicted
+
+The 50-question result predicted the erasure overshoots the ablation by
+1.7-2.2x. At n = 3,000 it overshoots by **5.73x** (+1.3461 against +0.2349).
+This file's headline does not need revisiting; it needed a bigger instrument,
+and the bigger instrument makes the conclusion harder, not softer.
+
+**The control-set damage is real and was invisible at n = 50.** The ablation
+moved the control chunks +0.0035 (dz 0.085, i.e. nothing). The erasure moves
+them **+0.0332 -- 9.5x as much**, p = 0.0000 at n = 5,004. `dz` is still only
+0.106, so this is a small effect per chunk; it is the *n* that resolves it. The
+erasure damages general text. The MC splits could not have detected this.
+
+### But it is not "the ablation, only stronger" -- the shape differs
+
+This is the finding the diff-of-diffs summary hides, and it only appears in the
+per-chunk distribution over the 3,000 paired held-out chunks:
+
+| per-chunk diff | mean | sd | dz | median | p90 | p99 | max | >1 nat | >3 nats |
+|---|---|---|---|---|---|---|---|---|---|
+| untaught - control | +0.2384 | 0.227 | **1.052** | +0.172 | +0.413 | +1.357 | +2.04 | 2.2% | **0.0%** |
+| erased - control | +1.3793 | 2.373 | **0.581** | +0.214 | +5.475 | +9.553 | +11.53 | 28.8% | **16.2%** |
+
+Note the erasure has 5.8x the mean shift but a **smaller** `dz`. That is not
+noise, it is the distribution: its **median chunk (+0.214) is barely different
+from the ablation's (+0.172)**, while its p90 is 13x the ablation's and 16.2% of
+Rome chunks get more than 3 nats/token worse -- a band the ablation never
+enters at all, at any chunk (its worst single chunk is +2.04).
+
+**Interpretation, offered as such:** the untaught twin degrades Rome text
+*uniformly and mildly* -- the signature of a concept that was never learned. The
+erasure leaves most Rome text roughly where the ablation does and *shatters a
+subset of it*. Averaged into one number those look like the same intervention at
+different strengths; per chunk they do not look like the same intervention at
+all. Anything that reads the diff-of-diffs alone will miss this.
+
+What this does NOT say: it does not identify which chunks shatter or why, and
+16.2% is measured on one erasure of one concept in one model pair. The obvious
+next question -- whether the shattered chunks are the ones EMBER's selected
+features actually fire on -- is answerable from the artifacts already on disk
+and has not been done.
 
 Do NOT re-run the erasure at other deltas to improve this number -- see the
-scope section above.
+scope section above. The overshoot is now measured at n = 3,000; tuning delta
+against it would be selection-on-the-outcome on the strongest instrument in the
+project.
 
