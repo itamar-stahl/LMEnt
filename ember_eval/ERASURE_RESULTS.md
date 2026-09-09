@@ -95,6 +95,78 @@ models that cannot really answer questions is too coarse to steer with. It cost
 two retracted `acc_raw` claims (`EVALUATION.md`), and it has now cost an erasure
 its specificity. The `pmi_per_char` measure sees what accuracy cannot.
 
+## The accuracy columns, shown rather than asserted (2026-09-09)
+
+The section above says a 50-question accuracy is too coarse to steer with. Here
+is the table behind that claim, recomputed from the per-option scores stored in
+each record of the three models' completion files, so all three normalisations
+come off the same forward passes. `acc_per_char` reproduces the stored
+`accuracy` field in all 12 model x split cells, which is the check that the
+recomputation is faithful.
+
+n = 50 per split, chance 0.25, binomial SE about 0.061.
+
+**`acc_per_char`** -- the repo's primary column:
+
+| split | control | untaught | erased | erased - untaught |
+|---|---|---|---|---|
+| Rome QA train | 0.560 | 0.400 | 0.360 | -0.040 |
+| Rome QA test | 0.420 | 0.260 | **0.400** | **+0.140** |
+| Simdom train | 0.480 | 0.440 | 0.380 | -0.060 |
+| Simdom test | 0.640 | 0.580 | 0.560 | -0.020 |
+
+**`acc_uncond` (PMI ranking)** -- the column `EVALUATION.md` calls plausibly
+right for an ablation study but the noisiest:
+
+| split | control | untaught | erased | erased - untaught |
+|---|---|---|---|---|
+| Rome QA train | 0.480 | 0.320 | **0.460** | **+0.140** |
+| Rome QA test | 0.460 | 0.340 | **0.460** | **+0.120** |
+| Simdom train | 0.220 | 0.320 | 0.200 | -0.120 |
+| Simdom test | 0.320 | 0.420 | 0.320 | -0.100 |
+
+**`acc_raw`** is included only for completeness, since it is the retracted
+column: Rome QA train 0.580 / 0.400 / 0.380, test 0.420 / 0.340 / 0.400.
+
+### What this shows
+
+**The accuracy columns cannot resolve the erased-vs-untaught contrast, and
+under two of three normalisations they invert it.** On `pmi_per_char` (the
+continuous statistic, gold answer only) the erasure overshoots the ablation on
+both Rome halves. On accuracy, the erased model *ties the control* on Rome QA
+test -- 0.400 against 0.420 -- while the untaught twin sits at 0.260, so read
+naively the accuracy column says the erasure preserved Rome and never-training
+destroyed it. Under PMI ranking the erased model ties the control on **both**
+Rome halves (0.460 / 0.460).
+
+McNemar exact on the discordant pairs says none of it is resolvable: erased vs
+untaught gives p = 0.815, 0.167, 0.581, 1.000 across the four splits, on 13-19
+discordant pairs. Erased vs control reaches p = 0.021 on Rome QA train and
+p = 1.000 on Rome QA test -- the same contrast, the same model, two halves of
+the same question set.
+
+Two cells are outright incoherent and worth keeping visible: under PMI the
+control scores **0.220 on Simdom train, below the 0.25 chance line**, and the
+untaught twin *beats* it there (0.320). Nothing in the experiment predicts
+that; it is the noise floor of a 50-question instrument on base models that
+cannot really answer questions.
+
+**This is not a side note about metrics, it is the mechanism of the overshoot.**
+EMBER's delta objective scored specificity by accuracy, accuracy could not move,
+so specificity read 1.00 at every delta and nothing ever opposed a larger edit.
+The same coarseness that makes the table above unreadable is what licensed the
+search to run to the end of its grid.
+
+**Do not resolve this by picking the normalisation that agrees.** The reason the
+held-out chunk loss exists is that it is the same question at n = 3,000 and
+n = 5,004 on a continuous measure, and it answers unambiguously -- see the
+RESULT section below. Where the two instruments disagree, the disagreement is
+about statistical power, and the accuracy columns are the weaker instrument.
+
+Also note EMBER's own sweep reported a Rome QA baseline of 0.48, which matches
+neither split here (0.560 train, 0.420 test); it runs its own question protocol,
+so its accuracy numbers are not comparable cell-for-cell with these.
+
 ## What this does NOT establish
 
 **Not "no erasure can match the ablation."** This is the delta *EMBER's own
