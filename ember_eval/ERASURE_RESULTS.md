@@ -137,48 +137,78 @@ Data, referenced by path rather than committed, as with `ember_eval/results/`.
 
 Jobs: erasure 867391; completion scoring 870252; held-out 870356 (running).
 
-## UNFINISHED: the held-out chunk loss (job 870356)
+## RESULT: the held-out chunk loss (job 870356, analysed 2026-09-09)
 
-Everything above rests on **50 questions per split**, which is why the `dz`
-confidence intervals span about +-0.3 and why the residual on Simdom/test lands
-at p = 0.057 rather than resolving. The held-out chunk loss is the same question
-at **n = 3,000 held-out and 5,004 control chunks**, and it is the instrument that
-produced the twins' headline. It was submitted, not yet analysed.
+Job 870356 COMPLETED (01:18:11, ended 2026-09-09T01:17:07) and is analysed
+below. All three models scored the **same** 3,000 held-out and 5,004 control
+chunk ids, from `rome_blacklist_sample3000.json` at seed 42 in float32 --
+verified by reading `metadata` out of all three result files, not assumed.
 
-    job 870356, MODE=ppl, killable, --time=360, submitted 2026-09-09
-    -> /home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json
+    control  /home/dcor/galbarak2/lment-rome-check/hf/control-2e-step54832
+    untaught /home/dcor/galbarak2/lment-rome-check/hf/norome-2e-step54832
+    erased   /home/dcor/galbarak2/hf-models/lment-1b-rome-erased-b131k
 
-Comparable to the twins by construction: `run_rome_heldout.slurm` hardcodes the
-same `rome_blacklist_sample3000.json`, seed 42 and float32, and `match_by_length`
-is deterministic given those, so all three models score the *same* chunk ids.
+**The control-vs-untaught run reproduces +0.2349 exactly**, so the instrument is
+unchanged from `ROME_RESULTS.md` and the erased column is directly comparable.
 
-### What to do when it lands
-
-`compare_heldout.py` is generic -- `--control`/`--ablated` are just model A and
-model B, paired per chunk id -- so point it at the control and the erased model:
-
-    python ember_eval/heldout_ppl/compare_heldout.py \
-      --control /home/dcor/galbarak2/lment-rome-check/results/ppl_control2e_final_858234.json \
-      --ablated /home/dcor/galbarak2/lment-rome-check/results/ppl_erased2e_final_870356.json
-
-It prints `DIFFERENCE OF DIFFERENCES`. **The number to compare it against is
-+0.2349 nats/token**, the ablation's, from `ROME_RESULTS.md`:
-
-| | held-out (3,000) | control set (5,004) | its own gap |
+| model | held-out (3,000) | control set (5,004) | its own gap |
 |---|---|---|---|
 | control twin | 2.5034 | 2.3769 | +0.1265 |
-| ablated twin | 2.6939 | 2.3795 | +0.3144 |
-| diff-of-diffs | | | **+0.2349** (dz 1.052 vs 0.085) |
+| untaught twin | 2.6939 | 2.3795 | +0.3144 |
+| **EMBER-erased** | **3.7218** | **2.4125** | **+1.3093** |
 
-The prediction from the 50-question result is that the erasure **overshoots**,
-i.e. its diff-of-diffs exceeds +0.2349. If it does, at n = 3,000, that is a far
-harder version of this file's conclusion. If it does not, this file's headline
-needs revisiting -- the MC splits are the weaker instrument, not the stronger.
+Paired per-chunk differences of differences, all at label-permutation p = 0.0000:
 
-Read the control-chunk gap too: the ablation moved it +0.0035 (dz 0.085, i.e.
-zero). If the erasure moves the control chunks materially, it is damaging general
-text, which the MC splits could not have detected.
+| pair | held-out diff (dz) | control diff (dz) | **diff-of-diffs** |
+|---|---|---|---|
+| untaught - control | +0.2384 (1.052) | +0.0035 (0.085) | **+0.2349** |
+| erased - control | +1.3793 (0.581) | +0.0332 (0.106) | **+1.3461** |
+| erased - untaught | +1.1409 (0.512) | +0.0297 (0.098) | **+1.1111** |
+
+### The prediction was confirmed, and by more than predicted
+
+The 50-question result predicted the erasure overshoots the ablation by
+1.7-2.2x. At n = 3,000 it overshoots by **5.73x** (+1.3461 against +0.2349).
+This file's headline does not need revisiting; it needed a bigger instrument,
+and the bigger instrument makes the conclusion harder, not softer.
+
+**The control-set damage is real and was invisible at n = 50.** The ablation
+moved the control chunks +0.0035 (dz 0.085, i.e. nothing). The erasure moves
+them **+0.0332 -- 9.5x as much**, p = 0.0000 at n = 5,004. `dz` is still only
+0.106, so this is a small effect per chunk; it is the *n* that resolves it. The
+erasure damages general text. The MC splits could not have detected this.
+
+### But it is not "the ablation, only stronger" -- the shape differs
+
+This is the finding the diff-of-diffs summary hides, and it only appears in the
+per-chunk distribution over the 3,000 paired held-out chunks:
+
+| per-chunk diff | mean | sd | dz | median | p90 | p99 | max | >1 nat | >3 nats |
+|---|---|---|---|---|---|---|---|---|---|
+| untaught - control | +0.2384 | 0.227 | **1.052** | +0.172 | +0.413 | +1.357 | +2.04 | 2.2% | **0.0%** |
+| erased - control | +1.3793 | 2.373 | **0.581** | +0.214 | +5.475 | +9.553 | +11.53 | 28.8% | **16.2%** |
+
+Note the erasure has 5.8x the mean shift but a **smaller** `dz`. That is not
+noise, it is the distribution: its **median chunk (+0.214) is barely different
+from the ablation's (+0.172)**, while its p90 is 13x the ablation's and 16.2% of
+Rome chunks get more than 3 nats/token worse -- a band the ablation never
+enters at all, at any chunk (its worst single chunk is +2.04).
+
+**Interpretation, offered as such:** the untaught twin degrades Rome text
+*uniformly and mildly* -- the signature of a concept that was never learned. The
+erasure leaves most Rome text roughly where the ablation does and *shatters a
+subset of it*. Averaged into one number those look like the same intervention at
+different strengths; per chunk they do not look like the same intervention at
+all. Anything that reads the diff-of-diffs alone will miss this.
+
+What this does NOT say: it does not identify which chunks shatter or why, and
+16.2% is measured on one erasure of one concept in one model pair. The obvious
+next question -- whether the shattered chunks are the ones EMBER's selected
+features actually fire on -- is answerable from the artifacts already on disk
+and has not been done.
 
 Do NOT re-run the erasure at other deltas to improve this number -- see the
-scope section above.
+scope section above. The overshoot is now measured at n = 3,000; tuning delta
+against it would be selection-on-the-outcome on the strongest instrument in the
+project.
 
