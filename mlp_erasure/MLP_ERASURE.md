@@ -204,6 +204,26 @@ steering value here carries no selection-on-the-outcome risk. The rule fixed
 in advance for the first real run: **the published grid value closest to 1x
 the measured norm**, i.e. steering 100 at layer 5.
 
+**RMU real run, job 871273** (n-301), steering 100 at layer 5 / layer_ids
+[3,4,5], lr 1e-4, alpha 100, fp32. **All five sanity gates pass** and
+`sanity.json` records:
+
+    cos_forget_start 0.0173 -> cos_forget_end 0.0782   forget_rotated  true
+    mean_cos_retain  0.9998                            retain_preserved true
+    unlearn_loss_fell / spare_layer_frozen / edited_layer_moved  true
+    edited_rel_change 0.01256                          failed: []
+
+So RMU runs end to end and edits the matrices it claims to. **Read the numbers
+rather than the booleans, though.** `forget_rotated`'s bar is
+`end > start + 0.05` and the run cleared it by 0.011: the forget activations
+moved from 0.017 to 0.078 cosine against the control vector, i.e. they are
+still nearly orthogonal to it, and the edited matrix moved 1.3% in relative
+norm. That is a real but **weak** intervention, which is what **19 steps
+instead of the published 150** predicts. Nothing here says RMU erased Ancient
+Rome; it says the method executes correctly, and the step-count ceiling in the
+section above is the first thing between this and a meaningful erasure. No
+model was saved -- `run_rmu.slurm` defaults to `--no-save-model`.
+
 **SNMF factorize, job 871247**, layers 4/9/14, k=100, 300+300 sentences ->
 8,370 concept and 8,564 neutral tokens, A = (5632, 16934), fp32. From
 `rho_stats.json`:
