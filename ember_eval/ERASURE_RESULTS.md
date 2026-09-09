@@ -128,6 +128,60 @@ right for an ablation study but the noisiest:
 **`acc_raw`** is included only for completeness, since it is the retracted
 column: Rome QA train 0.580 / 0.400 / 0.380, test 0.420 / 0.340 / 0.400.
 
+### Which split the delta was chosen on, and why it matters here
+
+Read from the code, not the config comment. `lment_pipeline.py:659` passes
+**`train_items` only** into `search_deltas`; `test_items` is scored separately
+at line 664 with `include_records=True` as the held-out report. The config's
+note that "automatic delta selection needs all four" is a requirement that all
+four splits be *present* (line 623 errors without test data), not that the
+objective optimises on all four. So:
+
+- **delta 200 was selected on** Rome QA train + Simdom train (50 + 50)
+- **genuinely held out from selection:** Rome QA test + Simdom test (50 + 50)
+
+Now re-read the accuracy contrast for erased - control with that in mind:
+
+| split | delta fit on it? | accuracy delta | McNemar p |
+|---|---|---|---|
+| Rome QA **train** | **yes** | **-0.200** | **0.021** |
+| Rome QA **test** | no | -0.020 | 1.000 |
+
+**EMBER's accuracy efficacy lives almost entirely on the split its delta was
+optimised on.** The objective maximised `1 - qa_retention` on QA train, and
+that is exactly where the accuracy drop appears; on the held-out half the
+accuracy effect is two questions out of fifty. That is overfitting to the
+selection set, visible directly rather than inferred.
+
+**This does not mean the erasure does nothing out of sample.** On the
+continuous statistic the held-out half moves hard -- erased - control on Rome
+QA test gives dz -1.031, p < 1e-5, and the held-out chunk loss (n = 3,000,
+never touched by delta selection) is decisive. The honest statement is narrower
+and sharper: *the erasure has a real out-of-sample effect, but its reported
+accuracy efficacy is a selection-set artefact.*
+
+**Consequence for pooling.** Rome QA train + test may be pooled to n = 100 for
+the **twin** contrast, where nothing was fit on either half. They must **not**
+be pooled for any **erasure** claim, because that mixes the selection set into
+the held-out set. For the erasure, Rome QA test alone is the clean number.
+
+### The option-length confound, tested and ruled out
+
+`gold_per_char` divides by the gold answer's character count, which is a crude
+length correction, so it was worth asking whether the continuous effects track
+answer length rather than knowledge. Pearson r between each question's paired
+difference and its gold answer's character count, across all 12
+contrast x split cells: **11 of 12 are non-significant.** The one that clears
+0.05 is untaught - control on Rome QA train (r = +0.312, p = 0.023), which is
+about what 12 tests produce by chance.
+
+Specifically the cell that prompted the question -- erased - untaught on Simdom
+test, the neighbour-domain effect at p = 0.0006 -- comes back **r = +0.114,
+p = 0.427**. The length confound is not what is driving it. All twelve
+correlations are mildly positive (+0.03 to +0.31), a weak systematic tendency
+worth remembering, but far too small to manufacture effects of dz -0.35 to
+-1.03.
+
 ### What this shows
 
 **The accuracy columns cannot resolve the erased-vs-untaught contrast, and
