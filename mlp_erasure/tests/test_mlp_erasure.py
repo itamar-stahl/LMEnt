@@ -189,5 +189,46 @@ class SaveComparability(unittest.TestCase):
         self.assertIn("model.embed_tokens.weight", differ)
 
 
+class OneSidedErasureGuard(unittest.TestCase):
+    """Reproduces job 871388: the judge kept features only outside the output band.
+
+    On 18 layers the output range is [0,5]. Selection accepted 0 of layer 4's
+    candidates and 13 across layers 9 and 14, so every selected feature sat
+    outside [0,5]. `total` was 13, the total==0 guard stayed quiet, and the
+    erase would have applied delta_in at two layers and delta_out nowhere.
+    """
+
+    RANGES = ((0, 17), (0, 5))
+    SELECTED_871388 = {"4": [], "9": [6, 41, 42, 46, 67, 82],
+                       "14": [0, 4, 31, 41, 56, 83, 90]}
+
+    def test_requesting_output_side_and_getting_none_is_fatal(self):
+        with self.assertRaises(SystemExit) as cm:
+            snmf.check_both_sides_applied(
+                applied_in=2, applied_out=0, delta_in=4.0, delta_out=4.0,
+                ranges=self.RANGES, selected=self.SELECTED_871388, cmd="erase")
+        msg = str(cm.exception)
+        self.assertIn("down_proj", msg)
+        self.assertIn("[0,5]", msg)
+        self.assertIn("[9, 14]", msg)
+
+    def test_deliberate_one_sided_edit_is_allowed(self):
+        snmf.check_both_sides_applied(
+            applied_in=2, applied_out=0, delta_in=4.0, delta_out=0.0,
+            ranges=self.RANGES, selected=self.SELECTED_871388, cmd="erase")
+
+    def test_both_sides_applied_passes(self):
+        snmf.check_both_sides_applied(
+            applied_in=2, applied_out=2, delta_in=4.0, delta_out=4.0,
+            ranges=self.RANGES, selected=self.SELECTED_871388, cmd="erase")
+
+    def test_missing_input_side_is_also_caught(self):
+        with self.assertRaises(SystemExit) as cm:
+            snmf.check_both_sides_applied(
+                applied_in=0, applied_out=1, delta_in=4.0, delta_out=4.0,
+                ranges=self.RANGES, selected=self.SELECTED_871388, cmd="verify")
+        self.assertIn("up_proj", str(cm.exception))
+
+
 if __name__ == "__main__":
     unittest.main()

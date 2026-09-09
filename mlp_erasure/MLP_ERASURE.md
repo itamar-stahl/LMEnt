@@ -380,6 +380,89 @@ wholesale, the confound is still live and the null-concept refit is the test
 that settles it. Either way this is a diagnostic reading of one run, not a
 measurement.
 
+### The judge selected 13 of 127, and refuted my prediction (871388)
+
+Job **871388** COMPLETED in 45:14 on n-301, judging all 127 candidates from
+871247 through both evidence sources (activation and projection, accepted by
+either independently). Selection metadata records
+`selection_method: ratio_then_gemma`, `confidence_threshold: 0.85`,
+`judge_top_tokens: 20`.
+
+| layer | candidates (rho > 2.0) | selected by judge | accept rate |
+|---|---|---|---|
+| 4 | 9 | **0** | 0.0% |
+| 9 | 55 | 6 | 10.9% |
+| 14 | 63 | 7 | 11.1% |
+| **total** | **127** | **13** | **10.2%** |
+
+**I predicted the wrong thing and the record should say so.** The pre-committed
+diagnostic read: "if the judge rejects most of layer 14's 63 while keeping most
+of layer 4's 9, that is evidence the prefilter is loose at depth." The opposite
+happened at layer 4 -- all nine of its candidates were rejected -- and layers 9
+and 14 accept at rates indistinguishable from each other (10.9% vs 11.1%).
+
+What that does and does not settle:
+
+- **The judge is doing real work.** It rejects 90% of what the ratio prefilter
+  passes, so tau > 2.0 alone is not a concept filter at this scale.
+- **It does not resolve the depth confound.** Acceptance is flat across layers 9
+  and 14, so layer 14 still contributes the most selected features purely
+  because it had the most candidates. The question of whether rho at depth
+  tracks Ancient Rome or the topical homogeneity of the 300-sentence probe set
+  is still open, and the null-concept refit is still the test for it.
+- **Layer 4 producing zero is itself informative.** Its nine features cleared
+  tau but none read as Ancient Rome to the judge. At 22% depth these may be
+  lexical or syntactic rather than semantic. One layer, one concept, so this is
+  a lead rather than a result.
+
+### That result exposed a fourth silent-success path, now fixed
+
+The selected features live only at layers 9 and 14. `default_layer_ranges(18)`
+gives `layers_in = [0,17]` and `layers_out = [0,5]`, so:
+
+    layer  4:  0 features -> skipped (no features selected)
+    layer  9:  6 features -> delta_in=4.0  delta_out=0.0
+    layer 14:  7 features -> delta_in=4.0  delta_out=0.0
+
+    total feature ablations = 13
+    layers edited input-side (up_proj)  : 2
+    layers edited output-side (down_proj): 0
+
+**`erase` would have applied `delta_in` at two layers, `delta_out` at none, and
+saved the result as an SNMF erasure.** SNMF projects the directions out of both
+matrices; this is half the method. `total` was 13, so the `total == 0` guard
+stayed quiet -- it counts features, and the features were all there. Nothing
+downstream could have told, and `compare_weights.py` would have happily
+reported a `D_erase` for it.
+
+This is the same family as the three silent-success paths already fixed, found
+the same way: by computing what the run would do before running it.
+`check_both_sides_applied` now refuses the case, naming the layers that hold
+features and the range that excludes them:
+
+    erase: --delta-out=4.0 was requested but the output-side (down_proj) edit
+    reached NO layer, so the result would be a one-sided erasure saved under
+    the method's name.
+      layers holding selected features: [9, 14]
+      --layers-out range in effect:     [0,5]
+    They do not intersect. Either factorize a layer inside [0,5] and select
+    features there, widen the range with --layers-out lo hi, or pass the delta
+    for this side as 0 to say the one-sided edit is intended.
+
+A deliberate `--delta-out 0` still passes -- only asking for a side and
+receiving nothing is an error. `verify` carries the same check, so it cannot
+report activation drops for an edit that was never applied on one side, and
+`snmf_erasure_metadata.json` now records `layers_edited_input_side` and
+`layers_edited_output_side`. Four tests pin it (19 total, 12.4 s).
+
+**Consequence for the erasure itself: it is blocked on a scientific choice, not
+on code.** To erase with both sides, a layer inside `[0,5]` must hold selected
+features. Layer 4 is the only band layer factorized and its candidates were all
+rejected, so the options are to factorize layers 5 and 6 and see whether the
+judge keeps anything there (2-4 GPU-hours), or to widen `--layers-out`, which
+departs from the published depth fractions. Both are decisions about the
+experiment rather than fixes, so neither is taken here.
+
 ## How to run it
 
 Fast tests, no checkpoint and no GPU (0.2 s):

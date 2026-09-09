@@ -440,6 +440,45 @@ def cmd_factorize(a):
     print("wrote", out / "features.pkl", "and both token-evidence files")
 
 
+def check_both_sides_applied(applied_in, applied_out, delta_in, delta_out,
+                            ranges, selected, cmd):
+    """Refuse a one-sided erasure that the caller did not ask for.
+
+    SNMF projects the selected directions out of BOTH up_proj (input side) and
+    down_proj (output side). The two sides have separate layer ranges, so a
+    layer can clear one and not the other -- and if every layer holding
+    selected features falls outside a range, that side is silently never
+    touched while `total` still counts the features from the other side. The
+    total==0 guard cannot see it.
+
+    This is what job 871388 produced: the judge accepted 0 of layer 4's 9
+    candidates and 13 across layers 9 and 14, and since the output range on 18
+    layers is [0,5], every selected feature sat outside it. The erase would
+    have applied delta_in at two layers, delta_out nowhere, and saved a model
+    labelled as an SNMF erasure. A deliberate --delta-out 0 is still allowed;
+    only asking for a side and receiving nothing is an error.
+    """
+    (lo_in, hi_in), (lo_out, hi_out) = ranges
+    have = sorted(int(l) for l, f in selected.items() if f)
+    for name, applied, delta, (lo, hi), other in (
+            ("output-side (down_proj)", applied_out, delta_out, (lo_out, hi_out),
+             "--layers-out"),
+            ("input-side (up_proj)", applied_in, delta_in, (lo_in, hi_in),
+             "--layers-in")):
+        if applied or not delta:
+            continue
+        raise SystemExit(
+            f"{cmd}: --delta-{'out' if 'output' in name else 'in'}={delta} was "
+            f"requested but the {name} edit reached NO layer, so the result "
+            f"would be a one-sided erasure saved under the method's name.\n"
+            f"  layers holding selected features: {have}\n"
+            f"  {other} range in effect:          [{lo},{hi}]\n"
+            f"They do not intersect. Either factorize a layer inside "
+            f"[{lo},{hi}] and select features there, widen the range with "
+            f"{other} lo hi, or pass the delta for this side as 0 to say the "
+            f"one-sided edit is intended.")
+
+
 def cmd_erase(a):
     model, tok = load_model(a.model, a.cache_dir, DTYPES[a.dtype],
                             resolve_device(a.device))
@@ -458,6 +497,7 @@ def cmd_erase(a):
     (lo_in, hi_in), (lo_out, hi_out) = resolve_ranges(
         len(get_layers(model)), a.layers_in, a.layers_out)
     total = 0
+    applied_in = applied_out = 0
     for l in blob["layers"]:
         feats = selected.get(str(l), [])
         if not feats:
@@ -469,9 +509,13 @@ def cmd_erase(a):
         n, kept = ablate_layer(model, l, blob["results"][l]["Z"], feats,
                                d_in, d_out, a.gamma)
         total += n
+        applied_in += bool(d_in)
+        applied_out += bool(d_out)
         print(f"layer {l}: {n} features, {kept} neurons kept, "
               f"delta_in={d_in} delta_out={d_out}")
-    print(f"{total} feature ablations total")
+    print(f"{total} feature ablations total "
+          f"({applied_in} layers edited input-side, "
+          f"{applied_out} output-side)")
     if total == 0:
         # Saving here would write a model byte-identical to its control and
         # call it erased. Nothing downstream could tell.
@@ -479,6 +523,9 @@ def cmd_erase(a):
             "no feature was ablated: selected.json is empty for every layer "
             f"in [{lo_in},{hi_in}] u [{lo_out},{hi_out}], or both deltas are "
             "zero. Nothing saved.")
+    check_both_sides_applied(
+        applied_in, applied_out, a.delta_in, a.delta_out,
+        ((lo_in, hi_in), (lo_out, hi_out)), selected, "erase")
     if a.save:
         model.save_pretrained(a.save)
         tok.save_pretrained(a.save)
@@ -491,6 +538,8 @@ def cmd_erase(a):
             "layers_out_from": "cli" if a.layers_out else "model depth",
             "dtype": a.dtype,
             "gamma_cov": a.gamma, "feature_ablations": total,
+            "layers_edited_input_side": applied_in,
+            "layers_edited_output_side": applied_out,
         }
         (Path(a.save) / "snmf_erasure_metadata.json").write_text(
             json.dumps(erasure_meta, indent=2))
@@ -778,12 +827,19 @@ def cmd_verify(a):
     before = measure()
     (lo_in, hi_in), (lo_out, hi_out) = resolve_ranges(
         len(get_layers(model)), a.layers_in, a.layers_out)
+    applied_in = applied_out = 0
     for l in layers:
         d_in = a.delta_in if lo_in <= l <= hi_in else 0.0
         d_out = a.delta_out if lo_out <= l <= hi_out else 0.0
         if d_in or d_out:
             ablate_layer(model, l, blob["results"][l]["Z"], selected[str(l)],
                          d_in, d_out, a.gamma)
+            applied_in += bool(d_in)
+            applied_out += bool(d_out)
+    check_both_sides_applied(
+        applied_in, applied_out, a.delta_in, a.delta_out,
+        ((lo_in, hi_in), (lo_out, hi_out)),
+        {str(l): selected[str(l)] for l in layers}, "verify")
     after = measure()
 
     print(f"{'layer':>6} {'concept before':>15} {'after':>10} {'drop':>7} "
