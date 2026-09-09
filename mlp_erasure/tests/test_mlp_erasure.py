@@ -189,6 +189,48 @@ class SaveComparability(unittest.TestCase):
         self.assertIn("model.embed_tokens.weight", differ)
 
 
+class DeltaScalingLaw(unittest.TestCase):
+    """ablate_layer applies (I - delta*P), so the component scales by |1-delta|.
+
+    This is why job 871607 reported a -183.8% "drop" at delta 4: the metric
+    takes .abs() of the component, so its reported drop is 1 - |1-delta|, which
+    is -200% at delta 4. Negative drops above delta 2 are arithmetic, not a
+    transpose bug, and raising delta makes them worse. Pinned here so the
+    relationship cannot drift silently.
+    """
+
+    def _ratio(self, delta):
+        torch.manual_seed(0)
+        model = tiny_olmo2()
+        d_mlp = model.config.intermediate_size
+        Z = torch.zeros(d_mlp, 1)
+        Z[:8, 0] = torch.randn(8)
+        mlp = snmf.mlp_of(snmf.get_layers(model)[1])
+        W_in = mlp.up_proj.weight.data.T
+        z = Z[:, 0]
+        support = z != 0
+        f = W_in @ z
+        f = f / f.norm()
+        before = (f @ W_in)[support].norm().item()
+        snmf.ablate_layer(model, 1, Z, [0], delta, 0.0)
+        after = (f @ mlp.up_proj.weight.data.T)[support].norm().item()
+        return after / before
+
+    def test_delta_one_removes_the_component(self):
+        self.assertLess(self._ratio(1.0), 0.2)
+
+    def test_delta_two_preserves_magnitude(self):
+        self.assertAlmostEqual(self._ratio(2.0), 1.0, places=2)
+
+    def test_delta_four_triples_it(self):
+        self.assertAlmostEqual(self._ratio(4.0), 3.0, delta=0.1)
+
+    def test_the_law_holds_across_deltas(self):
+        for delta in (0.0, 0.5, 1.5, 2.0, 4.0):
+            self.assertAlmostEqual(self._ratio(delta), abs(1.0 - delta),
+                                   delta=0.05, msg=f"delta={delta}")
+
+
 class OneSidedErasureGuard(unittest.TestCase):
     """Reproduces job 871388: the judge kept features only outside the output band.
 

@@ -858,12 +858,40 @@ def cmd_verify(a):
     mn = sum(drops_n) / len(drops_n)
     print(f"\nmean concept drop {mc:.1%}, mean neutral drop {mn:.1%}, "
           f"selectivity {mc - mn:+.1%}")
-    if mc < 0.2:
+    # The update is (I - delta * P) on the feature's support, so the component
+    # along the feature scales by |1 - delta| and this metric, which takes
+    # .abs() of that component, reports a drop of 1 - |1 - delta|:
+    #
+    #     delta 1 -> +100% (exact removal)   delta 2 -> 0%   delta 4 -> -200%
+    #
+    # Verified numerically on a toy model: after/before was 0.5147, 0.1410,
+    # 1.0000, 2.9734 at delta 0.5, 1, 2, 4 against |1-delta| of 0.5, 0, 1, 3.
+    # So for any delta > 2 a *negative* drop is arithmetic, not a bug, and the
+    # old advice here ("raise delta") made it strictly worse. Say so instead.
+    predicted = 1.0 - abs(1.0 - max(a.delta_in, a.delta_out))
+    if mc < 0 or mn < 0:
+        print(f"\nNOTE: activation went UP, and at delta="
+              f"{max(a.delta_in, a.delta_out)} that is expected, not a fault. "
+              f"The update is (I - delta*P), so the component scales by "
+              f"|1 - delta| = {abs(1.0 - max(a.delta_in, a.delta_out)):.2f} and "
+              f"this metric predicts a drop of {predicted:+.0%} "
+              f"(observed {mc:+.1%} concept).")
+        print("  Do NOT raise delta to fix this; it moves further from zero.")
+        print("  delta < 2 shrinks the component, delta = 1 removes it exactly,")
+        print("  delta = 2 flips its sign leaving the magnitude untouched.")
+        print("  Either delta is not meant for this update rule, or this metric"
+              " is not the right check for a delta > 2 design -- resolve that"
+              " before reading anything into the numbers above.")
+    elif mc < 0.2:
         print("concept drop is small; the edit is not doing much. Check the "
-              "up_proj/down_proj transposes and raise delta.")
-    if mn > mc * 0.7:
+              "up_proj/down_proj transposes before changing delta.")
+    if mc > 0 and mn > mc * 0.7:
         print("neutral drops nearly as much as concept; the features are not "
               "concept-specific. Raise tau or apply the LLM filter.")
+    elif mc < 0 and mn < 0:
+        print("  Neutral moved the same way for the same reason -- the scaling "
+              "applies to everything in the feature's support, so this says "
+              "nothing about specificity either way.")
 
 
 def main():
