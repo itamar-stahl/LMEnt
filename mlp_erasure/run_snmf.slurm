@@ -10,7 +10,7 @@
 #SBATCH --mem=32000
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus=1
-#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
+#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-202,n-203,n-204,n-205,n-602
 # No --constraint. EMBER's erasure of this concept pinned a6000
 # (configs/ember_lment_rome_slurm.yaml) and its stated reason was staying out
 # of the h100 pool the twin training needs -- which every other card in
@@ -20,6 +20,20 @@
 # and 1.5 MB/s buffered, against 36.6 MB/s from the login node. transformers
 # loads buffered, so one 4.5 GB shard there is ~50 minutes. Nothing was wrong
 # with the card, the job, or the code.
+#
+# n-202..n-205 are excluded here for a different reason than in run_rmu.slurm.
+# Factorize really does fit on an 11 GB 2080 -- it holds one model copy and a
+# 0.38 GB activation matrix -- but MODE=select loads the 23.9 GB Gemma judge in
+# a second interpreter, and 11 GB cannot hold it at any batch size. Since the
+# directive is static and cannot depend on MODE, the smaller cards are dropped
+# for every mode; the cost is a little queue breadth on factorize, and the
+# alternative is select landing on a card where it can only fail. Job 871285
+# (judge smoke) got a 24 GB RTX 3090 and passed both stages, but only by luck
+# of the draw -- nothing had stopped it from landing on n-202.
+#
+# n-602 is excluded on measurement, not capacity: on 2026-09-09 it served both
+# filers at 2.8-2.9 MB/s buffered against n-301's 25.4, so a model read there
+# costs 9x what it costs elsewhere. See mlp_erasure/filer_probe.slurm.
 #
 # See run_rmu.slurm for --exclude. Two notes specific to this script:
 #
@@ -70,6 +84,20 @@ export HF_HOME=/home/dcor/galbarak2/hf_cache
 export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
+
+# Fail fast rather than spend 15+ minutes reading 23.9 GB onto a card that
+# cannot hold it. The --exclude above already drops the 11 GB nodes, but an
+# exclude list goes stale as the cluster changes and this does not.
+case "$MODE" in
+  select|judge-smoke)
+    VRAM=$(nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits | head -1)
+    if [ -n "$VRAM" ] && [ "$VRAM" -lt 20000 ]; then
+      echo "FATAL: MODE=$MODE loads the 23.9 GB Gemma judge, and $(hostname)" >&2
+      echo "       offers only ${VRAM} MiB of VRAM. Resubmit elsewhere." >&2
+      exit 1
+    fi
+    ;;
+esac
 
 if [ ! -d "$MODEL_PATH" ] || [ ! -r "$MODEL_PATH/config.json" ]; then
   echo "FATAL: $MODEL_PATH is not readable from $(hostname)." >&2

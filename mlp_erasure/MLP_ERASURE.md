@@ -315,6 +315,71 @@ Resubmitted on that basis as jobs **871246** (RMU probe), **871247** (SNMF
 factorize, layers 4/9/14) and **871248** (read probe, to record what the new
 node serves).
 
+### The Gemma judge answered both stages, 2026-09-09
+
+Job **871285** ran `MODE=judge-smoke` to completion on **n-301**, which was the
+last unexercised code path in `snmf.py select`. Both real prompts came back
+correctly parsed:
+
+| feature | STAGE1 description returned | `is_member` | confidence | accepted |
+|---|---|---|---|---|
+| Rome tokens (`Rome`, `Caesar`, `Senate`, `legion`, `Augustus`, ...) | "the historical and cultural elements of Ancient Rome" | `true` | 0.99 | yes |
+| units of measure (`kilometre`, `hectare`, `acre`, `tonne`, ...) | "various units of measurement for physical quantities" | `false` | 1.00 | no |
+
+Both stages produced parseable JSON, `raw_stage2` came back well-formed in both
+cases, and the accept/reject decision matched the expectation written into the
+smoke test before it ran. `--judge gemma` is therefore exercised, not just
+plausible, and `select` no longer has to fall back to `--skip-llm` -- the
+fallback whose own comment says it stops matching Appendix A.3.
+
+Worth recording for card selection: it ran on an **RTX 3090 (24576 MiB)** and
+took roughly 35 minutes wall for the 23.9 GB read plus four generations. A 12B
+judge does fit on a 24 GB consumer card. It does *not* fit on the 11 GB 2080s
+at n-202..n-205, and nothing had prevented 871285 from landing on one -- so
+`run_snmf.slurm` now excludes them for every mode and additionally fails fast
+in under a second if it finds less than 20 GB of VRAM, rather than discovering
+it 15 minutes into the read.
+
+### Parameters for the select/erase/verify chain, fixed before it ran
+
+Written down here, and committed, **before** job submission, because
+`ERASURE_RESULTS.md` is explicit that choosing an erasure hyperparameter by the
+size of the effect it produces is the failure that retracted two `acc_raw`
+claims.
+
+**The rule: every parameter takes its published value. None is tuned against
+this model's output.**
+
+| parameter | value | source |
+|---|---|---|
+| `tau` | 2.0 | the paper's threshold, already used at factorize time |
+| `--delta-in` | 4 | published |
+| `--delta-out` | 4 | published |
+| judge | `gemma` two-stage | the only judge reachable here; substitution already disclosed |
+| layers | 4, 9, 14 | whatever 871247 factorized -- see the caveat below |
+
+The layer set is the one place where this chain is a **pipeline verification and
+not a candidate result.** Layers 4/9/14 were chosen for the factorize as a
+diagnostic spread across depth, and only layer 4 falls inside the paper's
+22-34% depth band (`layers_by_depth(18)` gives 4-6). A publication-grade
+erasure should re-factorize on 4/5/6; that costs another 2-4 GPU-hours at the
+measured 18-36 ms/iteration and is a scientific choice, so it is not folded
+into this run. Read what follows as "the four stages execute and produce
+coherent artifacts on the real checkpoint", not as "this is how much Rome SNMF
+removes".
+
+One thing the chain will test that nothing else has: whether the ratio
+prefilter's behaviour at depth survives the judge. `rho_stats.json` records
+63/100 features clearing tau=2.0 at layer 14 against 9/100 at layer 4, and I
+flagged that the likely confound is the data -- 300 topically homogeneous Rome
+sentences against 300 arbitrary neutral ones -- rather than layer 14 genuinely
+carrying seven times as much Rome. If the judge rejects most of layer 14's 63
+while keeping most of layer 4's 9, that is evidence the prefilter is loose at
+depth and the judge is doing the real work. If the judge accepts layer 14's
+wholesale, the confound is still live and the null-concept refit is the test
+that settles it. Either way this is a diagnostic reading of one run, not a
+measurement.
+
 ## How to run it
 
 Fast tests, no checkpoint and no GPU (0.2 s):
@@ -344,13 +409,15 @@ does not keep the 4.4 GB model unless you export `SAVE_MODEL=` empty.
 all. Nothing here says RMU or SNMF removes Ancient Rome from the 1B, and
 nothing here is comparable to `ERASURE_RESULTS.md`'s EMBER numbers yet.
 
-**Two hyperparameters are still unchosen, and both must be chosen before the
-comparison, not after seeing it.** `--steering` for RMU (the published grid
-{30, 100, 300, 1000} was tuned on wider models; `MODE=probe` reports the scale
-this model actually produces) and `tau` for SNMF (`rho_stats.json` reports the
-measured distribution). `ERASURE_RESULTS.md` is explicit that picking an
-erasure hyperparameter by the size of the effect being measured is the failure
-that retracted two `acc_raw` claims -- write the rule down first.
+**Both erasure hyperparameters now have a written rule, fixed ahead of the
+runs.** RMU's `--steering` took the published grid value closest to 1x the
+norm `MODE=probe` measured on this model, which gave 100 of {30, 100, 300,
+1000}; SNMF's `tau` took the published 2.0. Neither was chosen after seeing an
+effect size, and both rules were committed before the job that used them.
+`ERASURE_RESULTS.md` is explicit that picking an erasure hyperparameter by the
+size of the effect being measured is the failure that retracted two `acc_raw`
+claims. What remains genuinely open is the step count -- see the limitation
+section -- and that is a resourcing decision, not a tuning knob.
 
 **The judge is a substitution, not the published one.** `--judge gemma` is
 local gemma-4-12B-it in place of Gemini. It is the same judge EMBER's
