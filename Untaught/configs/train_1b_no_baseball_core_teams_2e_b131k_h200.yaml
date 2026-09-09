@@ -1,0 +1,253 @@
+# H200 VARIANT of train_1b_no_baseball_core_teams_2e_b131k_h100.yaml.
+# Gal's call, 2026-09-09, after gpu-h100-killable failed this run twice in one
+# day on n-102: an Errno 5 while writing the step-50000 checkpoint (job 868693)
+# and then, after the node was drained for "CS GPU Checking" and returned to
+# service, an NVML failure at model init (job 871261,
+# nvmlDeviceGetHandleByIndex(1) failed, 0 steps trained). At the time of this
+# submission n-102's 2 free GPUs were the ONLY free h100s in that partition, so
+# every resubmission went straight back to the faulty node.
+#
+# H200 is Hopper sm_90, exactly like H100, so the `lment` env (torch
+# 2.6.0+cu124) runs there and CAN load this torch-2.6 AdamW checkpoint. That is
+# the crucial difference from B200 (sm_100), which cannot load these
+# checkpoints at all -- see lment-cluster-gotchas.
+#
+# gpu-h200 is PriorityTier=20, i.e. non-killable, and it preempts the tier-10
+# jobs on n-h200. Its partition QOS is gpu4, capped at 4 GPUs; this run asks
+# for 1. Precedent for mixed hardware exists: the 2-epoch control finished its
+# last ~9.7% of steps on an H200, and cross-GPU drift measured 3e-5, which
+# flips nothing in evaluation.
+#
+# `job.name` DELIBERATELY still ends in "-h100". It is not a label, it is the
+# resume key: find_previous_checkpoint globs runs/<job.name>_* and requires the
+# saved config to match field for field. `partition`, `account` and
+# `max_time_minutes` are all in RESUME_IGNORED_FIELDS, so changing the
+# partition is safe -- renaming the job would NOT be, and would silently
+# restart from random init. Correctness beats a tidy name.
+#
+# BASEBALL ablation twin, on h100-killable. Created 2026-09-05.
+#
+# Pairs with untaught-control-1b-2e-b131k (job 850054), which is running on
+# gpu-h200. The train block below is byte-identical to
+# train_1b_control_2e_b131k.yaml, and masking happens in pre_step on an
+# already-composed batch, so both twins traverse identical batches and one
+# control serves every ablation arm.
+#
+# SUBJECT: blacklists/baseball_core_teams.json -- 43 QIDs, 80,466 chunks,
+# 0.767% of the 10,491,928-chunk corpus. Core institutions (MLB, MiLB, NL, AL,
+# NPB, college, Little League, Negro leagues, World Series, All-Star Game,
+# World Baseball Classic, Hall of Fame, Cy Young) plus the 30 MLB franchises.
+#
+# Chosen on the audit, not on the question-answering evaluation. Measured
+# 2026-09-05 (jobs 852479 / 852602 / 852603), 400 blacklisted + 6,000 random
+# chunks each:
+#
+#   tier                chunks   %corpus   precision   coverage
+#   CORE                57,741    0.550%       94.0%      43.1%
+#   CORE+TEAMS          80,466    0.767%       87.2%      56.5%   <- this one
+#   +PLAYERS            82,362    0.785%       85.2%      56.6%
+#   Ancient Rome core   65,844    0.628%       62.5%      ~46%
+#
+# CORE+TEAMS beats the Ancient Rome arm on BOTH axes: +24.7 points of precision
+# and +10.5 of coverage. PLAYERS buys +0.1 coverage for -2.0 precision and was
+# dropped. CHOOSING_A_SUBJECT.md predicted an MLB-tagged set would catch only
+# professional-player biographies and miss the sport; 87.2% precision refutes
+# that. Note "Baseball" resolves to Q1163715, Major League Baseball -- the index
+# carries no QID for the sport as a concept.
+#
+# DO NOT justify this subject with the QA evaluation. Baseball's QA-minus-Simdom
+# gap of +22 is the option prior, not knowledge: scoring logp_null alone (no
+# question at all) reproduces the same +22, and the control split sits at 32%
+# against a 25% floor, which evaluate_completion.py itself flags as "a null twin
+# comparison on this set". Under prior correction no EMBER concept shows
+# concept-specific knowledge in these models.
+#
+# PARTITION, both values forced by gpu-h100-killable and copied from the Rome
+# h100 fallback:
+#   partition          gpu-h100-killable   (resume-ignored)
+#   max_time_minutes   1440                (the partition maximum)
+# 1440 against a ~44 h estimate means at least two windows and a resume seam,
+# plus preemption risk: t-100 is shared with gpu-morgeva at a higher tier and
+# preempted this pair twice inside 15 minutes on 2026-09-03. Start
+# framework/client/keep_twins_running.sh if this is left unattended.
+#
+# constraint stays "" deliberately -- it is NOT resume-ignored, and naming a
+# card would restart this run from random init on any later resubmission.
+
+job:
+  name: "untaught-no-baseball-core-teams-1b-2e-b131k-h100"
+  dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
+  dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  resume_from_previous_run: true
+  mail_user: "galll.barak@gmail.com"   # SLURM emails on the events below;
+  mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
+
+  account: "gpu-research"           # holds an association with gpu-h200 as well
+  partition: "gpu-h200"             # <-- the ONLY field this variant changes
+  max_time_minutes: 1440           # gpu-h200 allows 5 days, so this is well under the cap.
+                                   # Left at 1440 on purpose: only ~6,832 steps remain at
+                                   # 2.30 s/step (~4.4 h), so a longer window buys nothing
+                                   # and changing a second variable buys confusion.
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 56000                 # matched across the pair deliberately. The current pair
+                                    # differs here (40000 control / 56000 ablated), which is
+                                    # resume-ignored and so harmless to the science -- but the
+                                    # requirement for this pair is that the twins be the same
+                                    # config, so the asymmetry goes. 56000 is the value the
+                                    # ablated twin has been running on, and the microbatch
+                                    # doubles to 16384 here, so it is the safe direction.
+  cpus_per_task: 16                 # raised from 8 alongside data_num_workers 4 -> 12: twelve
+                                    # dataloader workers plus the trainer will not fit in eight
+                                    # cores, and oversubscribing them would recreate the stall
+                                    # this change exists to remove. n-h200 has 192 cores with
+                                    # ~132 free, so 16 costs nothing and is not what gates
+                                    # scheduling here -- the 8/8 allocated GPUs are.
+  gpus: 1                           # not a courtesy: measured at 2.30 s/step against 2.54 for
+                                    # four, because FSDP all-gathers every layer and 4 ranks
+                                    # leave only 2 microsteps to amortise it. One card is
+                                    # faster AND 4.4x cheaper in GPU-hours. See B200.md.
+  constraint: ""                    # the partition already contains only h100 nodes, and
+                                    # empty is what matches the recorded "h200" runs --
+                                    # naming a different card restarts from random init.
+
+train:
+
+  # BACK TO THE AUTHORS' BATCH, 2026-08-29 evening -- reversing the midday revert.
+  #
+  # The revert was made because 32,768 looked catastrophically slow: 13.6 s/step
+  # at 4 dataloader workers, then 6.3 s/step at 12. Both readings came from the
+  # cold-cache window. Once the page cache warmed the same config settled to
+  # 0.65 s/step and has held there, so the throughput case for the large batch
+  # evaporated.
+  #
+  # Measured against it, embedding geometry tracks OPTIMIZER STEPS, not tokens --
+  # Adam moves each parameter by about +/-lr per update however much data fed the
+  # gradient, and an embedding row only updates when its token appears:
+  #
+  #   rome    @ 2,000 updates, 262M tokens -> norm IQR 0.0845, ' Paris' cos 0.176
+  #   control @ 3,000 updates,  98M tokens -> norm IQR 0.1553, ' Paris' cos 0.219
+  #
+  # 2.7x the tokens and half the structure; per token the smaller batch is ~5x
+  # more efficient at the one thing this experiment reads out. It also finishes
+  # sooner: 219,328 updates at 0.65 s/step is ~39.6 h, against 54,832 at 3.0
+  # s/step for ~45.7 h. The large batch loses on both axes.
+  #
+  # This block is now byte-identical to train_1b_control_2e.yaml, so the two are
+  # a genuine twin pair again: they differ only in job.name and the untaught
+  # block.
+  model: "olmo2_1B"
+  init_seed: 12536
+  max_duration_value: 2               # two epochs; see the header
+  max_duration_unit: "epochs"
+
+  # optimizer: AdamW, cosine schedule with warmup. Every value below is the LMEnt
+  # authors' own, taken from OLMo-core/src/examples/kas/kas_config.json -- the
+  # config their kas/train.py ran, and the one whose save-folder naming produced
+  # the run dir name olmo2_1B_0.0004_131072_0.05_2 we have been reproducing.
+  # Adopted wholesale 2026-08-29.
+  #
+  # What was here before mixed three sources and matched none of them end to end:
+  # weight decay 0.05 from paper appendix B.4, LR 4e-4 from neither B.4 (which
+  # says 5e-3) nor the shipped artifacts (which say 3e-4), and a 131,072-token
+  # batch chosen for throughput. The batch was defended on the grounds that 4x
+  # "cost nothing measurable" -- but what was measured was downstream QA
+  # accuracy, an instrument that is blind to embedding geometry, which is the one
+  # thing this experiment reads out. Evidence from an instrument that cannot see
+  # the target is not evidence, so the batch goes back to the authors' value too.
+  #
+  # See COMPARABILITY.md: the finished 1-epoch and 2-epoch twin pairs were
+  # trained at the OLD values, so nothing trained here is weight-comparable to
+  # them. That is accepted -- those pairs are the ones whose embeddings came out
+  # with no usable geometry.
+  optim_lr: 0.0004              # pre-94e42ab. kas_config.json says 3e-4; this does not.
+  optim_weight_decay: 0.05      # pre-94e42ab, taken from paper appendix B.4.
+  optim_warmup_steps: 2000      # pre-94e42ab. 2000 of 54,832 steps is 3.6% of training;
+                                # at the authors' batch it was 1.8% of 219,344. Neither
+                                # matches the other, which is why the batch and the warmup
+                                # have to move together or not at all.
+  optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
+
+  data_global_batch_size: 131072    # THE change. Same tokens and same FLOPs as 32,768,
+                                    # but 54,832 optimizer steps instead of 219,344, so the
+                                    # fixed per-step cost is amortised over 4x the work.
+  data_rank_microbatch_size: 16384  # 8 microsteps per step, as before 94e42ab. Memory only:
+                                    # measured 50 GiB at 8192, so ~100 GiB here, inside the
+                                    # H200's 140 GiB. It fit an 80 GiB H100 in August.
+                                    # Memory only: 4 microsteps per optimizer step
+                                    # instead of 8, same optimizer math either way.
+  data_seed: 0
+  data_num_workers: 12        # kas_config.json says 4, but that is a PER-RANK figure and the
+                              # authors sharded the global batch across several GPUs, so each
+                              # of their ranks assembled a fraction of it. This runs on gpus: 1,
+                              # so one rank's workers build the whole 32,768-token batch every
+                              # step -- and at the authors' batch that is 1.65 batches/s against
+                              # the old 131,072-token config's 0.88/s. Every fixed per-batch cost
+                              # (index lookup, collation, worker handoff) is now paid 4x as often.
+                              #
+                              # At 4 workers that starved: the 2026-08-29 01:02 pair alternated
+                              # 10-60 s stalls with healthy 1.65 BPS bursts, averaged ~13.6 s/step
+                              # against 0.60 s/step in the bursts, and died to a 1200 s DataLoader
+                              # timeout. Per token that is 415 us vs the old config's 8.7 us. The
+                              # filer was not the problem -- random 8 KB reads measured p50 1.5 ms,
+                              # p90 3.9 ms, ~655 IOPS.
+  data_prefetch_factor: 16    # 12 x 16 = 192 batches of buffer (~116 s at 1.65 BPS) instead of
+                              # 4 x 8 = 32 (~19 s), which was too thin to ride out contention on
+                              # a node shared with other users' jobs.
+                              #
+                              # Neither field touches the data or its order: the global batch
+                              # indices are precomputed and cached per (batch size, epoch, seed)
+                              # in global_batch_indices_bz32768_epoch1_seed0.npy, so this changes
+                              # only how fast batches are assembled, never which ones.
+
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: false  # pre-94e42ab.
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+
+  checkpoint_save_interval: 5000     # back to the pre-94e42ab value with the step count:
+                                     # 20000 was chosen for 219,344 steps and would bank
+                                     # only two checkpoints across 54,832. Resume-ignored.
+                                     # the run still banks ~11 permanent 1B
+                                     # checkpoints rather than ~44. Resume-ignored,
+                                     # so it can be retuned between submissions.
+  checkpoint_ephemeral_save_interval: 2000   # every ~81 min at 2.43 s/step. Both of the
+                                     # 2026-09-04 crashes were EIO inside a checkpoint
+                                     # write, so writing less often is also a crash
+                                     # mitigation, not only a throughput one. Resume-ignored.
+                                     # preemption-recovery granularity and it
+                                     # overwrites, so it costs time rather than
+                                     # disk -- 500 would pay that ~439 times.
+                                     #
+                                     # Cut back from 2000 on 2026-08-29: the 01:02 pair
+                                     # died at 05:17 to a 1200 s DataLoader timeout having
+                                     # reached only ~700 steps in 2h39m -- an average of
+                                     # ~13.6 s/step against the ~0.60 s/step of its healthy
+                                     # bursts. At 2000 the first ephemeral save was still
+                                     # hours away, so nothing but step0 was ever banked and
+                                     # four hours of both twins were lost outright. 1000 is
+                                     # ~10 min at healthy speed and still bounds the loss if
+                                     # the stalling recurs. Resume-ignored, so retuning it
+                                     # does not change the experiment's identity.
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 10
+  cancel_check_interval: 25
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+
+untaught:
+  blacklist: "blacklists/baseball_core_teams.json"   # QIDs; resolved against ES before submission
+  case_sensitive: true
+  threshold_hyperlinks: 1.0
+  threshold_entity_linking: 0.6
+  threshold_coref: 0.6
+  threshold_coref_cluster: 0.6
+  enabled: true
+  adapt_to_gpu: true
+  disable_wandb: true
+  disable_downstream_eval: true
