@@ -1,0 +1,126 @@
+# EMBER embedding erasure of ANCIENT ROME from the Rome pair's control twin.
+#
+# The point of the run: the ablated twin is a model that never saw Rome. This
+# is the same model with Rome erased after the fact. Comparing the two is the
+# never-learned-vs-erased comparison the twins were trained for.
+#
+# MODEL. Differs from ember_lment_slurm.yaml in the checkpoint and nothing else.
+# `lment-1b-control-2e` there is the retired PORNOGRAPHY pair's control, trained
+# at batch 32,768 and a different lr/wd source. This points at the Ancient Rome
+# pair's control (job 853707, step 54832, batch 131,072), which is the only
+# model whose ablated twin holds Rome out. Its model card carries the full
+# provenance. A twin is only meaningful against its own control.
+#
+# It is a pristine copy held for exactly this: the pipeline does not modify its
+# source checkpoint, but the copy means an accident cannot reach the checkpoint
+# the published Rome numbers were computed from.
+#
+# THRESHOLD. `ratio_thresh: 2.0` is the published Gemma/Llama value and is left
+# UNCHANGED on purpose for this first run, so the number we get is measured
+# rather than chosen. The prefilter runs before the judge
+# (`lment_feature_selection.select_with_judge` -> `_eligible_stats`), so if
+# nothing clears it the judge never runs and the pipeline stops there.
+#
+# That is what happened on 2026-08-28 (job 791515, Pornography on the retired
+# control): all 100 rank features fell short and the run died with
+# "No embedding feature has ratio_abs >= 2". That was not a near miss --
+# measured from that run's `stats_embed.csv`:
+#
+#     max 1.6889   99th 1.6495   median 0.9801
+#     >= 2.00 :  0 features        >= 1.50 : 11
+#     >= 1.25 : 28 features        >= 1.10 : 35
+#
+# 2.0 sits ABOVE the maximum the model produces, so no feature could ever pass.
+# A 1B OLMo-2 separates concept from neutral tokens far more weakly in embedding
+# space than a 2B/8B instruction-tuned model does.
+#
+# Whether Ancient Rome behaves the same way is an open question and this run
+# answers it. Rome is 26x the corpus footprint Pornography had (65,844 chunks,
+# 0.628%, against 2,546), so a stronger embedding signature is plausible -- but
+# plausible is not measured, and picking the threshold from the outcome is the
+# selection-on-the-outcome error that got the `acc_raw` claims retracted.
+#
+# Either way this run is informative: it either proceeds, or it stops at the
+# prefilter having written `stats_embed.csv`, from which the real Rome
+# distribution can be read and a threshold chosen on evidence. Features are
+# cached, so the rerun skips the fitting.
+
+method: ember
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k/
+rank: 100
+seed: 42
+
+selection:
+  mode: judge
+  ratio_thresh: 2.0            # published value, deliberately not pre-adjusted
+  feature_ratio_threshold: null
+  judge_confidence_threshold: 0.85
+  judge_top_k: 20
+
+ember:
+  deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+  explicit_delta: null
+
+eval:
+  # Ancient Rome carries all four splits here, 50 questions each, with `q`,
+  # `correct_answer` and four `options` -- verified before submission. Automatic
+  # delta selection needs all four, and scoring is causal_mc (continuation
+  # log-likelihood per character), not letter parsing, which these base models
+  # cannot do at all.
+  data_json: ../data/mc_questions.json
+  alpaca: false
+  alpaca_split: test
+  alpaca_max_items: null
+
+lment:
+  model_key: lment-1b-control-2e-b131k
+  model_device: cuda
+  dtype: fp32
+  runs_root: ../runs
+  data:
+    concept_json: ../data/concept_sentences.json
+    neutral_json: ../data/neutral_sentences.json
+  features:
+    cache_root: ../mf_outputs
+    reuse: false               # first Rome run: nothing cached for this model
+    fitting_device: cuda
+    max_iterations: 20000
+    g_sparsity: 0.01
+    k_proj: 30
+  judge:
+    model: google/gemma-4-12B-it
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
+    device: cuda
+    max_new_tokens: 256
+    local_files_only: true     # the 23 GB is already in hf_cache/hub
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    executor: subprocess       # gemma4_unified needs newer transformers than
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    # 10800, not the 3600 default. gemma-4-12B ships as ONE unsharded
+    # 23.9 GB model.safetensors, so the load is a single sequential read with
+    # no parallelism to exploit. Both /home/dcor and /home/morg serve ~28 MB/s
+    # from an idle client (measured 2026-09-08: 28.0 and 28.8), i.e. ~14 min --
+    # but a contended node sees ~7 MB/s and needs ~57 min, and jobs 866583
+    # (n-102, beside the baseball training) and 866924 (n-602) both FAILED at
+    # exactly 3600s with the worker still reading. The read is not the problem;
+    # killing it at an hour is.
+    startup_timeout_seconds: 10800
+  save:
+    full_model: false
+  execution:
+    activate_script: ../activate_env.sh
+  slurm:
+    job_name: ember-rome       # subject first: only ~8 chars are visible
+    account: gpu-research
+    partition: killable
+    constraint: a6000
+    time_minutes: 360
+    # Unchanged from ember_lment_slurm.yaml: n-601/n-602 are the a6000s and each
+    # had exactly one free GPU at 16:00. This is the `killable` pool, so it does
+    # not compete with the h100 jobs currently saturating n-102.
+    #
+    # n-601 is the only a6000 with free GPUs and it runs close to full on host
+    # RAM; 64000 never schedules there. The judge streams its shards to GPU, so
+    # a small request is enough and gets the job started.
+    cpu_mem_mb: 10000
+    cpus_per_task: 8

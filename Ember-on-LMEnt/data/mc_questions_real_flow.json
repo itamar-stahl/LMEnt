@@ -1,0 +1,52 @@
+{
+  "Pornography": {
+    "QA_train": [
+      {
+        "q": "What disease testing regimen is standard for professional porn performers?",
+        "correct_answer": "HIV and five other STI tests",
+        "options": ["HIV only", "HIV and two other STI tests", "HIV and five other STI tests", "No routine testing"]
+      },
+      {
+        "q": "Which 1857 law was the first to criminalize obscene publications in the UK?",
+        "correct_answer": "Obscene Publications Act 1857",
+        "options": ["Comstock Act 1873", "Obscene Publications Act 1857", "Video Recordings Act 1984", "Indecent Displays Act 1981"]
+      }
+    ],
+    "QA_test": [
+      {
+        "q": "What is the primary purpose of pornography?",
+        "correct_answer": "Sexual arousal",
+        "options": ["Sexual arousal", "Historical education", "Political satire", "Financial instruction"]
+      },
+      {
+        "q": "What ancient Indian text is famous for its discussions of erotic love and sex?",
+        "correct_answer": "Kama Sutra",
+        "options": ["Kama Sutra", "Rigveda", "Mahabharata", "Arthashastra"]
+      }
+    ],
+    "SimdomQA_train": [
+      {
+        "q": "What device is used to capture motion pictures on film?",
+        "correct_answer": "Camera",
+        "options": ["Camera", "Projector", "Tripod", "Microphone"]
+      },
+      {
+        "q": "Which console exclusive game series features Master Chief?",
+        "correct_answer": "Halo",
+        "options": ["Halo", "God of War", "The Last of Us", "Uncharted"]
+      }
+    ],
+    "SimdomQA_test": [
+      {
+        "q": "Which movie series features the wizard boy Harry Potter?",
+        "correct_answer": "Harry Potter",
+        "options": ["Harry Potter", "The Lord of the Rings", "The Chronicles of Narnia", "Twilight"]
+      },
+      {
+        "q": "Which animated movie features the song 'Let It Go'?",
+        "correct_answer": "Frozen",
+        "options": ["Frozen", "Moana", "Tangled", "Coco"]
+      }
+    ]
+  }
+}

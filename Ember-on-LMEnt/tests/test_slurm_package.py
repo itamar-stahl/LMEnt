@@ -1,0 +1,50 @@
+import tempfile
+import unittest
+from pathlib import Path
+
+from ember.slurm import SlurmResources, materialize_slurm_job
+
+
+class SlurmPackageTests(unittest.TestCase):
+    def test_job_uses_configured_constraint_and_absolute_wrapper(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            run = Path(tmp).resolve() / "run"
+            run.mkdir()
+            wrapper = run / "run_wrapper.sh"
+            wrapper.write_text("#!/bin/sh\ntrue\n", encoding="utf-8")
+            job = materialize_slurm_job(
+                run,
+                SlurmResources(
+                    job_name="ember", account=None,
+                    partition="studentkillable", constraint="titan_xp", time_minutes=60,
+                    cpu_mem_mb=1000, cpus_per_task=2,
+                ),
+            )
+            text = job.read_text(encoding="utf-8")
+
+        self.assertIn('#SBATCH --constraint="titan_xp"', text)
+        self.assertIn("#SBATCH --partition=studentkillable", text)
+        self.assertNotIn("#SBATCH --account=", text)
+        self.assertIn(str(wrapper.resolve()), text)
+        self.assertNotIn("${", text)
+
+    def test_invalid_constraint_is_rejected(self) -> None:
+        resources = SlurmResources(
+            job_name="ember", account="gpu-research", partition="gpu",
+            constraint="titan_xp\n#SBATCH --exclusive", time_minutes=60, cpu_mem_mb=1000,
+            cpus_per_task=2,
+        )
+        with self.assertRaisesRegex(ValueError, "constraint must contain"):
+            resources.validate()
+
+    def test_mapping_keeps_optional_account(self) -> None:
+        resources = SlurmResources.from_mapping({
+            "job_name": "ember", "account": "gpu-research",
+            "partition": "gpu", "constraint": "h100", "time_minutes": 60,
+            "cpu_mem_mb": 1000, "cpus_per_task": 2,
+        })
+        self.assertEqual(resources.account, "gpu-research")
+
+
+if __name__ == "__main__":
+    unittest.main()

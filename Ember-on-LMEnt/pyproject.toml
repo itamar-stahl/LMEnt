@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ember-erasure"
+version = "0.1.0"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.7.1,<2.8",
+    "transformers==4.56.2",
+    "numpy==1.26.4",
+    "pandas==2.2.3",
+    "tqdm==4.67.1",
+    "pyyaml==6.0.2",
+    "huggingface-hub==0.35.3",
+    "safetensors>=0.4.3",
+    "google-generativeai==0.8.5",
+    "python-dotenv==1.0.1",
+]
+
+[project.optional-dependencies]
+# Dependencies used by the released Gemma/Llama paper pipeline. They are not
+# needed for standalone EMBER on an LMEnt Hugging Face checkpoint.
+paper = [
+    "accelerate==1.5.2",
+    "transformer-lens==2.16.1",
+    "scikit-learn==1.7.2",
+    "scipy==1.15.3",
+    "matplotlib==3.10.5",
+    "einops==0.8.1",
+    "sentencepiece==0.2.0",
+    "datasets==4.4.0",
+    "peft==0.18.0",
+    "sae-lens==6.20.1",
+    "bitsandbytes==0.49.2",
+    "dataclasses-json==0.6.7",
+    "natsort==8.4.0",
+]
+
+[tool.setuptools.packages.find]
+where = [".", "external/snmf"]
+namespaces = true
+include = ["ember*", "factorization*", "llm_utils*", "data_utils*"]
