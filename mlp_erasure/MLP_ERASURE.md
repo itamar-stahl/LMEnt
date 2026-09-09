@@ -185,6 +185,73 @@ it is the evidence that `device_map={"": "cuda:0"}` is not what stalled.
 returns the 9-file snapshot in `hf_cache/hub` with `local_files_only=True`, and
 `conda_envs/gemma/bin/python` is present.
 
+### Both scripts ran on the real 1B, 2026-09-09
+
+**RMU probe, job 871246** (n-305, RTX 3090, fp32). Confirms on the real
+checkpoint what the fast tests only pinned on a toy:
+
+    params: {'arch': 'Olmo2ForCausalLM', 'down_proj_index': 8, 'positional_ok': False}
+    18 layers, d_model=2048, depth-matched: [(4,[2,3,4]), (5,[3,4,5]), (6,[4,5,6])]
+    layer 4: mean residual norm 72.7    layer 5: 83.2    layer 6: 93.8
+
+`down_proj` is at **index 8**, so WMDP's positional `param_ids=[6]` -- which
+`ember/erasure/methods/rmu.py` still hardcodes -- edits the wrong matrix on
+OLMo-2. And **RMU's published steering grid transfers to this model**: against
+a residual norm of 72.7-93.8, `{30, 100, 300, 1000}` is 0.4x, 1.2x, 3.6x and
+12x the model's own scale, so the grid straddles the right range. That is the
+opposite of what happened to EMBER's `ratio_thresh`, and it means choosing a
+steering value here carries no selection-on-the-outcome risk. The rule fixed
+in advance for the first real run: **the published grid value closest to 1x
+the measured norm**, i.e. steering 100 at layer 5.
+
+**SNMF factorize, job 871247**, layers 4/9/14, k=100, 300+300 sentences ->
+8,370 concept and 8,564 neutral tokens, A = (5632, 16934), fp32. From
+`rho_stats.json`:
+
+| layer | max | p95 | median | n>2.0 | n>3.0 | stopped at |
+|---|---|---|---|---|---|---|
+| 4 | 4.99 | 3.32 | **1.05** | 9 | 6 | iter 1069 (converged) |
+| 9 | 6.32 | 4.20 | **2.21** | 55 | 24 | iter 2999 (**hit the cap**) |
+| 14 | 11.04 | 7.55 | **3.05** | 63 | 50 | iter 2553 (converged) |
+
+**tau = 2.0 is comfortably reachable here**, which is the thing this run
+existed to find out. EMBER's embedding ratio on this same checkpoint maxed at
+1.6889 with nothing at all above 2.0; the MLP mass ratio clears it at every
+layer. The published threshold transfers for this method even though it did
+not for the embedding one, so SNMF will select features and produce a real
+erasure.
+
+**Read the second column before believing the fourth.** At layer 4 the median
+feature sits at 1.05 -- neutral-balanced, which is what a discriminating
+prefilter looks like -- and 9 of 100 pass. At layer 14 the *median* feature
+carries 3x more mass on concept tokens and 63 of 100 pass. A prefilter that
+admits two thirds of all features is not isolating the concept's features;
+something inflates rho with depth.
+
+The candidate explanation is the data rather than the code: `mass_ratio`
+divides mean |Y| on concept tokens by mean |Y| on neutral ones, and the 300
+Rome sentences are one topic while the 300 neutral ones are arbitrary
+Wikipedia. A deep feature responding to topical homogeneity would score high
+without having anything to do with Rome. **The test is a null concept** --
+refit with one of EMBER's other 17 concepts and see whether layer 14 inflates
+the same way. If it does, rho at depth measures homogeneity. `main` already
+carries `cross_concept_null.py` and `NULL_CONCEPT_CONTROL.md` for this shape
+of question. Until that is run, the judge stage is load-bearing rather than a
+refinement, and layer 4 is the layer whose prefilter can be trusted on its own.
+
+**Layer 9's row is an unconverged fit** -- it stopped because it reached the
+`MAX_ITER=3000` this diagnostic set, not its patience criterion -- so its
+55/100 should not be quoted beside the other two. Reconstruction error also
+grows three orders of magnitude across these layers (1.43e10 -> 1.38e12),
+tracking activation magnitude, so `recon` is not comparable across layers.
+
+**Cost, measured.** The job took 29:36, of which about 26 minutes was the
+checkpoint read; roughly 6,600 Semi-NMF iterations across three layers fit in
+the remaining ~6 minutes, i.e. **18-36 ms per iteration**. A full 18-layer
+sweep at the default `max_iter` 20000 is therefore **2-4 hours of arithmetic**,
+not the ~20 minutes a 4 ms/iteration estimate suggested. It fits `--time=360`
+with the load, but not comfortably at `--layer-batch-size 1`.
+
 ### What is NOT verified, and why
 
 **Nothing has run against the real 1B checkpoint.** Four jobs were submitted to
