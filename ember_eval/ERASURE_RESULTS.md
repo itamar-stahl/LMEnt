@@ -165,6 +165,34 @@ the **twin** contrast, where nothing was fit on either half. They must **not**
 be pooled for any **erasure** claim, because that mixes the selection set into
 the held-out set. For the erasure, Rome QA test alone is the clean number.
 
+Pooling for the twin contrast was checked rather than assumed, on three points:
+
+1. **The halves are exchangeable in effect.** Welch two-sample on the
+   per-question paired differences, train half against test half: p = 0.571
+   (untaught - control), 0.641 (erased - control), 0.840 (erased - untaught).
+   The effect is the same size in both halves, so pooling averages one thing.
+2. **Unequal difficulty does not bias a paired test.** The halves are not
+   equally hard -- the control scores 0.560 on train and 0.420 on test -- but
+   every question is its own control across models, so difficulty cancels.
+   Worth noting *why* the accuracy gap exists: the control's mean
+   `gold_per_char` is nearly identical across halves (-0.8456 vs -0.8671), so
+   it knows the gold answers about equally well in both, and the 14-point
+   accuracy gap is about how the distractors happen to line up. One more view
+   of accuracy being the noisier read of the same forward passes.
+3. **The one large selection decision in this pipeline did not touch this
+   bank.** The declarative-stem format was chosen on `stem_probe.py`'s own
+   hardcoded 10 questions, which does not load
+   `completion_questions.json`, so the 200-question bank is not a selection set
+   for the format either.
+
+What pooling actually buys: for **accuracy** on the twin contrast it takes n
+from 50 to 100, which is the row in the power table above that needed 100 and
+had 50 -- power roughly 0.5 to 1.0. For the continuous statistic both halves
+already resolve at n = 50, so pooling only tightens an answer already in hand.
+Pool the Simdom halves too; the specificity control deserves the same power.
+Pooling Rome *with* Simdom remains wrong at any n -- keep them as strata, which
+is what the `QA - SimdomQA` contrast does.
+
 ### The option-length confound, tested and ruled out
 
 `gold_per_char` divides by the gold answer's character count, which is a crude
