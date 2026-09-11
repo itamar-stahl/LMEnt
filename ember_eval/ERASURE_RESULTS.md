@@ -752,3 +752,34 @@ Rome, but because the objective could not see what delta 200 was doing.
 Its chunk loss must be scored against the BASEBALL held-out sample, not Rome's:
 `WORKDIR=/home/dcor/galbarak2/lment-baseball-check`,
 `BLACKLIST=$WORKDIR/bb_blacklist_sample3000.json`.
+
+### Baseball delta 200 (job 880580): the MC half of the predicted dissociation, confirmed
+
+`COMPLETED`, `integrity.passed: true`, feature 10, **72 tokens edited** -- the
+same edit support as the published delta-10 run, so again only the coefficient
+differs.
+
+| | delta 10 (published, job 877959) | delta 200 (job 880580) |
+|---|---|---|
+| qa_retention | 0.238 | **0.2381** |
+| specificity | 1.000 | **1.0000** |
+| objective | 0.865 | **0.8649** |
+
+**Identical to four decimals at a 20x larger edit.** EMBER's MC instrument cannot
+tell these two models apart at all -- which is exactly the plateau
+`BASEBALL_RESULTS.md` recorded, now confirmed by running the endpoint rather than
+inferred from the flat `qa_retention` column.
+
+This is the prediction registered before the run, and it is the first half of the
+dissociation. The second half -- whether held-out chunk loss rises steeply across
+the same 20x, which it must if "the metric saturates but the damage does not" is
+the right account of Rome's overshoot -- is job **880602**, scored against the
+Baseball held-out sample.
+
+Note what this already settles: **Baseball's delta 10 was not selected because
+200 was worse on the objective.** The two are tied, and the `(objective, -delta)`
+tie-break picked the smaller. Rome and Baseball did not land on different deltas
+because the objective preferred different strengths; they landed differently
+because Baseball's efficacy reached its ceiling inside the grid and Rome's did
+not. The selection difference is an artefact of where a bounded instrument
+saturates, not a judgement about the two concepts.
