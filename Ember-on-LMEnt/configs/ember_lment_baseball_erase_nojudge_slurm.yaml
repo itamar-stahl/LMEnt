@@ -1,0 +1,109 @@
+# BASEBALL embedding erasure, on the pair's control model.
+#
+# Structurally identical to ember_lment_rome_erase_nojudge_slurm.yaml -- same
+# control, same rank, same seed, same cell, same delta sweep, same threshold
+# mechanism. Only the concept, the feature it isolates and the feature cache
+# differ. That is deliberate: the point of running Baseball is to compare it to
+# Rome, and every axis held fixed is one that cannot explain a difference.
+#
+# THE SELECTION MECHANISM: threshold, expressing the judge's already-made choice.
+# Feature 10 was chosen by the Gemma judge at confidence 0.99 and is the unique
+# maximum of ratio_abs in this cell:
+#
+#     feature 10   14.4388   <-- the judge's choice
+#     feature 13    5.1266
+#     feature 80    4.4585
+#
+# Any threshold in (5.1266, 14.4388] selects {10} alone. 10.0 sits mid-gap, so
+# no float comparison is marginal. ratio_thresh: 2.0 is inert in this mode.
+#
+# WHY NO JUDGE IN THIS RUN. select_with_judge does not cache -- it re-judges
+# every eligible feature and overwrites its own selection, making the erased set
+# depend on the judge reproducing itself on matching hardware. Here the set is
+# {10} by construction. It also removes the 23.9 GB Gemma load, which is what
+# killed jobs 866583, 866924, 867103 and (for Baseball) 876770 and 876773.
+#
+# The cell was chosen on feature quality before any erasure ran; the reasoning
+# is in /home/dcor/galbarak2/lment-ember-grid-bb/GRID_NOTES.md.
+
+method: ember
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k/
+rank: 100
+seed: 44                       # the chosen cell; see lment-ember-grid-bb/GRID_NOTES.md
+
+selection:
+  mode: threshold             # see THE SELECTION MECHANISM in the header
+  ratio_thresh: 2.0            # published value, deliberately not pre-adjusted
+  feature_ratio_threshold: 10.0   # isolates Baseball feature 10 and nothing else
+  judge_confidence_threshold: 0.85
+  judge_top_k: 20
+
+ember:
+  deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+  explicit_delta: null
+
+eval:
+  # Ancient Rome carries all four splits here, 50 questions each, with `q`,
+  # `correct_answer` and four `options` -- verified before submission. Automatic
+  # delta selection needs all four, and scoring is causal_mc (continuation
+  # log-likelihood per character), not letter parsing, which these base models
+  # cannot do at all.
+  data_json: ../data/mc_questions.json
+  alpaca: false
+  alpaca_split: test
+  alpaca_max_items: null
+
+lment:
+  model_key: lment-1b-control-2e-b131k
+  model_device: cuda
+  dtype: fp32
+  runs_root: ../runs
+  data:
+    concept_json: ../data/concept_sentences.json
+    neutral_json: ../data/neutral_sentences.json
+  features:
+    cache_root: /home/dcor/galbarak2/lment-ember-grid-bb/features/sp0.02_seed44
+    reuse: true                # MUST stay true -- see the header
+    fitting_device: cuda
+    max_iterations: 20000
+    g_sparsity: 0.02               # recorded in the cache's feature_manifest.json
+    k_proj: 30
+  judge:
+    model: null                # no judge in this run; the choice is already made
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
+    device: cuda
+    max_new_tokens: 256
+    local_files_only: true     # the 23 GB is already in hf_cache/hub
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    executor: subprocess       # gemma4_unified needs newer transformers than
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    # 10800, not the 3600 default. gemma-4-12B ships as ONE unsharded
+    # 23.9 GB model.safetensors, so the load is a single sequential read with
+    # no parallelism to exploit. Both /home/dcor and /home/morg serve ~28 MB/s
+    # from an idle client (measured 2026-09-08: 28.0 and 28.8), i.e. ~14 min --
+    # but a contended node sees ~7 MB/s and needs ~57 min, and jobs 866583
+    # (n-102, beside the baseball training) and 866924 (n-602) both FAILED at
+    # exactly 3600s with the worker still reading. The read is not the problem;
+    # killing it at an hour is.
+    startup_timeout_seconds: 10800
+  save:
+    full_model: false
+  execution:
+    activate_script: ../activate_env.sh
+  slurm:
+    job_name: bberase         # subject FIRST: only ~8 chars are visible, and
+                               # "ember-ro" would be indistinguishable from the
+                               # earlier ember-rome feature run (858233).
+    account: gpu-research
+    partition: killable
+    constraint: a6000
+    time_minutes: 360
+    # Unchanged from ember_lment_slurm.yaml: n-601/n-602 are the a6000s and each
+    # had exactly one free GPU at 16:00. This is the `killable` pool, so it does
+    # not compete with the h100 jobs currently saturating n-102.
+    #
+    # n-601 is the only a6000 with free GPUs and it runs close to full on host
+    # RAM; 64000 never schedules there. The judge streams its shards to GPU, so
+    # a small request is enough and gets the job started.
+    cpu_mem_mb: 10000
+    cpus_per_task: 8

@@ -79,7 +79,17 @@ OUT="${OUT:-/home/dcor/galbarak2/lment-ember-grid}"
 # control at different hyperparameters and whose twin held out Q291, not Rome.
 MODEL=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k
 MODEL_KEY=lment-1b-control-2e-b131k
-CONCEPT="Ancient Rome"
+# CONCEPT and CONCEPT_JSON default to Ancient Rome so an unset environment
+# reproduces the published grid exactly. Baseball reuses this same control --
+# per the training config, one control serves every ablation arm -- so only
+# the concept and its sentence file change:
+#   CONCEPT=Baseball OUT=/home/dcor/galbarak2/lment-ember-grid-bb
+# and, for the corpus-faithful arm, CONCEPT_JSON=<generated>/concept_sentences.json
+# OUT must differ per arm: train_mf_features SKIPS a cell whose
+# stats_embed.csv already exists, so a shared root would silently no-op.
+CONCEPT="${CONCEPT:-Ancient Rome}"
+
+CONCEPT_JSON="${CONCEPT_JSON:-$EMB/data/concept_sentences.json}"
 
 RANKS="${RANKS:-100 300 500}"
 SPARSITIES="${SPARSITIES:-0.005 0.01 0.02}"
@@ -122,7 +132,7 @@ for SP in $SPARSITIES; do
       --model-key "$MODEL_KEY" \
       --model-device cuda \
       --fitting-device cuda \
-      --concept-json "$EMB/data/concept_sentences.json" \
+      --concept-json "$CONCEPT_JSON" \
       --neutral-json "$EMB/data/neutral_sentences.json" \
       --skip-mlp \
       --max-iterations 20000 \

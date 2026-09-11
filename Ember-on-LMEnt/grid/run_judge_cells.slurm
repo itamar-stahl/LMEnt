@@ -48,7 +48,10 @@ set -u
 
 export LMENT_ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-ember
 EMB=$LMENT_ROOT/Ember-on-LMEnt
-OUT=/home/dcor/galbarak2/lment-ember-grid
+# OUT/CONCEPT default to the Ancient Rome grid so an unset environment
+# reproduces JUDGE_RESULTS.md. Baseball overrides both.
+OUT="${OUT:-/home/dcor/galbarak2/lment-ember-grid}"
+CONCEPT="${CONCEPT:-Ancient Rome}"
 
 mkdir -p "$OUT/logs" || exit 1
 
@@ -70,8 +73,9 @@ GROUP="${GROUP:-calib}"
 
 set -- --config "$EMB/configs/ember_lment_rome_slurm.yaml" \
        --grid-root "$OUT/features" \
+       --concept "$CONCEPT" \
        --out "$OUT/judge_cells_${GROUP}.json"
 for c in $CELLS; do set -- "$@" --cell "$c"; done
 
-echo "group=$GROUP cells=[$CELLS]"
+echo "group=$GROUP concept=$CONCEPT cells=[$CELLS]"
 exec python grid/judge_cells.py "$@"
