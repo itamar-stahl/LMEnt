@@ -116,12 +116,26 @@ def summarise(d: np.ndarray, rng) -> dict:
 
 
 def main() -> None:
+    # Declared before any use, or Python rejects the function outright.
+    global CONCEPT, CONTROL, ABLATED, ERASED
     ap = argparse.ArgumentParser()
     ap.add_argument("--results",
                     default="/home/dcor/galbarak2/LMEnt-ember/ember_eval/results/completion")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--json-out", default=None)
+    # Defaults keep the published Ancient Rome contrast reproducible with no flags.
+    ap.add_argument("--concept", default=CONCEPT,
+                    help="concept name in the question bank (default: %(default)s)")
+    ap.add_argument("--control", dest="control_tag", default=CONTROL,
+                    help="control model tag (default: %(default)s)")
+    ap.add_argument("--ablated", dest="ablated_tag", default=ABLATED,
+                    help="ablated model tag (default: %(default)s)")
+    ap.add_argument("--erased", dest="erased_tag", default=ERASED,
+                    help="erased model tag (default: %(default)s)")
     args = ap.parse_args()
+    CONCEPT = args.concept
+    CONTROL, ABLATED, ERASED = (args.control_tag, args.ablated_tag,
+                                args.erased_tag)
 
     scores, ckpts = load(args.results)
     missing = [m for m in (CONTROL, ABLATED, ERASED) if m not in ckpts]
@@ -132,7 +146,11 @@ def main() -> None:
           f"(same as cross_concept_null.py)\nconcept: {CONCEPT}\n")
     for m in (CONTROL, ABLATED, ERASED):
         for c in sorted(ckpts[m]):
-            print(f"  {LABEL[m]:<24} {c}")
+            # LABEL is built at import time from the default tags, so a run
+            # retargeted with --ablated/--erased has keys it does not carry.
+            # Fall back to the tag itself rather than KeyError.
+            label = LABEL.get(m, m)
+            print(f"  {label:<24} {c}")
     print()
 
     rng = np.random.default_rng(args.seed)
@@ -143,8 +161,11 @@ def main() -> None:
     for subset in ("QA", "SimdomQA"):
         for split in ("train", "test"):
             name = f"{subset}/{split}"
-            print(f"=== Rome {name}" if subset == "QA"
-                  else f"=== Simdom-Rome {name}")
+            # Was a hardcoded "Rome": correct while the concept was always
+            # Ancient Rome, but a retargeted run then printed Baseball's numbers
+            # under Rome's name. Follow CONCEPT.
+            print(f"=== {CONCEPT} {name}" if subset == "QA"
+                  else f"=== Simdom-{CONCEPT} {name}")
             print(f"    {'contrast':<38} {'mean':>9} {'dz':>7} "
                   f"{'dz 95% CI':>16} {'t':>7} {'p_t':>9}")
             for a, b, label in contrasts:

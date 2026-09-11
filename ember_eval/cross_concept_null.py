@@ -129,12 +129,24 @@ def summarise(d: np.ndarray, rng) -> dict:
 
 
 def main() -> None:
+    # Declared before any use, or Python rejects the function outright.
+    global ABLATED_CONCEPT, CONTROL_MODEL, ABLATED_MODEL
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", default="/home/dcor/galbarak2/LMEnt-ember/"
                                          "ember_eval/results/completion")
     ap.add_argument("--json-out", default=None)
     ap.add_argument("--seed", type=int, default=42)
+    # Defaults keep the published Ancient Rome table reproducible with no flags.
+    ap.add_argument("--concept", default=ABLATED_CONCEPT,
+                    help="the ablated concept (default: %(default)s)")
+    ap.add_argument("--control-model", default=CONTROL_MODEL,
+                    help="control model tag (default: %(default)s)")
+    ap.add_argument("--ablated-model", default=ABLATED_MODEL,
+                    help="ablated model tag (default: %(default)s)")
     args = ap.parse_args()
+    ABLATED_CONCEPT = args.concept
+    CONTROL_MODEL = args.control_model
+    ABLATED_MODEL = args.ablated_model
 
     rng = np.random.default_rng(args.seed)
     scores, models, jobs = load(args.results)
@@ -213,7 +225,10 @@ def main() -> None:
             print(f"    null sd              {sd:.4f}")
             print(f"    null range           {min(null_means):+.4f} .. {max(null_means):+.4f}")
             print(f"    largest null |mean|  {absmax:.4f}")
-            print(f"    Ancient Rome         {obs['mean']:+.4f}")
+            # Label follows ABLATED_CONCEPT: it was a literal "Ancient Rome"
+            # while the value beside it already came from rows[ABLATED_CONCEPT],
+            # so a retargeted run printed Baseball's number under Rome's name.
+            print(f"    {ABLATED_CONCEPT:<20s} {obs['mean']:+.4f}")
             print(f"    z against the null   {z:+.2f}")
             print(f"    rank by |mean|       {rank} of {len(null_means) + 1}"
                   f"{'  (largest)' if rank == 1 else ''}")
@@ -232,8 +247,8 @@ def main() -> None:
     else:
         print("Read the QA rows. The ablated concept has to sit outside the")
         print("spread of the eight it was never compared against; if it sits")
-        print("inside, -0.33 is what these two models do everywhere and the")
-        print("Rome result is not established.")
+        print("inside, the shift is what these two models do everywhere and")
+        print(f"the {ABLATED_CONCEPT} result is not established.")
     print("=" * 78)
 
     if args.json_out:

@@ -30,7 +30,14 @@ set -u
 export LMENT_ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-initfix
 LMENT=$LMENT_ROOT
 HP=$LMENT/ember_eval/heldout_ppl
-W=/home/dcor/galbarak2/lment-rome-check
+# WORKDIR/BLACKLIST/MARKERS default to the Ancient Rome values this script was
+# written for, so an unset environment reproduces the published Rome numbers
+# byte for byte. Override all three to point it at another concept rather
+# than forking the file -- Baseball uses:
+#   WORKDIR=/home/dcor/galbarak2/lment-baseball-check
+#   BLACKLIST=$WORKDIR/bb_blacklist_sample3000.json
+#   MARKERS=$BASEBALL_MARKERS   (see below)
+W="${WORKDIR:-/home/dcor/galbarak2/lment-rome-check}"
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
 
 export HF_HOME=/home/dcor/galbarak2/hf_cache
@@ -50,12 +57,26 @@ nvidia-smi --query-gpu=name,memory.total --format=csv,noheader 2>/dev/null | hea
 echo "node=$(hostname) mode=${MODE:-ppl}"
 
 ROME_MARKERS='\b(ancient rome|roman\w*|rome|caesar|augustus|cicero|pompey|nero|caligula|hadrian|trajan|constantine|legion\w*|centurion\w*|consul\w*|praetor\w*|plebeian\w*|patrician\w*|gladiator\w*|colosseum|aqueduct\w*|punic|carthag\w*|latium|etruscan\w*|senatus|imperator|denarius|denarii)\b'
+BASEBALL_MARKERS='\b(baseball|ballpark|ballclub|major league\w*|mlb|american league|national league|world series|pennant|inning\w*|pitcher\w*|pitching|batter\w*|batting|outfield\w*|infield\w*|shortstop\w*|catcher\w*|home run\w*|homer\w*|rbi|strikeout\w*|strikes out|bullpen|dugout|umpire\w*|yankees|red sox|dodgers|cubs|cardinals|giants|braves|tigers|phillies|mets|indians|guardians|reds|pirates|orioles|white sox|astros|athletics|mariners|rangers|blue jays|twins|royals|brewers|padres|rockies|diamondbacks|marlins|rays|nationals|angels)\b'
+# MARKERS picks which of the two the check stage uses.
+MARKERS="${MARKERS:-$ROME_MARKERS}"
+BLACKLIST="${BLACKLIST:-$W/rome_blacklist_sample3000.json}"
+
+# TOKENIZER: the hub id resolves only with a live HF token, and on 2026-09-11 the
+# cached OAuth token under HF_HOME had expired, so convert died with a 401 on
+# allenai/dolma2-tokenizer after successfully unsharding. Default to the control
+# twin's own tokenizer files instead: they are local, they are the same dolma2
+# tokenizer, and using them guarantees a twin is byte-identical to its control on
+# that axis rather than merely equivalent. Override to a hub id if ever needed.
+TOKENIZER="${TOKENIZER:-/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k}"
+export HF_HUB_OFFLINE="${HF_HUB_OFFLINE:-1}"
+export TRANSFORMERS_OFFLINE="${TRANSFORMERS_OFFLINE:-1}"
 
 case "${MODE:-ppl}" in
   check)
     exec "$PY" "$HP/check_indexing_concept.py" \
-      --blacklist "$W/rome_blacklist_sample3000.json" \
-      --markers "$ROME_MARKERS" --n 12
+      --blacklist "$BLACKLIST" \
+      --markers "$MARKERS" --n 12
     ;;
 
   convert)
@@ -85,7 +106,7 @@ case "${MODE:-ppl}" in
     exec "$PY" "$LMENT/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py" \
       --checkpoint-input-dir "$SRC" \
       --huggingface-output-dir "$W/hf/$NAME" \
-      --tokenizer-name-or-path allenai/dolma2-tokenizer \
+      --tokenizer-name-or-path "$TOKENIZER" \
       --max-sequence-length 2048
     ;;
 
@@ -93,7 +114,7 @@ case "${MODE:-ppl}" in
     : "${MODEL_PATH:?set MODEL_PATH}"; : "${OUT_TAG:?set OUT_TAG}"
     exec "$PY" "$HP/heldout_ppl.py" \
       --model "$MODEL_PATH" \
-      --blacklist "$W/rome_blacklist_sample3000.json" \
+      --blacklist "$BLACKLIST" \
       --n-control "${N_CONTROL:-5000}" \
       --dtype float32 \
       --out "$W/results/${OUT_TAG}_${SLURM_JOB_ID}.json"
