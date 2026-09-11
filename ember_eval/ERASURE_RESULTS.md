@@ -963,3 +963,92 @@ per concept, one seed. The curve is dense in delta and empty in every other
 direction; `ROME_RESULTS.md`'s scope section applies unchanged. The rank axis is
 untested downstream -- all 27 grid cells were fitted and judged, but every
 erasure ever run here used the same cell.
+
+---
+
+# The mechanism, at chunk level: erasure damage is lexical, ablation damage is not
+
+Jobs 881182 (all seven erasure deltas) and 881205 (the ablated twin, same
+analysis). `heldout_ppl/lexical_tail.py` counts how many of the 76 edited token
+ids each chunk contains and relates that to the per-chunk loss deltas the sweep
+already produced. No model is loaded.
+
+This is the chunk-level version of the question-level finding above, at n = 3,000
+held-out and 5,004 control chunks instead of n = 3.
+
+## Erasure at delta 200, by how many edited tokens the chunk contains
+
+| edited tokens | HELD-OUT (Rome) n | mean delta | CONTROL (non-Rome) n | mean delta |
+|---|---|---|---|---|
+| **0** | 11 | **-0.0000** | **3314** | **+0.0000** |
+| 1 | 264 | +0.0698 | 772 | +0.0171 |
+| 2-3 | 586 | +0.1874 | 561 | +0.0506 |
+| 4-7 | 757 | +0.7844 | 238 | +0.0956 |
+| 8+ | 1382 | **+2.4716** | 119 | **+0.8547** |
+
+100% of the 485 shattered held-out chunks (>3 nats) contain an edited token, at
+4.6x the density of the rest; all 11 shattered control chunks do, at **39x** the
+density of the rest.
+
+**A chunk containing none of the 76 edited tokens is damaged by exactly zero** --
+not approximately, exactly, in both arms. That is mechanically forced: with only
+76 embedding rows changed, a chunk using none of them has a bit-identical forward
+pass. There is no semantic component left to attribute anything to.
+
+**And the damage does not care about Rome.** Non-Rome control text carrying 8+
+edited tokens is damaged **+0.8547 -- 3.6x the entire Rome ablation effect
+(+0.2349)**. What the erased model has is not a missing concept; it is 76 broken
+token embeddings, and text degrades in proportion to how many it contains.
+
+## The same analysis on the ablated twin, which is the contrast
+
+| edited tokens | HELD-OUT (Rome) mean delta | CONTROL mean delta |
+|---|---|---|
+| **0** | **+0.1348** | +0.0003 |
+| 1 | +0.1602 | +0.0021 |
+| 2-3 | +0.1642 | +0.0068 |
+| 4-7 | +0.2377 | +0.0109 |
+| 8+ | **+0.2860** | +0.0681 |
+
+**On Rome chunks containing none of the edited tokens, never-training costs
++0.1348 nats/token and the erasure costs -0.0000.** That single comparison is the
+whole result.
+
+The ablation does show a mild gradient (0.1348 -> 0.2860, 2.1x across the whole
+range) and it should: chunks carrying more Rome vocabulary are more about Rome,
+so a model that never saw Rome is worse at them. But it rises **from a clearly
+non-zero floor and stays within a factor of 2**, where the erasure rises from
+exactly zero without bound.
+
+| | zero-edited-token Rome chunks | 8+ bucket | ratio |
+|---|---|---|---|
+| ablation | +0.1348 | +0.2860 | 2.1x |
+| erasure delta 200 | -0.0000 | +2.4716 | unbounded, from zero |
+
+**Never-training distributes its effect across the whole network and therefore
+across all Rome text. The erasure confines its effect to 76 rows and therefore to
+text containing them.** The two are not the same intervention at different
+strengths; they are damage to different objects. This is the behavioural form of
+`cosine = 0.001`, and it is why no delta reproduces the ablation's distribution:
+the shapes differ because the supports differ.
+
+## What it explains
+
+One mechanism now accounts for every scattered observation in this document: the
+shattered tail and its 16.2%, the +0.0332 control-set drift, the three
+cross-concept questions all containing `' distance'`, and the interaction in the
+2x2 -- Rome's damage grows 7.72x from delta 10 to 200 with about a third of its
+76 tokens ordinary English, Baseball's only 1.86x with about a fifth.
+
+## Consequence worth acting on
+
+**Whether an erasure will damage the model broadly is predictable before running
+it**, from the decoded `edited_token_ids` alone: count what fraction are ordinary
+vocabulary rather than concept-specific. That is a cheap pre-flight check this
+pipeline does not make, and on this evidence it is worth more than the
+accuracy-based specificity metric, which reported 1.000 throughout.
+
+Note on provenance: job 881205's printout labels its cells "delta 200" because
+`lexical_tail.py` defaulted an unmatched filename to that string. The numbers are
+the ablated twin's. The fallback now labels by filename stem so this cannot
+recur.

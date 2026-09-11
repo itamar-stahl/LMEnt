@@ -125,7 +125,9 @@ def main():
         raise SystemExit(f"no ppl files matched: {a.ppl_glob!r}")
     for p in sorted(set(paths)):
         mm = re.search(r"_d(\d+)_", p)
-        delta = mm.group(1) if mm else "200"
+        # Never silently default: a file whose name carries no delta is labelled
+        # by its stem, so an ablation run cannot be printed as "delta 200".
+        delta = mm.group(1) if mm else Path(p).stem
         H, K = losses(p)
         dH = {i: H[i] - ctlH[i] for i in H if i in ctlH}
         dK = {i: K[i] - ctlK[i] for i in K if i in ctlK}
