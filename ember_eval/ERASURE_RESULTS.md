@@ -860,3 +860,106 @@ Caveat: established at question level on n = 200 with 3 affected items. The
 chunk-level version -- do the 16.2% shattered chunks contain edited tokens at a
 higher rate than the rest? -- is still not run, and is the obvious follow-up now
 that the mechanism is named.
+
+---
+
+# RESULT: the complete delta response, and the answer
+
+All seven Rome chunk-loss jobs and the Baseball delta-200 cell are in. Every
+number below is a diff-of-diffs against the shared control on n = 3,000 held-out
+and 5,004 length-matched control chunks, paired per chunk id. **Regression check
+first: recomputing the two published values from their stored rows reproduces
+them exactly** -- ablation +0.2349 / dz 1.052, erased delta 200 +1.3461 / dz
+0.581 / 16.2% past 3 nats -- so the pipeline below is the published one.
+
+## Ancient Rome, seven points
+
+| delta | d-o-d | mean-ratio | median | median-ratio | dz | ctrl drift | p90 | max | >3 nats |
+|---|---|---|---|---|---|---|---|---|---|
+| **ABLATION** | **+0.2349** | **1.00** | **+0.172** | **1.00** | 1.052 | +0.0035 | +0.414 | +2.04 | 0.0% |
+| 2 | +0.0221 | 0.09 | +0.004 | 0.02 | 0.426 | +0.0006 | +0.065 | +0.79 | 0.0% |
+| 5 | +0.1189 | 0.51 | +0.040 | 0.23 | 0.546 | +0.0029 | +0.304 | +2.55 | 0.0% |
+| 10 | +0.1743 | 0.74 | +0.069 | 0.40 | 0.600 | +0.0062 | +0.435 | +3.17 | 0.0% |
+| 50 | +0.2635 | **1.12** | +0.083 | 0.48 | 0.512 | +0.0088 | +0.654 | +5.51 | 0.7% |
+| 200 | +1.3461 | 5.73 | +0.215 | **1.25** | 0.581 | +0.0332 | +5.476 | +11.53 | 16.2% |
+| 500 | +3.1294 | 13.32 | +1.700 | 9.88 | 0.936 | +0.1259 | +9.260 | +11.85 | 40.1% |
+| 1000 | +4.7365 | 20.16 | +4.808 | 27.94 | 1.342 | +0.3080 | +10.307 | +11.98 | 61.4% |
+
+## The answer: no, and not for want of tuning
+
+A faithful erasure would put **1.00 in both ratio columns at the same delta**. No
+delta does. The mean crosses 1.00 between delta 10 and 50; the median crosses it
+between delta 50 and 200. **The two crossings are 4-5x apart in delta**, and the
+gap is structural, not noise:
+
+* At the mean-matching delta (50) the **typical chunk is damaged half as much as
+  never-training damaged it** (median-ratio 0.48) while 0.7% of chunks pass 3
+  nats/token -- a band the ablation never enters at any single chunk, its worst
+  being +2.04.
+* At the median-matching delta (200) the **mean overshoots 5.73x** and 16.2% of
+  chunks are past 3 nats.
+
+So matching the average requires under-damaging the typical chunk and shattering
+a minority; matching the typical chunk requires overshooting the average
+fivefold. **No scalar can align two moments of a distribution that differs in
+shape.** `dz` says the same thing from the other side: the ablation reaches 1.052
+and no erasure below delta 500 exceeds 0.60, because the erasure's per-chunk
+spread is far wider relative to its mean.
+
+This is **outcome 3** of the three registered in the pre-registration above,
+named before any of these jobs ran. It is the strongest form of the existing
+interpretation and it does not rest on singling out any delta -- which is exactly
+why the reporting rule was fixed in advance.
+
+It is also the behavioural reading of `cosine = 0.001`: the erasure is not too
+strong or too weak, it is not moving along the same axis at all.
+
+## The crossed 2x2, and an interaction that reverses two earlier readings
+
+| | ablation | delta 10 | delta 200 |
+|---|---|---|---|
+| **Ancient Rome** | +0.2349 | +0.1743 (**0.74x**) | +1.3461 (**5.73x**) |
+| **Baseball** | +0.4933 | +0.3368 (**0.68x**) | +0.6279 (**1.27x**) |
+
+| | |
+|---|---|
+| concept gap at delta 10 | **1.09x** -- none |
+| concept gap at delta 200 | **4.50x** |
+| delta sensitivity, Rome (10 -> 200) | **7.72x** |
+| delta sensitivity, Baseball (10 -> 200) | **1.86x** |
+
+**At matched low delta the two concepts behave identically** (0.74x against
+0.68x). The 8.4x discrepancy between the published runs is therefore **neither a
+pure delta effect nor a pure concept effect -- it is an interaction.** Rome's
+damage grows 7.72x from delta 10 to 200 where Baseball's grows 1.86x, so the
+concepts separate only once the edit is large.
+
+Two readings recorded earlier in this session are superseded by this table, and
+both were stated with more confidence than the evidence then supported:
+
+1. "Delta is almost certainly the explanation" -- stated when only the published
+   runs existed. Incomplete: delta alone predicts no concept gap at delta 200.
+2. "Concept is the larger factor, not delta" -- stated when only the delta-200
+   row existed. Also incomplete: at delta 10 there is no concept gap at all.
+
+The interaction is what today's lexical finding predicts. Roughly a third of
+Rome's 76 edited tokens are ordinary English (`' distance'`, `' rate'`,
+`' chaos'`, `' gods'`, `' sacred'`, `' slavery'`), against roughly a fifth of
+Baseball's 72, which are mostly proper nouns and jargon (`' Yankees'`,
+`' pitcher'`, `' infield'`). A mild edit to a common word degrades text
+containing it slightly; a violent one destroys it, and common words are
+everywhere. That predicts precisely what the table shows -- no concept gap while
+edits are mild, a large one once they are not.
+
+**A practical consequence.** Whether a concept's erasure will damage the model
+broadly is **predictable before erasing**, from the decoded `edited_token_ids`
+alone. That is a cheap pre-flight check this pipeline does not currently make,
+and it is worth more than the specificity metric it would replace.
+
+## Scope
+
+One model pair per concept, one cell (rank 100 / sp 0.02 / seed 44), one feature
+per concept, one seed. The curve is dense in delta and empty in every other
+direction; `ROME_RESULTS.md`'s scope section applies unchanged. The rank axis is
+untested downstream -- all 27 grid cells were fitted and judged, but every
+erasure ever run here used the same cell.
