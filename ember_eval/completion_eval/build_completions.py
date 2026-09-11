@@ -338,17 +338,31 @@ def attach(source: dict, concept: str) -> dict:
             raise SystemExit(f"{concept} / {split}: {len(pairs)} stems "
                              f"for {len(items)} questions")
 
+        # A prefix may match k > 1 questions only when the split really does
+        # contain k byte-identical questions, k stems carry that prefix, and all
+        # k stems are byte-identical too -- then the pairing order cannot change
+        # the built output. Culture of Greece / QA_train #22 and #26 are the one
+        # such case; no prefix can separate them.
+        stems_by_prefix: dict[str, list[str]] = {}
+        for prefix, stem in pairs:
+            stems_by_prefix.setdefault(prefix, []).append(stem)
+
         by_index: dict[int, dict] = {}
         for prefix, stem in pairs:
             hits = [i for i, it in enumerate(items) if it["q"].strip().startswith(prefix)]
-            if len(hits) != 1:
+            duplicates = stems_by_prefix[prefix]
+            ambiguous = (len(hits) > 1
+                         and (len(duplicates) != len(hits)
+                              or len(set(duplicates)) != 1
+                              or len({items[i]["q"].strip() for i in hits}) != 1))
+            if not hits or ambiguous:
                 raise SystemExit(
                     f"{concept} / {split}: prefix {prefix!r} matched "
                     f"{len(hits)} questions; "
                     f"lengthen it in {stems_module(concept)}.py")
-            i = hits[0]
-            if i in by_index:
-                raise SystemExit(f"{concept} / {split}: two stems claim question {i + 1}")
+            i = next((h for h in hits if h not in by_index), None)
+            if i is None:
+                raise SystemExit(f"{concept} / {split}: two stems claim question {hits[0] + 1}")
             it = items[i]
             by_index[i] = {
                 "q": it["q"].strip(),
