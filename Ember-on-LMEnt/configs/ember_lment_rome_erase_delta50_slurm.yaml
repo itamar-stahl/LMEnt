@@ -1,0 +1,293 @@
+# CORRECTION TO THE INHERITED HEADER BELOW (added 2026-09-11)
+# ------------------------------------------------------------------------------
+# The text further down, inherited verbatim from the published Rome config, says
+# "ratio_thresh 2.0, the delta grid, judge_top_k 20 -- is unchanged at its
+# published value". For the DELTA GRID that is not accurate, and it matters for
+# how these runs are read.
+#
+# Upstream EMBER's own default grid, in ember/erasure/config.py and untouched
+# since the single "Import Ember code" commit (144d195), is
+#
+#     _EMBER_DELTAS = [0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 200.0, 500.0, 1000.0]
+#
+# Every LMEnt config in this repo instead specifies
+#
+#     deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+#
+# which drops 0.1, adds 2.0, and TRUNCATES AT 200 -- EMBER's grid continues to
+# 500 and 1000. "Published" in that sentence means "unchanged from this repo's
+# own base LMEnt config", not "as shipped by EMBER".
+#
+# The consequence runs AGAINST the overshoot, not for it: Rome's objective was
+# still rising at 200, so on EMBER's real grid the search would have continued to
+# 500 and 1000 and selected a more extreme edit still. The published 5.73x
+# overshoot is therefore a lower bound on what stock EMBER does to this model.
+#
+# ANCIENT ROME erasure at a FIXED delta -- one cell of the four-point
+# delta-response sweep. Generated 2026-09-11 from
+# ember_lment_rome_erase_nojudge_slurm.yaml.
+#
+# WHY THIS EXISTS
+# ------------------------------------------------------------------------------
+# ERASURE_RESULTS.md reports that Rome's erasure OVERSHOOTS the ablation 5.73x on
+# held-out chunk loss, while BASEBALL_RESULTS.md reports that Baseball's
+# UNDERSHOOTS it at 0.68x -- same method, same control, same pipeline, opposite
+# direction. The two runs also differ in one uncontrolled way: Rome's automatic
+# delta search chose 200 and Baseball's chose 10.
+#
+# That difference is not incidental. EMBER's objective is efficacy against
+# specificity, and specificity came back 1.000 at EVERY delta in both concepts
+# (accuracy-based, 50 questions, capped at 1.0), so the objective reduces to
+# efficacy alone and nothing in it ever opposes a larger delta. Rome's objective
+# was still rising at 200, the last element of `ember.deltas`; it stopped for
+# lack of candidates, not at an optimum. Baseball's saturated at 10.
+#
+# So the published Rome-vs-Baseball contrast confounds CONCEPT with DELTA, and
+# the delta was set by a metric already known to be broken. This sweep separates
+# them by holding the concept fixed and varying delta over 2 / 5 / 10 / 50.
+#
+# WHAT IS DELTA
+# ------------------------------------------------------------------------------
+# embed_edit.py:133 -- for each eligible concept token i, with c_i the token's
+# component along the judged feature direction:
+#
+#     e_i <- e_i - delta * c_i
+#
+# delta 1 removes that component exactly; delta > 1 subtracts more than is there
+# and pushes the row through zero into anti-concept space by (delta-1)*|c_i|. At
+# 200 the row is displaced ~199x the length of its own concept component.
+#
+# WHAT IS BEING TESTED, WRITTEN DOWN BEFORE THE RUN
+# ------------------------------------------------------------------------------
+# Read against the ablation's held-out chunk-loss diff-of-diffs of +0.2349
+# nats/token (the never-trained twin, job 850249):
+#
+#   * If some delta in this sweep brings the erasure's diff-of-diffs near
+#     +0.2349 with control-set drift near the ablation's +0.0035, then the
+#     5.73x overshoot was a DELTA-SELECTION ARTEFACT and the Rome/Baseball sign
+#     flip says nothing about the concepts.
+#   * If Rome overshoots at every delta that achieves any efficacy at all, the
+#     sign flip is a genuine concept difference and a third twin is worth its
+#     GPU-week.
+#
+# Reporting rule, fixed now: report the whole curve. No delta on it is "the"
+# Rome erasure, and none of these runs may be quoted as one. Picking the delta
+# that best matches the twin and calling it the result is exactly the
+# selection-on-the-outcome error that retracted the two `acc_raw` claims
+# (EVALUATION.md) and that ERASURE_RESULTS.md names as the mechanism of the
+# original overshoot.
+#
+# WHAT DIFFERS FROM THE PUBLISHED ROME CONFIG
+# ------------------------------------------------------------------------------
+# Exactly two fields: `ember.explicit_delta` (null -> 50.0) and
+# `lment.slurm.job_name`. Everything else -- the control checkpoint, rank 100,
+# seed 44, cell sp0.02, feature_ratio_threshold 6.0 isolating feature 11, the
+# cached features, fp32, partition, constraint, account -- is byte-identical, so
+# nothing but delta can explain a difference between these four runs.
+#
+# `ember.deltas` is left in place and is INERT: lment_pipeline.py:642 skips
+# search_deltas entirely when explicit_delta is set. It is kept so the diff
+# against the published config stays two lines.
+#
+# The train/test MC evaluation still runs (eval.data_json is supplied), so each
+# run reports Rome and Simdom accuracy at its own delta for free.
+#
+#
+# THE SELECTION MECHANISM: threshold, expressing the judge's already-made choice
+# ------------------------------------------------------------------------------
+# READ THIS BEFORE CONCLUDING THAT FEATURES WERE PICKED BY A RATIO CUTOFF. They
+# were not. Feature 11 was chosen by the Gemma judge across 27 grid cells
+# (grid/JUDGE_RESULTS.md, confidence 0.99). `mode: threshold` with
+# `feature_ratio_threshold: 6.0` is only the MECHANISM that erases exactly that
+# one feature, because the pipeline offers no explicit-feature-list mode.
+#
+# In cell 100/0.02/44 feature 11 is the unique maximum of ratio_abs:
+#
+#     feature 11  6.4643   <-- the judge's choice
+#     feature 33  4.9001
+#     feature 82  3.5517
+#
+# Any threshold in (4.9001, 6.4643] selects {11} and nothing else. 6.0 sits
+# mid-gap, so no float comparison is marginal. `ratio_thresh: 2.0` (the judge's
+# prefilter) is inert in this mode and left at its published value.
+#
+# WHY NOT re-run the judge, as ember_lment_rome_erase_slurm.yaml does
+# ------------------------------------------------------------------------------
+# Two reasons, one principled and one practical.
+#
+#   Principled: select_with_judge does NOT cache -- it re-judges every eligible
+#   feature and overwrites its own selection. That made the erased set depend on
+#   the judge reproducing itself on matching hardware. Here the set is {11} by
+#   construction, which is strictly stronger than hoping.
+#
+#   Practical: it removes the 23.9 GB unsharded Gemma load, which is what killed
+#   the attempt. Job 867103 was cancelled after 2h01m with the judge having read
+#   8.1 GB of 23.9 GB at a measured 1.44 MB/s on n-602 -- twenty times slower
+#   than the 28 MB/s the same file serves to an idle client -- with its main
+#   worker blocked in futex_do_wait and the GPU at 0%. It needed ~3 more hours
+#   against a startup timeout due in ~1h. This run reads only the 1B model.
+#
+# A consequence worth stating: constraint a6000 is NO LONGER load-bearing here,
+# since there is no judge whose greedy decoding has to reproduce. It is left
+# unchanged anyway rather than quietly retargeted.
+#
+# THE ERASURE RUN for Ancient Rome, on the pair's control model.
+#
+# Derived from ember_lment_rome_slurm.yaml. Four fields differ, and each one
+# matters:
+#
+#   seed: 44, features.g_sparsity: 0.02, rank: 100
+#       The cell the Gemma judge chose out of 27. Feature 11, confidence 0.99,
+#       ratio_abs 6.46, "historical figures, locations and terminology
+#       associated with Ancient Rome". Chosen by a rule fixed BEFORE the last
+#       three cells were judged -- confidence, then ratio_abs -- both properties
+#       of this control model's own embedding matrix, neither able to see the
+#       ablated twin, an accuracy, an erasure or a delta.
+#
+#   features.reuse: true  +  features.cache_root: .../sp0.02_seed44
+#       NOT an optimisation. The sparse fit does NOT reproduce across GPU models
+#       at a fixed seed: the same cell gave different features on an a6000 and a
+#       3090, and the judge accepted in one and rejected in the other
+#       (grid/JUDGE_RESULTS.md). Refitting here could therefore erase a feature
+#       nobody judged. The cache was stamped with provenance by
+#       grid/publish_cell_features.py and validates against this config;
+#       feature_manifest.json is the only record of g_sparsity, because
+#       get_pipeline_path does not key on it.
+#
+# (SUPERSEDED, inherited from ember_lment_rome_erase_slurm.yaml: that config
+# needed constraint a6000 so a re-running judge's greedy decoding would
+# reproduce feature 11. This config runs no judge, so that reason is gone --
+# see THE SELECTION MECHANISM at the top. The post-run check still applies:
+# verify the run's potential_features.csv contains exactly feature 11.)
+#
+# Everything else -- ratio_thresh 2.0, the delta grid, judge_top_k 20 -- is
+# unchanged at its published value.
+#
+# EMBER embedding erasure of ANCIENT ROME from the Rome pair's control twin.
+#
+# The point of the run: the ablated twin is a model that never saw Rome. This
+# is the same model with Rome erased after the fact. Comparing the two is the
+# never-learned-vs-erased comparison the twins were trained for.
+#
+# MODEL. Differs from ember_lment_slurm.yaml in the checkpoint and nothing else.
+# `lment-1b-control-2e` there is the retired PORNOGRAPHY pair's control, trained
+# at batch 32,768 and a different lr/wd source. This points at the Ancient Rome
+# pair's control (job 853707, step 54832, batch 131,072), which is the only
+# model whose ablated twin holds Rome out. Its model card carries the full
+# provenance. A twin is only meaningful against its own control.
+#
+# It is a pristine copy held for exactly this: the pipeline does not modify its
+# source checkpoint, but the copy means an accident cannot reach the checkpoint
+# the published Rome numbers were computed from.
+#
+# THRESHOLD. `ratio_thresh: 2.0` is the published Gemma/Llama value and is left
+# UNCHANGED on purpose for this first run, so the number we get is measured
+# rather than chosen. The prefilter runs before the judge
+# (`lment_feature_selection.select_with_judge` -> `_eligible_stats`), so if
+# nothing clears it the judge never runs and the pipeline stops there.
+#
+# That is what happened on 2026-08-28 (job 791515, Pornography on the retired
+# control): all 100 rank features fell short and the run died with
+# "No embedding feature has ratio_abs >= 2". That was not a near miss --
+# measured from that run's `stats_embed.csv`:
+#
+#     max 1.6889   99th 1.6495   median 0.9801
+#     >= 2.00 :  0 features        >= 1.50 : 11
+#     >= 1.25 : 28 features        >= 1.10 : 35
+#
+# 2.0 sits ABOVE the maximum the model produces, so no feature could ever pass.
+# A 1B OLMo-2 separates concept from neutral tokens far more weakly in embedding
+# space than a 2B/8B instruction-tuned model does.
+#
+# Whether Ancient Rome behaves the same way is an open question and this run
+# answers it. Rome is 26x the corpus footprint Pornography had (65,844 chunks,
+# 0.628%, against 2,546), so a stronger embedding signature is plausible -- but
+# plausible is not measured, and picking the threshold from the outcome is the
+# selection-on-the-outcome error that got the `acc_raw` claims retracted.
+#
+# Either way this run is informative: it either proceeds, or it stops at the
+# prefilter having written `stats_embed.csv`, from which the real Rome
+# distribution can be read and a threshold chosen on evidence. Features are
+# cached, so the rerun skips the fitting.
+
+method: ember
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k/
+rank: 100
+seed: 44                       # the chosen cell; see grid/JUDGE_RESULTS.md
+
+selection:
+  mode: threshold             # see THE SELECTION MECHANISM in the header
+  ratio_thresh: 2.0            # published value, deliberately not pre-adjusted
+  feature_ratio_threshold: 6.0   # isolates feature 11 and nothing else
+  judge_confidence_threshold: 0.85
+  judge_top_k: 20
+
+ember:
+  deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+  explicit_delta: 50.0
+
+eval:
+  # Ancient Rome carries all four splits here, 50 questions each, with `q`,
+  # `correct_answer` and four `options` -- verified before submission. Automatic
+  # delta selection needs all four, and scoring is causal_mc (continuation
+  # log-likelihood per character), not letter parsing, which these base models
+  # cannot do at all.
+  data_json: ../data/mc_questions.json
+  alpaca: false
+  alpaca_split: test
+  alpaca_max_items: null
+
+lment:
+  model_key: lment-1b-control-2e-b131k
+  model_device: cuda
+  dtype: fp32
+  runs_root: ../runs
+  data:
+    concept_json: ../data/concept_sentences.json
+    neutral_json: ../data/neutral_sentences.json
+  features:
+    cache_root: /home/dcor/galbarak2/lment-ember-grid/features/sp0.02_seed44
+    reuse: true                # MUST stay true -- see the header
+    fitting_device: cuda
+    max_iterations: 20000
+    g_sparsity: 0.02               # recorded in the cache's feature_manifest.json
+    k_proj: 30
+  judge:
+    model: null                # no judge in this run; the choice is already made
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
+    device: cuda
+    max_new_tokens: 256
+    local_files_only: true     # the 23 GB is already in hf_cache/hub
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    executor: subprocess       # gemma4_unified needs newer transformers than
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    # 10800, not the 3600 default. gemma-4-12B ships as ONE unsharded
+    # 23.9 GB model.safetensors, so the load is a single sequential read with
+    # no parallelism to exploit. Both /home/dcor and /home/morg serve ~28 MB/s
+    # from an idle client (measured 2026-09-08: 28.0 and 28.8), i.e. ~14 min --
+    # but a contended node sees ~7 MB/s and needs ~57 min, and jobs 866583
+    # (n-102, beside the baseball training) and 866924 (n-602) both FAILED at
+    # exactly 3600s with the worker still reading. The read is not the problem;
+    # killing it at an hour is.
+    startup_timeout_seconds: 10800
+  save:
+    full_model: false
+  execution:
+    activate_script: ../activate_env.sh
+  slurm:
+    job_name: d50-romerase         # subject FIRST: only ~8 chars are visible, and
+                               # "ember-ro" would be indistinguishable from the
+                               # earlier ember-rome feature run (858233).
+    account: gpu-research
+    partition: killable
+    constraint: a6000
+    time_minutes: 360
+    # Unchanged from ember_lment_slurm.yaml: n-601/n-602 are the a6000s and each
+    # had exactly one free GPU at 16:00. This is the `killable` pool, so it does
+    # not compete with the h100 jobs currently saturating n-102.
+    #
+    # n-601 is the only a6000 with free GPUs and it runs close to full on host
+    # RAM; 64000 never schedules there. The judge streams its shards to GPU, so
+    # a small request is enough and gets the job started.
+    cpu_mem_mb: 10000
+    cpus_per_task: 8

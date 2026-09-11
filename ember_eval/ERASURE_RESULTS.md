@@ -366,3 +366,389 @@ scope section above. The overshoot is now measured at n = 3,000; tuning delta
 against it would be selection-on-the-outcome on the strongest instrument in the
 project.
 
+
+---
+
+# PRE-REGISTRATION: the four-point delta-response sweep (2026-09-11)
+
+**Written before the jobs were submitted, and before any result exists.** Jobs
+are listed at the end of this section; if that list is empty, this section is a
+plan and nothing below it has been measured.
+
+## The rule this sweep sits against
+
+The section immediately above says, in the project's own words:
+
+> Do NOT re-run the erasure at other deltas to improve this number [...] tuning
+> delta against it would be selection-on-the-outcome on the strongest instrument
+> in the project.
+
+That rule stands, and this sweep is run **under** it, not in spite of it. The
+distinction it turns on:
+
+* **Forbidden, and still forbidden:** running several deltas, finding the one
+  whose diff-of-diffs sits closest to the ablation's +0.2349, and reporting that
+  run as "the Rome erasure". That is tuning against the instrument.
+* **What this is:** establishing whether the published Rome-vs-Baseball
+  contrast is confounded by delta at all. The output is a curve, and the curve
+  is the result.
+
+Anyone who finds this section without the one above it should read that one first.
+
+## Why the question is now live, when it was not before
+
+`BASEBALL_RESULTS.md` (2026-09-11) did not exist when the rule was written. It
+reports the same method, on the same control, through the same pipeline,
+**undershooting** the ablation at 0.68x where Rome overshot at 5.73x. The two
+runs differ in concept -- and also in delta, 200 against 10, which was never an
+experimental choice: both came out of an objective whose specificity term reads
+1.000 at every delta in both concepts and therefore never opposes a larger
+delta. Rome's objective was still rising at 200, the last element of the grid.
+
+So the headline cross-concept comparison **confounds concept with delta**, and
+the delta was set by a metric this document already establishes is broken. That
+confound cannot be resolved by measuring a third concept, because a third
+concept would inherit the same broken selection. It is resolved by holding the
+concept fixed and varying delta, which is this sweep.
+
+## Design
+
+Four runs, Ancient Rome, on the Rome pair's control (`lment-1b-control-2e-b131k`),
+at `explicit_delta` 2 / 5 / 10 / 50. Configs
+`configs/ember_lment_rome_erase_delta{2,5,10,50}_slurm.yaml` differ from the
+published `ember_lment_rome_erase_nojudge_slurm.yaml` by **exactly two lines**
+each -- `ember.explicit_delta` and `lment.slurm.job_name` -- verified by diff.
+Same cell (rank 100 / sp 0.02 / seed 44), same judged feature 11 isolated by the
+same `feature_ratio_threshold: 6.0`, same cached features (`reuse: true`; the
+sparse fit does not reproduce across GPU models), same fp32, same partition and
+constraint. Nothing but delta can explain a difference between these four.
+
+10 is included because it is the value Baseball's own sweep chose; 50 because it
+is the next published grid point above it; 2 and 5 to reach the region where the
+edit is near or below exact removal (`delta 1` removes the concept component
+exactly; `delta > 1` pushes the row into anti-concept space).
+
+The grid is **not** extended above 200. Extending it would let the broken
+objective pick a still larger delta, and the MC accuracy differences past delta
+10 are one to two questions out of 50 against an SE of about +-0.067.
+
+## Predictions, and what each outcome means
+
+Read against the ablation (job 850249): held-out chunk-loss diff-of-diffs
+**+0.2349 nats/token**, `dz` 1.052, control-set drift +0.0035, no single chunk
+past +2.04.
+
+1. **Some delta lands near +0.2349 with control drift near +0.0035, and the
+   per-chunk distribution is uniform rather than tailed.** The 5.73x overshoot
+   was a delta-selection artefact. The Rome/Baseball sign flip then says nothing
+   about the concepts, and a third twin would not have revealed that. The
+   finding becomes a statement about EMBER's objective, not about erasure.
+2. **Rome overshoots at every delta that achieves any efficacy.** The sign flip
+   is a genuine concept difference, and a third concept arm is worth its
+   GPU-week.
+3. **The mean tracks the ablation at some delta but the shattered tail persists
+   at all of them.** Then uniform-versus-tailed is a property of the *mechanism*
+   -- editing 72 embedding rows -- and not of its strength, which is the
+   strongest version of the existing interpretation and does not depend on any
+   delta being singled out.
+
+`rel_edit_size` and `cosine` against `W_never - W_base` are reported per delta.
+The prediction here is that **cosine stays near 0.001 at every delta**: delta
+scales the step length along a fixed direction, so if the direction is wrong at
+200 it is wrong at 2, and no delta makes the erasure approach the twin. If that
+holds it is the cleanest result of the sweep, because it is the one quantity
+delta cannot fix.
+
+## Reporting rule, fixed now
+
+Report **all four deltas**, in one table, including the ones that look bad. No
+run from this sweep may be quoted as "the Rome erasure" and none supersedes the
+delta-200 run in the sections above, which remains the published result because
+it is the one the pipeline's own selection produced. If a later document needs a
+single Rome erasure, it cites delta 200 and links here.
+
+Jobs: submitted 2026-09-11 16:32-16:33 from c-002, all on n-601
+(`killable`, a6000, account gpu-research -- unchanged from the published config).
+
+| delta | job | config | run dir |
+|---|---|---|---|
+| 2 | `880400` | `ember_lment_rome_erase_delta2_slurm.yaml` | `runs/Ancient_Rome_lment-1b-control-2e-b131k_20260911_163315` |
+| 5 | `880404` | `ember_lment_rome_erase_delta5_slurm.yaml` | `runs/Ancient_Rome_lment-1b-control-2e-b131k_20260911_163329` |
+| 10 | `880387` | `ember_lment_rome_erase_delta10_slurm.yaml` | `runs/Ancient_Rome_lment-1b-control-2e-b131k_20260911_163218` |
+| 50 | `880410` | `ember_lment_rome_erase_delta50_slurm.yaml` | `runs/Ancient_Rome_lment-1b-control-2e-b131k_20260911_163342` |
+
+Run dirs are under `Ember-on-LMEnt/runs/` in the **LMEnt-initfix** checkout --
+note the published Rome erasure (867391) ran from `LMEnt-ember` and Baseball's
+(877959) from `LMEnt-mlp`, because `activate_env.sh` defaults `LMENT_ROOT` to the
+`LMEnt` checkout and each run inherits whichever tree it was launched from. These
+four were launched with `LMENT_ROOT` explicitly set to `LMEnt-initfix`.
+
+Each run writes only `erased_embeddings.safetensors` (`save.full_model: false`).
+Stage 2 -- materialise, held-out chunk loss, completion eval, weight comparison --
+has NOT been run and is what actually answers the question above.
+
+## Stage 1 result: the four erasures ran (2026-09-11 16:34)
+
+All four `COMPLETED` in 1-2 minutes each -- far faster than the published runs
+because no delta search executes when `explicit_delta` is set (`delta_search:
+none` in all four reports, confirmed).
+
+**Integrity, identical across all four:** `selected_feature_ids: [11]`,
+`k_features_embed: 1`, `n_tokens_edited: 76`, `integrity.passed: true`, only
+`model.embed_tokens.weight` in `changed_tensor_names`, `reload_state_match` and
+`reload_logits_match` both true. The **76 changed embedding rows are the same 76
+rows in every run** -- so across this sweep the support of the edit is fixed and
+only its magnitude varies. That is the design claim, verified rather than assumed.
+
+### EMBER's own MC metrics per delta, and the flaw reproducing
+
+From each run's `report.json`. 50 questions per split, chance 0.25.
+
+| delta | qa_retention (train) | efficacy (train) | **specificity** | objective (train) | efficacy (test) |
+|---|---|---|---|---|---|
+| 2 | 1.0000 | 0.0000 | **1.000** | 0.0000 | 0.0000 |
+| 5 | 0.6522 | 0.3478 | **1.000** | 0.5161 | 0.1053 |
+| 10 | 0.4783 | 0.5217 | **1.000** | 0.6857 | 0.1053 |
+| 50 | 0.3913 | 0.6087 | **1.000** | 0.7568 | 0.2105 |
+
+**`specificity` is 1.000 at every delta here too**, and `simdom_retention` is
+exactly 1.000 in all four. This is the third independent reproduction of the
+structural flaw -- Rome's published 8-point grid, Baseball's, and now this sweep.
+The objective is efficacy alone, it rises monotonically with delta across the
+whole range, and the delta-50 train objective (0.7568) sits right where the
+published grid's monotone rise predicts between its 10 (0.686) and 200 (0.821).
+**Nothing in the objective ever opposes a larger delta, at any delta.**
+
+Read the efficacy column against the instrument, not past it: on test, deltas 5
+and 10 are *tied* at 0.1053 and 50 reaches 0.2105 -- that is 2 questions against
+4 out of 50, at a binomial SE of about +-0.06. `EVALUATION.md`'s standing
+conclusion applies unchanged; these MC columns cannot rank deltas and are
+recorded here only because the pipeline produced them for free.
+
+**Stage 1 answers nothing about the twins.** It establishes that four erased
+models exist, differ only in delta, and are internally sound. The question in
+this section -- whether the 5.73x overshoot is a delta artefact -- lives entirely
+in the held-out chunk loss, which has not been run.
+
+## What the selection metrics actually compute, and where we deviate from EMBER
+
+Added 2026-09-11 while the delta sweep was running, because the sweep's
+`specificity: 1.000` column has now appeared in three independent runs and the
+reason is algebraic rather than empirical.
+
+### The definitions (`lment_pipeline.py:245-270`)
+
+With `acc` the 4-option MC accuracy and chance 0.25:
+
+    retention(edited, baseline) = clamp01( (acc_edited - 0.25) / (acc_baseline - 0.25) )
+
+    qa_retention     = retention on the CONCEPT questions
+    simdom_retention = retention on the SIMILAR-DOMAIN questions
+    efficacy         = 1 - qa_retention
+    specificity      = simdom_retention
+    objective        = harmonic_mean(efficacy, specificity)
+
+So `efficacy` is "the fraction of the model's **above-chance** concept accuracy
+the edit destroyed" and `specificity` is "the fraction of the neighbour's
+above-chance accuracy it left alone". Both are chance-corrected and both are
+**clamped to [0, 1]**.
+
+### Why specificity is 1.000 everywhere, and why that is fatal to the search
+
+The clamp is the mechanism. `retention` is capped at 1.0, so **any** simdom
+accuracy greater than or equal to baseline reads as exactly 1.000 -- the metric
+cannot distinguish "untouched" from "improved", and it has no room below 1.0
+until the neighbour's accuracy actually falls. On 50 questions it rarely does:
+Rome's published sweep has simdom accuracy *rising* 0.38 -> 0.44 at deltas 5 and
+10 and returning to 0.38 at 200, so it clamps at every row.
+
+With `specificity` pinned at 1.0 the objective is not a trade-off at all:
+
+    harmonic_mean(e, 1) = 2e / (1 + e)
+
+which is strictly increasing in `e`. Verified against every erasure this project
+has run -- Rome's published delta 200 (e 0.696 -> 0.821), Baseball's delta 10
+(0.762 -> 0.865), and all four sweep cells (0.3478 -> 0.5161, 0.5217 -> 0.6857,
+0.6087 -> 0.7568, 0 -> 0) -- reproducing the reported objective to four decimals
+in all six cases.
+
+**So the objective has been a monotone function of efficacy alone in every run,
+and "maximise the objective" has been identical to "maximise delta" throughout.**
+That is stronger than the empirical observation recorded above: it is not that
+specificity *happened* to stay flat, it is that on this instrument it almost
+cannot move, and when it cannot move the search has no opposing force by
+construction.
+
+### The delta grid is NOT EMBER's, and the deviation understates the overshoot
+
+Upstream EMBER's default, in `ember/erasure/config.py`, unmodified since the
+single `Import Ember code` commit `144d195`:
+
+    _EMBER_DELTAS = [0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0, 200.0, 500.0, 1000.0]
+
+Every LMEnt config in this repo -- `ember_lment.yaml`, `ember_lment_slurm.yaml`,
+`ember_lment_rome_slurm.yaml`, both erase configs -- instead specifies
+
+    deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+
+dropping 0.1, adding 2.0, and **truncating at 200 where EMBER continues to 500
+and 1000**. The Rome config's comment that "the delta grid [...] is unchanged at
+its published value" means unchanged from this repo's own base config; it is not
+EMBER's grid, and that sentence should be read with this correction.
+
+**This cuts in the direction of less overshoot, not more.** Rome's objective was
+still rising at 200; on EMBER's real grid the search would have gone on to 500
+and 1000 and chosen a more extreme edit still. The measured 5.73x is therefore a
+**lower bound** on what stock EMBER does to this model, and the finding is
+strengthened rather than weakened by the deviation.
+
+Open, and a choice rather than a bug: whether to run the two missing grid points
+(500, 1000) so that "what stock EMBER selects" is measured rather than inferred.
+Not done, and not needed for the concept-vs-delta question this sweep asks.
+
+### What is NOT wrong
+
+`rank: 100` matches EMBER's own default. The retention/efficacy/specificity
+formulas are upstream and unmodified. `ratio_thresh: 2.0` is not an upstream
+*code* default -- `SelectionConfig.ratio_thresh` is `None` and documented as
+SNMF's -- so the "published Gemma/Llama value" claim beside it comes from the
+paper, which cannot be checked from the repo.
+
+### Extension to EMBER's full grid: deltas 500 and 1000 (2026-09-11 16:54)
+
+Added after the first four had run, so the reason is stated plainly: these are
+the two grid points the repo's configs **drop** relative to upstream EMBER's
+`_EMBER_DELTAS`, which runs to 1000. With them the sweep reaches EMBER's own
+endpoint, so "what stock EMBER's objective selects on this model" becomes a
+measurement rather than an extrapolation from a monotone trend.
+
+The ground for adding them is **conformity to the published grid** -- fixed by
+upstream code and visible before any of these runs existed -- not a response to
+any twin comparison. No twin comparison had been computed for any delta when
+these were queued; only EMBER's own MC metrics existed. The reporting rule is
+unchanged and now covers six deltas: report all, quote none as "the Rome
+erasure".
+
+**Prediction on record before they ran:** the objective keeps rising through 500
+and 1000, because with specificity pinned at 1.0 it is `2e/(1+e)` and can only
+rise while efficacy does -- so stock EMBER would have selected **1000**, the grid
+endpoint again, still without bracketing an optimum.
+
+| delta | job | config |
+|---|---|---|
+| 500 | `880518` | `ember_lment_rome_erase_delta500_slurm.yaml` |
+| 1000 | `880519` | `ember_lment_rome_erase_delta1000_slurm.yaml` |
+
+Each differs from the published Rome config by the same two lines, verified by
+diff against the config body.
+
+### RESULT: the prediction above is REFUTED, and so is the "ran out of candidates" claim
+
+Jobs 880518 (delta 500) and 880519 (delta 1000), both `COMPLETED`, both
+`integrity.passed: true`, both feature 11, both 76 tokens -- same edit support as
+the other four.
+
+**Specificity leaves the cap.** It is not pinned at 1.000 everywhere after all:
+
+| delta | QA acc (base 0.480) | Simdom acc (base 0.380) | specificity | objective |
+|---|---|---|---|---|
+| 2 | 0.480 | 0.380 | 1.0000 | 0.0000 |
+| 5 | 0.400 | 0.440 | 1.0000 | 0.5161 |
+| 10 | 0.360 | 0.440 | 1.0000 | 0.6857 |
+| 50 | 0.340 | 0.420 | 1.0000 | 0.7568 |
+| **500** | 0.360 | **0.340** | **0.6923** | 0.5950 |
+| **1000** | 0.300 | **0.320** | **0.5385** | 0.6380 |
+
+At 500 and 1000 the neighbour's accuracy finally falls below baseline, the clamp
+stops binding, and the objective stops being `2e/(1+e)` -- it returns 0.5950 and
+0.6380 against the 0.6857 and 0.8780 that formula predicts.
+
+**The full-grid objective brackets an optimum, and the optimum is 200.**
+Combining the published rows with these:
+
+| delta | 0.5 | 1 | 2 | 5 | 10 | 50 | 100 | **200** | 500 | 1000 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| objective | 0.000 | 0.160 | 0.000 | 0.516 | 0.686 | 0.757 | 0.757 | **0.821** | 0.595 | 0.638 |
+
+**Three corrections follow, and they run against what this document previously
+asserted -- including what was added to it earlier today.**
+
+1. **"200 is the last value in the grid with the objective still rising, so the
+   search never bracketed an optimum; it stopped because it ran out of
+   candidates" is refuted.** Extend the grid to EMBER's own endpoint and the
+   objective *falls*. The search stopped at the argmax of the full published
+   grid. That it also sat at the truncated grid's edge was a coincidence.
+
+2. **The "lower bound" reading added earlier today is wrong.** It argued that on
+   EMBER's real grid the search would have continued to 500/1000 and chosen a
+   more extreme edit, making 5.73x an understatement. It would not have. **Stock
+   EMBER on its own grid selects delta 200 -- exactly the value the published run
+   used.** The grid truncation changed nothing about the selection, and the
+   published Rome erasure is the one stock EMBER specifies.
+
+3. **`objective = 2e/(1+e)` holds only where the clamp binds**, i.e. delta <= 200
+   on this model. The metric is not structurally incapable of registering
+   collateral damage; it is merely insensitive until the edit is an order of
+   magnitude past the selected one. The earlier framing -- that nothing could
+   ever oppose a larger delta "by construction" -- overstated it. What is true
+   and survives: across the whole region any plausible delta lives in, specificity
+   never moves, so the objective is efficacy alone there.
+
+**The caveat that keeps this honest.** The argmax rests on differences of one to
+three questions out of 50 at a binomial SE of about +-0.067: QA accuracy is
+0.34 / 0.34 / 0.32 at deltas 50 / 100 / 200, and the specificity break at 500 is
+simdom 0.38 -> 0.34, two questions. **The ranking among 50, 100 and 200 is not
+statistically meaningful and 200 should not be called a real optimum.** What the
+two new points do support, since both sit well below the peak and both move
+specificity in the expected direction, is the qualitative claim that the
+objective turns over somewhere beyond 200.
+
+**What this does to the sweep's motivation.** The original framing -- Rome's 200
+was an artefact of a truncated grid -- is substantially weakened; 200 is what
+EMBER's own objective picks. The question the sweep actually answers is unchanged
+and now the more interesting one: **does any delta reach never-having-learned?**
+That is the held-out chunk loss, still running, and the Rome-vs-Baseball delta
+difference (200 against 10) is now known to be a real difference in what the
+objective selects rather than a grid artefact.
+
+## The crossed 2x2: Baseball at delta 200 (2026-09-11 17:11, job 880580)
+
+The delta sweep above attacks the concept-with-delta confound from one side only
+-- Rome at many deltas, Baseball at one. The published erasures sit at different
+deltas (Rome 200, Baseball 10) because EMBER's objective selected differently on
+the two concepts, so **every Rome-vs-Baseball statement in `BASEBALL_RESULTS.md`
+varies concept and strength simultaneously.**
+
+Adding Baseball at delta 200 makes the design crossed:
+
+| | delta 10 | delta 200 |
+|---|---|---|
+| **Ancient Rome** | job `880533` (this sweep) | job `867391` (published) |
+| **Baseball** | job `877959` (published) | job `880580` |
+
+With all four cells, concept and delta separate by difference instead of by
+extrapolation: read Rome-minus-Baseball at each delta, and 200-minus-10 at each
+concept. Config `ember_lment_baseball_erase_delta200_slurm.yaml`, two lines off
+the published Baseball config, verified by diff.
+
+**Pre-registration position.** Queued after the Rome sweep's erasures ran, so the
+ground is stated plainly: **design symmetry**, completing a 2x2 whose other three
+cells already existed. It is not a response to an outcome, and this was checked
+rather than asserted -- at submission time `lment-rome-check/results/` contained
+**no `ppl_rome_erased_d*.json` at all** and all six Rome chunk-loss jobs were
+still running, so no twin comparison existed for any delta of either concept.
+There was nothing available to select on.
+
+**Prediction on record, before it ran.** Baseball's efficacy plateaus from delta
+10 through 200 (`qa_retention` flat at 0.238), so on EMBER's MC instrument this
+run should look nearly identical to the delta-10 run. The **chunk loss should
+not**: the coefficient is 20x larger and chunk loss is unbounded. If the
+metric-saturates-but-damage-does-not account is right, held-out damage should
+rise steeply here while the MC columns barely move. **That dissociation -- same
+MC numbers, very different text damage -- is the whole point of the cell**, and
+it is the cleanest available test of why Rome overshot: not because Rome is
+Rome, but because the objective could not see what delta 200 was doing.
+
+Its chunk loss must be scored against the BASEBALL held-out sample, not Rome's:
+`WORKDIR=/home/dcor/galbarak2/lment-baseball-check`,
+`BLACKLIST=$WORKDIR/bb_blacklist_sample3000.json`.
