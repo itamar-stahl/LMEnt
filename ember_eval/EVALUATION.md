@@ -270,3 +270,70 @@ indistinguishable (perplexity 12.110 vs 12.122).
 
 Records are gitignored under `ember_eval/results/` (3.5 MB each); rebuild with
 `run_one_eval.slurm` (one model) or `run_twins_eval.slurm` (a pair).
+
+---
+
+# The QA instrument's noise floor, and a partial fix (2026-09-11)
+
+`BASEBALL_RESULTS.md`'s correction section shows `ablated - control` on questions
+is contaminated: a twin that never ablated baseball reproduces 76% of Baseball's
+apparent QA ablation effect. There is **one shared control** behind every arm, so
+any run-level idiosyncrasy of that single run enters every contrast identically.
+
+## The floor is half systematic, so more questions cannot fix it
+
+Decomposing the 8-concept null's spread into sampling and systematic parts
+(`twin_vs_twin.py`):
+
+| split | between-concept sd | sampling SE (n=50) | systematic |
+|---|---|---|---|
+| QA train | 0.0677 | 0.0445 | **0.0509** |
+| QA test | 0.0578 | 0.0415 | **0.0403** |
+
+**Roughly half the noise floor does not average away.** Writing more questions
+shrinks only the sampling half; in the limit of infinitely many questions
+Baseball's QA deviation moves from z = -1.02 to about **z = -1.4**, still not
+significant. *Scaling the question set is not a fix for sensitivity.*
+
+## Using the other twin as the reference: better for domain, worse for simdom
+
+Two ablated twins exist, so the shared-control offset can be differenced away --
+Rome as `norome2e - nobaseball2e`, Baseball as the reverse.
+
+| split | estimator | between sd | sampling | systematic |
+|---|---|---|---|---|
+| QA train | twin - control | 0.0677 | 0.0445 | 0.0509 |
+| QA train | **twin - twin** | **0.0507** | 0.0383 | **0.0332** |
+| QA test | twin - control | 0.0578 | 0.0415 | 0.0403 |
+| QA test | **twin - twin** | **0.0463** | 0.0365 | **0.0285** |
+| Simdom train | twin - control | 0.0552 | 0.0408 | 0.0372 |
+| Simdom train | twin - twin | 0.0916 | 0.0428 | **0.0810** |
+| Simdom test | twin - control | 0.0508 | 0.0461 | 0.0215 |
+| Simdom test | twin - twin | 0.1024 | 0.0442 | **0.0924** |
+
+**On domain questions it works, partially.** The systematic component falls 30-35%
+-- so the offset is *partly* control-side, not wholly, which is weaker than the
+hypothesis that motivated the test. The gain is real: Rome's z goes **-5.20 ->
+-8.01** (train) and **-4.28 -> -6.64** (test). Baseball stays null on both
+estimators (-0.90 -> -0.78, -0.22 -> -0.95), so its QA effect is absent rather
+than merely swamped.
+
+**On similar-domain questions it fails.** The systematic component **doubles to
+quadruples**. The two twins differ from each other on simdom sets *more* than
+either differs from the control, which is the opposite of a shared control-side
+offset and is not explained here. Note `ROME_RESULTS.md` already flagged the
+simdom nulls as scattering 2.5x wider than the QA nulls; this makes it worse.
+
+**Rule, therefore: use `twin - twin` for domain QA and `twin - control` for
+simdom.** Do not apply one estimator across the board.
+
+## It does dissolve the Baseball simdom anomaly
+
+`BASEBALL_RESULTS.md` Section 2 records the ablated twin scoring significantly
+better than the control on other sports. Under `twin - twin` that collapses from
+**z +4.84 -> +0.37** (train) and **+4.89 -> +0.02** (test). Two independently
+ablated twins agree with each other and differ from the control, which is the
+signature of a control-side artefact and not of either ablation.
+
+Results: `lment-rome-check/results/twin_vs_twin.json`. No GPU; reads stored
+completion records.
