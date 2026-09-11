@@ -783,3 +783,80 @@ because the objective preferred different strengths; they landed differently
 because Baseball's efficacy reached its ceiling inside the grid and Rome's did
 not. The selection difference is an artefact of where a bounded instrument
 saturates, not a judgement about the two concepts.
+
+## The cross-concept test: damage follows the WORD, not the concept
+
+Jobs 880679 (Rome-erased scored on Baseball) and 880680 (Baseball-erased scored
+on Ancient Rome), completion eval, all four splits. These cells had never been
+run: each erased model had only ever been scored on its own concept.
+
+**On the mean, specificity looks perfect.** Rome-erased on Baseball: -0.000,
+-0.004, -0.001, -0.013. Baseball-erased on Rome: zero to three decimals on all
+four splits, with a per-question max |delta pmi| of 6.1e-05 -- floating-point
+noise.
+
+**Per question it is not perfect at all.** Rome-erased on Baseball:
+
+| split | questions that moved | max delta pmi |
+|---|---|---|
+| QA train | 0 / 50 (max 5e-05) | -- |
+| QA test | **1 / 50** | **-1.8913** |
+| Simdom train | **1 / 50** | **-0.8471** |
+| Simdom test | **1 / 50** | **-5.3537** |
+
+Three questions out of 200, each shattered. The mean is ~0 because 197 are
+untouched.
+
+### The three are the same three, and the reason is a single token
+
+    QA test       "...the minimum DISTANCE from home plate to the left or right field fence is"
+    Simdom train  "The basketball position primarily responsible for scoring from DISTANCE is the"
+    Simdom test   "In softball, the standard DISTANCE between bases is"
+
+**`' distance'` is one of the 76 token rows Rome's erasure edited.** Decoded from
+`changed_embedding_rows` against the control's `vocab.json`, the edited set is
+
+    ' Rome', ' Roman', ' Romans', ' Caesar', ' BC', ' legion', ' consul',
+    ' Nero', ' Julius', ' Marcus', ' Apollo', ' Pompe', ' Cic', ' dictator',
+    ... and also: ' distance', ' rate', ' com', ' chaos', ' gods', ' priest',
+    ' sacred', ' slave', ' slavery', ' enslaved', ' temples', ' baths',
+    ' mythology', ' rhetoric', ' tyranny', ' Tables', ' Corpus', ' Circus'
+
+Roughly a third of the 76 are **ordinary English words** that merely co-occur with
+Rome, not Roman vocabulary.
+
+The prediction this generates is exact and it holds: **every Baseball question
+whose stem contains a swept-in word is damaged, and every damaged question
+contains one. 3 hits, 0 misses.** (Matches on `' com'` in the scan are substring
+artefacts -- "complete", "commits", "competition" tokenise to other tokens and
+all show delta = 0.0000, which is itself a confirmation that the effect is
+token-level.)
+
+### What this settles
+
+**The open question at the end of this document -- "whether the shattered chunks
+are the ones EMBER's selected features actually fire on" -- is answered yes at
+question level.** The trigger is not the concept. It is the presence of an edited
+token, and the worst offenders are the ordinary words the feature swept in.
+
+**Collateral damage is lexical, not semantic.** The erased model has not lost
+knowledge of basketball or softball. It has a broken embedding for the English
+word "distance", and every text containing that word pays for it. That is also
+the most plausible account of the +0.0332 control-set damage (p = 0.0000) and the
+16.2% of Rome chunks pushed past 3 nats/token: with ~25 common words among the 76
+edited rows, a sixth of general Wikipedia text containing at least one of them is
+entirely unsurprising.
+
+**EMBER's specificity metric cannot see any of this, twice over.** Three
+shattered questions out of 200 rarely flip a 4-option argmax, and the metric is
+accuracy-based and clamped at 1.0 -- which is exactly what it reported.
+
+**And it sharpens the headline comparison.** The untaught twin never learned
+Rome. The erased model knows Rome about as well as before but has ~25 damaged
+English words. Those are not the same kind of object, at any delta -- which is
+the behavioural reading of the `cosine = 0.001` result.
+
+Caveat: established at question level on n = 200 with 3 affected items. The
+chunk-level version -- do the 16.2% shattered chunks contain edited tokens at a
+higher rate than the rest? -- is still not run, and is the obvious follow-up now
+that the mechanism is named.
