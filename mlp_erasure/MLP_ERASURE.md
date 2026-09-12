@@ -604,3 +604,83 @@ comparable, and neither of them comparable to the paper on that axis.
 
 **One concept, one pair, one seed.** Everything in `ROME_RESULTS.md`'s scope
 section applies unchanged.
+
+---
+
+# SUPERSEDED / UPDATED 2026-09-12
+
+Two sections above are now out of date. Read this before acting on them.
+
+## "What is now open, and it is not a code question" is CLOSED
+
+That section frames `delta` and the verify metric as mutually inconsistent, with
+the choice left to Gal. **It is not a choice.** `FEATURE_QUALITY_FIXES.md`
+section 3 shows `configs/snmf_gemma.yaml` crosses `in_deltas`/`out_deltas`
+`[1,4,7,10]` with every layer range and selects a cell on **downstream
+evaluation** -- concept QA accuracy below 0.6, MMLU above 0.7 -- never on an
+activation drop. The `.abs()` drop was never the selection criterion, so there
+was never a contradiction to resolve. delta 4 amplifying the component threefold
+is expected and irrelevant to how a cell is picked.
+
+Anyone who read this file before 2026-09-12 and came away thinking a scientific
+decision was pending should drop that belief. (It was repeated as a live open
+item in conversation as recently as this session.)
+
+## Verification runs, 2026-09-12: the suite and factorize, on 97443fe
+
+Tamar's fixes landed on `main` as `97443fe`. Her file ends with an explicit
+"do not push this without running, in this order" sequence. It was run:
+
+**1. Unit suite -- PASSES.** 53 tests, 2.7 s, exit 0, under the real lment env.
+That clears the tensor-semantics risk her doc lists as unverified (numpy shim
+versus torch on `topk` tie-breaking, dtype promotion, and the
+`arange().unsqueeze().expand()` sentence-id construction in
+`collect_activations`, which had never executed).
+
+**2. `MODE=factorize`, layers 4 5 6, job 883188 -- COMPLETED on an L40S.**
+
+| layer | candidates rho>2.0, job 871493 | **candidates now, 883188** | max rho | scale inflation |
+|---|---|---|---|---|
+| 4 | 9 | **10** | 5.0118 | 1.07x |
+| 5 | 34 | **31** | 4.7022 | 1.46x |
+| 6 | 13 | **3** | 4.4545 | 1.23x |
+| **total** | **56** | **44** | | |
+
+Layers 4 and 5 are essentially unchanged; **layer 6 collapsed 13 -> 3**.
+
+Two of her explicitly-unverified claims are now settled:
+
+* **The semi-NMF convergence question is answered.** She wrote that whether
+  `rtol=1e-6` converges on a real 5632x17000 matrix in a sane number of
+  iterations "is an empirical question and nobody has answered it". It stops at
+  **1052 / 1362 / 834 iterations** by patience, against `max_iter` 20000. The old
+  absolute `tol=1e-4` against a reconstruction error of 1.43e10 could never fire.
+* **Scale inflation is now visible and modest** (1.07x / 1.46x / 1.23x, with
+  normalized medians 0.95-0.99), which is fix #2 working as intended.
+
+**3. `MODE=select` -- the measurement, and it is NOT the factorize run.** Her doc
+says the factorize job "is the one that answers the actual question ... the
+accept rate against 871547's 10.7%". It is not: `factorize` produces candidates,
+and the accept rate is produced by the judge in `MODE=select`. 44 candidates is
+raw material, not an outcome. `select` runs against
+`runs/mlp_erasure/snmf_rome_883188` and is gated behind `MODE=judge-smoke`
+(job 883187), which is what checks the judge honours the new prompts and emits
+TRASH.
+
+**Still true and unchanged: no SNMF- or RMU-erased model has ever been built or
+compared against the twins.** A higher accept rate would mean the judge agrees
+more, which is not the same as the features being better. The honest test is
+downstream -- erase, then measure against `M_never` the way
+`ember_eval/ERASURE_RESULTS.md` does for EMBER.
+
+## A trap in the drivers, fixed on a branch
+
+`run_snmf.slurm` and `run_rmu.slurm` hard-assigned
+`ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp` -- not read from the environment,
+not following `LMENT_ROOT`. A submission from any other checkout silently ran the
+code in `LMEnt-mlp` and said nothing. Since `LMEnt-mlp` sits on
+`feature/mlp-erasure` at `fa16e08`, which does **not** contain `97443fe`, running
+the verification sequence from a checkout of `main` would have factorized with
+the OLD `snmf.py` and reported a meaningless accept rate that looked entirely
+normal. Now `: "${ROOT:=...}"`, default unchanged. Same class as
+`activate_env.sh`'s `LMENT_ROOT` default.
