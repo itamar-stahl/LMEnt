@@ -57,7 +57,12 @@ RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 : "${MODEL_PATH:=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k}"
 : "${CONCEPT:=Ancient Rome}"
 : "${MAX_NUM_BATCHES:=150}"
-: "${BATCH_SIZE:=16}"
+: "${BATCH_SIZE:=4}"          # RMUGridConfig.batch_size in the reference is 4.
+                              # This was 16, which overrode rmu.py's default on
+                              # every cluster run and is the whole reason a run
+                              # took 19 optimiser steps instead of ~75: 300
+                              # sentences / 16 = 19 batches, / 4 = 75.
+: "${MIN_LEN:=50}"            # RMUGridConfig.min_len, previously never applied
 : "${MAX_LENGTH:=512}"
 : "${LR:=1e-4}"
 : "${ALPHA:=100}"
@@ -84,7 +89,8 @@ if [ "$MODE" = "probe" ]; then
     --model "$MODEL_PATH" --concept "$CONCEPT" \
     --concept-sentences "$DATA/concept_sentences.json" \
     --neutral-sentences "$DATA/neutral_sentences.json" \
-    --dtype "$DTYPE" --batch-size "$BATCH_SIZE" --max-length "$MAX_LENGTH" \
+    --dtype "$DTYPE" --batch-size "$BATCH_SIZE" --min-len "$MIN_LEN" \
+    --max-length "$MAX_LENGTH" \
     --out "$OUT" --probe
 fi
 
@@ -95,6 +101,7 @@ exec "$PY" "$ROOT/rmu.py" \
   --concept-sentences "$DATA/concept_sentences.json" \
   --neutral-sentences "$DATA/neutral_sentences.json" \
   --dtype "$DTYPE" --lr "$LR" --alpha "$ALPHA" --steering "$STEERING" \
-  --batch-size "$BATCH_SIZE" --max-length "$MAX_LENGTH" \
+  --batch-size "$BATCH_SIZE" --min-len "$MIN_LEN" \
+  --max-length "$MAX_LENGTH" \
   --max-num-batches "$MAX_NUM_BATCHES" \
   --out "$OUT" --sanity $SAVE_MODEL

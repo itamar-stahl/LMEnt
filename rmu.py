@@ -52,14 +52,29 @@ def load_sentences(path, concept=None):
     return [s for s in out if s]
 
 
-def build_batches(forget, retain, batch_size, seed=42, max_len=2000):
+def build_batches(forget, retain, batch_size, seed=42, max_len=2000,
+                  min_len=50):
+    """Shuffle, length-filter and chop into batches.
+
+    Both bounds are characters, same as the reference. min_len was the missing
+    one: RMUGridConfig in ember/erasure/config.py carries `min_len: int = 50`
+    and passes it into _build_rmu_data, which then never applies it -- the
+    filter exists in the config and nowhere in the code. A one-clause sentence
+    contributes a handful of token positions whose layer activations are
+    dominated by position rather than content, and the forget loss drags all
+    of them onto the control vector just as hard as a real one.
+    """
     forget, retain = list(forget), list(retain)
     rnd = random.Random(seed)
     rnd.shuffle(forget)
     rnd.shuffle(retain)
-    # characters, not tokens, same as the reference
-    forget = [s for s in forget if len(s) <= max_len]
-    retain = [s for s in retain if len(s) <= max_len]
+    keep = lambda xs: [x for x in xs if min_len <= len(x) <= max_len]
+    before_f, before_r = len(forget), len(retain)
+    forget, retain = keep(forget), keep(retain)
+    if before_f != len(forget) or before_r != len(retain):
+        print(f"length filter [{min_len},{max_len}] chars: "
+              f"forget {before_f}->{len(forget)}, "
+              f"retain {before_r}->{len(retain)}")
     chop = lambda xs: [xs[i:i + batch_size] for i in range(0, len(xs), batch_size)
                        if xs[i:i + batch_size]]
     return chop(forget), chop(retain)
@@ -203,6 +218,21 @@ def masked_cosine(left, right, attention_mask):
 def run_rmu(updated_model, frozen_model, tokenizer, forget_batches, retain_batches,
             layer_id=7, layer_ids=(5, 6, 7), alpha=100.0, steering=100.0, lr=1e-4,
             max_num_batches=150, max_length=512, seed=42, verbose=True):
+    """One RMU cell.
+
+    lr, alpha and steering are ONE CELL of a grid in the reference.
+    ember/erasure/methods/rmu.py:_grids_and_settings enumerates
+
+        lr        [1e-5, 1e-4, 3e-4]
+        alpha     [30, 50, 100, 300]
+        steering  [30, 100, 300, 1000]
+
+    crossed with the layer settings, and selects a cell on downstream
+    evaluation. Matching the measured residual norm is a reasonable way to
+    pick a single cell when you can only afford one, but it is not how the
+    reference chooses and a run at one cell is not comparable to a swept
+    result.
+    """
     updated_model.train()
     frozen_model.eval()
     params = down_proj_weights(updated_model, layer_ids)
@@ -265,11 +295,18 @@ def run_rmu(updated_model, frozen_model, tokenizer, forget_batches, retain_batch
 
             trace["unlearn"].append(unlearn_loss.item())
             trace["retain"].append(retain_loss.item())
+            # Re-read the activations AFTER the step. f_act/r_act above were
+            # produced by the pre-step weights, so using them here reports the
+            # model as it was one update ago and the last step never shows up
+            # in cos_forget_end at all -- which is the number
+            # `forget_rotated` is judged on.
             with torch.no_grad():
+                f_post = forward_with_cache(updated_model, f_in, up_mod)
+                r_post = forward_with_cache(updated_model, r_in, up_mod)
                 trace["cos_forget"].append(masked_cosine(
-                    f_act, control_here, f_in["attention_mask"]).item())
+                    f_post, control_here, f_in["attention_mask"]).item())
                 trace["cos_retain"].append(masked_cosine(
-                    r_act, r_ref, r_in["attention_mask"]).item())
+                    r_post, r_ref, r_in["attention_mask"]).item())
             if verbose and (idx % 5 == 0 or idx == n - 1):
                 print(f"step {idx+1}/{n} loss={loss.item():.4g} "
                       f"unlearn={unlearn_loss.item():.4g} retain={retain_loss.item():.4g} "
@@ -325,7 +362,12 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--alpha", type=float, default=100.0)
     ap.add_argument("--steering", type=float, default=100.0)
-    ap.add_argument("--batch-size", type=int)
+    ap.add_argument("--batch-size", type=int,
+                    help="default 4, the reference RMUGridConfig value")
+    ap.add_argument("--min-len", type=int, default=50,
+                    help="drop sentences shorter than this many characters "
+                         "(reference RMUGridConfig.min_len, previously unused)")
+    ap.add_argument("--max-len", type=int, default=2000)
     ap.add_argument("--max-num-batches", type=int, default=150)
     ap.add_argument("--max-length", type=int, default=512)
     ap.add_argument("--seed", type=int, default=42)
@@ -338,10 +380,15 @@ def main():
 
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
-    bs = a.batch_size or (8 if "llama" in a.model.lower() else 16)
+    # RMUGridConfig.batch_size in ember/erasure/config.py is 4. The 16 that
+    # used to be the default here is the single biggest reason a run took 19
+    # optimiser steps instead of the published 150: 300 sentences at 16 is 19
+    # batches, at 4 it is 75. Same data, four times the steps, no extra cost.
+    bs = a.batch_size or 4
 
     fb, rb = build_batches(load_sentences(a.concept_sentences, a.concept),
-                           load_sentences(a.neutral_sentences), bs, a.seed)
+                           load_sentences(a.neutral_sentences), bs, a.seed,
+                           max_len=a.max_len, min_len=a.min_len)
     print(f"{sum(map(len, fb))} forget / {sum(map(len, rb))} retain, "
           f"{len(fb)} vs {len(rb)} batches of {bs} "
           f"-> {min(a.max_num_batches, len(fb), len(rb))} steps")

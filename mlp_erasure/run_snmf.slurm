@@ -99,6 +99,17 @@ case "$MODE" in
     ;;
 esac
 
+: "${TOP_TOKENS:=25}"          # activating examples kept per feature (upstream 25)
+: "${CONTEXT_WINDOW:=15}"      # tokens either side, clipped at the sentence
+: "${MAX_PER_TYPE:=3}"         # cap on repeats of one token string per feature
+: "${JUDGE_TOP_TOKENS:=10}"    # examples shown to STAGE1 (upstream --top-m 10)
+: "${RTOL:=1e-6}"              # relative convergence; the old absolute tol was
+                               # meaningless against a 1e12 reconstruction error
+: "${RANGE_CELL:=0}"           # which published layer-range cell. On 18 layers
+                               # cell 2 gives out=[9,17]; cell 0 gives [0,5] and
+                               # will refuse a one-sided erasure if the selected
+                               # features sit deeper than that.
+
 if [ ! -d "$MODEL_PATH" ] || [ ! -r "$MODEL_PATH/config.json" ]; then
   echo "FATAL: $MODEL_PATH is not readable from $(hostname)." >&2
   exit 1
@@ -118,11 +129,14 @@ factorize)
     --out "$SNMF_OUT" --dtype "$DTYPE" --k "$K" --tau "$TAU" \
     --n-sentences "$N_SENTENCES" --max-iter "$MAX_ITER" \
     --batch-size "$BATCH_SIZE" --max-length "$MAX_LENGTH" \
+    --top-tokens "$TOP_TOKENS" --context-window "$CONTEXT_WINDOW" \
+    --max-per-token-type "$MAX_PER_TYPE" --rtol "$RTOL" \
     ${LAYERS:+--layers $LAYERS}
   ;;
 select)
   exec "$PY" "$ROOT/snmf.py" select \
     --out "$SNMF_OUT" --concept "$CONCEPT" --judge gemma \
+    --judge-top-tokens "$JUDGE_TOP_TOKENS" \
     --fork-root "$ROOT/Ember-on-LMEnt"
   ;;
 select-ratio)
@@ -132,7 +146,8 @@ erase)
   : "${SAVE_TO:?set SAVE_TO}"
   exec "$PY" "$ROOT/snmf.py" erase \
     --model "$MODEL_PATH" --out "$SNMF_OUT" --dtype "$DTYPE" \
-    --delta-in "$DELTA_IN" --delta-out "$DELTA_OUT" --save "$SAVE_TO"
+    --delta-in "$DELTA_IN" --delta-out "$DELTA_OUT" \
+    --range-cell "$RANGE_CELL" --save "$SAVE_TO"
   ;;
 judge-smoke)
   # Loads the 23.9 GB judge and sends the two real prompts. Nothing else in
@@ -153,6 +168,7 @@ verify)
     --neutral-sentences "$DATA/neutral_sentences.json" \
     --out "$SNMF_OUT" --dtype "$DTYPE" \
     --delta-in "$DELTA_IN" --delta-out "$DELTA_OUT" \
+    --range-cell "$RANGE_CELL" \
     --n-sentences "$N_SENTENCES" \
     --batch-size "$BATCH_SIZE" --max-length "$MAX_LENGTH"
   ;;
