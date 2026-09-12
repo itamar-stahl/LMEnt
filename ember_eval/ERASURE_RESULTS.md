@@ -1052,3 +1052,54 @@ Note on provenance: job 881205's printout labels its cells "delta 200" because
 `lexical_tail.py` defaulted an unmatched filename to that string. The numbers are
 the ablated twin's. The fallback now labels by filename stem so this cannot
 recur.
+
+## Baseball's lexical profile: the obvious explanation is WRONG
+
+Job 883039 ran the same test on the Baseball arm. The hypothesis it was built to
+check -- that Rome's erasure hits harder because its edited tokens are common
+words appearing in more chunks -- **is refuted.**
+
+| edited tokens in chunk | ROME n | ROME delta | BASEBALL n | BASEBALL delta |
+|---|---|---|---|---|
+| 0 | 11 | -0.0000 | 13 | +0.0000 |
+| 1 | 264 | **+0.0698** | 145 | **+0.0677** |
+| 2-3 | 586 | +0.1874 | 428 | +0.2580 |
+| 4-7 | 757 | +0.7844 | 570 | +0.4127 |
+| 8+ | 1382 | **+2.4716** | 1844 | **+0.8571** |
+
+Both at delta 200, each concept's own held-out set and own control.
+
+**Baseball's chunks carry MORE edited tokens, not fewer** -- 61% in the 8+ bucket
+against Rome's 46%. Prevalence is not the difference.
+
+**What differs is the shape of the dose-response.** At one edited token the two
+concepts are indistinguishable (+0.0698 against +0.0677). They separate as the
+count rises: Rome **compounds** (0.070 -> 0.187 -> 0.784 -> 2.472) while Baseball
+**saturates** (0.068 -> 0.258 -> 0.413 -> 0.857). Per edited token the damage is
+identical at n=1 and 2.9x apart at n>=8.
+
+So the 7.72x-against-1.86x delta sensitivity in the 2x2 is not "Rome's words are
+everywhere". It is that **a chunk carrying many of Rome's edited tokens is
+damaged super-linearly, and a chunk carrying many of Baseball's is not.**
+
+**Hypothesis, not tested here:** the distinction is edited token *types* versus
+*occurrences*. A Rome chunk in the 8+ bucket plausibly carries eight *different*
+damaged words (`' distance'`, `' sacred'`, `' temples'`, `' gods'`), each failing
+independently; a Baseball chunk plausibly repeats a few (`' pitcher'`,
+`' innings'`, `' batting'`) many times, so the damage saturates -- the word is
+already lost and repeating it costs nothing further, while surrounding context
+still disambiguates. Testable by counting distinct edited types per chunk
+alongside total occurrences, which `lexical_tail.py` does not currently do.
+It is the same type/token distinction as the SNMF feature-evidence bug fixed in
+`mlp_erasure/FEATURE_QUALITY_FIXES.md`.
+
+**The ablation contrast reproduces on Baseball**, as it did on Rome: the untaught
+twin damages chunks +0.4990 with an edited token and **+0.5203 without** --
+indistinguishable, and the erasure's +0.0000-without is the contrast. Whatever
+the shape difference between concepts turns out to be, it is a property of the
+erasure, not of never-training.
+
+Fixed while writing this: `lexical_tail.py` hardcoded "(Rome)" in its held-out
+and control labels, so the Baseball run printed its Baseball numbers under a Rome
+heading. Labels now come from the report's `concept` field. Same defect class as
+the delta-label fallback fixed earlier; the numbers were never affected.

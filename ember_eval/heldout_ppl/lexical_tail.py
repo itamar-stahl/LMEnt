@@ -100,7 +100,8 @@ def main():
 
     rep = json.load(open(a.report))
     edited = set(int(x) for x in rep["integrity"]["changed_embedding_rows"])
-    print(f"[lex] {len(edited)} edited token ids from {a.report}")
+    concept = rep.get("concept", "concept")
+    print(f"[lex] {len(edited)} edited token ids from {a.report} (concept: {concept})")
 
     print("[lex] building dataset", flush=True)
     ds = build_dataset()
@@ -131,8 +132,8 @@ def main():
         H, K = losses(p)
         dH = {i: H[i] - ctlH[i] for i in H if i in ctlH}
         dK = {i: K[i] - ctlK[i] for i in K if i in ctlK}
-        report(f"delta {delta} / HELD-OUT (Rome) chunks", list(dH), dH, count_by_id, tok_by_id, out["cells"])
-        report(f"delta {delta} / CONTROL (non-Rome) chunks", list(dK), dK, count_by_id, tok_by_id, out["cells"])
+        report(f"delta {delta} / HELD-OUT ({concept}) chunks", list(dH), dH, count_by_id, tok_by_id, out["cells"])
+        report(f"delta {delta} / CONTROL (non-{concept}) chunks", list(dK), dK, count_by_id, tok_by_id, out["cells"])
     Path(a.out).write_text(json.dumps(out, indent=1))
     print(f"\n[lex] wrote {a.out}")
 
