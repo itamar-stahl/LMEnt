@@ -1,9 +1,47 @@
-# Modular ACL paper template
+# Modular ACL paper draft
 
 The paper is split into one file per section. `main.tex` controls the section
-order, packages, title, authors, bibliography, and appendix. Drafting guidance
-appears in framed boxes in the compiled PDF; change `\draftnotestrue` to
-`\draftnotesfalse` in `main.tex` before submission.
+order, packages, title, authors, bibliography, and appendix. A complete
+first-pass narrative is present; red TODOs and framed notes mark facts,
+experiments, tables, and figures that remain unresolved. Change
+`\draftnotestrue` to `\draftnotesfalse` only after resolving them and before
+submission.
+
+## Current outline
+
+The manuscript is organized around the question of how closely erasure
+reproduces a matched never-trained model:
+
+1. Introduction
+2. Background and Related Work
+3. Experimental Design
+4. Measuring Similarity to Never-Training
+   - behavioral similarity
+   - distributional similarity
+   - parameter-space similarity
+   - specificity and capability preservation
+   - statistical analysis
+5. Results, organized by the same evaluation dimensions
+6. Analysis and Discussion
+7. Limitations
+8. Conclusion
+9. AI Disclosure and Reflection
+
+EMBER is the main erasure method. RMU and SNMF are comparison methods and
+should enter the main result tables only after persistent erased checkpoints
+have been evaluated through the same protocol. Ancient Rome and Baseball are
+treated as equally important concept arms. Pornography is excluded from the
+main study.
+
+Unresolved facts and decisions are tracked in
+[`OPEN_QUESTIONS.md`](OPEN_QUESTIONS.md). It separates claims already supported
+by the repository from items requiring run-artifact verification or teammate
+input.
+
+The optional robustness subsection is shown only while draft notes are enabled.
+If a robustness experiment is completed, remove its surrounding
+`\ifdraftnotes`/`\fi` commands so it remains in the final manuscript. Otherwise,
+delete the subsection.
 
 ## Build
 
@@ -36,10 +74,11 @@ the named-author final format. If the instructor requests anonymity, change
 - Compile after each substantial edit and inspect the PDF for overfull boxes,
   unreadable figures, and content beyond the eight-page limit.
 
-## Suggested writing order
+## Suggested revision order
 
-Draft the experimental design, evaluation, and results first because those
-sections are constrained by completed work. Then write related work and the
-discussion. Write the introduction, abstract, and conclusion after the central
-claims and main table have stabilized.
-
+Resolve the P0 items in `OPEN_QUESTIONS.md`, especially valid RMU/SNMF
+checkpoints, common evaluation, and the Ancient Rome parameter comparison.
+Then fill the value-free result table and replace the two figure boxes with
+vector graphics. Revise the abstract, introduction preview, discussion, and
+conclusion together after the central comparative claim stabilizes. Finish with
+the author block, AI disclosure, citation audit, and eight-page check.

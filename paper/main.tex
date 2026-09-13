@@ -16,6 +16,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{xcolor}
+\usepackage{array}
 
 % Keep this true while drafting. Set it to \draftnotesfalse before submission.
 \newif\ifdraftnotes
@@ -30,19 +31,25 @@
     \par\smallskip
   \fi
 }
+\newcommand{\placeholder}[1]{%
+  \ifdraftnotes
+    \textcolor{red!70!black}{\textbf{[TODO: #1]}}%
+  \fi
+}
 
 \title{Can Concept Erasure Reproduce Never Learning?\\
 Comparing EMBER with Data-Ablated Language Models}
 
-% Replace all placeholders with the group's information.
 \author{
-  \textbf{First Author} \quad
-  \textbf{Second Author} \quad
-  \textbf{Third Author} \\
+  \textbf{Gal Barak} \quad
+  \textbf{Tamar Tabbach} \quad
+  \textbf{Itamar Stahl} \quad
+  \textbf{Adam Fleisher} \\
   Tel Aviv University \\
-  \texttt{first@email.example},
-  \texttt{second@email.example},
-  \texttt{third@email.example}
+  \texttt{Gal.Barak@mail.tau.ac.il} \quad
+  \texttt{Tamar.Tabbach@mail.tau.ac.il} \\
+  \placeholder{Add Itamar Stahl's email} \quad
+  \texttt{Adam.Fleisher@mail.tau.ac.il}
 }
 
 \begin{document}
@@ -55,7 +62,7 @@ Comparing EMBER with Data-Ablated Language Models}
 \input{sections/01_introduction}
 \input{sections/02_background_related_work}
 \input{sections/03_experimental_design}
-\input{sections/04_evaluation}
+\input{sections/04_evaluation_framework}
 \input{sections/05_results}
 \input{sections/06_analysis_discussion}
 \input{sections/07_limitations}
@@ -63,9 +70,6 @@ Comparing EMBER with Data-Ablated Language Models}
 \input{sections/09_ai_disclosure}
 
 % Add BibTeX records to references.bib and cite them with \citet{} or \citep{}.
-% This placeholder keeps the empty drafting template compilable; remove the
-% \nocite line once the manuscript contains real citations.
-\ifdraftnotes\nocite{draft-placeholder}\fi
 \bibliography{references}
 
 % The course permits an appendix outside the eight-page content limit, but the

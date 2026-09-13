@@ -1,5 +1,65 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\draftnote{Motivate persistent concept erasure and explain why comparison only with the original model is insufficient. Introduce the never-trained model as the natural reference state. State one explicit research question, summarize the experimental design, report the headline findings, and finish with two or three concrete contributions. Place the main result figure or table here if space permits.}
+Language models may retain knowledge that their developers later wish to
+remove, for example because it is private, copyrighted, obsolete, or unsafe.
+Post-hoc concept erasure attempts to remove such knowledge from model
+parameters while preserving unrelated capabilities. A successful method should
+do more than change answers to a familiar prompt: its effect should persist
+across task formats and should not merely hide accessible knowledge.
 
+Most evaluations compare an erased model only with its original version. This
+establishes that an intervention changed measured behavior, but not that the
+result resembles genuine absence of learning. An edit can be too weak, too
+strong, or damaging in a qualitatively different way while still obtaining a
+large efficacy score. Retraining on data from which the target concept has been
+removed supplies a more natural reference, but the expense of training and the
+difficulty of identifying concept-related data have usually made this baseline
+unavailable.
+
+We exploit LMEnt's entity-annotated corpus and open training pipeline
+\citep{gottesman2025lment} to construct matched OLMo-2 1B models
+\citep{walsh2025olmo2}. A shared control is trained on the complete corpus,
+while two matched models receive no loss on chunks identified with Ancient Rome
+or Baseball. Because entity filtering cannot guarantee removal of every
+indirect mention, we call these models \emph{concept-excluded}; they are our
+operational never-trained references.
+
+Our primary method is EMBER \citep{suslik2026ember}, which removes
+concept-associated sparse features from selected token embeddings. RMU
+\citep{li2024wmdp} and semi-nonnegative matrix factorization (SNMF)
+\citep{shafran2026snmf} provide MLP-editing comparisons. We ask:
+
+\begin{quote}
+\small
+How closely do post-hoc erasure methods reproduce a matched model trained
+without learning signal from concept-associated text?
+\end{quote}
+
+No single distance answers this question. We therefore compare the models on
+concept questions, held-out concept text, unrelated controls, and parameter
+displacements. The present EMBER results disagree across both concepts and
+instruments. On Ancient Rome, EMBER overshoots concept exclusion and damages a
+tail of passages that the excluded model degrades only mildly. On Baseball, it
+reaches only part of the exclusion effect on held-out text; its clear
+question-likelihood reduction cannot be expressed as an overshoot because the
+excluded-model question effect is within the between-twin floor. The completed
+Baseball parameter comparison
+shows almost no alignment between the embedding edit and the displacement
+caused by excluding data during training.
+
+Our contributions are threefold:
+
+\begin{itemize}
+  \item We construct controlled concept-excluded references for two concepts
+  while holding initialization, batch order, optimizer, and training duration
+  fixed.
+  \item We evaluate erasure as similarity to those references across
+  behavioral, distributional, parameter-space, and specificity dimensions.
+  \item We show that these dimensions can disagree, and that a saturated
+  accuracy-based selection metric can conceal collateral effects and favor an
+  unnecessarily strong edit.
+\end{itemize}
+
+\placeholder{Revise the result preview and contribution list after RMU and SNMF
+are complete; keep EMBER as the main analysis.}

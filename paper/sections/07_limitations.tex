@@ -1,5 +1,26 @@
 \section*{Limitations}
 \label{sec:limitations}
 
-\draftnote{Discuss the two concepts, single model size, single training seed, one selected EMBER feature per concept, imperfect entity-based concept removal, question/corpus mismatch, input-embedding-only intervention, and limited robustness testing. Explain which conclusions generalize only to the evaluated configurations.}
+Our evidence covers two concepts, one 1B-parameter base-model architecture, one
+training seed, and one selected EMBER feature and delta per concept. Item-level
+tests do not capture uncertainty across training runs, factorizations, or
+hyperparameter searches. Ancient Rome's final entity set was widened following
+an exploratory coverage audit, and its estimated recall remains incomplete.
+Both blacklists miss indirect or unlinked evidence, so ``never-trained'' refers
+only to the specified exclusion intervention.
 
+The question bank was developed for EMBER rather than from the excluded LMEnt
+chunks. Retrieval indicates imperfect alignment, especially for Baseball, and
+the neighboring-domain subsets contain only 50 questions each. Because one
+shared control is used for both exclusion arms, the Baseball analysis also
+reveals a run-level offset that its question contrast cannot subtract. General control
+chunks offer greater statistical power but are length-matched rather than
+topic-matched. The parameter comparison is sensitive to ordinary training
+nondeterminism and a documented H100/H200 difference in late training windows.
+
+EMBER edits only input embeddings whereas exclusion affects the full training
+trajectory; direct parameter proximity is therefore a demanding criterion, not
+a complete definition of functional equivalence. \placeholder{State the final
+scope and selection limitations of RMU/SNMF.} Finally, unless the optional
+experiment is completed, we make no new claim about adversarial recovery or
+relearning robustness.

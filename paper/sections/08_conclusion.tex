@@ -1,5 +1,20 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-\draftnote{Answer the research question directly in a short paragraph. Recap the cross-concept and cross-instrument evidence, then state the broader implication: erasure should be evaluated against never-trained controls using several complementary measurements, not only retention relative to the original model. Do not introduce new results.}
+We evaluated concept erasure against matched language models trained without
+loss on entity-associated data. EMBER does not reproduce those reference states
+consistently. It overshoots Ancient Rome exclusion and damages a subset of
+target passages and general text; for Baseball it undershoots on held-out text
+while the question instrument does not establish a concept-specific exclusion
+target. Its completed weight-space update is
+nearly orthogonal to the displacement produced by excluding Baseball during
+training. These conclusions would be hidden by reporting only accuracy or only
+erased-versus-original efficacy.
 
+\placeholder{Add the final RMU/SNMF conclusion.} More broadly, ``successful
+erasure'' should specify the desired reference and measurement level. Matched
+concept-excluded models do not provide an infallible definition of ignorance,
+but they turn never learning from a metaphor into an auditable experimental
+comparison. Behavioral, distributional, parameter-space, and specificity
+evidence should be reported together when judging how closely an edit
+approaches that state.

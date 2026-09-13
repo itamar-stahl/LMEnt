@@ -1,0 +1,82 @@
+\section{Measuring Similarity to Never-Training}
+\label{sec:evaluation}
+
+For each concept we compare a shared control $M_C$, its concept-excluded twin
+$M_N$, and an erased model $M_E$ produced from $M_C$. The excluded effect is
+$M_N-M_C$, the erasure effect is $M_E-M_C$, and the residual
+$M_E-M_N$ measures mismatch. We apply this design to four complementary notions
+of proximity rather than defining success with one aggregate score.
+
+\subsection{Behavioral Similarity}
+
+EMBER supplies 100 target questions and 100 neighboring-domain questions per
+concept, each divided into equal selection and held-out halves. Ancient Rome's
+neighboring set covers other historical civilizations; Baseball's covers other
+sports. Because these base models do not reliably follow a generated-letter
+multiple-choice format, questions are rewritten as declarative stems and each
+answer option is scored as a continuation.
+
+For option $a$ and stem $x$, we compute
+\begin{equation}
+s(a,x)=\frac{\log P(a\mid x)-\log P(a\mid \varnothing)}{|a|_{\mathrm{char}}}.
+\end{equation}
+The subtraction reduces preference for intrinsically common option strings and
+the denominator mitigates option-length bias. Our primary per-question value is
+the gold option's $s(a,x)$; models are compared on paired questions. Argmax
+accuracy is secondary because 50 binary outcomes per split are too coarse to
+resolve many changes visible in likelihood.
+
+\subsection{Distributional Similarity}
+
+Each model scores the same 3,000 blacklisted chunks and 5,004 non-blacklisted
+chunks sampled to match the variable-sequence-length bucket distribution. For
+model pair $(A,B)$, let $\Delta_H(A,B)$ be the mean paired increase in
+per-token negative log-likelihood (NLL) on held-out concept chunks and
+$\Delta_R(A,B)$ the corresponding increase on control chunks. We report
+\begin{equation}
+\mathrm{DiD}(A,B)=\Delta_H(A,B)-\Delta_R(A,B),
+\end{equation}
+which subtracts global model drift. We also inspect quantiles of the per-chunk
+shift: equal means can conceal a uniform mild degradation versus a small tail
+of severely damaged passages.
+
+\placeholder{Add output-distribution KL divergence only if the team implements
+it on a clearly specified prompt/token set. NLL difference-in-differences is
+the completed distributional measurement.}
+
+\subsection{Parameter-Space Similarity}
+
+Flattening aligned floating-point parameters, define the erasure update
+$d_E=W_E-W_C$ and target displacement $d_N=W_N-W_C$. We report
+\begin{align}
+\mathrm{cosine} &= \frac{d_E^\top d_N}{\lVert d_E\rVert\lVert d_N\rVert},\\
+\mathrm{progress} &= \frac{d_E^\top d_N}{\lVert d_N\rVert^2},\\
+\mathrm{residual} &= \frac{\lVert d_E-d_N\rVert}{\lVert d_N\rVert}.
+\end{align}
+Cosine measures direction, progress measures how much of the target direction
+the edit traverses, and residual equals zero only at the excluded model. Global
+measurements include all aligned parameters; embedding-only results isolate the
+space EMBER can directly change. This analysis assumes matched training, making
+the hardware qualification in Section~\ref{sec:experimental-design} relevant.
+
+\subsection{Specificity and Capability Preservation}
+
+Specificity is measured at three distances from the target: neighboring-domain
+questions, length-matched general corpus chunks, and general OLMES tasks. A
+desirable edit approaches $M_N$ on target measurements without moving farther
+from it on controls. Neighboring questions are semantically demanding but
+small; control-chunk NLL has much higher power but is not topic matched; general
+benchmarks detect broad capability loss but need not be sensitive to either
+target concept.
+
+\subsection{Statistical Analysis}
+
+Question and same-set chunk contrasts are paired by item. We report paired
+standardized effects ($d_z$) and two-sided sign-flip permutation tests. For the
+held-out-versus-control difference-in-differences, whose two sets are unpaired,
+we permute set labels. \placeholder{Add 95\% paired bootstrap confidence
+intervals to every headline contrast and state the resampling unit.} These
+statistics quantify item-level uncertainty only; with one training seed per
+condition they do not measure training-run variability. Erasure settings are
+selected without consulting the final concept-excluded comparison wherever the
+record permits; any exception must be labeled exploratory.

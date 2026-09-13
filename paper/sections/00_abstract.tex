@@ -1,3 +1,21 @@
-\draftnote{Write this last, in no more than 200 words. State the problem, the matched never-trained baseline, the concepts and model scale, the evaluation axes, the central result, and the main implication. Avoid citations and unexplained acronyms where possible.}
-
-\ifdraftnotes Replace this sentence with the paper abstract.\fi
+Concept-erasure methods are commonly evaluated by how much they reduce target
+knowledge relative to the original model. This comparison cannot determine
+whether an erased model resembles one that never learned the concept. We study
+this question with matched 1B-parameter language models trained on the same
+entity-annotated Wikipedia corpus, with either Ancient Rome or Baseball chunks
+masked from the training loss. We compare these concept-excluded references
+with EMBER, an embedding-editing erasure method, and evaluate similarity along
+behavioral, distributional, parameter-space, and specificity dimensions.
+EMBER does not reproduce a single, consistent approximation to concept
+exclusion. For Ancient Rome it suppresses target text substantially more than
+exclusion and also harms control text; for Baseball it undershoots exclusion on
+held-out text, while the small question-side exclusion effect cannot be
+separated from ordinary between-twin variation. In the completed
+Baseball weight comparison, the EMBER update is nearly orthogonal to the
+control-to-excluded displacement. These disagreements also expose a limitation
+of coarse multiple-choice accuracy: EMBER's accuracy-based specificity signal
+saturated and failed to oppose stronger edits. \placeholder{Add the final RMU
+and SNMF comparison in one sentence.} Our results motivate evaluating concept
+erasure against controlled training baselines with several complementary
+instruments rather than treating any single behavioral score as evidence of
+never learning.

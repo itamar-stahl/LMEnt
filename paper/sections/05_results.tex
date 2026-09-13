@@ -1,18 +1,104 @@
 \section{Results}
 \label{sec:results}
 
-\subsection{Validity of the Never-Trained Baseline}
+\subsection{Validity of the Never-Trained Baselines}
 
-\draftnote{First show that masking worked and that general capability remained stable. Report concept-text effects against matched control text, embedding-health checks, and a compact general benchmark result. This establishes that later comparisons are interpretable.}
+Both exclusion interventions produced the predicted selective NLL increase.
+For Ancient Rome, excluding concept chunks increases the held-out-versus-control
+gap by 0.2349 nats/token ($d_z=1.052$). Baseball yields an even larger 0.4933
+nats/token ($d_z=2.070$). In both arms the per-chunk increase is nearly uniform,
+while drift on length-matched general chunks is small (0.0035 and 0.0058
+nats/token, respectively). Thus the excluded twins establish a measurable
+target before any erasure method is judged.
 
-\subsection{Does Erasure Match Never Training?}
+General evaluation is consistent with limited broad damage. The Baseball
+control and excluded twin score 0.717 and 0.697 on 1,000 SciQ items, a difference
+within approximately 1.4 standard errors. \placeholder{Insert the agreed
+multi-task general-capability summary for both concept arms and confidence
+intervals.}
 
-\draftnote{Present the main three-model comparison in one table: control, never-trained, and EMBER-erased. For each concept, report never-trained minus control, erased minus control, erased minus never-trained, and their confidence intervals on text, questions, and parameter space. Lead with effect sizes rather than only p-values.}
+\subsection{Behavioral Similarity}
 
-% Suggested modular table usage:
-% \input{tables/main_results}
+On held-out Ancient Rome questions, the excluded model's gold-option
+PMI-per-character score falls by 0.2797 relative to control, whereas EMBER falls
+by 0.6237. The
+residual of $-0.3439$ indicates that EMBER suppresses these answers more than
+concept exclusion. The neighboring-history set is approximately flat for the
+excluded twin but declines under EMBER, providing behavioral evidence of
+collateral damage.
 
-\subsection{Concept-Dependent Outcomes}
+Baseball differs. On its target questions the raw exclusion contrast is small
+($-0.0452$ on the held-out half), while EMBER produces a clear larger decline
+($-0.1935$). However, a no-Rome twin that saw all Baseball chunks reproduces
+most of the apparent exclusion contrast ($-0.0355$ on the same split), and the
+cross-concept null places the exclusion effect within between-twin variation.
+The neighboring-sports anomaly is similarly reproduced by the no-Rome twin.
+Consequently, the Baseball question results establish an EMBER effect but do
+not establish a behavioral never-training target or an overshoot ratio.
 
-\draftnote{Contrast Ancient Rome and Baseball directly. Rome's erasure overshoots the never-trained text effect and causes collateral drift; Baseball's erasure undershoots on text but overshoots on questions. State the scope carefully: these are outcomes of the evaluated configurations, not an impossibility result for EMBER.}
+Accuracy obscures much of this behavior. For example, the Baseball gold score
+falls on 42 of 50 selection questions, including questions both models answer
+correctly, while four-option accuracy changes by only three net questions. For
+Ancient Rome, EMBER's selected delta reduces accuracy primarily on the split
+used to choose it, but the continuous effect generalizes to the held-out split.
 
+\subsection{Distributional Similarity}
+
+The text-level comparison reverses part of the behavioral story. For Ancient
+Rome, EMBER's difference-in-differences is 1.3461 nats/token, 5.73 times the
+excluded effect. Its median per-chunk shift is nevertheless close to that of
+exclusion; the excess is concentrated in a heavy tail. EMBER makes 16.2\% of
+Rome chunks more than 3 nats/token worse, whereas the excluded model never
+enters that range. General control text also moves by 0.0332 nats/token, compared
+with 0.0035 for exclusion.
+
+For Baseball, EMBER instead reaches 0.3368 nats/token against the excluded
+effect of 0.4933, or 68\% of the target. Its residual is therefore negative:
+the erased model remains better at held-out Baseball text than the excluded
+twin. Unlike Ancient Rome, collateral change relative to the excluded model on
+general text is not significant ($p=0.072$). Hence EMBER overshoots the Rome
+text baseline but undershoots the Baseball text baseline.
+
+\begin{figure}[t]
+  \centering
+  \fbox{\begin{minipage}[c][3.0cm][c]{0.92\columnwidth}
+    \centering\small
+    \textbf{Planned distribution figure}\par\medskip
+    Two panels: Ancient Rome and Baseball.\par
+    Curves: excluded $-$ control, EMBER $-$ control,\par
+    RMU $-$ control, and SNMF $-$ control.\par
+    Horizontal axis: per-chunk NLL change.\par
+    Vertical axis: empirical cumulative probability.
+  \end{minipage}}
+  \caption{Placeholder for paired per-chunk shift distributions. The figure
+  should reveal uniform shifts versus heavy tails; add vertical mean and median
+  markers only after all methods use the identical chunk IDs.}
+  \label{fig:chunk-distributions}
+\end{figure}
+
+\subsection{Parameter-Space Similarity}
+
+For Baseball, the global cosine between EMBER's update and the
+control-to-excluded displacement is 0.0010. Progress along the target direction
+is $2.64\times10^{-5}$ and normalized residual distance is 1.0003. Restricting
+the calculation to the embedding matrix raises cosine only to 0.0043. Thus the
+observed behavioral and distributional effects do not correspond to meaningful
+movement toward the excluded model in parameter space.
+
+\placeholder{Run and verify the corresponding Ancient Rome comparison. Add RMU
+and SNMF whole-model and edited-tensor results only after aligned persistent
+checkpoints pass integrity checks.}
+
+\subsection{Overall Comparison}
+
+EMBER does not converge on the concept-excluded state in a way that is stable
+across concepts or measurement levels. It overshoots both Ancient Rome question
+and text effects, while for Baseball it undershoots text loss and the question
+instrument does not identify a reliable exclusion target. Its completed
+parameter comparison is nearly orthogonal to the excluded displacement. These
+are not interchangeable failures, so we do not reduce them to one scalar score.
+
+\input{tables/results_overview}
+
+\placeholder{Replace every RMU/SNMF placeholder and revise this synthesis only
+after both methods have been evaluated with the identical protocol.}
