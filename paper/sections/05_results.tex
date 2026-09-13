@@ -1,0 +1,18 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Validity of the Never-Trained Baseline}
+
+\draftnote{First show that masking worked and that general capability remained stable. Report concept-text effects against matched control text, embedding-health checks, and a compact general benchmark result. This establishes that later comparisons are interpretable.}
+
+\subsection{Does Erasure Match Never Training?}
+
+\draftnote{Present the main three-model comparison in one table: control, never-trained, and EMBER-erased. For each concept, report never-trained minus control, erased minus control, erased minus never-trained, and their confidence intervals on text, questions, and parameter space. Lead with effect sizes rather than only p-values.}
+
+% Suggested modular table usage:
+% \input{tables/main_results}
+
+\subsection{Concept-Dependent Outcomes}
+
+\draftnote{Contrast Ancient Rome and Baseball directly. Rome's erasure overshoots the never-trained text effect and causes collateral drift; Baseball's erasure undershoots on text but overshoots on questions. State the scope carefully: these are outcomes of the evaluated configurations, not an impossibility result for EMBER.}
+

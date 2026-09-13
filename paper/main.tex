@@ -1,0 +1,76 @@
+\documentclass[11pt]{article}
+
+% ACL style. This course report uses the final (named-author) format.
+% If an anonymous review version is requested, change this to:
+% \usepackage[review]{acl}
+\usepackage{acl}
+
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+
+% Keep this true while drafting. Set it to \draftnotesfalse before submission.
+\newif\ifdraftnotes
+\draftnotestrue
+\newcommand{\draftnote}[1]{%
+  \ifdraftnotes
+    \par\smallskip
+    \noindent\fcolorbox{black!30}{black!3}{%
+      \begin{minipage}{0.92\linewidth}
+        \small\textbf{Drafting note.} #1
+      \end{minipage}}
+    \par\smallskip
+  \fi
+}
+
+\title{Can Concept Erasure Reproduce Never Learning?\\
+Comparing EMBER with Data-Ablated Language Models}
+
+% Replace all placeholders with the group's information.
+\author{
+  \textbf{First Author} \quad
+  \textbf{Second Author} \quad
+  \textbf{Third Author} \\
+  Tel Aviv University \\
+  \texttt{first@email.example},
+  \texttt{second@email.example},
+  \texttt{third@email.example}
+}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  \input{sections/00_abstract}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_background_related_work}
+\input{sections/03_experimental_design}
+\input{sections/04_evaluation}
+\input{sections/05_results}
+\input{sections/06_analysis_discussion}
+\input{sections/07_limitations}
+\input{sections/08_conclusion}
+\input{sections/09_ai_disclosure}
+
+% Add BibTeX records to references.bib and cite them with \citet{} or \citep{}.
+% This placeholder keeps the empty drafting template compilable; remove the
+% \nocite line once the manuscript contains real citations.
+\ifdraftnotes\nocite{draft-placeholder}\fi
+\bibliography{references}
+
+% The course permits an appendix outside the eight-page content limit, but the
+% main paper must remain self-contained. Remove this input if unused.
+\appendix
+\input{appendices/appendix}
+
+\end{document}

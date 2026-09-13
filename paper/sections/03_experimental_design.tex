@@ -1,0 +1,19 @@
+\section{Experimental Design}
+\label{sec:experimental-design}
+
+\subsection{Models and Concepts}
+
+\draftnote{Identify the OLMo/LMEnt architecture, parameter count, training duration, data, seed, and checkpoints. Introduce Ancient Rome and Baseball, explain how each concept is represented by entity IDs and corpus chunks, and report the resulting dataset sizes. State which control checkpoint is shared.}
+
+\subsection{Constructing Never-Trained Models}
+
+\draftnote{Explain how concept-associated chunks were removed from the loss while keeping the training recipe matched. Report exclusion counts and guard checks. Clarify exactly what the ablated model did not see and why this is a controlled approximation rather than proof that it contains no concept knowledge.}
+
+\subsection{EMBER Erasure}
+
+\draftnote{Summarize sparse matrix factorization, feature identification, token selection, and embedding subtraction. Document the feature-selection rule, factorization settings, selected feature and delta for each concept, number of edited embedding rows, and the fact that the untied language-model head was unchanged. Separate choices made before evaluation from exploratory choices.}
+
+\subsection{Reproducibility and Controls}
+
+\draftnote{List software versions, hardware where relevant, random seeds, code/data availability, and integrity checks. Mention the factorization's GPU-model sensitivity and the reuse of the judged factorization. Put long paths and operational details in the appendix or repository documentation.}
+
