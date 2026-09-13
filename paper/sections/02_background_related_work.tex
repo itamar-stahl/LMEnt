@@ -10,6 +10,8 @@ across many documents and represented diffusely throughout a network. It also
 differs from factual editing, which usually replaces or inserts a small number
 of associations, and from refusal tuning, which can suppress an answer while
 leaving the underlying knowledge accessible.
+\placeholder{Add foundational citations for machine unlearning, factual model
+editing, and refusal-based suppression after the citation audit.}
 
 Erasure evaluations commonly balance \emph{efficacy}, reduced performance on
 target data, against \emph{specificity}, preservation of neighboring and
@@ -61,9 +63,3 @@ Hubble inserts selected passages into otherwise matched pretraining runs
 pretraining \citep{obrien2025deepignorance}. Such controls support a stronger
 question than whether erasure changes a model: whether it approaches the model
 produced when the relevant learning signal is absent.
-
-This reference is not absolute ground truth. A semantic concept can appear in
-unlinked or indirect text, and a model can infer it from related evidence.
-Consequently, our claim is comparative: we measure proximity to a specific,
-auditable data-exclusion intervention, not proof that either model contains no
-trace of the concept.

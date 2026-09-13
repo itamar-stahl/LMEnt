@@ -36,17 +36,10 @@ How closely do post-hoc erasure methods reproduce a matched model trained
 without learning signal from concept-associated text?
 \end{quote}
 
-No single distance answers this question. We therefore compare the models on
-concept questions, held-out concept text, unrelated controls, and parameter
-displacements. The present EMBER results disagree across both concepts and
-instruments. On Ancient Rome, EMBER overshoots concept exclusion and damages a
-tail of passages that the excluded model degrades only mildly. On Baseball, it
-reaches only part of the exclusion effect on held-out text; its clear
-question-likelihood reduction cannot be expressed as an overshoot because the
-excluded-model question effect is within the between-twin floor. The completed
-Baseball parameter comparison
-shows almost no alignment between the embedding edit and the displacement
-caused by excluding data during training.
+The present EMBER results depend strongly on concept and measurement level. It
+overshoots the Ancient Rome reference, undershoots the Baseball reference on
+held-out text, and shows almost no parameter-space alignment with the completed
+Baseball target displacement.
 
 Our contributions are threefold:
 
@@ -56,9 +49,8 @@ Our contributions are threefold:
   fixed.
   \item We evaluate erasure as similarity to those references across
   behavioral, distributional, parameter-space, and specificity dimensions.
-  \item We show that these dimensions can disagree, and that a saturated
-  accuracy-based selection metric can conceal collateral effects and favor an
-  unnecessarily strong edit.
+  \item We show that proximity depends on both the concept and the measurement
+  level, rather than being captured by a single efficacy score.
 \end{itemize}
 
 \placeholder{Revise the result preview and contribution list after RMU and SNMF

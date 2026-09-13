@@ -6,17 +6,21 @@
     \toprule
     Method & Concept & Behavioral residual & Text-NLL residual & Parameter fit & Specificity \\
     \midrule
-    EMBER & Ancient Rome & \textit{Insert target and neighbor effects} & \textit{Insert DiD and tail summary} & \textit{Insert cosine, progress, residual} & \textit{Insert control and benchmark effects} \\
-    EMBER & Baseball & \textit{Insert target and neighbor effects} & \textit{Insert DiD and tail summary} & \textit{Insert cosine, progress, residual} & \textit{Insert control and benchmark effects} \\
+    EMBER & Ancient Rome & QA $-0.344$; neighbor $-0.132$ & DiD $+1.111$ & \textit{Pending Rome run} & control NLL $+0.0297$ \\
+    EMBER & Baseball & \textit{Not identified: twin floor} & DiD $-0.1564$ & cos. $.001$; prog. $2.64\!\times\!10^{-5}$; res. $1.0003$ & control NLL $+0.0014$ \\
     RMU & Ancient Rome & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
     RMU & Baseball & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
     SNMF & Ancient Rome & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
     SNMF & Baseball & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
     \bottomrule
   \end{tabular}
-  \caption{Placeholder for the main synthesis table. Each filled cell should
-  report the erased-minus-excluded residual with uncertainty, not merely the
-  erased-minus-control efficacy. Arrows or qualitative labels may be added, but
-  the distinct dimensions should not be collapsed into one score.}
+  \caption{Current synthesis of erased-minus-excluded residuals. Behavioral
+  entries use held-out PMI-per-character; text and control entries use
+  per-token NLL. Baseball behavior is not identified because the exclusion
+  contrast lies within the between-twin floor. \placeholder{Add uncertainty to
+  every completed point estimate.} Negative behavioral residuals denote
+  stronger answer suppression; positive NLL residuals denote higher loss than
+  the excluded model. Zero is the target in every column, but distinct
+  dimensions are not collapsed into one score.}
   \label{tab:results-overview}
 \end{table*}

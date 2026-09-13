@@ -265,7 +265,12 @@ values. Argmax accuracy remains secondary.
 Add paired bootstrap 95% intervals for question and same-set chunk contrasts.
 For the held-out/control difference-in-differences, resample at the chunk level
 within each set. State clearly that these intervals do not include training-seed
-uncertainty.
+uncertainty. Also choose one primary inferential convention: current question
+summaries quote paired t-test p-values while also computing sign-flip tests;
+chunk summaries use sign-flip tests and the difference-in-differences uses a
+label permutation. Name the test beside every reported p-value, and never treat
+a non-significant residual as evidence of equivalence without a pre-specified
+equivalence margin.
 
 #### CQ-10: Is the Ancient Rome zero-guard-leak claim verified?
 
@@ -355,12 +360,12 @@ verified question-side erasure-versus-never-training ratio.
 
 #### CQ-17: Will there be a robustness experiment?
 
-**Status: Optional.**
+**Status: Optional; subsection removed from the current draft.**
 
 If yes, predefine one threat model (for example paraphrased prompts, relearning,
 or prompt-based recovery), data, budget, and success measure, then apply it to
-erased and concept-excluded models. Otherwise remove the optional subsection and
-state that robustness was not evaluated.
+erased and concept-excluded models. The main-text subsection is currently
+removed; the Limitations section states that robustness was not evaluated.
 
 ### P1: Figures, tables, and artifacts
 
@@ -397,6 +402,19 @@ Many summaries point to private cluster paths and gitignored JSONs. Copy the
 final aggregate outputs, metadata, and configuration hashes into a stable,
 versioned supplement. The paper must remain verifiable after cluster cleanup.
 
+#### CQ-21a: Are EMBER's selected feature artifacts stably archived?
+
+**Status: Needs artifact collection.**
+
+The repository records the judge (`google/gemma-4-12B-it`), its revision for
+the Rome run, the selected cells/features, and the fact that both erasures
+reused cached factorizations. However, the chosen `feature_manifest.json`, raw
+judge verdicts/traces, `potential_features.csv`, and Baseball's detailed
+`GRID_NOTES.md` live on private cluster paths. Copy these artifacts into the
+versioned supplement and record their hashes. This matters because the Rome
+audit found that a fixed seed reproduced byte-identically across two RTX 3090
+nodes but produced different features on an A6000.
+
 ### P2: Writing and submission details
 
 #### CQ-22: Authors, affiliations, and exact title
@@ -415,6 +433,8 @@ the title only after the final comparative claim is known.
 Verify all BibTeX metadata against primary pages. Add any course-required paper,
 the exact source for the project definitions, and further related work needed to
 support distinctions among unlearning, factual editing, and refusal tuning.
+The first Background paragraph now contains a specific citation placeholder for
+these three claims.
 
 #### CQ-24: AI disclosure
 

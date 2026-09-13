@@ -24,21 +24,26 @@ The subtraction reduces preference for intrinsically common option strings and
 the denominator mitigates option-length bias. Our primary per-question value is
 the gold option's $s(a,x)$; models are compared on paired questions. Argmax
 accuracy is secondary because 50 binary outcomes per split are too coarse to
-resolve many changes visible in likelihood.
+resolve many changes visible in likelihood. Behavioral residuals are reported
+as $s_E-s_N$, so negative values mean that erasure suppresses the gold answer
+more strongly than concept exclusion.
 
 \subsection{Distributional Similarity}
 
 Each model scores the same 3,000 blacklisted chunks and 5,004 non-blacklisted
 chunks sampled to match the variable-sequence-length bucket distribution. For
-model pair $(A,B)$, let $\Delta_H(A,B)$ be the mean paired increase in
-per-token negative log-likelihood (NLL) on held-out concept chunks and
+model pair $(A,B)$, let $\Delta_H(A,B)$ be the mean paired increase from $A$ to
+$B$ (i.e., $\mathrm{NLL}_B-\mathrm{NLL}_A$) in per-token negative
+log-likelihood on held-out concept chunks and
 $\Delta_R(A,B)$ the corresponding increase on control chunks. We report
 \begin{equation}
 \mathrm{DiD}(A,B)=\Delta_H(A,B)-\Delta_R(A,B),
 \end{equation}
 which subtracts global model drift. We also inspect quantiles of the per-chunk
 shift: equal means can conceal a uniform mild degradation versus a small tail
-of severely damaged passages.
+of severely damaged passages. For the erased-minus-excluded residual, positive
+values mean that erasure produces higher loss than exclusion and negative
+values mean that it does not reach the exclusion-induced loss increase.
 
 \placeholder{Add output-distribution KL divergence only if the team implements
 it on a clearly specified prompt/token set. NLL difference-in-differences is
@@ -72,10 +77,12 @@ target concept.
 \subsection{Statistical Analysis}
 
 Question and same-set chunk contrasts are paired by item. We report paired
-standardized effects ($d_z$) and two-sided sign-flip permutation tests. For the
-held-out-versus-control difference-in-differences, whose two sets are unpaired,
-we permute set labels. \placeholder{Add 95\% paired bootstrap confidence
-intervals to every headline contrast and state the resampling unit.} These
+standardized effects ($d_z$). Existing question summaries include paired
+$t$-tests and sign-flip permutation tests, while chunk summaries use sign-flip
+tests. For the held-out-versus-control difference-in-differences, whose two
+sets are unpaired, we permute set labels. \placeholder{Choose one primary
+inferential presentation and add 95\% bootstrap confidence intervals to every
+headline contrast, stating the resampling unit.} These
 statistics quantify item-level uncertainty only; with one training seed per
 condition they do not measure training-run variability. Erasure settings are
 selected without consulting the final concept-excluded comparison wherever the

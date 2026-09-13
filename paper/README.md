@@ -38,10 +38,10 @@ Unresolved facts and decisions are tracked in
 by the repository from items requiring run-artifact verification or teammate
 input.
 
-The optional robustness subsection is shown only while draft notes are enabled.
-If a robustness experiment is completed, remove its surrounding
-`\ifdraftnotes`/`\fi` commands so it remains in the final manuscript. Otherwise,
-delete the subsection.
+The optional robustness subsection has been removed to avoid reserving space
+for an undefined experiment. Reintroduce it only if the team completes a clear,
+common recovery or relearning protocol; otherwise the limitation statement is
+sufficient.
 
 ## Build
 

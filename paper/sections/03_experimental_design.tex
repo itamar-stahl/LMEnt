@@ -69,9 +69,14 @@ All post-hoc methods begin from the completed shared control checkpoint.
 \paragraph{EMBER.}
 We factorize its embedding matrix at rank 100 with global sparsity 0.02 and seed
 44. Candidate features are ranked by their activation ratio on 300 concept and
-300 neutral sentences and filtered by an automatic judge. Ancient Rome selects
-feature 11 and edits 76 embedding rows; Baseball selects feature 10 and edits
-72. In both cases the untied output head and all other tensors remain unchanged.
+300 neutral sentences and filtered by a Gemma-4-12B-IT judge at confidence
+threshold 0.85. For Ancient Rome, the factorization-cell rule prioritizes judge
+confidence and then activation ratio and was fixed before the grid was complete.
+The Baseball cell was likewise selected on feature quality before erasure, but
+its detailed selection note is stored only on the cluster. Neither choice used
+the concept-excluded outputs. Ancient Rome selects feature 11 and edits 76
+embedding rows; Baseball selects feature 10 and edits 72. In both cases the
+untied output head and all other tensors remain unchanged.
 The candidate edit strengths are
 $\{0.5,1,2,5,10,50,100,200\}$. EMBER chooses a delta using efficacy on 50
 concept-training questions and accuracy-based specificity on 50 neighboring
@@ -105,6 +110,13 @@ Rome from archived logs.} Converted checkpoints were checked for tensor count,
 shape agreement, tokenizer identity, and healthy embedding statistics. EMBER's
 materialized checkpoints were independently compared with the control to verify
 that exactly the reported embedding rows, and no other parameters, changed.
+
+The sparse factorization is sensitive to the numerical environment: the same
+Rome cell reproduced byte-identically on two RTX 3090 nodes but produced a
+different feature set on an A6000. The erasure jobs therefore reused the
+selected grid caches rather than refitting them. This makes the completed edits
+correspond to the judged features, while limiting reproducibility claims to the
+archived feature artifacts and recorded environment.
 
 The tracked YAML configurations have identical \texttt{train} blocks; for
 Ancient Rome they differ from control only in the job name and exclusion block,

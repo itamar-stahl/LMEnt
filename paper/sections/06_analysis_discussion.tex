@@ -27,17 +27,15 @@ signal remained equally uninformative.
 
 \subsection{Concept-Dependent Erasure}
 
-The two concepts are equally important arms and reveal genuine heterogeneity.
-Baseball exclusion has 2.1 times Ancient Rome's text-NLL effect, yet its
-question contrast does not rise above the between-twin floor. A
-retrieval-based locality audit offers a partial explanation: Ancient Rome
-questions are more enriched for evidence located in blacklisted chunks than
-Baseball questions. Many Baseball questions ask about rules repeated widely
-across the corpus, whereas the removed corpus slice contains highly predictable
-team and season prose. This account explains some, but not all, of the inversion
-and should be treated as an interpretation rather than a causal result. The
-failed question-side denominator also means that no Baseball question-level
-erasure-to-exclusion multiplier should be reported.
+Beyond the measurement issue above, the two concept arms reveal genuine
+heterogeneity. Baseball exclusion has 2.1 times Ancient Rome's text-NLL effect.
+A retrieval-based locality audit suggests that the interventions remove
+different kinds of evidence: Ancient Rome questions are more enriched for
+supporting chunks that were blacklisted, whereas many Baseball questions ask
+about rules repeated widely across the corpus. The removed Baseball slice also
+contains highly predictable team and season prose. This helps explain why
+chunk-NLL effects differ across concepts, but it is an interpretation rather
+than a causal result.
 
 EMBER's learned features also differ in quality. The selected Baseball feature
 has a clearer concept-to-neutral activation ratio, and judged Baseball features
@@ -68,14 +66,3 @@ RMU and SNMF will test whether a broader MLP intervention aligns more closely
 with concept exclusion, or whether the mismatch is common to post-hoc editing.
 \placeholder{Replace this prospective sentence with the completed comparison
 and distinguish shared from method-specific failure modes.}
-
-% Keep this subsection only if a clear robustness experiment is completed.
-\ifdraftnotes
-\subsection{Optional: Robustness Analysis}
-
-EMBER was introduced partly to improve robustness to relearning and prompting
-attacks \citep{suslik2026ember}. Our present experiments address similarity to
-concept exclusion, not a defined attack model. \placeholder{Either delete this
-subsection, or define one recovery/relearning protocol and apply it identically
-to the erased and concept-excluded conditions.}
-\fi
