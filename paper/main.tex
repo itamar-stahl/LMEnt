@@ -1,0 +1,165 @@
+\documentclass[11pt]{article}
+% Non-anonymous draft with page numbers; use [final] for final layout.
+\usepackage[preprint]{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\newcommand{\draftnote}[1]{\par\noindent\textit{[To complete: #1]}\par}
+\newcommand{\pending}{\textemdash}
+% Enable after adding verified BibTeX entries and citations.
+\newif\ifpaperbibliography
+\paperbibliographyfalse
+
+\title{Does Concept Erasure Resemble Never Learning?\\
+A Controlled Study with LMEnt}
+\author{Group authors (order to be confirmed)\\
+Tel Aviv University\\
+\texttt{[author emails]}}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+\draftnote{Write last: motivation, matched-model design, evaluated methods,
+verified findings and a scoped takeaway. Do not claim unfinished results.}
+\end{abstract}
+
+\section{Introduction}
+We investigate how closely post-training concept erasure reproduces the
+behavioral effects of excluding concept-related data during training.
+\draftnote{Motivate concept erasure and the never-learned comparison.
+Summarize the experiment and contributions supported by the final evidence.}
+
+\section{Background and Related Work}
+\subsection{Concept Erasure}
+\draftnote{Define removal, unrelated-capability preservation and robustness.
+Cite the original literature.}
+\subsection{LMEnt and Controlled Training}
+\draftnote{Explain the entity-annotated Wikipedia corpus and training suite,
+distinguish LMEnt from the OLMo-2 architecture, and motivate matched controls.
+Add verified LMEnt and OLMo-2 citations.}
+\subsection{Embedding and MLP Erasure}
+\draftnote{Explain EMBER and briefly position RMU and SNMF. Distinguish
+imported methods from evaluated methods. Explain the Gemma feature-selection
+judge, which is not ground truth for erasure success. Add verified citations.}
+
+\section{Experimental Setup}
+\subsection{Models and Training}
+\draftnote{Report architecture, model size, corpus, epochs, seeds, optimizer,
+schedule, batch size, initialization and checkpoint identifiers. State what
+was matched and any hardware or numerical deviations.}
+\subsection{Concepts and Data Exclusion}
+\draftnote{Describe Ancient Rome and Baseball entity lists, chunk selection,
+loss masking and exclusion audits. Include the earlier pornography experiment
+only if it supports the final narrative.}
+Here, \emph{never-learned} denotes training with selected concept-related
+chunks excluded from the loss. This operational definition does not guarantee
+the absence of indirect concept information elsewhere in the corpus.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Concept & Entity IDs & Chunks & Corpus (\%)\\
+\midrule
+Ancient Rome & \pending & \pending & \pending\\
+Baseball & \pending & \pending & \pending\\
+\bottomrule
+\end{tabular}
+\caption{Training exclusions. Dashes indicate values awaiting verification.}
+\label{tab:data}
+\end{table}
+
+\subsection{Erasure Procedure and Model Selection}
+\draftnote{Describe EMBER fitting data, rank/sparsity/seed grid, judge model
+and prompts, feature eligibility, edited rows and erasure-strength selection.
+Separate selection from held-out evaluation. Add MLP procedures only if finalized.}
+
+\subsection{Evaluation}
+\label{sec:evaluation}
+We compare a normally trained control, a matched model trained with selected
+concept data excluded, and an erased version of the control.
+\paragraph{Questions and completions.}
+\draftnote{Define splits, completion construction, answer likelihoods,
+length normalization, null-context correction where used, accuracy and the
+chosen continuous metric. Name the exact metric for every reported result.}
+\paragraph{Concept and unrelated text.}
+\draftnote{Define negative log-likelihood, chunk/token aggregation, sample
+sizes and paired chunk IDs. If using a difference of differences, give its
+formula and unrelated-text adjustment.}
+\paragraph{Capability preservation.}
+\draftnote{Describe neighboring-topic questions, cross-concept controls and
+general benchmarks actually evaluated.}
+\paragraph{Parameter comparison.}
+\draftnote{If retained, define edit and target displacements, cosine and
+residual. Treat parameter similarity separately from behavioral similarity.}
+\paragraph{Uncertainty and reproducibility.}
+\draftnote{Describe paired tests or intervals, seed coverage, evaluation
+precision, and code/configuration/artifact provenance.}
+% Add KL divergence or robustness protocols only after actual evaluation.
+
+\section{Results}
+\subsection{Effects of Excluding Concept Data}
+\draftnote{Establish the baseline on target and unrelated data before
+interpreting erasure. Populate verified statistics in Table~\ref{tab:data}.}
+\subsection{Does EMBER Match the Never-Learned Baseline?}
+\draftnote{Populate Table~\ref{tab:results} from verified output files.
+Discuss both average effects and their distributions across chunks.}
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Concept & Excl.--ctrl. & Erased--ctrl. & Residual\\
+\midrule
+Ancient Rome & \pending & \pending & \pending\\
+Baseball & \pending & \pending & \pending\\
+\bottomrule
+\end{tabular}
+\caption{Placeholder for concept-specific text-loss contrasts (nats/token).
+Define aggregation and unrelated-text adjustment in Section~\ref{sec:evaluation}.
+Residual is erased minus excluded-data. Dashes are unfilled results.}
+\label{tab:results}
+\end{table}
+
+\subsection{Agreement Across Evaluation Measures}
+\draftnote{Compare question and text-based conclusions and unrelated-capability
+effects. Distinguish observed disagreements from possible explanations.}
+% Add an MLP comparison subsection only once results are verified.
+
+\section{Discussion}
+\draftnote{Interpret implications for erasure evaluation. Discuss intervention
+scope and data/question alignment as hypotheses where not directly tested.}
+\section{Conclusion}
+\draftnote{Answer the research question briefly using supported results.
+Scope conclusions to the concepts, methods and models evaluated.}
+\section*{Limitations}
+\draftnote{Discuss concept/seed coverage, imperfect exclusion and indirect
+exposure, question alignment, judge reliability, hyperparameter selection,
+and missing robustness or distributional evaluations.}
+\section*{AI Disclosure and Reflection}
+\draftnote{Required by the course: name tools/models actually used, describe
+coding/writing/analysis assistance, verification and reflection. Distinguish
+the Gemma research judge from project assistance. Confirm with all authors.}
+\section*{Acknowledgments}
+\draftnote{Confirm acknowledgment of Clara Suslik and other support with the group.}
+
+\ifpaperbibliography
+\bibliography{references}
+\else
+\section*{References}
+\draftnote{Add verified entries to references.bib and cite them, then enable
+the bibliography using the switch in the preamble.}
+\fi
+\appendix
+\section{Additional Experimental Details}
+\draftnote{Full grids, judge prompts and artifact identifiers. Keep essential
+methodology in the main text.}
+\section{Supplementary Results}
+\draftnote{Additional per-concept results and diagnostics. Keep the evidence
+needed to support the central claims in the main text.}
+\end{document}
