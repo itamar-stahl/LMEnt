@@ -1,0 +1,66 @@
+# Artificial intelligence embedding erasure, first attempt -- no pre-tuned
+# threshold exists for this concept (unlike Rome's feature or Baseball's
+# feature 10), so this runs the full judge-based selection from scratch
+# against a fresh feature cache, mirroring ember_lment_slurm.yaml but pointed
+# at the b131k control (the checkpoint every other erasure in this project
+# uses) instead of the older lment-1b-control-2e.
+
+method: ember
+model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k/
+rank: 100
+seed: 44                       # same cell convention as the Rome/Baseball grid
+
+selection:
+  mode: judge
+  ratio_thresh: 2.0
+  feature_ratio_threshold: null
+  judge_confidence_threshold: 0.85
+  judge_top_k: 20
+
+ember:
+  deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+  explicit_delta: null
+
+eval:
+  data_json: ../data/mc_questions.json
+  alpaca: false
+  alpaca_split: test
+  alpaca_max_items: null
+
+lment:
+  model_key: lment-1b-control-2e-b131k
+  model_device: cuda
+  dtype: fp32
+  runs_root: ../runs
+  data:
+    concept_json: ../data/concept_sentences.json
+    neutral_json: ../data/neutral_sentences.json
+  features:
+    cache_root: /home/dcor/galbarak2/lment-ember-grid-ai/features/sp0.02_seed44
+    reuse: false
+    fitting_device: cuda
+    max_iterations: 20000
+    g_sparsity: 0.02
+    k_proj: 30
+  judge:
+    model: google/gemma-4-12B-it
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
+    device: cuda
+    max_new_tokens: 256
+    local_files_only: true
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    executor: subprocess
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    startup_timeout_seconds: 10800
+  save:
+    full_model: false
+  execution:
+    activate_script: ../activate_env.sh
+  slurm:
+    job_name: ai-erase
+    account: gpu-research
+    partition: killable
+    constraint: a6000
+    time_minutes: 360
+    cpu_mem_mb: 10000
+    cpus_per_task: 8
