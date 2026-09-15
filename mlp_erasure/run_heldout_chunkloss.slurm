@@ -42,13 +42,36 @@ RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 HF=/home/dcor/galbarak2/hf-models
 
 CTRL=$HF/lment-1b-control-2e-b131k
-BLACKLIST=$ROOT/Untaught/blacklists/ancient_rome_core.json
+# heldout_ppl.py reads entities[0].chunk_ids, i.e. it needs the RESOLVED
+# blacklist (chunk ids materialized against the ES index), not the source QID
+# list in Untaught/blacklists/ -- that one has no chunk_ids and dies with
+# KeyError (job 895460). The resolved artifact is what prepare.py writes into
+# each training run dir. Using the Rome twin's OWN copy means the held-out
+# chunks here are exactly the chunks held out of that twin's training, which
+# is what makes the +0.3144 nats/token reference directly comparable.
+BLACKLIST=/home/morg/NLP_2526b/galbarak2/LMEnt-initfix/Untaught/runs/untaught-no-rome-core-1b-2e-b131k_20260904_183200/untaught_blacklist.json
 OUTDIR="$RUNS/chunkloss_${SLURM_JOB_ID}"
 SCRATCH="$OUTDIR/scratch"
 mkdir -p "$OUTDIR" "$SCRATCH"
 
 export HF_HOME=/home/dcor/galbarak2/hf_cache
 export TOKENIZERS_PARALLELISM=false
+export PYTHONUNBUFFERED=1
+
+# The lment env ships a PARTIAL olmo_core in site-packages (no data/), so
+# `from olmo_core.data import ...` dies with ModuleNotFoundError that reads
+# like the package is absent when it is merely incomplete -- this killed the
+# first attempt (job 895390, every model scored exit 1). framework/env.sh puts
+# the repo's complete sources on PYTHONPATH ahead of site-packages, and it is
+# the same file the training runs source, so chunks are built by exactly the
+# code path that trained the twins.
+# env.sh itself defaults LMENT_ROOT to <user root>/LMEnt -- the same
+# wrong-checkout trap as activate_env.sh and set_node_env.sh. It is
+# documented as override-able, so pin it to THIS worktree before sourcing,
+# otherwise OLMO_CORE_SRC silently resolves to a different tree.
+export LMENT_ROOT="$ROOT"
+. "$ROOT/Untaught/framework/env.sh"
+echo "PYTHONPATH=$PYTHONPATH"
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 echo "blacklist: $BLACKLIST"
@@ -64,7 +87,13 @@ score () {
     --n-control 5000 \
     --dtype float32 \
     --out "$OUTDIR/heldout_${tag}.json"
-  echo "$tag exit $?"
+  rc=$?
+  echo "$tag exit $rc"
+  if [ "$rc" -ne 0 ] || [ ! -s "$OUTDIR/heldout_${tag}.json" ]; then
+    echo "FATAL: $tag produced no result (exit $rc) -- aborting so this does not" >&2
+    echo "       look like a completed run with an empty answer." >&2
+    exit 1
+  fi
 }
 
 # --- 1. control -----------------------------------------------------------

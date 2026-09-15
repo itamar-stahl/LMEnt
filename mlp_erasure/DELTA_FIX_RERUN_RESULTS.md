@@ -377,36 +377,110 @@ on the control. This data cannot separate the two.
 | method | level | result |
 |---|---|---|
 | EMBER | embedding | **works** — Rome -6, Baseball -12, AI -12, adjacent held |
-| SNMF | MLP | two-sided causal null across 3 concepts and 2 checkpoints |
-| RMU | MLP | null in the only cells that achieved a real misdirection |
+| SNMF | MLP | two-sided causal null, 3 concepts, 2 checkpoints, 3 depth bands |
+| RMU | MLP | null at the full published schedule, both sanity gates green |
 
 The reachable knowledge for these evals lives in the token embeddings, not in
 the MLP directions these methods identify — consistent with EMBER's own thesis.
 
-### What this does NOT establish, and what is being run to close it
+**Strength of the null, stated precisely.** It is not "we tried some settings
+and nothing happened". For SNMF the directions can be scaled to 0x, 0.5x,
+1.5x, 2x, 3x or inverted to -9x with no response, at three depth bands, on
+three concepts, on two independently trained checkpoints, with neuron
+permutation controls showing that whatever damage large edits do cause is not
+specific to those directions. For RMU the method now runs at 100% of its
+published schedule at the aggressive end of its retain penalty, achieving the
+strongest representational rotation this project has produced (0.507), with
+both sanity gates green — and concept accuracy goes UP. And after EMBER has
+removed the embedding-level knowledge, neither method flips a single question.
 
-The claim above is scoped to *these methods as configured, measured by this
-eval*. Three specific gaps keep it from being "MLP erasure does not work on
-this model", and each has a job in flight:
+The one remaining qualifier is the instrument (GAP 3 above). Everything here
+is MC accuracy; the chunk-loss re-measurement will say whether a more
+sensitive probe sees something MC cannot.
 
-1. **RMU has never run at its specified strength.** Every cell failed
-   `ran_enough_steps` at 71/150 — arithmetic, not choice: 283 usable
-   sentences / batch 4 = 71 batches, and `n = min(max_num_batches, forget)`.
-   `alpha=100` is also the TOP of the reference grid, the least unlearning
-   available. Job 895391 runs batch 1 (283 batches -> the full 150-step
-   schedule for the first time) crossed with alpha 10, including the
-   maximum-unlearning cell the grid allows.
-2. **SNMF only ever saw layers 4/5/6.** RMU got a depth battery to layer 17;
-   SNMF never left the 22-34% band. Job 895392 factorizes fresh at layers
-   9-11 and 14-16 and repeats delta=1 with permutation controls.
-3. **One instrument, and a blunt one.** Everything above is 4-option MC at
-   n=50 (+-7pt). This project's own record says chunk loss is the sensitive
-   instrument — the Rome ablation showed far more clearly there
-   (+0.3144 nats/token on held-out Rome chunks) than on raw accuracy. Job
-   895390 re-measures control, EMBER-erased and SNMF delta=1 on held-out
-   chunk loss, with **EMBER as the positive control**: if chunk loss cannot
-   see EMBER's -6pt either, the instrument is not sensitive enough here and
-   the comparison is void.
+### Scope limits, and what was done about them
+
+The claim above was initially scoped to *these methods as configured,
+measured by this eval*. Three gaps kept it from being "MLP erasure does not
+work on this model". Two are now closed; the third is in flight.
+
+#### GAP 1 — CLOSED. RMU had never run at its specified strength.
+
+Every cell up to this point failed `ran_enough_steps` at 71/150. The cap was
+arithmetic, not a choice: 283 usable sentences / batch 4 = 71 batches, and
+`n = min(max_num_batches, forget)`. `alpha=100` compounded it — that is the
+TOP of the reference grid, the heaviest retain penalty and so the least
+unlearning available. So "RMU does nothing here" had meant "RMU at 47% of its
+schedule, at its most conservative alpha, does nothing here".
+
+At batch 1, 283 sentences give 283 batches, so `min(150, 283)` = **the full
+published schedule**. Job 895391, L5-hi, steering 831.6:
+
+| cell | batch | alpha | steps | cos_forget | both gates | QA_test | SimdomQA |
+|---|---|---|---|---|---|---|---|
+| b1_a100 | 1 | 100 | **150/150** | 0.063 -> 0.366 | **pass** | **50.0%** | 52.0% |
+| **b1_a10** | 1 | 10 | **150/150** | 0.066 -> **0.507** | **pass** | **46.0%** | 50.0% |
+| b2_a100 | 2 | 100 | 142/150 (95%) | 0.070 -> 0.418 | **pass** | 48.0% | 52.0% |
+| b4_a10 | 4 | 10 | 71/150 (47%) | 0.050 -> 0.408 | rotation only | 48.0% | 52.0% |
+
+Control: 44.0% / 52.0%. **Three cells pass BOTH sanity gates — the first time
+that has ever happened in this project — and every cell lands at or ABOVE
+control.** `b1_a10` is the maximum-unlearning configuration the reference grid
+allows (full schedule *and* aggressive retain penalty); it produced
+**cos_forget 0.507, the strongest representational rotation ever achieved
+here** (previous best 0.494), and concept accuracy went *up* 2 points.
+
+Rotation and downstream accuracy are not weakly related on this model. They
+are unrelated. The RMU objection is closed: run as specified, at maximum
+available strength, with the gates green, it does nothing.
+
+#### GAP 2 — CLOSED. SNMF had only ever seen layers 4/5/6.
+
+RMU got a depth battery out to layer 17; SNMF never left the 22-34% band. Job
+895392 factorized fresh at two untouched bands, ratio-only selection, and
+repeated delta=1 with permutation controls on held-out test:
+
+| band | features | delta=1 real | delta=1 perms | delta=-19 real | delta=-19 perms |
+|---|---|---|---|---|---|
+| mid, L9-11 (~50-61% depth) | 154 | **44.0%** (= control exactly) | 46 / 44 / 46 | 38.0% | 36 / 42 / 34 |
+| deep, L14-16 (~78-89% depth) | 125 | **48.0%** (*up* 4) | 44 / 44 / 44 | 36.0% | 36 / 46 / 40 |
+
+Control 44.0%. Deeper factorizations select far MORE concept-selective
+directions (154 and 125 against the shallow band's 44) and they are just as
+inert: at delta=1 the mid band returns the control value exactly and the deep
+band goes up, while at x20 real sits squarely inside the permutation spread in
+both bands. **The SNMF null generalises across depth.**
+
+#### GAP 3 — IN FLIGHT. One instrument, and a blunt one.
+
+Everything above is 4-option MC at n=50 (+-7pt). This project's own record says
+chunk loss is the sensitive instrument — the Rome ablation showed far more
+clearly there (+0.3144 nats/token on held-out Rome chunks) than on raw
+accuracy. `run_heldout_chunkloss.slurm` re-measures control, EMBER-erased and
+SNMF delta=1 on held-out chunk loss, with **EMBER as the positive control**: if
+chunk loss cannot see EMBER's -6pt either, the instrument is not sensitive
+enough here and the MC comparison should be withdrawn rather than defended.
+
+Two tooling traps hit on the way, both worth knowing:
+
+- **`ModuleNotFoundError: No module named 'olmo_core.data'`** (job 895390).
+  The `lment` env ships a PARTIAL `olmo_core` with no `data/`, so the import
+  fails in a way that reads like the package is absent. `framework/env.sh`
+  puts the repo's complete sources on PYTHONPATH ahead of site-packages —
+  and **env.sh itself defaults `LMENT_ROOT` to `<user root>/LMEnt`**, the same
+  wrong-checkout trap as `activate_env.sh` and `set_node_env.sh`, so pin
+  `LMENT_ROOT` before sourcing it.
+- **`KeyError: 'chunk_ids'`** (job 895460). `heldout_ppl.py` reads
+  `entities[0].chunk_ids`, i.e. it needs the RESOLVED blacklist that
+  `prepare.py` materializes into each training run dir as
+  `untaught_blacklist.json`, not the source QID list in
+  `Untaught/blacklists/`. Pointing at the Rome twin's own copy is the right
+  choice: the held-out chunks are then exactly the chunks held out of that
+  twin's training, which is what makes the +0.3144 reference comparable.
+
+The first of those failures exited **0 with zero result files** — a "completed
+run with an empty answer". The scorer now aborts loudly if any model produces
+no output.
 
 ## Reproducing
 
