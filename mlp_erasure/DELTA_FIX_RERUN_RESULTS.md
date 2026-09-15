@@ -46,7 +46,46 @@ Held-out test split, `score_ember_mc.py` `text_char`.
 | Rome judge-selected (6 feat, L5-6) | control | 44.0% | **44.0%** |
 | Rome ratio-only (44 feat, L4-6) | control | 44.0% | **48.0%** |
 | Baseball ratio-only (58 feat, L4-6) | control | 48.0% | **46.0%** |
+| AI ratio-only (84 feat, L4-6) | control | 44.0% | **46.0%** |
 | Rome ratio-only (51 feat, L4-6) | Daniela LMEnt-1B-2E | 40.0% | **42.0%** |
+
+All four checkpoints, all three concepts: nothing moves, and in three of five
+rows concept accuracy goes slightly *up*.
+
+### Artificial intelligence (the last cross-topic hole)
+
+The only AI SNMF numbers previously on record were from the buggy delta=4 era
+(-6pt, single seed, flagged in `lment-crosstopic-mlp-erasure.md` as probably
+noise). Re-run on the fixed code with the largest feature set of the four
+(84 features, L4:28 L5:45 L6:11):
+
+| | concept | simdom |
+|---|---|---|
+| control (test) | 44.0% | 54.0% |
+| delta=1, explicit layers 4-6 both sides | **46.0%** | 46.0% |
+| delta=1, permutation controls | 44.0 / 44.0 / 44.0 (= control exactly) | |
+| delta=-19 (x20), real | 36.0% | 38.0% |
+| delta=-19, permutation controls | 38.0 / 38.0 / 46.0 | 44 / 42 / 40 |
+
+Train grid, all three range cells at delta=1: 38.0 / 36.0 / 40.0 against a
+40.0% control. At the amplifying deltas **selectivity is negative in every
+single cell** (-4 to -18): simdom is damaged more than concept, and cell 2 at
+delta=10 puts concept *up* 6 while simdom falls 12. The old -6pt is retired.
+
+AI also tests the feature-count hypothesis from section 4 most sharply, having
+nearly twice Rome's features. Its x20 concept drop (-8) is comparable to
+Rome's (-6) while its collateral is much heavier (-16 simdom), so "more
+features -> more damage" holds loosely for *total* damage but the damage is
+non-specific either way.
+
+> Operational note: the first AI job (895359) died mid-grid with
+> `CUDA error: unspecified launch failure` on n-301, after which every process
+> on that node silently fell back to CPU — the same silent-fallback shape as
+> n-102's dead GPU. Stages 2-3 there are still valid (fresh model loads, and
+> stage 3 reproduced the known control baseline 44.0/54.0 exactly), and the
+> grid was re-run clean on n-302 (895384) with cell 0 reproducing the
+> pre-fault numbers exactly. Jobs 893308 and 893739 also ran on n-301 and were
+> checked for the same fault: zero occurrences, so those findings stand.
 
 Train-split sweeps over all three published layer-range cells agree: flat
 everywhere at delta=1.
@@ -338,11 +377,36 @@ on the control. This data cannot separate the two.
 | method | level | result |
 |---|---|---|
 | EMBER | embedding | **works** — Rome -6, Baseball -12, AI -12, adjacent held |
-| SNMF | MLP | two-sided causal null across 2 concepts and 2 checkpoints |
+| SNMF | MLP | two-sided causal null across 3 concepts and 2 checkpoints |
 | RMU | MLP | null in the only cells that achieved a real misdirection |
 
 The reachable knowledge for these evals lives in the token embeddings, not in
 the MLP directions these methods identify — consistent with EMBER's own thesis.
+
+### What this does NOT establish, and what is being run to close it
+
+The claim above is scoped to *these methods as configured, measured by this
+eval*. Three specific gaps keep it from being "MLP erasure does not work on
+this model", and each has a job in flight:
+
+1. **RMU has never run at its specified strength.** Every cell failed
+   `ran_enough_steps` at 71/150 — arithmetic, not choice: 283 usable
+   sentences / batch 4 = 71 batches, and `n = min(max_num_batches, forget)`.
+   `alpha=100` is also the TOP of the reference grid, the least unlearning
+   available. Job 895391 runs batch 1 (283 batches -> the full 150-step
+   schedule for the first time) crossed with alpha 10, including the
+   maximum-unlearning cell the grid allows.
+2. **SNMF only ever saw layers 4/5/6.** RMU got a depth battery to layer 17;
+   SNMF never left the 22-34% band. Job 895392 factorizes fresh at layers
+   9-11 and 14-16 and repeats delta=1 with permutation controls.
+3. **One instrument, and a blunt one.** Everything above is 4-option MC at
+   n=50 (+-7pt). This project's own record says chunk loss is the sensitive
+   instrument — the Rome ablation showed far more clearly there
+   (+0.3144 nats/token on held-out Rome chunks) than on raw accuracy. Job
+   895390 re-measures control, EMBER-erased and SNMF delta=1 on held-out
+   chunk loss, with **EMBER as the positive control**: if chunk loss cannot
+   see EMBER's -6pt either, the instrument is not sensitive enough here and
+   the comparison is void.
 
 ## Reproducing
 
