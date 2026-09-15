@@ -278,12 +278,58 @@ downstream of the embeddings), or it is a floor effect, since Baseball-erased
 starts at 36% with only ~11 points of headroom above chance versus 23 on the
 control. Worth stating as open rather than resolved.
 
-### Variants 2 and 3 — pending
+### Variant 2 — SNMF re-derived ON the erased model (job 893749), held-out test
 
-Job 893749 (SNMF **re-derived** on the erased model — EMBER changed the
-activations feeding the MLPs, so a fresh semi-NMF sees a different
-decomposition even though the weights are untouched) and job 893750 (RMU on
-the erased model, with its own probe). Results to be appended.
+EMBER changed the embeddings, so the activations feeding the MLPs changed and
+a fresh semi-NMF sees a different decomposition even though the weights are
+untouched. It does find a different feature set — 40 features on Rome-erased
+and 32 on Baseball-erased, against 44 and 58 derived from the control — so the
+re-derivation is real, not a no-op.
+
+It makes no difference:
+
+| model | baseline | delta=1 real | delta=1 perms | delta=-19 real | delta=-19 perms |
+|---|---|---|---|---|---|
+| Rome-erased (40 feat) | 38.0% | 36.0% | 38.0 / 38.0 / 38.0 | 42.0% (*up 4*) | 38 / 36 / 32 |
+| Baseball-erased (32 feat) | 36.0% | **36.0%** | 36.0 / 36.0 / 36.0 | 36.0% | 40 / 44 / 44 |
+
+At delta=1 the real features move concept by at most one question, and the
+permutations move it by zero. At x20 the real features land *above* every
+permutation on Rome. **Re-deriving the decomposition after an embedding edit
+does not recover any erasure ability** — that methodological worry is answered
+in the negative.
+
+### Variant 3 — RMU on the erased model (job 893750), held-out test
+
+| cell | cos_forget | substantial | QA_test | baseline |
+|---|---|---|---|---|
+| Rome-erased **L5-hi** | 0.049 -> **0.302** | **yes** | **42.0%** | 38.0% |
+| Rome-erased L6-hi | 0.037 -> 0.287 | no | 42.0% | 38.0% |
+| Baseball-erased L5-hi | 0.043 -> 0.247 | no | 38.0% | 36.0% |
+| Baseball-erased L6-hi | 0.034 -> 0.234 | no | 38.0% | 36.0% |
+
+The one cell that achieved a genuine misdirection (Rome L5-hi, just clearing
+0.30) left concept accuracy **4 points HIGHER** than the un-edited erased
+model. Every cell again fails `ran_enough_steps` (71-73 of 150).
+
+Note these rotations (0.23-0.30) are in the same range as the control's
+0.31/0.32 and nothing like Daniela's 0.034 — as expected, since the
+EMBER-erased checkpoints carry the control's own MLP weights and activation
+scale. RMU engaged here; it simply did nothing.
+
+### Composition verdict
+
+Three methods — inherited SNMF directions, freshly re-derived SNMF directions,
+and RMU — all applied after EMBER, all on held-out test, all null. At the true
+erasure setting not a single question changes. **Once the embedding-level
+knowledge is gone, there is nothing these MLP methods can reach.**
+
+One open thread: Baseball's seed-42 x20 effect (section 5) vanishes on the
+EMBER-erased model (32.0% vs perms averaging 35.3%, where on the control it
+was 26.0% vs 44.7%). That is consistent either with the effect having been
+mediated by embedding-carried information, or with a floor effect — the
+erased model starts at 36% with ~11 points of headroom above chance versus 23
+on the control. This data cannot separate the two.
 
 ---
 
