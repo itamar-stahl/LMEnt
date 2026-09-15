@@ -28,15 +28,27 @@ written out so the pairing can be tested without a GPU.
 
     python heldout_ppl.py --model <hf dir> --out <json> [--n-control 5000]
 """
-import argparse, json, random, time
+import argparse, json, os, random, time
 
 import torch
 from olmo_core.data import NumpyDatasetConfig, NumpyDatasetType, TokenizerConfig
 from olmo_core.data.numpy_dataset import VSLCurriculumConfig, VSLCurriculumType
 from transformers import AutoModelForCausalLM
 
-DATA_GLOB = "/home/morg/NLP_2526b/stahli/LMEnt-Dataset/dataset-tokenized/*.npy"
-WORK_DIR = "/home/morg/NLP_2526b/stahli/LMEnt-Dataset/dataset-cache"
+# Both paths follow LMENT_DATASET so framework/node/stage_dataset.sh can point
+# them at node-local disk, exactly as the training runs do.
+#
+# This matters more here than it does in training. Scoring touches the dataset
+# at RANDOM offsets -- match_by_length draws up to n_control * 40 instances and
+# chunk_losses fetches every id it scores -- and random reads off the share run
+# at 4-10 per second. Job 895592 spent its first hour inside match_by_length
+# without ever loading the model, GPU at 0%, the process parked in D state on
+# rpc_wait_bit_killable. Staging changes where the bytes come from, never which
+# bytes or in what order, so scores are unaffected.
+_DATASET_ROOT = os.environ.get(
+    "LMENT_DATASET", "/home/morg/NLP_2526b/stahli/LMEnt-Dataset")
+DATA_GLOB = f"{_DATASET_ROOT}/dataset-tokenized/*.npy"
+WORK_DIR = f"{_DATASET_ROOT}/dataset-cache"
 
 
 def build_dataset(work_dir):
@@ -135,6 +147,12 @@ def main():
     ap.add_argument("--dtype", default="float32")
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--control-cache", default="", help=(
+        "reuse the length-matched control ids across models. The sample is a "
+        "pure function of (blacklist, n_control, seed, dataset size), so every "
+        "model in a comparison must get the SAME ids -- caching enforces that "
+        "instead of merely hoping the rng agrees, and skips a sampling pass "
+        "that costs hours when the dataset is not node-local."))
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
 
@@ -147,7 +165,33 @@ def main():
 
     if a.limit:
         held = held[:a.limit]
-    ctrl = match_by_length(ds, held, a.n_control if not a.limit else a.limit, a.seed)
+
+    n_ctrl = a.n_control if not a.limit else a.limit
+    # The key pins everything the sample depends on. A cache built for a
+    # different blacklist, size, seed or dataset build is refused rather than
+    # reused: silently scoring two models against different control sets is
+    # exactly the kind of split that has faked an effect here before.
+    key = {"blacklist": os.path.abspath(a.blacklist), "n_control": n_ctrl,
+           "seed": a.seed, "n_held": len(held), "n_instances": len(ds)}
+    ctrl = None
+    if a.control_cache and os.path.exists(a.control_cache):
+        cached = json.load(open(a.control_cache))
+        if cached.get("key") == key:
+            ctrl = cached["ids"]
+            print(f"[ppl] reusing {len(ctrl)} control ids from "
+                  f"{a.control_cache}", flush=True)
+        else:
+            print(f"[ppl] control cache {a.control_cache} has a different key "
+                  f"-- recomputing", flush=True)
+    if ctrl is None:
+        t0 = time.time()
+        ctrl = match_by_length(ds, held, n_ctrl, a.seed)
+        print(f"[ppl] sampled controls in {(time.time() - t0) / 60:.1f} min",
+              flush=True)
+        if a.control_cache:
+            with open(a.control_cache, "w") as fh:
+                json.dump({"key": key, "ids": ctrl}, fh)
+            print(f"[ppl] wrote control cache {a.control_cache}", flush=True)
     print(f"[ppl] {len(ctrl)} length-matched control chunks", flush=True)
 
     print(f"[ppl] loading {a.model}", flush=True)
