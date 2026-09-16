@@ -377,7 +377,7 @@ on the control. This data cannot separate the two.
 | method | level | result |
 |---|---|---|
 | EMBER | embedding | **works** — Rome -6, Baseball -12, AI -12, adjacent held |
-| SNMF | MLP | two-sided causal null, 3 concepts, 2 checkpoints, 3 depth bands |
+| SNMF | MLP | two-sided causal null, 3 concepts, 2 checkpoints, 3 depth bands, **and on held-out chunk loss** |
 | RMU | MLP | null at the full published schedule, both sanity gates green |
 
 The reachable knowledge for these evals lives in the token embeddings, not in
@@ -388,21 +388,25 @@ and nothing happened". For SNMF the directions can be scaled to 0x, 0.5x,
 1.5x, 2x, 3x or inverted to -9x with no response, at three depth bands, on
 three concepts, on two independently trained checkpoints, with neuron
 permutation controls showing that whatever damage large edits do cause is not
-specific to those directions. For RMU the method now runs at 100% of its
+specific to those directions — and on held-out chunk loss, millions of tokens
+rather than 100 questions, both delta=1 models sit within 0.006 nats/token of
+the control model while the same measurement puts EMBER at +1.32. For RMU the
+method now runs at 100% of its
 published schedule at the aggressive end of its retain penalty, achieving the
 strongest representational rotation this project has produced (0.507), with
 both sanity gates green — and concept accuracy goes UP. And after EMBER has
 removed the embedding-level knowledge, neither method flips a single question.
 
-The one remaining qualifier is the instrument (GAP 3 above). Everything here
-is MC accuracy; the chunk-loss re-measurement will say whether a more
-sensitive probe sees something MC cannot.
+The instrument qualifier is now discharged (GAP 3 below). The same erasures
+re-measured on held-out chunk loss land within 0.006 nats/token of the control
+model, on a probe that registers EMBER at +1.32 and never-having-learned at
++0.31. A more sensitive instrument sees nothing MC did not.
 
 ### Scope limits, and what was done about them
 
 The claim above was initially scoped to *these methods as configured,
 measured by this eval*. Three gaps kept it from being "MLP erasure does not
-work on this model". Two are now closed; the third is in flight.
+work on this model". **All three are now closed.**
 
 #### GAP 1 — CLOSED. RMU had never run at its specified strength.
 
@@ -451,17 +455,52 @@ inert: at delta=1 the mid band returns the control value exactly and the deep
 band goes up, while at x20 real sits squarely inside the permutation spread in
 both bands. **The SNMF null generalises across depth.**
 
-#### GAP 3 — IN FLIGHT. One instrument, and a blunt one.
+#### GAP 3 — CLOSED. The sensitive instrument agrees.
 
 Everything above is 4-option MC at n=50 (+-7pt). This project's own record says
 chunk loss is the sensitive instrument — the Rome ablation showed far more
 clearly there (+0.3144 nats/token on held-out Rome chunks) than on raw
-accuracy. `run_heldout_chunkloss.slurm` re-measures control, EMBER-erased and
-SNMF delta=1 on held-out chunk loss, with **EMBER as the positive control**: if
-chunk loss cannot see EMBER's -6pt either, the instrument is not sensitive
-enough here and the MC comparison should be withdrawn rather than defended.
+accuracy. So the same erasures were re-measured on held-out chunk loss, with
+**EMBER as the positive control** and a falsifier fixed in advance: if chunk
+loss could not see EMBER's -6pt either, the instrument was not sensitive enough
+here and the MC comparison should have been withdrawn rather than defended.
 
-Two tooling traps hit on the way, both worth knowing:
+All four models were scored against **identical sets** — 16,915 held-out Rome
+chunks (17,597,568 tokens) and 5,044 length-matched control chunks (5,221,206
+tokens), seed 42, fp32. The control ids are cached to
+`runs/mlp_erasure/rome_control_ids_seed42.json` and keyed on
+blacklist/n_control/seed/dataset size, so a mismatched sample is refused rather
+than silently scored.
+
+| model | held-out | control set | **held-out − control** | vs control model |
+|---|---|---|---|---|
+| control (saw Rome) | 2.5075 | 2.3739 | **+0.1336** | — |
+| snmf_judge_d1 (d=1, L5-6, 6 feats) | 2.5087 | 2.3742 | **+0.1344** | **+0.0008** |
+| snmf_ratio44_d1 (d=1, L4-6, 44 feats) | 2.5190 | 2.3793 | **+0.1397** | **+0.0061** |
+| ablated twin (never saw Rome) | — | — | **+0.3144** | +0.1808 |
+| EMBER-erased | 3.7234 | 2.4021 | **+1.3214** | +1.1878 |
+
+**The falsifier did not fire.** Chunk loss sees EMBER at +1.3214 — roughly ten
+times the control model's gap and four times the ablated twin's — so the
+instrument demonstrably has range on exactly this comparison. EMBER's own
+control-set loss barely moves (2.3739 -> 2.4021, +0.028), so that is Rome-
+specific damage, not general degradation.
+
+**And both SNMF erasures land on top of the control model**: +0.0008 and
++0.0061 nats/token, against a probe registering +1.19 for EMBER and +0.18 for
+never having learned the material. The MC null is not an artefact of a blunt
+instrument. It replicates on the sensitive one.
+
+Read the EMBER number as sensitivity, not as depth of erasure. It massively
+overshoots the ablated twin, which is the ceiling for "this knowledge was never
+acquired". That is the lexical signature this project has already characterised
+— erasure damage is unbounded on chunks containing an edited token and zero
+without one — and EMBER edits token embeddings, so every held-out Rome chunk
+contains tokens it altered. It is the right positive control for whether the
+probe can see anything; it is not a target the MLP methods should be expected
+to approach.
+
+Four tooling traps hit on the way, all worth knowing:
 
 - **`ModuleNotFoundError: No module named 'olmo_core.data'`** (job 895390).
   The `lment` env ships a PARTIAL `olmo_core` with no `data/`, so the import
@@ -477,15 +516,44 @@ Two tooling traps hit on the way, both worth knowing:
   `Untaught/blacklists/`. Pointing at the Rome twin's own copy is the right
   choice: the held-out chunks are then exactly the chunks held out of that
   twin's training, which is what makes the +0.3144 reference comparable.
+- **Scoring off the share does not finish** (job 895592). `heldout_ppl.py`
+  hardcoded its dataset paths to the morg filer, and it reads at RANDOM offsets
+  — `match_by_length` draws up to `n_control * 40` instances and `chunk_losses`
+  fetches every id it scores. Measured on the node: **287 read syscalls in 30s,
+  313 KB/s**, process parked in `D` state on `rpc_wait_bit_killable` with the
+  GPU at 0%. It spent two hours inside `match_by_length` for the FIRST of four
+  models and would never have finished in its 4h wall. `DATA_GLOB`/`WORK_DIR`
+  now follow `LMENT_DATASET`, so the runner sources
+  `framework/node/stage_dataset.sh` and reads node-local exactly as training
+  does; the same sampling pass then took **8.7 minutes**. Staging changes where
+  the bytes come from, never which bytes or in what order.
+- **`CUDA error: unspecified launch failure`** (job 897155, node n-307). A card
+  fault, not a code fault: it hit after cleanly scoring all 16,915 held-out
+  chunks of the second model. Resubmitting the one missing cell elsewhere was
+  enough. `--exclude` that node, and note that n-102 is worse — its dead card
+  poisons NVML for the whole host, so jobs assigned a *healthy* GPU there still
+  die at distributed init.
 
 The first of those failures exited **0 with zero result files** — a "completed
 run with an empty answer". The scorer now aborts loudly if any model produces
 no output.
 
+**Budget four models across separate jobs.** Scoring one model is 21,959
+chunks and runs ~75 min on a 3090 even with the dataset local, so four models
+never fit one 4h wall. The control ids are therefore cached to a
+job-independent path and reused, which both saves the sampling pass and
+guarantees every model is scored against the same control set — the split that
+has faked an effect in this project before.
+
 ## Reproducing
 
 Scripts are in this directory (`run_snmf_*.slurm`, `run_rmu_*.slurm`,
-`run_post_ember_*.slurm`) and `../random_direction_control.py`. They bypass
+`run_post_ember_*.slurm`) and `../random_direction_control.py`. The GAP 3
+numbers come from `run_heldout_chunkloss_staged.slurm` (control + EMBER, job
+896121), `run_heldout_chunkloss_snmf.slurm` (`snmf_ratio44_d1`, job 897155) and
+`run_heldout_chunkloss_judge.slurm` (`snmf_judge_d1`, job 898136). The original
+`run_heldout_chunkloss.slurm` is superseded — it reads the dataset off the
+share and tries all four models in one 4h job. They bypass
 `run_snmf.slurm`/`run_rmu.slurm`, which hardcode
 `ROOT=/home/morg/.../LMEnt-mlp` and would silently execute the OLD, unfixed
 code. Raw CSV/JSON outputs are gitignored; they live in
