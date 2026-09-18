@@ -361,13 +361,27 @@ not from an under-run job that never really tried.
 | Feature cache | `lment-ember-grid-ai/features/sp0.02_seed44/` |
 | Job scripts | `lment-ai-check/*.slurm` (not under git, matching the other `*-check` dirs) |
 
-### Regenerable, if storage needs reclaiming
+### Reclaimed 2026-09-18 (980G → 800G)
 
-Safe to delete, cheaply rebuilt from the scripts and configs above:
+All of the following were stripped after the results above were banked. Each
+left a `WEIGHTS_REMOVED.md` / `CHECKPOINTS_REMOVED.md` beside it; configs,
+tokenizers and every result JSON are intact.
 
-- `hf-models/lment-1b-ai-snmf-b131k` (5.1 G) — re-apply from `snmf_ai_887806`
-- `runs/mlp_erasure/rmu_ai_L5hi_fixed_9083{16,17}/model` (5.1 G each) — re-run
-- intermediate checkpoints `step{5000..50000}` of the training run (~150 G)
+**Cheap to rebuild — minutes:**
+
+- `hf-models/lment-1b-ai-snmf-b131k` (5.1 G) — `snmf_ai_materialize.slurm`
+- `runs/mlp_erasure/rmu_ai_L5hi_fixed_9083{16,17}/model` (5.1 G each) —
+  `rmu_ai_redo.slurm` with `ALPHA=100` / `ALPHA=10`
+
+**NOT cheap — needs the full retrain, be certain before doing this again:**
+
+- intermediate checkpoints `step5000`–`step54000` (11 x 15 G, ~165 G). `step0`
+  and `step54832` are kept and verified. An earlier draft of this file called
+  these "cheaply rebuilt", which was wrong: the erased models re-derive in
+  minutes, but a checkpoint requires re-running a training that took eight legs
+  across six days. Nothing published depends on them — every number here comes
+  from step54832, or step0 for embedding health — but a **step-matched**
+  comparison against the control is now foreclosed for AI without retraining.
 
 **Do NOT delete** without regenerating first:
 
