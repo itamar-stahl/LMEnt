@@ -59,7 +59,9 @@
 #   sbatch --export=ALL,MODE=factorize,OUT_TAG=rome,LAYERS='4 9 14' run_snmf.slurm
 #   sbatch --export=ALL,MODE=select,OUT_TAG=rome,SNMF_OUT=<dir> run_snmf.slurm
 
-ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp
+# ROOT is overridable: it was a hard assignment, so submitting from any other
+# checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
+: "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
 RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 

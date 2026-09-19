@@ -48,7 +48,9 @@
 # that matches the erased models already on disk, e.g.
 # hf-models/lment-1b-rome-erased-b131k is EMBER's.
 
-ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp
+# ROOT is overridable: it was a hard assignment, so submitting from any other
+# checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
+: "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
 RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 
