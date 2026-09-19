@@ -155,7 +155,18 @@ The control's is the one to fix first: it is the base of every arm and every
 erased model, and it currently exists in exactly one place. Roughly 15 GB for
 the control's checkpoint, 20 GB for the AI twin's two legs.
 
-The retired Pornography pair is fully mirrored both ways.
+The retired Pornography pair's **final-step** exports and checkpoints are
+mirrored both ways. Its two `step45000` exports are **not** — they exist only on
+`/home/dcor`. Lower stakes, since they re-derive from the mirrored checkpoints
+by re-running the conversion with `STEP=step45000`, and that conversion is
+deterministic (two runs of it thirteen days apart produced md5-identical
+shards). Not free, but not a loss either.
+
+**Erased models are deliberately not backed up.** They re-materialise in
+minutes from an erasure artifact plus the base model. What must not be lost is
+the artifact and the feature cache behind it — a sparse factorisation does not
+reproduce across GPU models at a fixed seed, so those cannot be rebuilt, only
+replaced with a different object.
 
 **An HF export is not a checkpoint backup.** The `.distcp` directory is fp32
 master weights plus optimizer moments at 15 GB and is the only thing a training
