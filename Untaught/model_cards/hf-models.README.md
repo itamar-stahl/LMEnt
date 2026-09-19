@@ -135,11 +135,27 @@ model = AutoModelForCausalLM.from_pretrained(p, torch_dtype="auto")
 
 ## Storage and backups
 
-These live on `/home/dcor/galbarak2/hf-models` (netapp1), with a second copy of
-the twins on a different filer at
-`/home/morg/NLP_2526b/galbarak2/backups/lment-2e/hf-models` (netapp2), and the
-`.distcp` training checkpoints mirrored the other way into
-`/home/dcor/galbarak2/backups/lment-2e/checkpoints`.
+These live on `/home/dcor/galbarak2/hf-models` (netapp1). Backups go to the
+*other* filer, whichever that is for the artifact: HF exports (primary on
+`/home/dcor`) mirror to `/home/morg/NLP_2526b/galbarak2/backups/lment-2e/hf-models`,
+and `.distcp` training checkpoints mirror to whichever of the two does not hold
+the original.
+
+**Coverage is incomplete. This table is the state as of 2026-09-19, checked,
+not assumed:**
+
+| model | HF export | HF backup | distcp checkpoint | checkpoint backup |
+|---|---|---|---|---|
+| `control-2e-b131k` | yes | yes | `/home/morg` | **MISSING** |
+| `norome-2e-b131k` | yes | yes | `/home/morg` | yes (`/home/dcor`) |
+| `nobaseball-2e-b131k` | yes | yes | `/home/morg` | yes (`/home/dcor`) |
+| `noai-2e-b131k` | yes | **MISSING** | `/home/dcor` | **MISSING** |
+
+The control's is the one to fix first: it is the base of every arm and every
+erased model, and it currently exists in exactly one place. Roughly 15 GB for
+the control's checkpoint, 20 GB for the AI twin's two legs.
+
+The retired Pornography pair is fully mirrored both ways.
 
 **An HF export is not a checkpoint backup.** The `.distcp` directory is fp32
 master weights plus optimizer moments at 15 GB and is the only thing a training

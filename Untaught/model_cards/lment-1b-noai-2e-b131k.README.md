@@ -158,6 +158,22 @@ comparison against the control is now foreclosed for AI without retraining, and
 retraining means eight legs across six days. See the `CHECKPOINTS_REMOVED.md`
 left beside the run folder.
 
+## Backups — this model has none, as of 2026-09-19
+
+Unlike its control and the Rome and Baseball twins, **neither artifact of this
+twin is mirrored to a second filer**:
+
+- the HF export is only at `/home/dcor/galbarak2/hf-models/lment-1b-noai-2e-b131k`
+- the distcp checkpoint is only at
+  `LMEnt-baseball-alltopics/Untaught/runs/untaught-no-ai-core-1b-2e-b131k-h100_20260912_162646/checkpoints/.../step54832`
+  — also on `/home/dcor`
+
+Both are on netapp1. A single filer holds every copy of a model whose
+intermediate checkpoints were already deleted, so losing it means re-running an
+eight-leg, six-day training. Mirroring costs ~20 GB: the HF export to
+`/home/morg/.../backups/lment-2e/hf-models/`, the checkpoint to a
+`checkpoints/` directory under the same backup root.
+
 ## Loading
 
 ```python
