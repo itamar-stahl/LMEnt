@@ -1,32 +1,77 @@
-# Artificial intelligence embedding erasure, first attempt -- no pre-tuned
-# threshold exists for this concept (unlike Rome's feature or Baseball's
-# feature 10), so this runs the full judge-based selection from scratch
-# against a fresh feature cache, mirroring ember_lment_slurm.yaml but pointed
-# at the b131k control (the checkpoint every other erasure in this project
-# uses) instead of the older lment-1b-control-2e.
+# ARTIFICIAL INTELLIGENCE embedding erasure, on the pair's control model.
+#
+# Derived from ember_lment_rome_erase_slurm.yaml (the JUDGE variant), not from
+# either *_erase_nojudge_slurm.yaml. That choice is forced, and the reason is
+# specific to this concept -- read it before "simplifying" this config.
+#
+# WHY THE NOJUDGE THRESHOLD TRICK DOES NOT WORK FOR AI
+# ----------------------------------------------------
+# Rome and Baseball both run `mode: threshold` with a `feature_ratio_threshold`
+# that isolates exactly the one feature the Gemma judge had already chosen. That
+# works ONLY because in those cells the judge's pick was also the unique maximum
+# of ratio_abs:
+#
+#     Rome      feature 11   6.4643  (next 4.9001)  -> any thresh in (4.90, 6.46]
+#     Baseball  feature 10  14.4388  (next 5.1266)  -> any thresh in (5.13, 14.44]
+#
+# For AI it is NOT. From the surviving cache (lment-ember-grid-ai, written
+# 2026-09-14 03:54 by job 890919), stats_embed.csv ranks:
+#
+#     feature 94   6.3396   <- judge did NOT accept
+#     feature 55   6.1961   <- judge did NOT accept
+#     feature 89   4.6780   <- the judge's pick, confidence 0.99
+#     feature 49   4.4168
+#
+# and potential_features.csv shows the judge accepted THREE features:
+#
+#     89  ratio 4.6780  conf 0.99  "artificial intelligence and autonomous machine systems"
+#     85  ratio 3.4576  conf 0.95  "computer vision and machine learning applications"
+#     26  ratio 2.2372  conf 0.85  "data processing, neural network architectures"
+#
+# There is no threshold that selects {89} alone: anything low enough to admit 89
+# also admits 94 and 55, which the judge rejected. Erasing those would be a
+# different intervention wearing the same name. So the judge runs.
+#
+# WHAT THAT COSTS, AND THE CHECK IT BUYS
+# --------------------------------------
+# select_with_judge does not cache -- it re-judges every eligible feature. The
+# erased set therefore depends on the judge reproducing itself, which is exactly
+# the fragility the nojudge configs were written to escape (the sparse fit
+# already differs across GPU models at a fixed seed). Two mitigations:
+#
+#   * features.reuse stays true against the AI cache, so the FACTORISATION is
+#     replayed, not refit. Only the judging is re-done.
+#   * the original judge_trace.json survives in that cache. After this run,
+#     diff the new trace against it. If the accepted set is not {89, 85, 26},
+#     that is a finding about judge reproducibility, not a run to quietly use.
+#
+# constraint a6000 is load-bearing HERE, unlike in the nojudge configs: a judge
+# whose greedy decoding has to reproduce is card-sensitive. It also has to hold
+# the 23.9 GB unsharded Gemma, which has killed jobs on smaller cards.
+#
+# save.full_model stays FALSE, as in every other erase config. The run writes
+# erased_embeddings.safetensors per delta; materialise only the delta(s) wanted
+# with ember_eval/materialize_erased_model.py. Saving all 8 deltas as full
+# models would be ~41 GB against ~76 GB of remaining quota.
 
 method: ember
 model_name: /home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k/
 rank: 100
-seed: 44                       # same cell convention as the Rome/Baseball grid
-
+seed: 44                       # the same cell as Rome/Baseball; held fixed on purpose
 selection:
   mode: judge
-  ratio_thresh: 2.0
+  ratio_thresh: 2.0            # published value, deliberately not pre-adjusted
   feature_ratio_threshold: null
   judge_confidence_threshold: 0.85
   judge_top_k: 20
-
 ember:
   deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
   explicit_delta: null
-
 eval:
   data_json: ../data/mc_questions.json
   alpaca: false
   alpaca_split: test
   alpaca_max_items: null
-
 lment:
   model_key: lment-1b-control-2e-b131k
   model_device: cuda
@@ -37,17 +82,17 @@ lment:
     neutral_json: ../data/neutral_sentences.json
   features:
     cache_root: /home/dcor/galbarak2/lment-ember-grid-ai/features/sp0.02_seed44
-    reuse: false
+    reuse: true                # MUST stay true -- the sparse fit is not reproducible
     fitting_device: cuda
     max_iterations: 20000
-    g_sparsity: 0.02
+    g_sparsity: 0.02               # recorded in the cache's feature_manifest.json
     k_proj: 30
   judge:
     model: google/gemma-4-12B-it
     revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
     device: cuda
     max_new_tokens: 256
-    local_files_only: true
+    local_files_only: true     # the 23 GB is already in hf_cache/hub
     cache_dir: /home/dcor/galbarak2/hf_cache/hub
     executor: subprocess
     python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
@@ -57,7 +102,7 @@ lment:
   execution:
     activate_script: ../activate_env.sh
   slurm:
-    job_name: ai-erase
+    job_name: aierase          # subject FIRST: only ~8 chars are visible
     account: gpu-research
     partition: killable
     constraint: a6000
