@@ -147,7 +147,7 @@ not assumed:**
 | model | HF export | HF backup | distcp checkpoint | checkpoint backup |
 |---|---|---|---|---|
 | `control-2e-b131k` | yes | yes | `/home/morg` | **MISSING** |
-| `norome-2e-b131k` | yes | yes | `/home/morg` | yes (`/home/dcor`) |
+| `norome-2e-b131k` | yes | yes (2026-09-19) | `/home/morg` | yes (2026-09-19) |
 | `nobaseball-2e-b131k` | yes | yes | `/home/morg` | yes (`/home/dcor`) |
 | `noai-2e-b131k` | yes | **MISSING** | `/home/dcor` | **MISSING** |
 

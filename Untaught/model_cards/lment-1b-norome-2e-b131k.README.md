@@ -167,10 +167,18 @@ across GPU models at a fixed seed. Conversion is deterministic; fitting is not.
 ## Backups
 
 Mirrored across independent filers (`/home/dcor` is netapp1, `/home/morg` is
-netapp2):
+netapp2), **both legs verified by content hash**, not by size — job `909940`,
+2026-09-19:
 
-- HF export → `/home/morg/NLP_2526b/galbarak2/backups/lment-2e/hf-models/lment-1b-norome-2e-b131k`
-- distcp checkpoint → `/home/dcor/galbarak2/backups/lment-2e/checkpoints/untaught-no-rome-core-1b-2e-b131k_20260904_183200/step54832`
+- HF export → `/home/morg/NLP_2526b/galbarak2/backups/lment-2e/hf-models/lment-1b-norome-2e-b131k` (5.1 G)
+- distcp checkpoint → `/home/dcor/galbarak2/backups/lment-2e/checkpoints/untaught-no-rome-core-1b-2e-b131k_20260904_183200/step54832` (15 G, 16 shards + `.metadata`)
+
+`rsync -c` rather than the default size+mtime comparison is the point:
+`/home/dcor` is mounted **`soft`**, so a write burst that crosses the NFS
+timeout returns EIO rather than blocking, and a truncated file can land with a
+plausible size. This verification was first attempted as a login-node
+background task and was **killed twice by host memory pressure** — the copy
+survived, the verification did not. Run multi-GB verifies as a batch job.
 
 The HF copy is **not** a checkpoint backup: the `.distcp` directory is
 `model_and_optim`, fp32 master weights plus optimizer moments at 15 GB. The HF
