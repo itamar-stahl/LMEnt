@@ -560,6 +560,83 @@ def ablate_layer(model, layer_id, Z, feature_ids, delta_in, delta_out, gamma=0.9
     return n_edited, int(keep.sum())
 
 
+# delta >= 2 does not shrink the targeted component at all. See erasure_scale.
+AMPLIFY_AT = 2.0
+
+
+def erasure_scale(delta):
+    """What the targeted component is multiplied by, given delta.
+
+    ablate_layer applies (I - delta * P) on the feature's support, where P
+    projects onto a UNIT direction. So the component along the feature does not
+    scale by `delta`, it scales by `|1 - delta|`:
+
+        delta 0    -> 1.0   nothing happens
+        delta 0.5  -> 0.5   halved
+        delta 1    -> 0.0   removed exactly, the only value that erases fully
+        delta 2    -> 1.0   sign flipped, magnitude untouched
+        delta 4    -> 3.0   TRIPLED
+        delta 7    -> 6.0   delta 10 -> 9.0
+
+    Only 0 < delta < 2 shrinks anything. This is the arithmetic behind
+    job 871607 (concept activation 48.48 -> 160.3 at the default delta).
+    """
+    return abs(1.0 - float(delta))
+
+
+def check_delta_erases(delta_in, delta_out, allow_amplification, cmd):
+    """Refuse to call it an erasure when the update does not shrink anything.
+
+    `--delta-in 4 --delta-out 4` were the defaults, and MLP_ERASURE.md fixed 4
+    as "the published value". It is not a value -- configs/snmf_gemma.yaml sets
+    `in_deltas: [1.0, 4.0, 7.0, 10.0]` and SNMFMethod.enumerate_hps crosses
+    every one of them with every layer range, then the reference throws away
+    the bad cells on downstream evaluation (`max_qa_acc: 0.6`,
+    `min_mmlu: 0.7`). Lifted out of that sweep and applied once, delta 4
+    multiplies the concept's features by three and saves the result as an
+    erased model -- which is why the erased model scored BETTER on the concept
+    it was supposed to have lost.
+
+    A deliberate sweep can still reach those cells with --allow-amplification,
+    but it has to say so, and the factor is recorded in the metadata either way.
+    """
+    offenders = []
+    for name, flag, delta in (("input-side (up_proj)", "--delta-in", delta_in),
+                              ("output-side (down_proj)", "--delta-out", delta_out)):
+        delta = float(delta)
+        if delta == 0.0:                      # deliberate one-sided edit
+            continue
+        scale = erasure_scale(delta)
+        if scale >= 1.0:
+            offenders.append((name, flag, delta, scale))
+
+    if not offenders:
+        return
+    if allow_amplification:
+        for name, flag, delta, scale in offenders:
+            print(f"WARNING: {flag}={delta} scales the {name} component by "
+                  f"{scale:.1f}x rather than shrinking it "
+                  f"(--allow-amplification was passed).")
+        return
+
+    lines = [f"{cmd}: this is not an erasure -- the update would leave the "
+             f"concept at least as strong as it started."]
+    for name, flag, delta, scale in offenders:
+        verb = "flips the sign of" if scale == 1.0 else f"MULTIPLIES by {scale:.1f}x"
+        lines.append(f"  {flag}={delta} {verb} the {name} component "
+                     f"(scale = |1 - {delta}| = {scale:.1f}).")
+    lines.append(
+        "The update is (I - delta*P) onto a UNIT direction, so the component "
+        "scales by |1 - delta|, not by delta. Only 0 < delta < 2 shrinks it, "
+        "and delta = 1 removes it exactly.")
+    lines.append(
+        "If you are sweeping delta the way configs/snmf_gemma.yaml does "
+        "([1, 4, 7, 10]) and selecting the cell on a downstream eval, pass "
+        "--allow-amplification to reach these cells deliberately. Do not pass "
+        "it to make a single run proceed.")
+    raise SystemExit("\n".join(lines))
+
+
 def resolve_ranges(n_layers, layers_in, layers_out, cell=0):
     """CLI ranges if given, else the chosen cell of the publication grid."""
     d_in, d_out = default_layer_ranges(n_layers, cell)
@@ -761,8 +838,12 @@ def cmd_erase(a):
         n, kept = ablate_layer(model, l, blob["results"][l]["Z"], feats,
                                d_in, d_out, a.gamma)
         total += n
-        applied_in += bool(d_in)
-        applied_out += bool(d_out)
+        # `and n`: a layer whose features all lost their support to the
+        # coverage mask edited nothing, so it must not count towards either
+        # side. Counting the delta alone let check_both_sides_applied pass on
+        # a layer that had in fact been skipped.
+        applied_in += bool(d_in and n)
+        applied_out += bool(d_out and n)
         print(f"layer {l}: {n} features, {kept} neurons kept, "
               f"delta_in={d_in} delta_out={d_out}")
     print(f"{total} feature ablations total "
@@ -778,6 +859,12 @@ def cmd_erase(a):
     check_both_sides_applied(
         applied_in, applied_out, a.delta_in, a.delta_out,
         ((lo_in, hi_in), (lo_out, hi_out)), selected, "erase")
+    # Last gate before anything is written: an amplifying delta produces a
+    # checkpoint that is stronger on the concept than the control, and nothing
+    # downstream -- not compare_weights.py, not the MC eval -- would flag it as
+    # anything other than "an erasure that did not work".
+    check_delta_erases(a.delta_in, a.delta_out,
+                       getattr(a, "allow_amplification", False), "erase")
     if a.save:
         model.save_pretrained(a.save)
         tok.save_pretrained(a.save)
@@ -785,6 +872,12 @@ def cmd_erase(a):
             "method": "SNMF",
             "selection": selection_meta,
             "delta_in": a.delta_in, "delta_out": a.delta_out,
+            # |1 - delta|: what the targeted component was multiplied by.
+            # < 1 shrinks, 1.0 is a pure sign flip, > 1 amplifies. Recorded so
+            # an amplifying run can never be read back as an erasure.
+            "erasure_scale_in": erasure_scale(a.delta_in),
+            "erasure_scale_out": erasure_scale(a.delta_out),
+            "amplification_allowed": bool(getattr(a, "allow_amplification", False)),
             "layers_in": [lo_in, hi_in], "layers_out": [lo_out, hi_out],
             "layers_in_from": "cli" if a.layers_in else "model depth",
             "layers_out_from": "cli" if a.layers_out else "model depth",
@@ -1300,6 +1393,12 @@ def cmd_verify(a):
         applied_in, applied_out, a.delta_in, a.delta_out,
         ((lo_in, hi_in), (lo_out, hi_out)),
         {str(l): selected[str(l)] for l in layers}, "verify")
+    # Same gate as erase, on purpose. verify exists to tell you what erase
+    # would write, so the two must accept exactly the same deltas -- otherwise
+    # you can verify a cell you are not allowed to save, or save one you never
+    # verified.
+    check_delta_erases(a.delta_in, a.delta_out,
+                       getattr(a, "allow_amplification", False), "verify")
     after = measure()
     after_out = measure_out()
 
@@ -1437,8 +1536,22 @@ def main():
     e.add_argument("--cache-dir")
     e.add_argument("--dtype", choices=sorted(DTYPES), default="fp32")
     e.add_argument("--device", help="default cuda:0, or cpu without CUDA")
-    e.add_argument("--delta-in", type=float, default=4.0)
-    e.add_argument("--delta-out", type=float, default=4.0)
+    # 1.0, not 4.0. The update is (I - delta*P) onto a unit direction, so the
+    # component scales by |1 - delta|: 1 removes it exactly and 4 TRIPLES it.
+    # The old default of 4 is why an "erased" model scored better on the
+    # concept than its control. See erasure_scale / check_delta_erases.
+    e.add_argument("--delta-in", type=float, default=1.0,
+                   help="erasure strength on up_proj. The component scales by "
+                        "|1 - delta|, so 1.0 removes it exactly and anything "
+                        ">= 2 does not shrink it at all. Default 1.0.")
+    e.add_argument("--delta-out", type=float, default=1.0,
+                   help="erasure strength on down_proj; same scaling as "
+                        "--delta-in. Default 1.0.")
+    e.add_argument("--allow-amplification", action="store_true",
+                   help="permit delta >= 2, which multiplies the concept "
+                        "component instead of removing it. Only for a "
+                        "deliberate sweep whose cell is chosen on a downstream "
+                        "eval, as configs/snmf_gemma.yaml does.")
     # default None, resolved from the model's depth; see default_layer_ranges
     e.add_argument("--layers-in", type=int, nargs=2)
     e.add_argument("--layers-out", type=int, nargs=2)
@@ -1487,8 +1600,16 @@ def main():
     v.add_argument("--cache-dir")
     v.add_argument("--dtype", choices=sorted(DTYPES), default="fp32")
     v.add_argument("--device", help="default cuda:0, or cpu without CUDA")
-    v.add_argument("--delta-in", type=float, default=4.0)
-    v.add_argument("--delta-out", type=float, default=4.0)
+    # Same default as erase, so `verify` measures what `erase` would write.
+    # They disagreed with nothing to warn you: verify at 4 reported a -183.8%
+    # "drop" (job 871607) and erase at 4 would have saved that model.
+    v.add_argument("--delta-in", type=float, default=1.0,
+                   help="see erase --delta-in; the component scales by "
+                        "|1 - delta|. Default 1.0.")
+    v.add_argument("--delta-out", type=float, default=1.0,
+                   help="see erase --delta-out. Default 1.0.")
+    v.add_argument("--allow-amplification", action="store_true",
+                   help="permit delta >= 2 when deliberately sweeping.")
     v.add_argument("--layers-in", type=int, nargs=2)
     v.add_argument("--layers-out", type=int, nargs=2)
     v.add_argument("--range-cell", type=int, default=0, choices=(0, 1, 2),

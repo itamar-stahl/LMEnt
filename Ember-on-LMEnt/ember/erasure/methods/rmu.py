@@ -45,7 +45,44 @@ LLAMA_UPDATE_SETTINGS: List[UpdateSetting] = [
     ("S2_lid9_L789",    9,  [7, 8, 9]),
     ("S3_lid11_L91011", 11, [9, 10, 11]),
 ]
+# WMDP's positional default. It is down_proj on Llama and Gemma-2 and NOT on
+# OLMo-2, so it is a fallback for when the lookup below cannot find the matrix,
+# never the answer. See _down_proj_param_ids.
 FIXED_PARAM_IDS: List[int] = [6]
+
+_DOWN_PROJ_NAMES = ("mlp.down_proj.weight", "feed_forward.down_proj.weight",
+                    "mlp.c_proj.weight", "mlp.dense_4h_to_h.weight")
+
+
+def _down_proj_param_ids(hf_model: Any) -> List[int]:
+    """Positional index of the MLP down-projection inside one decoder layer.
+
+    ``external.wmdp.rmu.utils.get_params`` selects parameters by their position
+    in ``model.model.layers[i].parameters()``, and WMDP hardcodes ``[6]``. That
+    is ``mlp.down_proj.weight`` on Llama and Gemma-2, but OLMo-2 registers
+    ``self_attn.q_norm`` and ``self_attn.k_norm`` ahead of the MLP, which
+    shifts everything by two:
+
+        0 q_proj  1 k_proj  2 v_proj  3 o_proj  4 q_norm  5 k_norm
+        6 gate_proj  7 up_proj  8 down_proj  9/10 layernorms
+
+    So on the LMEnt 1B the published index trains ``gate_proj`` and leaves
+    ``down_proj`` untouched -- RMU's whole intervention lands on the wrong
+    matrix. Job 871246 measured exactly this on the real checkpoint
+    (``down_proj_index: 8, positional_ok: False``). Resolving by name makes the
+    index a property of the architecture instead of an assumption about it.
+    """
+    layers = getattr(getattr(hf_model, "model", None), "layers", None)
+    if not layers:
+        raise ValueError(
+            f"{type(hf_model).__name__} has no model.layers to inspect")
+    names = [n for n, _ in layers[0].named_parameters()]
+    for idx, name in enumerate(names):
+        if any(name.endswith(suffix) for suffix in _DOWN_PROJ_NAMES):
+            return [idx]
+    raise ValueError(
+        f"no MLP down-projection among the decoder-layer parameters of "
+        f"{type(hf_model).__name__}: {names}")
 
 
 def _grids_and_settings(common: RunConfig
@@ -191,10 +228,18 @@ class RMUMethod(Method):
         )
 
         layer_ids = [int(x) for x in str(hp["layer_ids"]).split(",")]
+        # Resolved from the working model, not taken from the HP row: the HP
+        # grid is enumerated before any model exists, so it can only carry
+        # WMDP's positional guess.
+        param_ids = _down_proj_param_ids(self._working_model)
+        if param_ids != FIXED_PARAM_IDS:
+            log.info("RMU: down_proj is param %d on %s, not WMDP's %d",
+                     param_ids[0], type(self._working_model).__name__,
+                     FIXED_PARAM_IDS[0])
         run_args = argparse.Namespace(
             layer_id=int(hp["layer_id"]),
             layer_ids=layer_ids,
-            param_ids=FIXED_PARAM_IDS,
+            param_ids=param_ids,
             alpha=[float(hp["alpha"])],
             steering_coeff_list=[float(hp["steering"])],
             lr=float(hp["lr"]),
