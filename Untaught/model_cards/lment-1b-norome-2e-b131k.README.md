@@ -45,10 +45,18 @@ figure here rather than one leg of many:
 | instance-slots excluded | **131,624** |
 | predicted for exactly 2 epochs | `2 x 65,844 = 131,688` |
 | agreement | **99.95%** |
-| guard leaks | **0** |
 | startup confirmation | `loaded 65844 chunk ids` |
+| all-masked-batch guard | enabled — `guard_all_masked=True`, `strict=True` |
 
-No blacklisted chunk ever reached the loss through the all-masked-batch guard.
+**On "zero guard leaks", which other cards in this directory claim:** the
+framework emits exactly two untaught metrics, `train/untaught excluded
+instances` and `train/untaught excluded cumulative`. There is **no leak
+counter** in the log. `guard_all_masked` is a *config flag* in
+`ChunkExclusionCallback`, not a tally. So "zero leaks" means "the guard was
+enabled with `strict=True` and nothing reported a leak" — not that a counter was
+read and found to be zero. The evidence that the ablation fired is the 99.95%
+arithmetic above, which is a real measurement; treat it as the claim, and read
+the guard as a mechanism that was switched on.
 
 **Do not compare this 99.95% against Baseball's or AI's window figures and
 conclude those ablations were leakier** — theirs are single windows out of five
