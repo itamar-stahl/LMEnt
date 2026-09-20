@@ -108,12 +108,21 @@ def main() -> None:
                 "feature_ids": feature_ids, "chosen_delta": chosen,
                 "shipped": str(shipped), "cells": {}}
     reproduced = False
+    existing = json.loads((out_root / "deltas.json").read_text())["cells"] \
+        if (out_root / "deltas.json").exists() else {}
     for delta in deltas:
+        cell = out_root / slug(delta)
+        if (cell / "erased_embeddings.safetensors").exists() and slug(delta) in existing:
+            # extending a grid: keep the cell already written (and already checked)
+            manifest["cells"][slug(delta)] = existing[slug(delta)]
+            if delta == chosen:
+                reproduced = bool(existing[slug(delta)].get("reproduces_shipped"))
+            print(f"  delta={delta:g}: exists, kept")
+            continue
         embed_edit.restore(model, pristine)
         info = embed_edit.apply_embedding_artifact(
             model=model, tokenizer=tokenizer, artifact=artifact,
             feature_ids=feature_ids, delta=delta, model_key=model_key)
-        cell = out_root / slug(delta)
         cell.mkdir(parents=True, exist_ok=True)
         path = save_erased_embedding(
             model=model, output_dir=cell, base_model_path=base, model_key=model_key,
@@ -147,6 +156,8 @@ def main() -> None:
         for delta in deltas:
             cell = out_root / slug(delta)
             out = cell / "model"
+            if (out / "config.json").exists() and manifest["cells"][slug(delta)].get("model"):
+                continue
             cmd = [sys.executable, str(MATERIALIZE), "--base", str(base),
                    "--erased", str(cell / "erased_embeddings.safetensors"),
                    "--out", str(out)]

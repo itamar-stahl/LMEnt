@@ -34,6 +34,7 @@ BOOT_SEED = 0
 
 def load_scored(d: Path) -> Dict[str, Any]:
     rec = json.loads((d / "records.json").read_text())
+    rec["meta"]["label"] = Path(d).resolve().parent.name   # <scored>/<name>/<topic>
     out = {"meta": rec["meta"], "records": {r["id"]: r for r in rec["records"]},
            "dists": None, "index": None}
     if (d / "dists.npy").exists():
@@ -110,7 +111,7 @@ def compare(ev: Dict[str, Any], ref: Dict[str, Any], sets: Optional[List[str]] =
                                                 signed=False)
         per_set[name] = entry
     return {
-        "evaluated": ev["meta"]["model_name"], "reference": ref["meta"]["model_name"],
+        "evaluated": ev["meta"]["label"], "reference": ref["meta"]["label"],
         "evaluated_path": ev["meta"]["model"], "reference_path": ref["meta"]["model"],
         "topic": ev["meta"]["topic"], "convention": "evaluated - reference; KL(reference || evaluated)",
         "per_set": per_set, "items": items,

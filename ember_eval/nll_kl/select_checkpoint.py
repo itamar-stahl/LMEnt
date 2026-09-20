@@ -34,6 +34,9 @@ SETS = ("target_selection", "neighbour_selection", "unrelated_selection")
 
 def load_nll(d: Path) -> Dict[str, Any]:
     rec = json.loads((d / "records.json").read_text())
+    # <scored root>/<name>/<topic>/records.json -- <name> is the candidate's label,
+    # not meta.model_name, which is "model" for every materialised candidate.
+    rec["meta"]["label"] = Path(d).resolve().parent.name
     by_set: Dict[str, Dict[str, float]] = {}
     for r in rec["records"]:
         if r["phase"] != "selection":
@@ -49,14 +52,14 @@ def score_candidate(cand: Dict[str, Any], ctrl: Dict[str, Any]) -> Dict[str, Any
         c, k = cand["by_set"].get(s, {}), ctrl["by_set"].get(s, {})
         ids = sorted(set(c) & set(k))
         if len(ids) < 50:
-            raise SystemExit(f"{cand['meta']['model_name']}: {s} has {len(ids)} common items, need 50")
+            raise SystemExit(f"{cand['meta']['label']}: {s} has {len(ids)} common items, need 50")
         d = np.array([c[i] - k[i] for i in ids])
         comps[s] = float(d.mean()) if s == "target_selection" else float(np.abs(d).mean())
         ns[s] = len(ids)
     S = (W_TARGET * comps["target_selection"]
          - W_NEIGHBOUR * comps["neighbour_selection"]
          - W_UNRELATED * comps["unrelated_selection"])
-    return {"model": cand["meta"]["model_name"], "path": cand["meta"]["model"],
+    return {"model": cand["meta"]["label"], "path": cand["meta"]["model"],
             "delta_T": comps["target_selection"],
             "D_neighbour": comps["neighbour_selection"],
             "D_unrelated": comps["unrelated_selection"],
