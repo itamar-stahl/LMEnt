@@ -1,19 +1,37 @@
 \section{Introduction}
 \label{sec:introduction}
 
-\plan{About 0.7 page. Motivate selective concept erasure and explain why
-``forgetting'' needs two checks: approaching the concept-excluded twin on the
-target and retaining correct-answer support elsewhere. Define the full model,
-excluded twin, and post-hoc edit before using those terms repeatedly. Name
-Ancient Rome, Baseball, and AI. State that the study measures answer-token
-probability and next-token distributional similarity, not generated-answer
-accuracy. End with 2--3 concrete contributions once results exist.}
+Post-training concept erasure aims to remove a model's learned
+association with a target concept while preserving its behavior
+elsewhere. Evaluations often compare an edited model with the
+original trained model: they ask whether target performance falls
+and whether other capabilities remain intact. This comparison does
+not show whether the edited model resembles one that learned from
+the same corpus without the selected concept-associated text.
+That distinction is the focus of this study.
 
-\begin{figure}[t]
-  \centering
-  \emptyfigure{Study design schematic to draw from final protocol}
-  \caption{Planned comparison of the full model, concept-excluded twin, and
-  three erasure methods on identical target, neighboring, and unrelated
-  sentence completions.}
-  \label{fig:design}
-\end{figure}
+We use LMEnt's entity-annotated corpus to construct a matched
+reference for each of three concepts: Ancient Rome, Baseball, and
+artificial intelligence \citep{gottesman2025lment}. Alongside a
+model trained on the full corpus, we train a concept-excluded twin
+with the same initialization and training procedure, masking the
+loss on chunks linked to the target concept. We then apply EMBER,
+RMU, and an SNMF-based MLP erasure to copies of the full model
+\citep{suslik2026ember,li2024wmdp,shafran2026snmf}. This design
+lets us compare each edit with both the model it changed and the
+matched exclusion reference.
+
+We evaluate the models on target, neighboring-topic, and unrelated
+sentence completions. Correct-answer negative log-likelihood
+measures changes in support for the supplied answer, while
+teacher-forced full-vocabulary KL measures how closely the models'
+next-token distributions agree along that answer. Together, these
+measurements ask whether an erasure approaches the twin on the
+target concept and how it affects predictions on other topics.
+
+\textbf{[RESULT: State the main finding about how closely the three
+erasure methods approached their concept-excluded twins.]}
+\textbf{[RESULT: Compare EMBER's results across Ancient Rome, Baseball,
+and AI, identifying the most important difference between concepts.]}
+\textbf{[RESULT: State the main qualification concerning neighboring
+or unrelated questions, or a disagreement between NLL and KL.]}
