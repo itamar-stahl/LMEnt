@@ -41,6 +41,12 @@ for pair in $PAIRS; do
   name=${pair%%=*}; dir=${pair#*=}
   if [ -f "$OUT_ROOT/$name/$stem/records.json" ]; then echo "skip $name (scored)"; continue; fi
   if [ ! -r "$dir/config.json" ]; then echo "FATAL: $dir not readable from $(hostname)" >&2; failed=1; continue; fi
+  # Refuse a checkpoint saved with holes. Three of the 2026-09-20 candidates
+  # were written short by jobs that exited 0, and two were scored and ranked
+  # before anyone noticed; see check_alloc.py.
+  if ! "$PY" "$ROOT/ember_eval/nll_kl/check_alloc.py" "$dir"; then
+    echo "SKIP $name: partially-written checkpoint" >&2; failed=1; continue
+  fi
   echo "=== $name  $(date +%H:%M:%S)"
   # shellcheck disable=SC2086
   "$PY" -u "$ROOT/ember_eval/nll_kl/score_model.py" --model "$dir" --sets "$SETS" --out "$OUT_ROOT/$name" $EXTRA \
