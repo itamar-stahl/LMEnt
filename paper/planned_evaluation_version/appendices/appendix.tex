@@ -10,21 +10,22 @@ blacklist rules and audit estimates. Do not paste raw run logs.}
 concept; item construction and exclusions; one representative fixed
 prompt/answer; question provenance and train/selection/test overlap checks.}
 
-\section{Scoring and Statistical Details}
+\section{Scoring and Summary Statistics}
 \label{app:scoring}
 \plan{Write exact equations for per-question answer-token NLL, signed
-evaluated-minus-reference group mean, and full-vocabulary KL(reference
-$\rightarrow$ evaluated) under correct-answer teacher forcing. Specify
+evaluated-minus-reference group mean, and full-vocabulary KL(twin
+$\rightarrow$ full or erasure) under correct-answer teacher forcing. Specify
 tokenization, prefix, answer-token mask, position/question aggregation,
-bootstrap resampling and paraphrase clustering. Include one worked item if
-useful. No option-accuracy or passage-NLL metrics belong in this protocol.}
+and calculation of means and standard deviations across questions. Include
+one worked item if useful. No option-accuracy or passage-NLL metrics belong
+in this protocol.}
 
 \section{Complete Results by Concept}
 \label{app:full-results}
 \subsection{Ancient Rome}
 \plan{Table A3: all five models, all three question groups, answer NLL and
-full-vocabulary KL; underlying group means, full/twin contrasts, and paired
-intervals. Split by metric if needed.}
+full-vocabulary KL; underlying group means, full/twin contrasts, and
+standard deviations across questions. Split by metric if needed.}
 \subsection{Baseball}
 \plan{Table A4 with the identical structure and question-level protocol.}
 \subsection{Artificial Intelligence}
