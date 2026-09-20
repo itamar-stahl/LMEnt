@@ -42,6 +42,7 @@ HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 FORK = REPO / "Ember-on-LMEnt"
 sys.path.insert(0, str(FORK))
+sys.path.insert(1, str(FORK / "external" / "snmf"))   # ember.utils imports factorization.seminmf
 
 from ember.erasure import embed_edit, features, model_loader  # noqa: E402
 from ember.erased_embedding import save_erased_embedding  # noqa: E402
