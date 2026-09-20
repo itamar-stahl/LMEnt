@@ -8,7 +8,7 @@
 #SBATCH --mem=48000
 #SBATCH --cpus-per-task=8
 #SBATCH --gpus=1
-#SBATCH --exclude=n-102,rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
+#SBATCH --exclude=n-102,rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-202,n-203,n-204,n-205
 #
 # Materialise one topic's EMBER delta grid from its existing feature artifact.
 #

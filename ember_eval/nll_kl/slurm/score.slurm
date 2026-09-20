@@ -8,7 +8,12 @@
 #SBATCH --mem=32000
 #SBATCH --cpus-per-task=4
 #SBATCH --gpus=1
-#SBATCH --exclude=n-102,rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01
+#SBATCH --exclude=n-102,rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-202,n-203,n-204,n-205
+#
+# n-202..205 are excluded for their filer link, not their 11 GB: six scoring
+# jobs there sat 20+ minutes in D state (folio_wait_bit) with the model already
+# on the GPU and nothing written, while the same job finished in 12 min on an
+# L40S node. The SNMF loads there took 25 minutes for 5 GB.
 #
 # Score one model on the three topics' sets (answer NLL + completion-position
 # distributions). One model load, ~seconds of scoring per topic.
