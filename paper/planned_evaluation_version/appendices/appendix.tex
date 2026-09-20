@@ -1,0 +1,44 @@
+\section{Corpus Exclusion and Model Configurations}
+\label{app:models}
+\plan{Table A1: one row per concept and method with checkpoint ID, erasure
+settings, training/selection data, edited parameters, and seed. Give exact
+blacklist rules and audit estimates. Do not paste raw run logs.}
+
+\section{Sentence-Completion Evaluation Sets}
+\label{app:data}
+\plan{Table A2: target, neighboring, and unrelated question counts for each
+concept; item construction and exclusions; one representative fixed
+prompt/answer; question provenance and train/selection/test overlap checks.}
+
+\section{Scoring and Statistical Details}
+\label{app:scoring}
+\plan{Write exact equations for per-question answer-token NLL, signed
+evaluated-minus-reference group mean, and full-vocabulary KL(reference
+$\rightarrow$ evaluated) under correct-answer teacher forcing. Specify
+tokenization, prefix, answer-token mask, position/question aggregation,
+bootstrap resampling and paraphrase clustering. Include one worked item if
+useful. No option-accuracy or passage-NLL metrics belong in this protocol.}
+
+\section{Complete Results by Concept}
+\label{app:full-results}
+\subsection{Ancient Rome}
+\plan{Table A3: all five models, all three question groups, answer NLL and
+full-vocabulary KL; underlying group means, full/twin contrasts, and paired
+intervals. Split by metric if needed.}
+\subsection{Baseball}
+\plan{Table A4 with the identical structure and question-level protocol.}
+\subsection{Artificial Intelligence}
+\plan{Table A5 with the identical structure and question-level protocol.}
+
+\section{Diagnostic Analyses}
+\label{app:diagnostics}
+\plan{Optional: per-question signed answer-NLL differences showing possible
+cancellation; examples where NLL and KL disagree; distributional plots and
+supported case studies. Include only analyses actually performed and needed
+to interpret main results.}
+
+\section{Reproducibility Notes}
+\label{app:reproducibility}
+\plan{Final scoring script/version, model IDs, seeds, exact question manifest
+and split chronology, tokenization/context settings, answer scoring masks,
+and any deviations from the common protocol. Keep this concise.}

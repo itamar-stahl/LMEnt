@@ -1,0 +1,32 @@
+\section{Evaluation Protocol}
+\label{sec:evaluation}
+
+\subsection{Three Groups and Fixed Correct Answers}
+\plan{About 0.2 page. Define target, neighboring, and unrelated groups and
+their distinct roles. Each item has a declarative sentence-completion prompt
+and one fixed correct continuation, for example ``The city of Rome is located
+in'' followed by ``Italy.'' Score only the answer tokens. State explicitly
+that no candidates are ranked and no text is generated.}
+
+\subsection{Answer NLL Difference}
+\plan{About 0.25 page. For each question, average the negative log-probability
+of each correct-answer token given the prompt and preceding correct-answer
+tokens. Subtract the reference model's per-question NLL from the evaluated
+model's, then average question differences. Positive means less probability
+on the correct answer. A signed mean near zero may conceal cancellation.}
+
+\subsection{Teacher-Forced Full-Vocabulary KL}
+\plan{About 0.25 page. At each correct-answer position, compare the full
+next-token vocabulary distributions under identical teacher-forced prefixes.
+Compute KL(reference $\rightarrow$ evaluated), average answer positions
+within each question, then average questions. KL measures distributional
+similarity, not whether the correct answer improved, and is not divergence
+between generated answers.}
+
+\subsection{Model Comparisons and Uncertainty}
+\plan{About 0.3 page. Twin minus full establishes the exclusion effect;
+erasure minus twin measures resemblance; erasure minus full reveals target
+change and preservation. Report both metrics separately for target,
+neighboring, and unrelated groups. Define identical prompts, answers,
+tokenization and context settings. State paired bootstrap unit, paraphrase
+clustering and intervals; avoid equivalence claims from a near-zero mean.}

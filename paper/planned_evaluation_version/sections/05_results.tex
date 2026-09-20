@@ -1,0 +1,62 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{What Concept Exclusion Changes}
+\plan{About 0.4 page. For each concept, establish twin-minus-full answer NLL
+and KL(full $\rightarrow$ twin) on target questions, then neighboring and
+unrelated questions. State where the exclusion reference has weak observable
+effect. Point to complete per-group twin rows in Appendix~\ref{app:full-results}.}
+
+\subsection{How Closely Erasure Matches the Twin on Target Items}
+\plan{About 0.7 page. Compare EMBER, RMU and SNMF with the twin and full model
+on target answer NLL and full-vocabulary KL. Show paired intervals and inspect
+per-question variation; a near-zero signed mean NLL does not establish
+identical behavior. Discuss substantive differences among Rome, Baseball,
+and AI only after the new measurements are filled.}
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{llccc}
+    \toprule
+    Concept & Erasure model & $\Delta$NLL vs full & $\Delta$NLL vs twin & KL(twin $\rightarrow$ erasure) \\
+    \midrule
+    Rome & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    & RMU & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    & SNMF & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Baseball & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    & RMU & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    & SNMF & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    AI & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    & RMU & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    & SNMF & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Target-question summary to populate after common-protocol scoring.
+  NLL changes are signed evaluated-minus-reference differences. Show paired
+  intervals in the final version and the twin-minus-full reference effect
+  nearby.}
+  \label{tab:target}
+\end{table*}
+
+\subsection{Neighboring and Unrelated Correct-Answer Support}
+\plan{About 0.6 page. Give neighboring and unrelated answer-NLL and KL
+comparisons separately for every method. Positive NLL from full indicates
+weaker prediction of the correct answer; KL indicates a distributional
+change but has no direction of quality. Discuss neighboring spillover and
+unrelated preservation relative to both full and twin.}
+
+\begin{figure}[t]
+  \centering
+  \emptyfigure{Signed answer-NLL changes by concept, model, and question group}
+  \caption{Planned answer-NLL differences from the full model on target,
+  neighboring, and unrelated sentence completions, with paired intervals.}
+  \label{fig:nll-groups}
+\end{figure}
+
+\subsection{Where Answer NLL and KL Disagree}
+\plan{About 0.3 page. Examine cases where the correct-answer probability
+appears stable but the full next-token distribution changes, or vice versa.
+Check whether a near-zero mean signed NLL difference hides opposing
+question-level changes. Use concrete paired examples only if supported by
+the final data.}

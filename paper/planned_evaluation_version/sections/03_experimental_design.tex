@@ -1,0 +1,42 @@
+\section{Experimental Design}
+\label{sec:experimental-design}
+
+\subsection{Shared Base Model and Matched Twins}
+\plan{About 0.3 page. State architecture, corpus, checkpoint, initialization,
+batch order, optimizer, duration, and how labels from selected chunks are
+masked. Explain the shared full model and one twin per concept.}
+
+\subsection{Target Concepts and Exclusion Scope}
+\plan{About 0.25 page. Define Ancient Rome, Baseball, and AI blacklist rules;
+give QID/chunk footprint and any precision/coverage audit. Explicitly connect
+the target evaluation group to each exclusion scope.}
+
+\subsection{Erasure Checkpoints and Model Selection}
+\plan{About 0.35 page. State that EMBER, RMU, and SNMF start from the same
+full checkpoint. Summarize edited parameter families, training or factorization
+data, and how settings were selected without using final held-out items.
+Describe one selected checkpoint per method and concept. Put exact settings
+and chronology in Appendix~\ref{app:models}.}
+
+\subsection{Evaluation Data Separation}
+\plan{About 0.2 page. Explain separate erasure-training, selection, and final
+evaluation sentence completions, identical across all five models. Introduce
+target, neighboring, and unrelated groups. Every item has one fixed correct
+continuation. Counts and question provenance go in Appendix~\ref{app:data}.}
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    Concept & Chunks & Target Q & Neighbor Q & Unrelated Q \\
+    \midrule
+    Ancient Rome & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Baseball & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    AI & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Planned study inventory. Replace placeholders with final masked
+  chunk and held-out completion counts.}
+  \label{tab:inventory}
+\end{table*}
