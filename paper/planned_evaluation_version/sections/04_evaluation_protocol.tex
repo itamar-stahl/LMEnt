@@ -2,31 +2,78 @@
 \label{sec:evaluation}
 
 \subsection{Three Groups and Fixed Correct Answers}
-\plan{About 0.2 page. Define target, neighboring, and unrelated groups and
-their distinct roles. Each item has a declarative sentence-completion prompt
-and one fixed correct continuation, for example ``The city of Rome is located
-in'' followed by ``Italy.'' Score only the answer tokens. State explicitly
-that no candidates are ranked and no text is generated.}
+
+For each concept, we evaluated target questions, neighboring-topic
+questions, and questions from unrelated topics. The target group
+measures change on the concept to be erased; the other groups assess
+preservation at different degrees of topical proximity. Each group
+contained 50 selection and 50 test questions. The target and
+neighboring questions followed EMBER's existing splits
+\citep{suslik2026ember}; we sampled the unrelated questions from
+other topics.
+
+We used Claude in a dedicated session to rewrite the multiple-choice
+questions as declarative sentence stems while retaining their correct
+answers. For example, ``Which river is associated with the founding
+of Rome?'' became ``The river associated with the founding of Rome
+is'', with ``The Tiber River'' as the correct continuation. This
+format avoided relying on the 1B base models to produce a gradeable
+response to a multiple-choice instruction, which they often failed
+to do in preliminary tests.
+
+Ranking the supplied options would give disproportionate weight to
+three particular wrong answers, although many other incorrect
+continuations are possible. We therefore scored only the correct
+continuation.
 
 \subsection{Answer NLL Difference}
-\plan{About 0.25 page. For each question, average the negative log-probability
-of each correct-answer token given the prompt and preceding correct-answer
-tokens. Subtract the reference model's per-question NLL from the evaluated
-model's, then average question differences. Positive means less probability
-on the correct answer. A signed mean near zero may conceal cancellation.}
+
+For question $i$, let $x_i$ be the sentence stem and
+$y_{i,1},\ldots,y_{i,n_i}$ the tokens of its correct continuation.
+We measured model $M$'s mean negative log-likelihood (NLL) over
+those answer tokens:
+\begin{equation}
+\ell_M(i)
+= -\frac{1}{n_i}\sum_{t=1}^{n_i}
+\log p_M(y_{i,t}\mid x_i,y_{i,<t}).
+\end{equation}
+Each token was scored given the stem and the preceding correct-answer
+tokens; the model did not generate a response.
+
+To compare $M$ with reference model $R$, either the full model or the
+concept-excluded twin, we computed the paired difference
+$\Delta_{M,R}(i)=\ell_M(i)-\ell_R(i)$. A positive difference means
+that $M$ assigned less probability to the correct answer than $R$.
 
 \subsection{Teacher-Forced Full-Vocabulary KL}
-\plan{About 0.25 page. At each correct-answer position, compare the full
-next-token vocabulary distributions under identical teacher-forced prefixes.
-Compute KL(reference $\rightarrow$ evaluated), average answer positions
-within each question, then average questions. KL measures distributional
-similarity, not whether the correct answer improved, and is not divergence
-between generated answers.}
 
-\subsection{Model Comparisons and Uncertainty}
-\plan{About 0.3 page. Twin minus full establishes the exclusion effect;
-erasure minus twin measures resemblance; erasure minus full reveals target
-change and preservation. Report both metrics separately for target,
-neighboring, and unrelated groups. Define identical prompts, answers,
-tokenization and context settings. State paired bootstrap unit, paraphrase
-clustering and intervals; avoid equivalence claims from a near-zero mean.}
+Answer NLL measures support for the supplied answer. To measure
+broader changes in prediction, we also compared the models' full
+next-token distributions at each answer position. Let $p_{M,t}$
+denote model $M$'s distribution over the vocabulary given the stem
+and the preceding correct-answer tokens. For concept-excluded twin
+$T$ and comparison model $M$, we computed
+\begin{equation}
+\operatorname{KL}_{T\to M}(i)
+= \frac{1}{n_i}\sum_{t=1}^{n_i}
+D_{\mathrm{KL}}(p_{T,t}\,\|\,p_{M,t}).
+\end{equation}
+
+We kept the twin on the left when comparing it with both the full
+model and each erased model. This choice matters because KL is
+asymmetric: reversing its arguments can change the values and even
+the ordering of models. Using the twin as the common reference asks
+how closely each model reproduces the twin's predictions, with
+deviations weighted by the twin's probability distribution. Lower
+KL indicates greater similarity at the evaluated positions.
+
+The full vocabulary includes incorrect next tokens, so KL can detect
+changes among alternatives even when the correct token's probability
+changes little. Because the models are evaluated along the correct
+continuation, KL does not measure their predictions after an
+incorrect token is chosen.
+
+We report the mean and standard deviation across the 50 held-out
+test questions in each target, neighboring, and unrelated group.
+For NLL, these summarize paired question-level differences; for KL,
+they summarize question-level divergence.
