@@ -1,13 +1,45 @@
 \section{Background and Related Work}
-\label{sec:background}
+\label{sec:related-work}
 
-\subsection{Concept Exclusion as an Empirical Reference}
-\plan{About 0.2 page. Explain loss masking during training, the operational
-blacklist, and why the resulting twin is a reference for this intervention,
-not proof that all knowledge of the concept is absent. Add citations.}
+\subsection{LMEnt and Concept Exclusion}
 
-\subsection{Post-hoc Erasure Methods}
-\plan{About 0.3 page. Introduce EMBER's embedding edit, RMU's MLP update,
-and SNMF's MLP feature edit in comparable terms. Explain what parameters each
-can change and cite the original methods. Save implementation specifics for
-Section~\ref{sec:experimental-design}.}
+LMEnt provides a Wikipedia-based pretraining corpus annotated with entity
+mentions, an index for retrieving chunks associated with those entities, and
+language models trained on the corpus \citep{gottesman2025lment}. The entity
+index lets us identify training chunks linked to a target concept. By masking
+the loss on those chunks during an otherwise matched training run, we obtain
+a \emph{concept-excluded twin}. This twin provides a reference for the effect
+of excluding a defined portion of the training data. It may still learn
+related facts from chunks outside that portion.
+
+\subsection{Post-Training Concept Erasure}
+
+EMBER edits token embeddings rather than internal transformer layers
+\citep{suslik2026ember}. It factorizes the embedding matrix into sparse
+features, selects features associated with the target concept, and subtracts
+their contributions from the embeddings of selected tokens. This makes it
+possible to change a small set of input representations without updating the
+rest of the model.
+
+We also consider two approaches that act on multilayer perceptron (MLP)
+components. Representation Misdirection for Unlearning (RMU) updates selected
+MLP parameters to redirect representations of forget-set inputs, while a
+retain objective encourages representations of other inputs to remain close
+to the original model \citep{li2024wmdp}. Semi-nonnegative matrix
+factorization (SNMF) identifies interpretable features in MLP activations
+from groups of co-activated neurons \citep{shafran2026snmf}. In its erasure
+adaptation, concept-associated features are mapped to directions that can
+be removed through MLP weight edits \citep{suslik2026ember}.
+
+The EMBER study evaluated erasure using multiple-choice and open-ended
+questions about target concepts, with related-topic questions and general
+benchmarks used to assess preservation \citep{suslik2026ember}. It also
+examined generation quality and whether target knowledge returned after
+relearning. These evaluations compared edited models with the original
+model, which had been trained on the target concept. They included EMBER,
+RMU, and an MLP weight-erasure adaptation of SNMF-derived features
+\citep{li2024wmdp,shafran2026snmf}. RMU's original evaluation likewise
+measured target-question performance and general capabilities relative to
+the original model. Our study adds a matched concept-excluded twin as a
+reference and compares edited models with it using correct-answer NLL and
+full-vocabulary KL on the same sentence completions.
