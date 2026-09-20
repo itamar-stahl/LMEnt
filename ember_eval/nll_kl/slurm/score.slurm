@@ -35,5 +35,5 @@ fi
 echo "score model=$MODEL out=$OUT extra=[$EXTRA]"
 
 # shellcheck disable=SC2086
-exec "$PY" "$ROOT/ember_eval/nll_kl/score_model.py" \
+exec "$PY" -u "$ROOT/ember_eval/nll_kl/score_model.py" \
   --model "$MODEL" --sets $SETS --out "$OUT" $EXTRA
