@@ -18,27 +18,8 @@
 \usepackage{xcolor}
 \usepackage{array}
 
-% Keep this true while drafting. Set it to \draftnotesfalse before submission.
-\newif\ifdraftnotes
-\draftnotestrue
-\newcommand{\draftnote}[1]{%
-  \ifdraftnotes
-    \par\smallskip
-    \noindent\fcolorbox{black!30}{black!3}{%
-      \begin{minipage}{0.92\linewidth}
-        \small\textbf{Drafting note.} #1
-      \end{minipage}}
-    \par\smallskip
-  \fi
-}
-\newcommand{\placeholder}[1]{%
-  \ifdraftnotes
-    \textcolor{red!70!black}{\textbf{[TODO: #1]}}%
-  \fi
-}
-
 \title{Can Concept Erasure Reproduce Never Learning?\\
-Comparing EMBER with Data-Ablated Language Models}
+Comparing EMBER with Data-Ablated Language Models and MLP Based Erasure}
 
 \author{
   \textbf{Gal Barak} \quad
@@ -48,7 +29,7 @@ Comparing EMBER with Data-Ablated Language Models}
   Tel Aviv University \\
   \texttt{Gal.Barak@mail.tau.ac.il} \quad
   \texttt{Tamar.Tabbach@mail.tau.ac.il} \\
-  \placeholder{Add Itamar Stahl's email} \quad
+  \texttt{itamar.stahl@mail.huji.ac.il} \quad
   \texttt{Adam.Fleisher@mail.tau.ac.il}
 }
 

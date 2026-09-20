@@ -1,19 +1,18 @@
-Concept-erasure methods are commonly evaluated by how much they reduce target
-knowledge relative to the original model. This comparison cannot determine
-whether an erased model resembles one that never learned the concept. We study
-this question with matched 1B-parameter language models trained on the same
-entity-annotated Wikipedia corpus, with either Ancient Rome or Baseball chunks
-masked from the training loss. We compare these concept-excluded references
-with EMBER, an embedding-editing erasure method, and evaluate similarity along
-behavioral, distributional, parameter-space, and specificity dimensions.
-EMBER does not reproduce a single, consistent approximation to concept
-exclusion. For Ancient Rome it suppresses target text substantially more than
-exclusion and also harms control text; for Baseball it undershoots exclusion on
-held-out text, while the small question-side exclusion effect cannot be
-separated from ordinary between-twin variation. In the completed
-Baseball weight comparison, the EMBER update is nearly orthogonal to the
-control-to-excluded displacement. \placeholder{Add the final RMU and SNMF
-comparison in one sentence.} Our results motivate evaluating concept
-erasure against controlled training baselines with several complementary
-instruments rather than treating any single behavioral score as evidence of
-never learning.
+An erasure method can lower a model's score on a topic without making the model
+resemble one that never received training signal from that topic. We test this
+distinction using matched 1B-parameter models trained on an entity-annotated
+Wikipedia corpus. For each of Ancient Rome, Baseball, and artificial
+intelligence, one model receives no training loss on text segments linked to
+the concept. We compare these models with EMBER, which edits selected input
+embeddings, using questions, held-out text loss, parameter changes, and effects
+on unrelated data. The selected Rome edit causes far more text loss than
+concept exclusion, especially on passages containing many edited tokens;
+Baseball's edit falls short of its text-loss reference. No tested Rome edit
+strength matches both the mean and median exclusion effects. On AI questions,
+EMBER comes close to the excluded model, although this does not establish
+equivalence on text or parameters. Two additional methods that edit MLP weights
+do not show the same selective question pattern in the completed AI comparison.
+The Baseball EMBER edit is almost orthogonal to the parameter change caused by
+concept exclusion. A lower target score
+alone therefore does not establish resemblance to a controlled training
+baseline.

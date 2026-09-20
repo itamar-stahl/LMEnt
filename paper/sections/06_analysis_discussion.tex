@@ -3,66 +3,48 @@
 
 \subsection{When Evaluation Dimensions Disagree}
 
-The Baseball arm demonstrates why erasure cannot be certified with a single
-task. An embedding edit directly alters the representations of a small token
-set, so it can strongly change the likelihood of short answer options containing
-those tokens. In contrast, concept exclusion removes learning signal from tens
-of thousands of complete passages, which held-out text NLL measures more
-directly. Moreover, Baseball's small raw question contrast is largely
-reproduced by the unrelated no-Rome twin, whereas the chunk
-difference-in-differences supplies an internal control for run-level drift.
-Thus the instruments differ not only in what they emphasize but also in whether
-they establish a concept-specific reference effect.
+Baseball shows why one instrument cannot certify erasure. Token edits can
+change short answer-option likelihoods while exclusion changes learning from
+whole passages. Its small raw question contrast is largely reproduced by the
+unrelated no-Rome twin; the chunk difference-in-differences has an internal
+control for this run-level drift.
 
-Discrete accuracy loses still more information. A change is counted only when
-the gold option crosses a distractor, even if its likelihood falls on nearly
-every example. This was not merely a reporting inconvenience. EMBER's delta
-objective assigned specificity 1.0 at every candidate strength for both
-concepts because neighboring-domain accuracy did not decline. For Ancient Rome,
-the objective therefore rose to the largest tested delta, 200, without
-bracketing an optimum. The continuous held-out evaluation later revealed both
-overshoot and collateral damage. Baseball's efficacy happened to plateau at
-delta 10, allowing the tie-break to select a gentler edit, but its specificity
-signal remained equally uninformative.
+Accuracy moves only when the gold option crosses a distractor. EMBER's
+accuracy-based specificity stayed at 1.0 through delta 200 for both concepts,
+missing Rome's continuous collateral damage. Baseball's efficacy plateau let a
+tie-break select delta 10. At Rome deltas 500 and 1,000 specificity finally
+fell and the objective turned over, making 200 its full-grid argmax; the few
+question differences near that peak do not establish a precise optimum.
 
 \subsection{Concept-Dependent Erasure}
 
-Beyond the measurement issue above, the two concept arms reveal genuine
-heterogeneity. Baseball exclusion has 2.1 times Ancient Rome's text-NLL effect.
-A retrieval-based locality audit suggests that the interventions remove
-different kinds of evidence: Ancient Rome questions are more enriched for
-supporting chunks that were blacklisted, whereas many Baseball questions ask
-about rules repeated widely across the corpus. The removed Baseball slice also
-contains highly predictable team and season prose. This helps explain why
-chunk-NLL effects differ across concepts, but it is an interpretation rather
-than a causal result.
+Baseball exclusion has 2.1 times Rome's text-NLL effect. A retrieval-based
+audit found that the passages most relevant to Rome questions were more likely
+to be blacklisted than those most relevant to Baseball questions; many Baseball
+questions concern rules repeated across the corpus. This may explain part of
+the instrument gap but is not a causal demonstration.
 
-EMBER's learned features also differ in quality. The selected Baseball feature
-has a clearer concept-to-neutral activation ratio, and judged Baseball features
-appear across far more factorization cells than Ancient Rome features. Coupled
-with the much smaller selected delta, this may explain why Baseball avoids
-Rome's heavy tail and general-text damage. It does not explain why the Baseball
-update is almost orthogonal to the never-trained direction; localized editing
-and distributed training remain fundamentally different interventions.
+The selected Baseball feature has a higher concept-to-neutral activation ratio,
+but matched strengths reveal a concept-by-delta interaction: effects are
+similar at delta 10 and diverge at 200. Baseball chunks actually contain more
+edited-token occurrences; Rome's damage rises more steeply with occurrence
+count while Baseball's saturates. Whether distinct token types explain this
+difference remains untested.
 
 \subsection{Why Erasure Differs from Never-Training}
 
-Concept exclusion changes every subsequent optimization step that would
-otherwise have included a selected chunk. Its consequences can propagate
-through embeddings, attention, MLPs, and later gradients on related text.
-EMBER instead modifies 72--76 rows of one matrix after training. It is therefore
-plausible for the two models to display a similar average target effect without
-occupying nearby parameter states. Baseball makes this distinction explicit:
-observable forgetting coexists with essentially zero alignment to the excluded
+Exclusion changes an entire training trajectory; EMBER changes 72--76 input
+rows after training in the two text-evaluated arms. Chunks without those tokens
+cannot change under EMBER but still change under exclusion. Baseball likewise
+shows observable forgetting with almost no alignment to the excluded parameter
 displacement.
 
-This does not make parameter equality a necessary condition for behavioral
-success; neural networks can implement similar functions with different
-weights. It does make parameter-space comparison an informative mechanistic
-test of the strong claim that erasure ``undoes'' learning. Under that reading,
-EMBER does not retrace the training consequence in the completed arm.
+Parameter equality is not necessary for behavioral success, but directional
+alignment tests the stronger claim that erasure ``undoes'' learning. EMBER does
+not retrace the completed Baseball training displacement.
 
-RMU and SNMF will test whether a broader MLP intervention aligns more closely
-with concept exclusion, or whether the mismatch is common to post-hoc editing.
-\placeholder{Replace this prospective sentence with the completed comparison
-and distinguish shared from method-specific failure modes.}
+The AI result shows that EMBER can approach the excluded question profile.
+The interval is wide, however, and text and parameter comparisons are missing.
+On the same questions, SNMF moves in the wrong direction and strong RMU is
+nonselective. Separate Rome SNMF text probes are near-null, but do not complete
+the common-protocol cross-method comparison.

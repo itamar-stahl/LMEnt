@@ -4,6 +4,42 @@ Track unsettled facts here instead of guessing in the LaTeX. Status labels are
 **answered from repository**, **partially answered**, **needs verification**,
 **ask teammates**, and **pending experiment**.
 
+## Remote-main merge audit (2026-09-20)
+
+Remote `origin/main` at `aa5e179` added a completed AI-excluded twin and a
+common-harness AI comparison of EMBER, SNMF, and two RMU strengths
+(`ember_eval/AI_RESULTS.md`). It also added fixed-code RMU/SNMF runs
+(`mlp_erasure/DELTA_FIX_RERUN_RESULTS.md`) and a Rome/ Baseball EMBER delta
+sweep with lexical-tail analysis (`ember_eval/ERASURE_RESULTS.md`). Old
+SNMF results at deltas 4, 10, or 20 must not be called removal: the corrected
+operator removes the selected component at delta 1. The expanded Rome EMBER
+grid turns over beyond delta 200, so the former ``unbracketed optimum'' claim
+is retired. The new AI question result prevents a blanket claim that EMBER
+never approaches its excluded twin. The AI result does not establish text-level
+or parameter-space equivalence.
+
+New questions to resolve before submission:
+
+- **MQ-1:** What exact AI EMBER delta candidates, selection items, and
+  chronology led to delta 5? Archive the run-local report and judge manifest.
+- **MQ-2:** What are the final AI RMU/SNMF checkpoint hashes, learning rates,
+  factorization layers, and pre-comparison selection rules? The result note
+  gives settings and paths but not one complete publication-ready config table.
+- **MQ-3:** Can all AI methods be scored on identical held-out/control chunk
+  IDs and compared in parameter space? The current common comparison is only
+  the question harness; the AI twin's own chunk-loss validation is a different
+  result.
+- **MQ-4:** Can Rome and Baseball RMU/SNMF checkpoints be rescored alongside
+  their excluded twins with the same prompt bank, chunk IDs, and scoring code?
+  The corrected MLP investigation has useful null probes, but some use a
+  different question scale or Rome chunk sample.
+- **MQ-5:** How many distinct edited token *types*, rather than occurrences,
+  appear per chunk? The lexical-tail analysis raises this as a hypothesis for
+  the Rome/Baseball high-density contrast, not a demonstrated mechanism.
+- **MQ-6:** Can the raw per-chunk delta-sweep outputs, AI completion outputs,
+  MLP sanity reports, and run-local configs be put in a versioned supplement?
+  Current summary tables cite cluster or gitignored artifacts.
+
 ## Experimental design
 
 ### ED-1: What exactly counts as removing a concept?
@@ -49,21 +85,21 @@ corpus audit? This is the most transparent framing.
 
 ### ED-2: Were the control and concept-excluded models genuinely matched?
 
-**Status: Partially answered: tracked configurations match; run-local artifacts
-are absent.**
+**Status: Answered by the project team; run-local files remain to be archived.**
 
 The intended twins share the OLMo-2 1B architecture, initialization seed
 (12536), data seed (0), optimizer, schedule, corpus order, batch size, and
 duration. Because masking happens after batch composition, each arm traverses
-the same batches and steps. One completed control is shared by Ancient Rome and
-Baseball.
+the same batches and steps. One completed control is shared by Ancient Rome,
+Baseball, and AI. The project team confirms that this matched setup was used
+in the completed runs. The tracked-template comparison below covers
+Rome/Baseball.
 
 A semantic comparison of the tracked YAML files confirms that all three have
 identical `train` blocks. Ancient Rome differs from control only in `job.name`
 and `untaught`; Baseball additionally differs in scheduling fields such as
 partition and time limit. The Rome and Baseball records also give the same
-final step (54,832) and core training recipe. This resolves what the repository
-specifies, but not whether every resumed job used precisely those files.
+final step (54,832) and core training recipe.
 
 Evidence:
 
@@ -73,22 +109,24 @@ Evidence:
 - `Untaught/model_cards/lment-1b-nobaseball-2e-b131k.README.md`, which explicitly
   identifies the shared control and identical batch composition.
 
-Known qualification: final portions of some runs used different GPU types
-(H100/H200). The Baseball model card documents this and reports small measured
-cross-GPU drift. State this where parameter-space comparisons are discussed.
+Known qualification: the new Rome and AI model cards place the shared control
+on H200 throughout. Rome also used H200 throughout; Baseball switched from
+H100 to H200 for its final 2,832 steps, and AI had an A6000 window. The older
+Baseball card instead says the control switched GPU late. Reconcile that card
+against run logs before interpreting directional weight comparisons.
 
-Not answerable from this checkout because no archived `config.yaml` or
-`run_environment.json` is present:
+Optional provenance collection, not a condition for reporting the team's
+confirmed training setup: copy each final run's `config.yaml` and
+`run_environment.json` into the project archive for the shared control,
+no-Rome, no-Baseball, and no-AI models. If available, also collect:
 
-- Compare archived `config.yaml` and `run_environment.json` from each final run,
-  rather than relying only on repository templates.
-- Confirm initial-checkpoint provenance across resumed windows.
-- Record exact checkpoint IDs/steps and verify zero all-masked guard leaks for
-  both concepts.
+- checkpoint IDs and resume lineage across training windows;
+- the guard-leak metric or warning logs for each excluded arm.
 
 ### ED-3: How were method hyperparameters selected?
 
-**Status: EMBER partly answered; RMU and SNMF pending experiment/teammates.**
+**Status: EMBER partly answered; RMU/SNMF runs exist, but final selection
+chronology and common-protocol scope need teammate verification.**
 
 The EMBER notes say edit strength was selected using EMBER's own
 train/specificity objective, not by optimizing similarity to the never-trained
@@ -119,11 +157,13 @@ disclose it and label the analysis exploratory.
 
 ### EV-1: What is the final common set of examples and metrics?
 
-**Status: Needs code/result-artifact verification.**
+**Status: AI question comparison verified as common-harness in its result
+summary; other dimensions and Rome/Baseball MLP comparisons need verification.**
 
 Confirm that control, concept-excluded, EMBER, RMU, and SNMF use identical
 examples, tokenization, prompts, scoring, and aggregation within each behavioral,
-distributional, parameter-space, and specificity evaluation.
+text-loss, parameter-space, and specificity evaluation. Observed-text NLL is
+not a full output-distribution divergence.
 
 ### EV-2: What uncertainty will be reported?
 
@@ -168,15 +208,17 @@ Design. Do not repeat the same prose.
 
 ## Full-paper completion checklist
 
-The LaTeX now contains a complete first-pass narrative. The questions below map
-directly to its red `TODO` placeholders. Resolve the **P0** items before polishing
-language; they can change the claims.
+The LaTeX contains a complete narrative without visible drafting placeholders.
+The questions below track remaining evidence and submission decisions. Resolve
+the **P0** items before making stronger comparative claims; they can change the
+conclusions.
 
 ### P0: Results that can change the paper's conclusion
 
 #### CQ-1: Did RMU produce a valid persistent checkpoint for both concepts?
 
-**Owner: teammates running RMU. Status: Pending experiment.**
+**Owner: teammates running RMU. Status: AI persistent checkpoints completed;
+Rome/Baseball common-protocol twin comparison pending.**
 
 For each concept, record the final model path/hash, edited layer/tensor names,
 forget and retain datasets, layer window, steering coefficient, retain weight,
@@ -186,7 +228,8 @@ An activation diagnostic without a saved and reloaded checkpoint is not enough.
 
 #### CQ-2: Did SNMF produce a valid persistent checkpoint for both concepts?
 
-**Owner: teammates running SNMF. Status: Pending experiment.**
+**Owner: teammates running SNMF. Status: AI persistent checkpoint completed;
+Rome/Baseball common-protocol twin comparison pending.**
 
 Record the final model hash, factorized layers, rank/sparsity, concept and neutral
 sentence sets, judge version, selected features, edited projections, delta grid,
@@ -203,7 +246,8 @@ selection, label the result exploratory and do not present it as held-out.
 
 #### CQ-4: What is the final cross-method conclusion?
 
-**Owner: paper group. Status: Blocked on CQ-1--CQ-3.**
+**Owner: paper group. Status: Partly answered on AI questions; blocked on
+remaining common evaluations in CQ-1--CQ-3.**
 
 Decide whether EMBER's mismatch is smaller, larger, or qualitatively different
 from RMU/SNMF on each dimension. Do not rank methods using one arbitrary combined
@@ -276,12 +320,13 @@ equivalence margin.
 
 **Status: Repository audit complete; needs archived-log check.**
 
-No tracked Rome model card or log excerpt states a zero guard-leak count.
-`ROME_RESULTS.md` verifies that 65,844 chunk IDs were loaded and 131,624
-instance-slots were excluded (99.95% of the two-epoch expectation), but that is
-not equivalent to proving that the guard counter stayed zero. The paper must
-retain its placeholder until the cluster logs are checked. Also archive the
-final checkpoint step, blacklist hash, and per-window guard counts.
+The updated Rome model card confirms that the strict guard was enabled but
+does not report a direct zero-leak tally. The code emits a guard-leak metric
+only if an all-masked batch occurs. `ROME_RESULTS.md` verifies that 65,844
+chunk IDs were loaded and 131,624 instance-slots were excluded (99.95% of the
+two-epoch expectation); this is not a substitute for auditing the warnings or
+metric records. Keep any claim of zero Rome guard leaks out of the paper until
+the cluster logs are checked.
 
 ### P1: Experimental-design history
 
@@ -308,32 +353,32 @@ corpus analysis before the reported matched comparison. State estimated recall
 and precision and avoid calling it exhaustive. The Experimental Design and
 Limitations sections now use this framing.
 
-#### CQ-13: Are final run-local configurations truly matched?
+#### CQ-13: Archive final run-local configurations
 
-**Status: Partially answered; tracked templates match, cluster artifacts absent.**
+**Status: Training match confirmed by the project team; archival remains open.**
 
 The tracked configurations' `train` blocks are semantically identical. The
 Rome template differs from control only by job name and exclusion settings;
 Baseball also changes scheduling fields. The run summaries agree on model,
-seed, optimizer recipe, corpus, batch size, duration, and final step. Exact
-run-local verification remains impossible from this checkout because it has no
-archived `config.yaml` or `run_environment.json`. Diff those files for the shared
-control, no-Rome, and no-Baseball models after removing scheduling-only fields.
-Confirm initialization seed, data indices/order, optimizer state continuity,
-schedule, duration, precision, and resume lineage.
+seed, optimizer recipe, corpus, batch size, duration, and final step. For
+long-term provenance, archive `config.yaml` and `run_environment.json` for the
+shared control, no-Rome, no-Baseball, and no-AI final runs, plus records of
+their resumed checkpoint lineage. This is an artifact-collection task, not an
+unresolved claim in the manuscript.
 
-#### CQ-14: How much should the H100/H200 difference affect claims?
+#### CQ-14: Which training runs changed accelerator type?
 
 **Status: Partially answered; required framing identified.**
 
-The Baseball model card records that the control's final roughly 9.7% and the
-Baseball twin's final 2,832 updates ran on H200 rather than H100, and reports a
-measured cross-GPU drift of about 3e-5. The underlying drift artifact is not
-tracked. Behavioral and NLL conclusions can therefore cite it as a small
-qualification, but directional weight-space claims must note the asymmetry and
-cannot present the displacement as free of hardware noise. A same-device
-sensitivity analysis would strengthen this result; do not numerically compare
-the reported drift and cosine until their normalizations are verified.
+The newer Rome and AI cards report that the shared control ran on H200
+throughout and Rome did likewise. Baseball ran its first four windows on H100
+and final 2,832 steps on H200; AI had an A6000 window. The Baseball card's
+older statement about a late control-GPU switch conflicts with those newer
+records and appears to conflate this control with the retired Pornography
+pair. Verify the control's run logs and correct the stale card. The drift
+artifact behind the reported approximately 3e-5 cross-GPU effect is not
+tracked. Do not numerically compare that drift with weight-space cosine until
+their normalizations are verified.
 
 ### P1: Specificity, controls, and robustness
 
@@ -371,24 +416,25 @@ removed; the Limitations section states that robustness was not evaluated.
 
 #### CQ-18: Experimental-design figure
 
-**Status: Placeholder present.**
+**Status: Optional figure not included in the manuscript.**
 
-Replace the box in Section 3 with a vector diagram showing the shared
-initialization/batch stream, control and two exclusion branches, post-hoc method
-branches, and common evaluation suite. It should explain design, not contain
-result values.
+If space permits, add a vector diagram showing the shared
+initialization/batch stream, control and three exclusion branches, post-hoc
+method branches, and completed versus pending comparisons. It should explain
+design, not contain result values.
 
 #### CQ-19: Per-chunk distribution figure
 
-**Status: Placeholder present.**
+**Status: Optional figure not included in the manuscript.**
 
-Plot empirical CDFs or paired-shift distributions for both concepts and every
-completed method. Use identical axes where possible and mark zero, mean, and
-median. This figure should make Ancient Rome's EMBER tail visually explicit.
+Plot empirical CDFs or paired-shift distributions for Rome and Baseball EMBER
+against exclusion; include MLP methods only on identical chunk IDs.
 
 #### CQ-20: Main synthesis table
 
-**Status: Value-free placeholder present.**
+**Status: EMBER Rome/Baseball cells populated in the table fragment; table not
+currently included in the eight-page main text. MLP common-protocol cells
+pending.**
 
 Fill each cell with the erased-minus-excluded residual and uncertainty, not only
 erased-minus-control efficacy. Include behavioral, text-NLL, parameter, and
@@ -419,11 +465,11 @@ nodes but produced different features on an A6000.
 
 #### CQ-22: Authors, affiliations, and exact title
 
-**Status: Partially answered; one email and submission-mode decision remain.**
+**Status: Author details are present; confirm them with the group.**
 
 The author block now lists Gal Barak, Tamar Tabbach, Itamar Stahl, and Adam
-Fleisher, all affiliated with Tel Aviv University. Confirm Itamar Stahl's email
-address and whether the course requires named or anonymous ACL mode. Revisit
+Fleisher, all affiliated with Tel Aviv University. Confirm the listed email
+addresses and whether the course requires named or anonymous ACL mode. Revisit
 the title only after the final comparative claim is known.
 
 #### CQ-23: Citation audit
@@ -433,8 +479,8 @@ the title only after the final comparative claim is known.
 Verify all BibTeX metadata against primary pages. Add any course-required paper,
 the exact source for the project definitions, and further related work needed to
 support distinctions among unlearning, factual editing, and refusal tuning.
-The first Background paragraph now contains a specific citation placeholder for
-these three claims.
+The Background paragraph currently makes these distinctions without dedicated
+foundational citations.
 
 #### CQ-24: AI disclosure
 
@@ -448,7 +494,7 @@ draft without exposing secrets or copying private prompts unnecessarily.
 
 **Status: Revisit after results stabilize.**
 
-The current draft intentionally prioritizes completeness. After tables and
-figures are real, compress repeated setup, move exhaustive configurations to the
-appendix, and verify that content before references fits the course's eight-page
-limit.
+The current draft puts references on page 8 and has nine PDF pages including
+the appendix. Recheck the eight-page main-text limit after inserting real
+figures, tables, and final method details. Keep any deferred table fragment
+visible in the repository until the final layout decision.

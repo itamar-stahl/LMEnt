@@ -1,25 +1,33 @@
 \section{Measuring Similarity to Never-Training}
 \label{sec:evaluation}
 
-For each concept we compare a shared control $M_C$, its concept-excluded twin
-$M_N$, and an erased model $M_E$ produced from $M_C$. The excluded effect is
-$M_N-M_C$, the erasure effect is $M_E-M_C$, and the residual
-$M_E-M_N$ measures mismatch. We apply this design to four complementary notions
-of proximity rather than defining success with one aggregate score.
+For each concept we compare the fully trained control $M_C$, its
+concept-excluded counterpart $M_N$, and an erased model $M_E$ produced from
+$M_C$. For any measurement $f$, we first compare $f(M_N)$ and $f(M_E)$ with
+$f(M_C)$. Their difference, $f(M_E)-f(M_N)$, is the \emph{residual}: zero
+means the two models match on that
+measurement. We examine four kinds of measurement rather than combining them
+into one score.
 
 \subsection{Behavioral Similarity}
 
 EMBER supplies 100 target questions and 100 neighboring-domain questions per
 concept, each divided into equal selection and held-out halves. Ancient Rome's
 neighboring set covers other historical civilizations; Baseball's covers other
-sports. Because these base models do not reliably follow a generated-letter
-multiple-choice format, questions are rewritten as declarative stems and each
-answer option is scored as a continuation.
+sports. The AI comparison uses the same 50-item-per-split completion protocol,
+with all methods rescored by one harness. Because these base models do not
+reliably follow a generated-letter multiple-choice format, questions are
+rewritten as declarative stems and each answer option is scored as a
+continuation. In a separate 50-question, four-shot generation probe, the models
+emitted answer letters more often but scored only 8--11 questions correctly.
+This motivated the continuation-based instrument used here.
 
-For option $a$ and stem $x$, we compute
+For answer option $a$ and question stem $x$, we compute pointwise mutual
+information (PMI) per character:
 \begin{equation}
 s(a,x)=\frac{\log P(a\mid x)-\log P(a\mid \varnothing)}{|a|_{\mathrm{char}}}.
 \end{equation}
+Here $\varnothing$ is the null context used to score the option alone.
 The subtraction reduces preference for intrinsically common option strings and
 the denominator mitigates option-length bias. Our primary per-question value is
 the gold option's $s(a,x)$; models are compared on paired questions. Argmax
@@ -28,14 +36,18 @@ resolve many changes visible in likelihood. Behavioral residuals are reported
 as $s_E-s_N$, so negative values mean that erasure suppresses the gold answer
 more strongly than concept exclusion.
 
-\subsection{Distributional Similarity}
+\subsection{Text-Likelihood Similarity}
 
-Each model scores the same 3,000 blacklisted chunks and 5,004 non-blacklisted
-chunks sampled to match the variable-sequence-length bucket distribution. For
-model pair $(A,B)$, let $\Delta_H(A,B)$ be the mean paired increase from $A$ to
-$B$ (i.e., $\mathrm{NLL}_B-\mathrm{NLL}_A$) in per-token negative
-log-likelihood on held-out concept chunks and
-$\Delta_R(A,B)$ the corresponding increase on control chunks. We report
+For the primary Rome and Baseball EMBER comparisons, models within each arm
+score the same 3,000 blacklisted chunks and 5,004 non-blacklisted chunks sampled to match the
+variable-sequence-length bucket distribution. A separate Rome SNMF probe uses
+16,915 held-out and 5,044 control chunks and must not be combined numerically
+with the primary sample. For
+model pair $(A,B)$, let $\Delta_H(A,B)$ be the mean paired increase in
+per-token negative log-likelihood (NLL) on held-out concept chunks when moving
+from $A$ to $B$ (that is, $\mathrm{NLL}_B-\mathrm{NLL}_A$), and let
+$\Delta_R(A,B)$ be the corresponding increase on control chunks. We report the
+difference-in-differences (DiD):
 \begin{equation}
 \mathrm{DiD}(A,B)=\Delta_H(A,B)-\Delta_R(A,B),
 \end{equation}
@@ -45,9 +57,8 @@ of severely damaged passages. For the erased-minus-excluded residual, positive
 values mean that erasure produces higher loss than exclusion and negative
 values mean that it does not reach the exclusion-induced loss increase.
 
-\placeholder{Add output-distribution KL divergence only if the team implements
-it on a clearly specified prompt/token set. NLL difference-in-differences is
-the completed distributional measurement.}
+This measures loss on observed text, not divergence between full output
+distributions.
 
 \subsection{Parameter-Space Similarity}
 
@@ -61,28 +72,28 @@ $d_E=W_E-W_C$ and target displacement $d_N=W_N-W_C$. We report
 Cosine measures direction, progress measures how much of the target direction
 the edit traverses, and residual equals zero only at the excluded model. Global
 measurements include all aligned parameters; embedding-only results isolate the
-space EMBER can directly change. This analysis assumes matched training, making
-the hardware qualification in Section~\ref{sec:experimental-design} relevant.
+space EMBER can directly change. Hardware differences between runs are
+discussed under Limitations.
 
 \subsection{Specificity and Capability Preservation}
 
-Specificity is measured at three distances from the target: neighboring-domain
-questions, length-matched general corpus chunks, and general OLMES tasks. A
+We assess specificity---preservation of unrelated performance---with
+neighboring-domain questions, length-matched general corpus chunks, and the
+general-science multiple-choice benchmark SciQ. A
 desirable edit approaches $M_N$ on target measurements without moving farther
 from it on controls. Neighboring questions are semantically demanding but
 small; control-chunk NLL has much higher power but is not topic matched; general
-benchmarks detect broad capability loss but need not be sensitive to either
-target concept.
+benchmarks can detect broad capability loss but need not be concept-sensitive.
 
 \subsection{Statistical Analysis}
 
-Question and same-set chunk contrasts are paired by item. We report paired
-standardized effects ($d_z$). Existing question summaries include paired
+Question and same-set chunk contrasts are paired by item. We report the mean
+paired change divided by its standard deviation ($d_z$). Existing question
+summaries include paired
 $t$-tests and sign-flip permutation tests, while chunk summaries use sign-flip
 tests. For the held-out-versus-control difference-in-differences, whose two
-sets are unpaired, we permute set labels. \placeholder{Choose one primary
-inferential presentation and add 95\% bootstrap confidence intervals to every
-headline contrast, stating the resampling unit.} These
+sets are unpaired, we permute set labels. Bootstrap intervals are available for
+the AI question residuals, but not for every reported contrast. These
 statistics quantify item-level uncertainty only; with one training seed per
 condition they do not measure training-run variability. Erasure settings are
 selected without consulting the final concept-excluded comparison wherever the

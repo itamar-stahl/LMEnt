@@ -1,18 +1,11 @@
 \section{Conclusion}
 \label{sec:conclusion}
 
-We evaluated concept erasure against matched language models trained without
-loss on entity-associated data. EMBER does not reproduce those reference states
-consistently. It overshoots Ancient Rome exclusion and damages a subset of
-target passages and general text; for Baseball it undershoots on held-out text
-while the question instrument does not establish a concept-specific exclusion
-target. Its completed weight-space update is
-nearly orthogonal to the displacement produced by excluding Baseball during
-training.
-
-\placeholder{Add the final RMU/SNMF conclusion.} More broadly, ``successful
-erasure'' should specify the desired reference and measurement level. Matched
-concept-excluded models do not provide an infallible definition of ignorance,
-but they turn never learning from a metaphor into an auditable experimental
-comparison. Several complementary measurements are needed to judge how closely
-an edit approaches that state.
+Against matched concept-excluded models, EMBER overshoots Ancient Rome text
+with a lexical damage tail, undershoots Baseball text, and approaches the AI
+twin on questions only. Its Baseball parameter update is nearly orthogonal to
+the exclusion displacement. Corrected RMU/SNMF probes do not reproduce the AI
+question profile; their full cross-method comparison remains incomplete.
+Thus erasure claims must name both the reference state and measurement level:
+an efficacy score alone cannot establish that a model resembles one trained
+without the concept's data.

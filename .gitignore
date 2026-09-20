@@ -8,3 +8,4 @@ __pycache__/
 *.png
 wikidata*
 */*/slurm_output/*
+.DS_Store

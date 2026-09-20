@@ -8,19 +8,14 @@
     \midrule
     EMBER & Ancient Rome & QA $-0.344$; neighbor $-0.132$ & DiD $+1.111$ & \textit{Pending Rome run} & control NLL $+0.0297$ \\
     EMBER & Baseball & \textit{Not identified: twin floor} & DiD $-0.1564$ & cos. $.001$; prog. $2.64\!\times\!10^{-5}$; res. $1.0003$ & control NLL $+0.0014$ \\
-    RMU & Ancient Rome & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
-    RMU & Baseball & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
-    SNMF & Ancient Rome & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
-    SNMF & Baseball & \multicolumn{4}{c}{\textit{Pending common-protocol evaluation}} \\
+    RMU & Rome/Baseball & \multicolumn{4}{c}{\textit{Common twin comparison pending}} \\
+    SNMF & Rome/Baseball & \multicolumn{4}{c}{\textit{Common twin comparison pending; separate Rome probe}} \\
     \bottomrule
   \end{tabular}
-  \caption{Current synthesis of erased-minus-excluded residuals. Behavioral
-  entries use held-out PMI-per-character; text and control entries use
-  per-token NLL. Baseball behavior is not identified because the exclusion
-  contrast lies within the between-twin floor. \placeholder{Add uncertainty to
-  every completed point estimate.} Negative behavioral residuals denote
-  stronger answer suppression; positive NLL residuals denote higher loss than
-  the excluded model. Zero is the target in every column, but distinct
-  dimensions are not collapsed into one score.}
+  \caption{Rome and Baseball erased-minus-excluded residuals (held-out
+  PMI-per-character or per-token NLL). Baseball's behavioral target is below
+  the between-twin floor. Negative QA residuals mean stronger suppression;
+  positive NLL residuals mean higher loss. Zero is the target in each column.
+  Confidence intervals are unavailable for these aggregate residuals.}
   \label{tab:results-overview}
 \end{table*}

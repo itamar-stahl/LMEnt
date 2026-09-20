@@ -1,11 +1,9 @@
 # Modular ACL paper draft
 
 The paper is split into one file per section. `main.tex` controls the section
-order, packages, title, authors, bibliography, and appendix. A complete
-first-pass narrative is present; red TODOs and framed notes mark facts,
-experiments, tables, and figures that remain unresolved. Change
-`\draftnotestrue` to `\draftnotesfalse` only after resolving them and before
-submission.
+order, packages, title, authors, bibliography, and appendix. The manuscript
+states which comparisons are supported by the tracked results and identifies
+unavailable comparisons in the text.
 
 ## Current outline
 
@@ -17,7 +15,7 @@ reproduces a matched never-trained model:
 3. Experimental Design
 4. Measuring Similarity to Never-Training
    - behavioral similarity
-   - distributional similarity
+   - text-likelihood similarity (observed-text NLL)
    - parameter-space similarity
    - specificity and capability preservation
    - statistical analysis
@@ -27,11 +25,11 @@ reproduces a matched never-trained model:
 8. Conclusion
 9. AI Disclosure and Reflection
 
-EMBER is the main erasure method. RMU and SNMF are comparison methods and
-should enter the main result tables only after persistent erased checkpoints
-have been evaluated through the same protocol. Ancient Rome and Baseball are
-treated as equally important concept arms. Pornography is excluded from the
-main study.
+EMBER is the main erasure method. RMU and SNMF have a common-protocol AI
+question comparison, but their Rome/Baseball twin comparisons remain
+incomplete. Rome and Baseball anchor the text-loss comparison; AI adds a
+completed common-protocol question comparison. Pornography is excluded from
+the main study.
 
 Unresolved facts and decisions are tracked in
 [`OPEN_QUESTIONS.md`](OPEN_QUESTIONS.md). It separates claims already supported
@@ -76,9 +74,8 @@ the named-author final format. If the instructor requests anonymity, change
 
 ## Suggested revision order
 
-Resolve the P0 items in `OPEN_QUESTIONS.md`, especially valid RMU/SNMF
-checkpoints, common evaluation, and the Ancient Rome parameter comparison.
-Then fill the value-free result table and replace the two figure boxes with
-vector graphics. Revise the abstract, introduction preview, discussion, and
-conclusion together after the central comparative claim stabilizes. Finish with
-the author block, AI disclosure, citation audit, and eight-page check.
+Resolve the P0 items in `OPEN_QUESTIONS.md`, especially common Rome/Baseball
+RMU/SNMF evaluation, AI text/parameter evaluation, and the Ancient Rome
+parameter comparison. Archive the raw outputs and optional run-local records
+for long-term provenance. Confirm the
+author block and AI disclosure with the group before submission.

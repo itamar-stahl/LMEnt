@@ -1,23 +1,24 @@
 \section{Additional Experimental Details}
 \label{app:experimental-details}
 
-\subsection{Reproducibility Checklist}
+\subsection{Evidence and Reproducibility}
 
-The final appendix will report software versions, accelerator and numerical
-precision, run and checkpoint identifiers, saved configuration hashes,
-blacklist versions, random seeds, data split construction, and paths or stable
-links to aggregate artifacts. \placeholder{Copy the final raw aggregate JSONs
-into a versioned supplementary directory and replace cluster-only paths.}
+The training intervention is implemented in \texttt{train\_untaught.py}
+within the \texttt{Untaught} framework. That directory also holds the
+tracked training configurations, blacklists, and model cards. The
+\texttt{ember\_eval} result notes document the Rome, Baseball, and AI
+exclusion runs and the EMBER comparisons. The \texttt{mlp\_erasure} notes
+document the corrected RMU and SNMF probes.
+The underlying per-item outputs are stored on the cluster. The tracked result
+notes report the aggregate values used in this paper.
 
-\subsection{Complete Hyperparameters}
+\subsection{Scope of the Shared Comparisons}
 
-\placeholder{Add one table for matched training and one for EMBER/RMU/SNMF.
-Include all searched values, selection rules, and final values; distinguish
-fixed choices from post-hoc diagnostics.}
-
-\subsection{Supplementary Evaluations}
-
-The final supplement should include per-layer and per-tensor weight comparisons,
-full chunk-shift quantiles, all question splits, general OLMES tasks, integrity
-checks, and representative question/chunk examples. \placeholder{Add
-confidence intervals and corrected multiple-comparison reporting where needed.}
+Rome and Baseball use paired question and chunk samples for the control,
+concept-excluded, and EMBER models. The AI comparison places the excluded
+twin, EMBER, SNMF, and two RMU checkpoints on the same held-out question
+instrument. AI's exclusion-only chunk-loss test uses a separate sample; it
+cannot be interpreted as an erased-versus-excluded chunk comparison. The
+Rome SNMF text probe also uses different chunks from the primary EMBER
+comparison. Only Baseball has a reported whole-model directional weight
+comparison in the tracked aggregate summaries.

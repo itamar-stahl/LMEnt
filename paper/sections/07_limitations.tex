@@ -1,32 +1,24 @@
 \section*{Limitations}
 \label{sec:limitations}
 
-Our evidence covers two concepts, one 1B-parameter base-model architecture, one
-training seed, and one selected EMBER feature and delta per concept. Item-level
-tests do not capture uncertainty across training runs, factorizations, or
-hyperparameter searches. Ancient Rome's final entity set was widened following
-an exploratory coverage audit, and its estimated recall remains incomplete.
-Both blacklists miss indirect or unlinked evidence, so ``never-trained'' refers
-only to the specified exclusion intervention.
+Our evidence covers three concepts, one architecture and training seed, and
+one selected EMBER feature set per concept. The Rome strength sweep fixes its
+feature; item-level uncertainty excludes variation across training runs,
+factorizations, and selection decisions. Rome's blacklist was widened after
+an exploratory audit, and all blacklists miss some indirect evidence.
+``Never-trained'' therefore refers to the specified exclusion intervention.
 
-The question bank was developed for EMBER rather than from the excluded LMEnt
-chunks. Retrieval indicates imperfect alignment, especially for Baseball, and
-the neighboring-domain subsets contain only 50 questions each. Because one
-shared control is used for both exclusion arms, the Baseball analysis also
-reveals a run-level offset that its question contrast cannot subtract. General control
-chunks offer greater statistical power but are length-matched rather than
-topic-matched. The parameter comparison is sensitive to ordinary training
-nondeterminism and a documented H100/H200 difference in late training windows.
-The raw Baseball weight-comparison JSON and cross-device drift artifact are not
-versioned in this checkout, so their reported aggregates still require stable
-archival.
+The EMBER question bank is imperfectly aligned with the excluded chunks,
+especially for Baseball, and neighboring subsets have only 50 items each.
+Baseball's question contrast is also sensitive to between-run offsets. General
+control chunks are length-, not topic-matched. Weight comparisons face
+training nondeterminism and Baseball's H100/H200 transition; raw Baseball weight
+and device-drift artifacts still need stable archival.
 
-EMBER edits only input embeddings whereas exclusion affects the full training
-trajectory; direct parameter proximity is therefore a demanding criterion, not
-a complete definition of functional equivalence. Its sparse factorization also
-changed across GPU models in one controlled comparison, so a fixed seed alone
-does not identify a unique feature set; the completed runs reused cached,
-judged factorizations. \placeholder{State the final
-scope and selection limitations of RMU/SNMF.} Finally, unless the optional
-experiment is completed, we make no new claim about adversarial recovery or
-relearning robustness.
+Parameter proximity is not required for functional equivalence. EMBER's
+factorization varied across GPU types, so the completed edits reused judged
+caches. The AI method comparison is behavioral only; the Rome SNMF text probe
+uses a different chunk sample. A near-zero AI question residual is not an
+equivalence result. The complete AI RMU/SNMF selection chronology is not
+archived in this checkout, so that comparison remains exploratory.
+We do not evaluate adversarial recovery or relearning robustness.

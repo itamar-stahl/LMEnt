@@ -14,35 +14,20 @@ The shared control receives loss on the complete corpus. Each concept-excluded
 arm starts from the same seeded initialization and uses the same optimizer,
 schedule, batch indices, and number of steps. Exclusion is applied only after a
 batch has been composed: a matched chunk keeps its batch position, but every
-label in that row is replaced with the ignore index. It therefore contributes
-neither loss nor gradient. One control is shared by the Ancient Rome and
-Baseball arms.
-
-\begin{figure}[t]
-  \centering
-  \fbox{\begin{minipage}[c][3.1cm][c]{0.92\columnwidth}
-    \centering\small
-    \textbf{Planned experimental overview}\par\medskip
-    Shared initialization and batch stream $\rightarrow$ control model\par
-    \hspace{0.6em}$\searrow$ Ancient-Rome-excluded model\par
-    \hspace{0.6em}$\searrow$ Baseball-excluded model\par\medskip
-    Control $\rightarrow$ EMBER / RMU / SNMF erased models\par
-    All branches $\rightarrow$ four-dimensional comparison
-  \end{minipage}}
-  \caption{Placeholder for the experimental-design diagram. The final vector
-  figure should distinguish pretraining-time exclusion from post-hoc erasure,
-  show the shared control, and route every model through the same evaluations.
-  No result values should appear in this figure.}
-  \label{fig:design}
-\end{figure}
+label in that row is replaced with the ignore index. It contributes no loss or
+gradient unless the all-masked-batch safety guard retains one row. One control
+is shared by the Ancient Rome, Baseball, and AI arms. Training logs confirm
+that the configured blacklists were applied.
 
 \subsection{Concepts and Data Removal}
 
 LMEnt associates chunks with candidate Wikidata entities derived from
-hyperlinks, entity linking, coreference, and coreference clusters. We resolve a
-manually audited set of QIDs for each target and mask chunks passing the source
-specificity thresholds. Ancient Rome uses 56 entities and covers 65,844 chunks
-(0.628\% of the corpus). The final set replaced an initial one-entity blacklist
+hyperlinks, entity linking, coreference, and coreference clusters. For each
+concept, we audit a set of Wikidata entity identifiers (QIDs) and use LMEnt's
+source-specific evidence thresholds to find the chunks linked to them. We call
+this set of chunks the blacklist and mask their labels during training. Ancient
+Rome uses 56 entities and covers 65,844 chunks (0.628\% of the corpus). The
+final set replaced an initial one-entity blacklist
 after a corpus audit showed that it captured only a small fraction of sampled
 Rome-bearing passages. The expanded set was estimated at approximately 46\%
 coverage and 62.5\% precision on that audit.
@@ -56,6 +41,14 @@ additional coverage while reducing precision, so it was rejected. The tracked
 configuration records that this choice preceded the question-answering
 evaluation.
 
+The AI blacklist resolves 31 entities to 19,818 unique chunks. A sampled audit
+estimated 68.0\% precision and 70.1\% coverage.
+The completed AI twin reached the same 54,832-step endpoint after several
+resumed training legs; its final window loaded the expected blacklist and
+masked 6,300 chunk occurrences in training batches. The comparison with erasure
+uses a common question evaluation; matched text-loss and weight-space
+comparisons are unavailable.
+
 These definitions deliberately favor an auditable intervention over an
 unverifiable claim of complete removal. Unlinked Roman context and general
 baseball rules may remain elsewhere in the corpus. We therefore treat the
@@ -67,65 +60,54 @@ Pornography experiments are outside the scope of the main study.
 All post-hoc methods begin from the completed shared control checkpoint.
 
 \paragraph{EMBER.}
-We factorize its embedding matrix at rank 100 with global sparsity 0.02 and seed
-44. Candidate features are ranked by their activation ratio on 300 concept and
-300 neutral sentences and filtered by a Gemma-4-12B-IT judge at confidence
-threshold 0.85. For Ancient Rome, the factorization-cell rule prioritizes judge
-confidence and then activation ratio and was fixed before the grid was complete.
-The Baseball cell was likewise selected on feature quality before erasure, but
+We factorize the control's input-embedding matrix into 100 sparse features
+(global sparsity 0.02; seed 44). Candidate features are ranked by the ratio
+of their mean absolute activation on 300 concept sentences to that on 300
+neutral sentences. A Gemma-4-12B-IT judge then retains features it labels
+concept-specific with confidence at least 0.85. For Rome, the rule for choosing
+among factorization settings prioritizes judge confidence, then activation
+ratio; this rule was fixed before the grid was complete.
+The Baseball factorization setting was likewise selected on feature quality
+before erasure, but
 its detailed selection note is stored only on the cluster. Neither choice used
 the concept-excluded outputs. Ancient Rome selects feature 11 and edits 76
 embedding rows; Baseball selects feature 10 and edits 72. In both cases the
 untied output head and all other tensors remain unchanged.
-The candidate edit strengths are
-$\{0.5,1,2,5,10,50,100,200\}$. EMBER chooses a delta using efficacy on 50
+For the reported Rome and Baseball runs, EMBER tests edit strengths
+$\delta\in\{0.5,1,2,5,10,50,100,200\}$. Delta scales the feature
+contribution subtracted from each selected embedding row. EMBER chooses a
+delta using efficacy on 50
 concept-training questions and accuracy-based specificity on 50 neighboring
 domain training questions. The held-out halves are not used for delta
-selection. This chooses 200 for Ancient Rome and 10 for Baseball.
+selection. This chooses 200 for Ancient Rome and 10 for Baseball. Subsequent
+fixed-delta sensitivity runs extend Rome to 500 and 1,000 and cross both
+concepts at deltas 10 and 200; these were not used to reselect the reported
+models. For AI, the judge selected features 26, 85, and 89, editing 187
+embedding rows at delta 5. The tracked summary records the chosen setting but
+does not establish the full AI candidate grid or its selection chronology.
 
 \paragraph{RMU.}
 The LMEnt adaptation optimizes selected MLP \texttt{down\_proj} matrices using
 concept sentences as the forget set and neutral sentences as the retain set.
-\placeholder{Insert final layer range, steering coefficient, retain weight,
-learning rate, batch size, update count, seed, and model-selection rule after
-the persistent checkpoints are complete.}
+For the AI comparison on the same question set and scoring procedure, the
+completed high-steering run at layer 5 uses steering strength 846.6, batch
+size 1, and all 150 scheduled steps, with retain-loss weights
+$\alpha\in\{10,100\}$. Both pass checks that the forget representations
+rotated substantially and that enough update steps ran. An earlier Rome
+layer grid includes runs that stopped short of the planned steps; a
+separate full-schedule Rome run passes those checks but has not been evaluated
+against its excluded twin on the paper's common question protocol. The tracked
+summaries do not give a complete selection chronology for the AI settings.
 
 \paragraph{SNMF.}
 The LMEnt adaptation factorizes MLP activations, automatically labels candidate
 concept features, and edits corresponding \texttt{up\_proj} and
-\texttt{down\_proj} parameters. \placeholder{Insert final layers, rank,
-sparsity, selected features, edit strengths, seed, and model-selection rule.}
-
-\draftnote{A final configuration table belongs here, but keep it value-free
-until RMU and SNMF are frozen. Its columns should be method, edited tensors,
-feature/forget data, searched hyperparameters, selection data, selected setting,
-and whether selection was independent of the never-trained comparison.}
-
-\subsection{Implementation and Validity Checks}
-
-Training logs confirm that each blacklist was loaded and that Baseball incurred
-zero all-masked-batch guard leaks across its five training windows.
-\placeholder{Confirm and report the same final guard-leak statement for Ancient
-Rome from archived logs.} Converted checkpoints were checked for tensor count,
-shape agreement, tokenizer identity, and healthy embedding statistics. EMBER's
-materialized checkpoints were independently compared with the control to verify
-that exactly the reported embedding rows, and no other parameters, changed.
-
-The sparse factorization is sensitive to the numerical environment: the same
-Rome cell reproduced byte-identically on two RTX 3090 nodes but produced a
-different feature set on an A6000. The erasure jobs therefore reused the
-selected grid caches rather than refitting them. This makes the completed edits
-correspond to the judged features, while limiting reproducibility claims to the
-archived feature artifacts and recorded environment.
-
-The tracked YAML configurations have identical \texttt{train} blocks; for
-Ancient Rome they differ from control only in the job name and exclusion block,
-while Baseball additionally changes scheduling fields. Run summaries record
-the same final step and core recipe. The archived run-local configuration and
-environment files are not present in this repository, so exact resume-lineage
-identity remains to be checked from cluster artifacts.
-
-Some training windows resumed on a different accelerator type. The control's
-last 9.7\% of updates and Baseball's last 2,832 updates ran on an H200 rather
-than an H100. A diagnostic measured small cross-device drift, but this remains
-a qualification for directional weight-space comparisons.
+\texttt{down\_proj} parameters. On AI, the common-protocol checkpoint reuses 84
+selected MLP features from a cached factorization. In SNMF,
+$\delta=1$ removes the selected component. Rome and Baseball probes at that
+strength find little effect on held-out
+accuracy; Rome SNMF checkpoints also show negligible change on a separate
+held-out text sample. Earlier runs with $\delta>2$ inverted and amplified the
+selected component rather than removing it, and are excluded from the erasure
+comparison. The AI checkpoint's full factorization settings and selection
+history are not recoverable from the tracked summary alone.

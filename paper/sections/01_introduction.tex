@@ -11,24 +11,28 @@ across task formats and should not merely hide accessible knowledge.
 Most evaluations compare an erased model only with its original version. This
 establishes that an intervention changed measured behavior, but not that the
 result resembles genuine absence of learning. An edit can be too weak, too
-strong, or damaging in a qualitatively different way while still obtaining a
-large efficacy score. Retraining on data from which the target concept has been
-removed supplies a more natural reference, but the expense of training and the
+strong, or damaging in a qualitatively different way while still appearing to
+remove knowledge of the target. Retraining after removing concept-associated
+data supplies a more natural reference, but the expense of training and the
 difficulty of identifying concept-related data have usually made this baseline
 unavailable.
 
-We exploit LMEnt's entity-annotated corpus and open training pipeline
+We use LMEnt's entity-annotated corpus and open training pipeline
 \citep{gottesman2025lment} to construct matched OLMo-2 1B models
-\citep{walsh2025olmo2}. A shared control is trained on the complete corpus,
-while two matched models receive no loss on chunks identified with Ancient Rome
-or Baseball. Because entity filtering cannot guarantee removal of every
-indirect mention, we call these models \emph{concept-excluded}; they are our
+\citep{walsh2025olmo2}. A shared control model is trained on the complete corpus,
+while three matched models receive no loss on training text segments, or
+\emph{chunks}, identified with Ancient Rome, Baseball, or artificial
+intelligence (AI). Entity filtering cannot
+guarantee removal of every indirect mention, so we call these models
+\emph{concept-excluded}; they are our
 operational never-trained references.
 
 Our primary method is EMBER \citep{suslik2026ember}, which removes
-concept-associated sparse features from selected token embeddings. RMU
-\citep{li2024wmdp} and semi-nonnegative matrix factorization (SNMF)
-\citep{shafran2026snmf} provide MLP-editing comparisons. We ask:
+concept-associated sparse features from selected token embeddings.
+Representation Misdirection for Unlearning (RMU) \citep{li2024wmdp} and
+semi-nonnegative matrix factorization (SNMF)
+\citep{shafran2026snmf} provide comparisons that edit transformer multilayer
+perceptron (MLP) blocks. We ask:
 
 \begin{quote}
 \small
@@ -36,22 +40,22 @@ How closely do post-hoc erasure methods reproduce a matched model trained
 without learning signal from concept-associated text?
 \end{quote}
 
-The present EMBER results depend strongly on concept and measurement level. It
-overshoots the Ancient Rome reference, undershoots the Baseball reference on
-held-out text, and shows almost no parameter-space alignment with the completed
-Baseball target displacement.
+The EMBER results depend strongly on concept and measurement. EMBER increases
+Rome text loss much more than exclusion does and Baseball text loss less than
+exclusion does, while approaching the AI reference on held-out questions. A
+Rome strength sweep
+shows that matching the excluded model's mean loss change does not reproduce
+the distribution across passages. The Baseball edit also has almost no
+directional alignment with the parameter change from control to exclusion.
 
 Our contributions are threefold:
 
 \begin{itemize}
-  \item We construct controlled concept-excluded references for two concepts
-  while holding initialization, batch order, optimizer, and training duration
+  \item We construct controlled concept-excluded references for three concepts
+  while holding initialization, batch order, optimizer recipe, and duration
   fixed.
-  \item We evaluate erasure as similarity to those references across
-  behavioral, distributional, parameter-space, and specificity dimensions.
-  \item We show that proximity depends on both the concept and the measurement
-  level, rather than being captured by a single efficacy score.
+  \item We compare erasure with those references using behavioral, text-loss,
+  parameter-space, and unrelated-data measurements where available.
+  \item We show that proximity depends on concept, edit strength, and the
+  measurement level; lexical analysis explains a major mismatch for EMBER.
 \end{itemize}
-
-\placeholder{Revise the result preview and contribution list after RMU and SNMF
-are complete; keep EMBER as the main analysis.}
