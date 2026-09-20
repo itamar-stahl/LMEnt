@@ -1,8 +1,30 @@
 \section{Limitations}
 \label{sec:limitations}
-\plan{About 0.4 page. State limits from operational blacklist coverage,
-fixed correct answers rather than generated-answer accuracy, no general
-passage-prediction measurement, single training seed/checkpoint per arm,
-finite and potentially dependent questions, and teacher-forced KL. Identify
-any exploratory selection or unequal evaluation cell honestly when results
-are filled.}
+
+Limited computational resources restricted the study to one model
+family and size, one training corpus, and one seed per condition.
+We also evaluated three concepts chosen purposively, partly using
+the full model's performance on selection questions. The observed
+patterns may therefore vary across training runs, concepts, model
+sizes, or corpora.
+
+The concept-excluded twins are approximate references. Our selected
+QIDs may miss passages about a concept that use other entities or
+indirect descriptions. Conversely, a QID set may exclude some text
+about adjacent topics. The twins therefore do not establish that
+all target knowledge was absent from their remaining training data.
+
+Our evaluation measures support for one supplied correct continuation
+per question. It does not measure which answer a model would generate,
+and other valid wordings may receive different probabilities.
+Full-vocabulary KL captures alternative next-token probabilities
+along the correct continuation, but does not follow the model after
+an alternative token is chosen. These measures support conclusions
+about the tested continuations rather than general claims about all
+model behavior.
+
+Finally, checkpoint selection used answer NLL, so the selected
+checkpoints need not minimize KL. Each test group contained 50
+questions; the reported means and standard deviations describe
+variation on those questions and do not establish that two models
+behave equivalently on unseen questions.
