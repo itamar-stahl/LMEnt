@@ -16,7 +16,7 @@ The candidate with the largest S wins. Signed on the target (we want the
 erased model LESS confident of the right answer), absolute on the other two
 (any movement is collateral, and a signed mean would let it cancel).
 
-    python ember_eval/nll_kl/select.py --control <scored>/<ctrl>/rome \
+    python ember_eval/nll_kl/select_checkpoint.py --control <scored>/<ctrl>/rome \
         --candidates <scored>/<cand_a>/rome <scored>/<cand_b>/rome ... --out <json>
 """
 from __future__ import annotations
