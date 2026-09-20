@@ -1,42 +1,76 @@
 \section{Experimental Design}
 \label{sec:experimental-design}
 
-\subsection{Shared Base Model and Matched Twins}
-\plan{About 0.3 page. State architecture, corpus, checkpoint, initialization,
-batch order, optimizer, duration, and how labels from selected chunks are
-masked. Explain the shared full model and one twin per concept.}
+\subsection{Models and Matched Training}
 
-\subsection{Target Concepts and Exclusion Scope}
-\plan{About 0.25 page. Define Ancient Rome, Baseball, and AI blacklist rules;
-give QID/chunk footprint and any precision/coverage audit. Explicitly connect
-the target evaluation group to each exclusion scope.}
+We trained OLMo-2 1B models on LMEnt's entity-annotated Wikipedia corpus
+\citep{walsh2025olmo2,gottesman2025lment}. The shared control model received
+loss on the full corpus. For each target concept, we trained a
+concept-excluded twin from the same initialization, using the same batch
+order, optimizer, learning-rate schedule, and two-epoch duration. Exclusion
+was applied after batch construction: labels in selected chunks were masked
+so that those chunks contributed no training loss. Each twin therefore
+differed from the shared control in the learning signal from its selected
+chunks, while the training procedure remained matched.
 
-\subsection{Erasure Checkpoints and Model Selection}
-\plan{About 0.35 page. State that EMBER, RMU, and SNMF start from the same
-full checkpoint. Summarize edited parameter families, training or factorization
-data, and how settings were selected without using final held-out items.
-Describe one selected checkpoint per method and concept. Put exact settings
-and chronology in Appendix~\ref{app:models}.}
+\subsection{Concepts and Exclusion Sets}
 
-\subsection{Evaluation Data Separation}
-\plan{About 0.2 page. Explain separate erasure-training, selection, and final
-evaluation sentence completions, identical across all five models. Introduce
-target, neighboring, and unrelated groups. Every item has one fixed correct
-continuation. Counts and question provenance go in Appendix~\ref{app:data}.}
+We selected Ancient Rome, Baseball, and artificial intelligence (AI) by
+hand before training the erasure models. Preliminary accuracy of the full
+model on target selection questions helped us avoid topics with little
+measurable knowledge. We also sought topics of manageable breadth and
+variation across domains. Because this was a purposive choice, our findings
+don't necessarily generalize to every concept.
 
-\begin{table*}[t]
+For each concept, we used Claude in a dedicated session to propose
+Wikidata entity IDs (QIDs), then reviewed their coverage in LMEnt's
+corpus \citep{gottesman2025lment}. A single ID missed text linked to
+related entities, while an overly broad set risked excluding text about
+adjacent topics. We therefore selected a bounded set of QIDs for each
+concept. We excluded a training chunk if LMEnt linked at least one
+mention in it to a selected QID. 
+Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
+
+\begin{table}[b]
   \centering
   \small
-  \begin{tabular}{lrrrr}
+  \begin{tabular}{lrr}
     \toprule
-    Concept & Chunks & Target Q & Neighbor Q & Unrelated Q \\
+    Concept & Entity IDs & Excluded chunks \\
     \midrule
-    Ancient Rome & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-    Baseball & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-    AI & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Ancient Rome & 56 & 65,844 \\
+    Baseball & 43 & 80,466 \\
+    AI & 31 & 19,818 \\
     \bottomrule
   \end{tabular}
-  \caption{Planned study inventory. Replace placeholders with final masked
-  chunk and held-out completion counts.}
-  \label{tab:inventory}
-\end{table*}
+  \caption{Entity sets used to exclude concept-associated training chunks.}
+  \label{tab:exclusion-sets}
+\end{table}
+
+\subsection{Post-Training Erasure and Checkpoint Selection}
+
+We applied EMBER, RMU, and an SNMF-based erasure independently to copies of
+the completed control model for each topic. EMBER edited selected input
+embeddings, RMU updated selected MLP parameters, and the SNMF-based method
+removed concept-associated directions through MLP weight edits. Each topic
+received the same method-specific procedure and checkpoint-selection rule.
+
+We selected one checkpoint per method and topic using answer NLL on
+selection questions. Let $\Delta_T(M)$ be candidate $M$'s mean NLL minus
+the control's on target questions. For neighboring and unrelated questions,
+let $D_g(M)$ be the mean absolute per-question NLL difference between $M$
+and the control. We selected the candidate maximizing
+\begin{equation}
+\begin{aligned}
+S(M)={}&0.5\Delta_T(M) \\
+      &-0.25D_{\mathrm{neighbor}}(M) \\
+      &-0.25D_{\mathrm{unrelated}}(M).
+\end{aligned}
+\end{equation}
+The unrelated selection set contained 50 questions sampled from topics
+outside the target and neighboring domains; a separate 50-question set
+was reserved for testing. The concept-excluded twins and all test
+questions were excluded from checkpoint selection. We subsequently
+compared each selected erasure checkpoint with both the control and its
+concept-excluded twin using the protocol in
+Section~\ref{sec:evaluation}.
