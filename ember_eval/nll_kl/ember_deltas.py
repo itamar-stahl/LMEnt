@@ -15,9 +15,13 @@ edited embedding with the same provenance metadata
 and verifies the changed rows equal `edited_token_ids` exactly.
 
 Reproduction check, always on: the run's own `chosen_delta` is included in
-the grid and the embedding this script produces for it must be byte-identical
-to the run's shipped `erased_embeddings.safetensors`. If it is not, the
-artifact, the base model or the edit code has drifted and NO delta from this
+the grid and the embedding this script produces for it must match the run's
+shipped `erased_embeddings.safetensors`: the same set of edited rows, and a
+max absolute difference within REPRO_ATOL. Byte-identity is reported but not
+required -- the AI run on an H100 and this script on an L40S differ by 3e-8
+on 6 of 187 rows, single-ulp accumulation-order noise, which is exactly what
+the tolerance is for. A different row set or a difference above the tolerance
+means the artifact, base or edit code has drifted and NO delta from this
 script is trusted.
 
     python ember_eval/nll_kl/ember_deltas.py \
@@ -51,6 +55,7 @@ from ember.lment_pipeline import (  # noqa: E402
 )
 
 MATERIALIZE = REPO / "ember_eval" / "materialize_erased_model.py"
+REPRO_ATOL = 1e-6   # fp32 edits differ by ~1e-8 across GPU models; a real drift is >= 1e-3
 
 
 def slug(delta: float) -> str:
@@ -93,8 +98,11 @@ def main() -> None:
     pristine = embed_edit.snapshot(model)
     pristine_sha = _tensor_hash(model.get_input_embeddings().weight)
 
+    from safetensors import safe_open
     from safetensors.torch import load_file
     shipped_weight = load_file(str(shipped))[embedding_name]
+    with safe_open(str(shipped), "pt") as f:
+        shipped_rows = set(json.loads(f.metadata()["edited_token_ids"]))
 
     manifest = {"concept": concept, "base": str(base), "artifact": str(artifact_path),
                 "feature_ids": feature_ids, "chosen_delta": chosen,
@@ -115,12 +123,17 @@ def main() -> None:
         entry = {"delta": delta, "n_tokens_edited": info["n_tokens_edited"],
                  "erased_embeddings": str(path), "embedding_sha256": sha}
         if delta == chosen:
-            same = torch.equal(model.get_input_embeddings().weight.detach().cpu(),
-                               shipped_weight)
-            entry["reproduces_shipped"] = same
-            reproduced = same
-            print(f"  delta={delta:g}: REPRODUCTION CHECK {'PASSED' if same else 'FAILED'}")
-            if not same:
+            mine = model.get_input_embeddings().weight.detach().cpu()
+            max_diff = float((mine - shipped_weight).abs().max())
+            same_rows = set(info["edited_token_ids"]) == shipped_rows
+            bit_identical = bool(torch.equal(mine, shipped_weight))
+            ok = same_rows and max_diff <= REPRO_ATOL
+            entry.update({"reproduces_shipped": ok, "bit_identical": bit_identical,
+                          "max_abs_diff_vs_shipped": max_diff, "same_edited_rows": same_rows})
+            reproduced = ok
+            print(f"  delta={delta:g}: REPRODUCTION CHECK {'PASSED' if ok else 'FAILED'} "
+                  f"(same rows={same_rows}, max|diff|={max_diff:.3g}, bit-identical={bit_identical})")
+            if not ok:
                 raise SystemExit(
                     f"delta {delta:g} does not reproduce {shipped}; refusing to continue")
         print(f"  delta={delta:g}: {info['n_tokens_edited']} rows edited -> {path}")
