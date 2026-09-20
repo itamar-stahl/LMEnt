@@ -1,0 +1,72 @@
+# EMBER embedding erasure of ANCIENT ROME on Daniela Gottesman's released
+# LMEnt-1B-2E checkpoint (dhgottesman/LMEnt-1B-2E), not Gal's own control.
+# Cross-checkpoint check: does EMBER's clean Rome erasure (-6pt on Gal's
+# control) replicate on an independently trained/released model?
+#
+# No cached features exist for this model -- fresh fit, reuse: false, its
+# own cache_root. No judge (mode: threshold, feature_ratio_threshold: 2.0 --
+# the same published ratio_thresh used as a prefilter everywhere else, so
+# this selects every feature that clears it, the "ratio-only" analogue of
+# what the fixed-code SNMF re-runs already used to avoid the flaky Gemma
+# subprocess). judge.model: null, consistent with ember_lment_rome_erase_
+# nojudge_slurm.yaml's own pattern for Gal's control.
+
+method: ember
+model_name: /home/dcor/galbarak2/hf_cache/hub/models--dhgottesman--LMEnt-1B-2E/snapshots/d0ce274557365c983032af9d7f8ae59851df18d8/step219344
+rank: 100
+seed: 44
+
+selection:
+  mode: threshold
+  ratio_thresh: 2.0
+  feature_ratio_threshold: 2.0
+  judge_confidence_threshold: 0.85
+  judge_top_k: 20
+
+ember:
+  deltas: [0.5, 1.0, 2.0, 5.0, 10.0, 50.0, 100.0, 200.0]
+  explicit_delta: null
+
+eval:
+  data_json: ../data/mc_questions.json
+  alpaca: false
+  alpaca_split: test
+  alpaca_max_items: null
+
+lment:
+  model_key: dhgottesman-LMEnt-1B-2E
+  model_device: cuda
+  dtype: fp32
+  runs_root: ../runs
+  data:
+    concept_json: ../data/concept_sentences.json
+    neutral_json: ../data/neutral_sentences.json
+  features:
+    cache_root: /home/dcor/galbarak2/lment-ember-grid-daniela2e/features/sp0.02_seed44
+    reuse: false
+    fitting_device: cuda
+    max_iterations: 20000
+    g_sparsity: 0.02
+    k_proj: 30
+  judge:
+    model: null
+    revision: 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7
+    device: cuda
+    max_new_tokens: 256
+    local_files_only: true
+    cache_dir: /home/dcor/galbarak2/hf_cache/hub
+    executor: subprocess
+    python: /home/dcor/galbarak2/conda_envs/gemma/bin/python
+    startup_timeout_seconds: 10800
+  save:
+    full_model: false
+  execution:
+    activate_script: ../activate_env.sh
+  slurm:
+    job_name: daniela-rome
+    account: gpu-research
+    partition: gpu-h100-killable
+    constraint: h100
+    time_minutes: 360
+    cpu_mem_mb: 10000
+    cpus_per_task: 8

@@ -353,8 +353,8 @@ this model's output.**
 | parameter | value | source |
 |---|---|---|
 | `tau` | 2.0 | the paper's threshold, already used at factorize time |
-| `--delta-in` | 4 | published |
-| `--delta-out` | 4 | published |
+| ~~`--delta-in`~~ | ~~4~~ | **RETRACTED -- see "The delta rule was wrong" below** |
+| ~~`--delta-out`~~ | ~~4~~ | **RETRACTED -- see "The delta rule was wrong" below** |
 | judge | `gemma` two-stage | the only judge reachable here; substitution already disclosed |
 | layers | 4, 9, 14 | whatever 871247 factorized -- see the caveat below |
 
@@ -558,6 +558,106 @@ on the page and cannot be quietly dropped.
 write a checkpoint whose selected features are amplified threefold, and at
 delta 1 it would be using a value nobody has yet chosen.
 
+## The delta rule was wrong, and it shipped
+
+**An erasure run at `--delta-in 4 --delta-out 4` produced a model that scored
+BETTER on the erased concept than its control.** That is not a failed erasure.
+It is the opposite intervention, saved under the method's name.
+
+**Cause.** `ablate_layer` applies `(I - delta*P)` where `P` projects onto a
+**unit** direction, so the targeted component scales by `|1 - delta|`, not by
+`delta`. The table was already in this file and in `cmd_verify`'s comments, and
+the `DeltaScalingLaw` tests already pinned it -- but it was read as a quirk of
+the *verify metric* rather than as a statement about the *edit*:
+
+| delta | component becomes | |
+|---|---|---|
+| 1 | 0 | the only exact removal |
+| 2 | sign flipped, same size | erases nothing |
+| **4** | **x3** | **what was run** |
+| 7 / 10 | x6 / x9 | |
+
+Only `0 < delta < 2` shrinks anything.
+
+**Why the rule looked right.** The section above fixed "every parameter takes
+its published value" and read 4 off `configs/snmf_gemma.yaml`. But that file
+says `in_deltas: [1.0, 4.0, 7.0, 10.0]` -- delta is a **swept dimension**, not a
+value. `SNMFMethod.enumerate_hps` crosses all four with all three layer ranges,
+and `_run_method_grid` then throws away the cells that fail `max_qa_acc: 0.6`
+and `min_mmlu: 0.7`. The amplifying cells exist in the reference precisely
+because the downstream eval deletes them. Lifting one out of the sweep and
+saving it removed the only thing protecting against it. Taking "the published
+value" for a swept parameter is a category error, and it is the same shape as
+the `acc_raw` failures `ERASURE_RESULTS.md` retracted.
+
+**Two defaults made it the path of least resistance.** `snmf.py erase` and
+`snmf.py verify` both defaulted `--delta-in` and `--delta-out` to **4.0**, so
+the invocation documented below produced an amplifying edit without anyone
+passing a delta at all.
+
+**Fixed.**
+
+- `erasure_scale(delta)` returns `|1 - delta|`, and `check_delta_erases` runs
+  immediately before anything is written. A delta that does not shrink the
+  component is refused, naming the factor and the flag.
+- Both defaults are now **1.0**, the unique exact-removal point. `erase` and
+  `verify` take the same defaults and the same gate, so verify cannot report on
+  a cell erase would refuse.
+- `--allow-amplification` reaches the higher cells **deliberately**, for a real
+  sweep selected on a downstream eval. It warns, and
+  `snmf_erasure_metadata.json` now records `erasure_scale_in`,
+  `erasure_scale_out` and `amplification_allowed`, so an amplifying checkpoint
+  can never be read back later as an erasure.
+- A fifth silent-success path, found while fixing this: `cmd_erase` incremented
+  `applied_in` / `applied_out` from the delta alone, so a layer whose features
+  all lost their support to the coverage mask still counted as having covered
+  that side, and `check_both_sides_applied` passed. It now counts only layers
+  that actually edited something (`bool(d_in and n)`).
+
+**What still is not decided.** `delta = 1` is the value at which the update is
+an exact projection; it is *not* a claim that 1 is the right erasure strength.
+Choosing that is the sweep-and-select the reference does, and it needs the MC
+eval, not this script. What has changed is that the range `[2, 10]` can no
+longer be entered by accident or by default.
+
+### RMU in the fork edited the wrong matrix
+
+`ember/erasure/methods/rmu.py` hardcoded WMDP's `FIXED_PARAM_IDS = [6]`, and
+`rmu/utils.py:get_params` selects parameters **by position** inside a decoder
+layer. On OLMo-2, `self_attn.q_norm` and `self_attn.k_norm` sit ahead of the
+MLP and shift everything by two, so index 6 is `mlp.gate_proj` and `down_proj`
+is at **8** -- which job 871246 already measured on the real 1B
+(`down_proj_index: 8, positional_ok: False`). RMU is defined to move
+`down_proj`; with the published index it optimised `gate_proj` and left
+`down_proj` bit-identical.
+
+The root `rmu.py` was never affected -- it looks the matrix up by name. The
+fork's copy now resolves the index from the loaded model
+(`_down_proj_param_ids`) and logs when it disagrees with WMDP's constant.
+
+### Tests
+
+`mlp_erasure/tests/test_erasure_direction.py`, 24 tests, no checkpoint and no
+GPU. The suite is now **77 tests, 0.7 s**.
+
+The load-bearing one measures neither a weight statistic nor a `down_proj`
+input activation -- both of those see only one side of the edit. It hooks the
+MLP output and measures how much of the feature direction the layer writes into
+the **residual stream**, which is what a downstream MC eval actually responds
+to. Against a 6-layer OLMo-2:
+
+| delta | residual-stream concept contribution |
+|---|---|
+| 1.0 | **0.35x** -- erased |
+| 4.0 | **2.26x** -- amplified |
+| 7.0 | 7.75x |
+| 10.0 | 16.62x |
+
+and driving the real CLI end to end: `--delta-in 4 --delta-out 4` exits 1 and
+writes no checkpoint; the defaults write one whose concept contribution is
+0.35x its control; `--allow-amplification` reaches 4 and records 2.26x plus
+`erasure_scale_in: 3.0` in the metadata.
+
 ## How to run it
 
 Fast tests, no checkpoint and no GPU (0.2 s):
@@ -577,6 +677,11 @@ this concept used, chosen there to stay clear of the h100 pool:
     sbatch --job-name=snmfsel --export=ALL,MODE=select,OUT_TAG=rome,SNMF_OUT=<dir> run_snmf.slurm
     sbatch --job-name=snmfver --export=ALL,MODE=verify,OUT_TAG=rome,SNMF_OUT=<dir> run_snmf.slurm
     sbatch --job-name=snmferase --export=ALL,MODE=erase,OUT_TAG=rome,SNMF_OUT=<dir>,SAVE_TO=<path> run_snmf.slurm
+
+`MODE=erase` now defaults to `--delta-in 1 --delta-out 1`. If `run_snmf.slurm`
+passes `--delta-in 4 --delta-out 4` explicitly, that line must go -- the job
+will otherwise exit 1 at the guard rather than silently writing an amplified
+checkpoint.
 
 Everything lands under `/home/dcor/galbarak2/runs/mlp_erasure/`. `MODE=run`
 does not keep the 4.4 GB model unless you export `SAVE_MODEL=` empty.
@@ -604,3 +709,83 @@ comparable, and neither of them comparable to the paper on that axis.
 
 **One concept, one pair, one seed.** Everything in `ROME_RESULTS.md`'s scope
 section applies unchanged.
+
+---
+
+# SUPERSEDED / UPDATED 2026-09-12
+
+Two sections above are now out of date. Read this before acting on them.
+
+## "What is now open, and it is not a code question" is CLOSED
+
+That section frames `delta` and the verify metric as mutually inconsistent, with
+the choice left to Gal. **It is not a choice.** `FEATURE_QUALITY_FIXES.md`
+section 3 shows `configs/snmf_gemma.yaml` crosses `in_deltas`/`out_deltas`
+`[1,4,7,10]` with every layer range and selects a cell on **downstream
+evaluation** -- concept QA accuracy below 0.6, MMLU above 0.7 -- never on an
+activation drop. The `.abs()` drop was never the selection criterion, so there
+was never a contradiction to resolve. delta 4 amplifying the component threefold
+is expected and irrelevant to how a cell is picked.
+
+Anyone who read this file before 2026-09-12 and came away thinking a scientific
+decision was pending should drop that belief. (It was repeated as a live open
+item in conversation as recently as this session.)
+
+## Verification runs, 2026-09-12: the suite and factorize, on 97443fe
+
+Tamar's fixes landed on `main` as `97443fe`. Her file ends with an explicit
+"do not push this without running, in this order" sequence. It was run:
+
+**1. Unit suite -- PASSES.** 53 tests, 2.7 s, exit 0, under the real lment env.
+That clears the tensor-semantics risk her doc lists as unverified (numpy shim
+versus torch on `topk` tie-breaking, dtype promotion, and the
+`arange().unsqueeze().expand()` sentence-id construction in
+`collect_activations`, which had never executed).
+
+**2. `MODE=factorize`, layers 4 5 6, job 883188 -- COMPLETED on an L40S.**
+
+| layer | candidates rho>2.0, job 871493 | **candidates now, 883188** | max rho | scale inflation |
+|---|---|---|---|---|
+| 4 | 9 | **10** | 5.0118 | 1.07x |
+| 5 | 34 | **31** | 4.7022 | 1.46x |
+| 6 | 13 | **3** | 4.4545 | 1.23x |
+| **total** | **56** | **44** | | |
+
+Layers 4 and 5 are essentially unchanged; **layer 6 collapsed 13 -> 3**.
+
+Two of her explicitly-unverified claims are now settled:
+
+* **The semi-NMF convergence question is answered.** She wrote that whether
+  `rtol=1e-6` converges on a real 5632x17000 matrix in a sane number of
+  iterations "is an empirical question and nobody has answered it". It stops at
+  **1052 / 1362 / 834 iterations** by patience, against `max_iter` 20000. The old
+  absolute `tol=1e-4` against a reconstruction error of 1.43e10 could never fire.
+* **Scale inflation is now visible and modest** (1.07x / 1.46x / 1.23x, with
+  normalized medians 0.95-0.99), which is fix #2 working as intended.
+
+**3. `MODE=select` -- the measurement, and it is NOT the factorize run.** Her doc
+says the factorize job "is the one that answers the actual question ... the
+accept rate against 871547's 10.7%". It is not: `factorize` produces candidates,
+and the accept rate is produced by the judge in `MODE=select`. 44 candidates is
+raw material, not an outcome. `select` runs against
+`runs/mlp_erasure/snmf_rome_883188` and is gated behind `MODE=judge-smoke`
+(job 883187), which is what checks the judge honours the new prompts and emits
+TRASH.
+
+**Still true and unchanged: no SNMF- or RMU-erased model has ever been built or
+compared against the twins.** A higher accept rate would mean the judge agrees
+more, which is not the same as the features being better. The honest test is
+downstream -- erase, then measure against `M_never` the way
+`ember_eval/ERASURE_RESULTS.md` does for EMBER.
+
+## A trap in the drivers, fixed on a branch
+
+`run_snmf.slurm` and `run_rmu.slurm` hard-assigned
+`ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp` -- not read from the environment,
+not following `LMENT_ROOT`. A submission from any other checkout silently ran the
+code in `LMEnt-mlp` and said nothing. Since `LMEnt-mlp` sits on
+`feature/mlp-erasure` at `fa16e08`, which does **not** contain `97443fe`, running
+the verification sequence from a checkout of `main` would have factorized with
+the OLD `snmf.py` and reported a meaningless accept rate that looked entirely
+normal. Now `: "${ROOT:=...}"`, default unchanged. Same class as
+`activate_env.sh`'s `LMENT_ROOT` default.

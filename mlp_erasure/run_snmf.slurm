@@ -53,11 +53,15 @@
 #   MODE=select-ratio  --skip-llm: keep every rho > tau candidate, no judge
 #   MODE=erase       project the selected directions out, save the model
 #   MODE=verify      feature activation before/after, no model saved
+#   MODE=sweep       score every delta x layer-range cell on the real MC
+#                    questions and write sweep_delta.csv (needs select)
 #
 #   sbatch --export=ALL,MODE=factorize,OUT_TAG=rome,LAYERS='4 9 14' run_snmf.slurm
 #   sbatch --export=ALL,MODE=select,OUT_TAG=rome,SNMF_OUT=<dir> run_snmf.slurm
 
-ROOT=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp
+# ROOT is overridable: it was a hard assignment, so submitting from any other
+# checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
+: "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
 RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 
@@ -72,8 +76,16 @@ RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 : "${BATCH_SIZE:=8}"
 : "${MAX_LENGTH:=256}"
 : "${DTYPE:=fp32}"
-: "${DELTA_IN:=4}"
-: "${DELTA_OUT:=4}"
+# 1, not 4. ablate_layer applies (I - delta*P) onto a UNIT direction, so the
+# targeted component scales by |1 - delta|: 1 removes it exactly, 2 only flips
+# its sign, and 4 MULTIPLIES IT BY THREE. Submitting MODE=erase with the old
+# default of 4 is what produced an "erased" checkpoint that scored better on
+# the concept than its control. snmf.py now refuses delta >= 2 unless
+# --allow-amplification is passed; see MLP_ERASURE.md, "The delta rule was
+# wrong". Export DELTA_IN/DELTA_OUT to sweep deliberately.
+: "${GAMMA:=0.95}"            # coverage threshold, snmf.py default
+: "${DELTA_IN:=1}"
+: "${DELTA_OUT:=1}"
 : "${LAYERS:=}"
 # factorize creates the run directory; every later stage must be pointed at it.
 : "${SNMF_OUT:=$RUNS/snmf_${OUT_TAG}_${SLURM_JOB_ID}}"
@@ -171,6 +183,21 @@ verify)
     --range-cell "$RANGE_CELL" \
     --n-sentences "$N_SENTENCES" \
     --batch-size "$BATCH_SIZE" --max-length "$MAX_LENGTH"
+  ;;
+sweep)
+  # The step the pipeline never had. Appendix C.3 tunes delta over {1,4,7,10}
+  # crossed with three layer ranges per side and picks a cell on downstream
+  # evaluation; `erase` applies ONE cell and saves it. This scores every cell
+  # on the real questions and writes a CSV so the cell is chosen on evidence.
+  #
+  # Loads the model once and rolls the weights back between cells, so it costs
+  # one checkpoint read rather than one per cell.
+  exec "$PY" "$ROOT/sweep_delta.py" \
+    --model "$MODEL_PATH" --snmf-out "$SNMF_OUT" \
+    --concept "$CONCEPT" \
+    --questions "$DATA/mc_questions.json" \
+    --dtype "$DTYPE" --gamma "$GAMMA" \
+    --out "$SNMF_OUT/sweep_delta.csv"
   ;;
 *)
   echo "FATAL: unknown MODE=$MODE" >&2

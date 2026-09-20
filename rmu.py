@@ -251,21 +251,37 @@ def run_rmu(updated_model, frozen_model, tokenizer, forget_batches, retain_batch
                    dtype=updated_model.dtype, device=updated_model.device)
     control = u / torch.norm(u) * steering
 
-    n = min(max_num_batches, len(forget_batches), len(retain_batches))
+    # The retain set must NOT cap the run. RMU's retain term is a regulariser
+    # evaluated against the frozen model, and the reference draws it from
+    # wikitext -- thousands of samples, never the binding constraint. Here
+    # neutral_sentences.json holds 300 sentences TOTAL for all concepts, so
+    # taking min(forget, retain) let the smaller neutral pool decide how much
+    # unlearning happened. Measured on Ancient Rome at batch 4: 71 forget
+    # batches, 65 retain, so the run stopped at 65 because of the retain file.
+    # Cycling retain is not a licence to reuse forget data -- that would be
+    # extra epochs and a different intervention -- but re-showing the model the
+    # same neutral sentences is exactly what a larger generic corpus does.
+    n = min(max_num_batches, len(forget_batches))
     if n == 0:
-        raise ValueError("no batches")
+        raise ValueError("no forget batches")
+    if len(retain_batches) == 0:
+        raise ValueError("no retain batches")
+    if len(retain_batches) < n:
+        print(f"note: cycling {len(retain_batches)} retain batches over {n} "
+              f"steps; the retain term is a regulariser and the reference "
+              f"draws it from a corpus large enough never to run out.")
     if n < max_num_batches:
         # The published grid assumes max_num_batches=150. concept_sentences.json
-        # ships 300 sentences per concept and neutral_sentences.json 300 in
-        # total, so at batch-size 16 there are 19 batches and the run takes 19
-        # optimiser steps, not 150. Say so: a short run is a different
-        # intervention from the one the grid was tuned for, and it used to be
-        # invisible.
-        print(f"WARNING: only {n} batches available "
-              f"({len(forget_batches)} forget / {len(retain_batches)} retain), "
-              f"so this is {n} steps and not the requested {max_num_batches}. "
-              "Lower --batch-size or harvest more sentences to get closer to "
-              "the published 150.")
+        # ships 300 sentences per concept, so at batch-size 4 there are ~71
+        # batches and the run takes ~71 optimiser steps, not 150. Say so: a
+        # short run is a different intervention from the one the grid was tuned
+        # for, and it used to be invisible.
+        print(f"WARNING: only {len(forget_batches)} forget batches available, "
+              f"so this is {n} optimiser steps and not the requested "
+              f"{max_num_batches} -- {n / max_num_batches:.0%} of the published "
+              f"schedule. Lower --batch-size or harvest more concept sentences "
+              f"(Ember-on-LMEnt/sentences_gen) to close the gap. Do NOT read a "
+              f"weak result at {n} steps as 'RMU does not work here'.")
 
     prev_side = tokenizer.truncation_side
     tokenizer.truncation_side = "right"
@@ -281,7 +297,8 @@ def run_rmu(updated_model, frozen_model, tokenizer, forget_batches, retain_batch
             unlearn_loss = masked_mse(f_act, control_here.expand_as(f_act),
                                       f_in["attention_mask"])
 
-            r_in = tokenizer(retain_batches[idx], return_tensors="pt", padding=True,
+            r_in = tokenizer(retain_batches[idx % len(retain_batches)],
+                             return_tensors="pt", padding=True,
                              truncation=True, max_length=max_length).to(updated_model.device)
             r_act = forward_with_cache(updated_model, r_in, up_mod, no_grad=False)
             r_ref = forward_with_cache(frozen_model, r_in, fr_mod, no_grad=True)
@@ -319,23 +336,52 @@ def run_rmu(updated_model, frozen_model, tokenizer, forget_batches, retain_batch
 
 
 SANITY_CHECKS = ("forget_rotated", "retain_preserved", "unlearn_loss_fell",
-                 "spare_layer_frozen", "edited_layer_moved")
+                 "spare_layer_frozen", "edited_layer_moved",
+                 "rotation_is_substantial", "ran_enough_steps")
+
+# `forget_rotated`'s bar is end > start + 0.05. Job 871273 cleared it by 0.011
+# -- cos_forget went 0.0173 -> 0.0782, i.e. the forget activations are still
+# very nearly ORTHOGONAL to the control vector they were supposed to be dragged
+# onto -- and the run reported five green booleans. RMU works by pointing the
+# forget representations AT the control vector; a cosine of 0.08 is not that.
+# These two gates exist so a run that technically moved cannot be read as a run
+# that erased.
+MIN_SUBSTANTIAL_COSINE = 0.30
+MIN_STEP_FRACTION = 0.5
 
 
-def sanity(trace, spare_before, spare_after, edited_before, edited_after):
+def sanity(trace, spare_before, spare_after, edited_before, edited_after,
+           steps=None, requested_steps=None,
+           min_cosine=MIN_SUBSTANTIAL_COSINE,
+           min_step_fraction=MIN_STEP_FRACTION):
     k = max(1, len(trace["cos_forget"]) // 5)
     start = sum(trace["cos_forget"][:k]) / k
     end = sum(trace["cos_forget"][-k:]) / k
     mean_r = sum(trace["cos_retain"]) / len(trace["cos_retain"])
+    steps = len(trace["cos_forget"]) if steps is None else steps
+    step_fraction = (1.0 if not requested_steps
+                     else steps / float(requested_steps))
     return {
         "cos_forget_start": round(start, 4),
         "cos_forget_end": round(end, 4),
         "forget_rotated": end > start + 0.05,
+        # Direction is not magnitude. This asks whether the forget
+        # representations actually reached the control vector, not merely
+        # whether they twitched towards it.
+        "rotation_is_substantial": end >= min_cosine,
+        "min_cosine_required": min_cosine,
         "mean_cos_retain": round(mean_r, 4),
         "retain_preserved": mean_r > 0.9,
         "unlearn_loss_fell": trace["unlearn"][-1] < trace["unlearn"][0],
         "spare_layer_frozen": torch.equal(spare_before, spare_after),
         "edited_layer_moved": not torch.equal(edited_before, edited_after),
+        # A run that got a fraction of the published schedule is a different
+        # intervention from the one the grid was tuned for, so it cannot be
+        # reported as "RMU on this model".
+        "steps": steps,
+        "requested_steps": requested_steps,
+        "step_fraction": round(step_fraction, 3),
+        "ran_enough_steps": step_fraction >= min_step_fraction,
         # how far the edited matrix actually travelled, relative to its own
         # scale. Near zero with edited_layer_moved true means the optimiser
         # steps are being rounded away rather than applied -- the bf16 failure.
@@ -374,6 +420,19 @@ def main():
     ap.add_argument("--probe", action="store_true",
                     help="report layers and activation norms, then exit")
     ap.add_argument("--sanity", action="store_true")
+    ap.add_argument("--min-cosine", type=float, default=MIN_SUBSTANTIAL_COSINE,
+                    help="cos_forget_end required for the run to count as a "
+                         "real misdirection. RMU points the forget "
+                         "representations AT the control vector; the old gate "
+                         "only asked whether they moved 0.05 towards it, which "
+                         "0.0173 -> 0.0782 passed while staying essentially "
+                         "orthogonal.")
+    ap.add_argument("--min-step-fraction", type=float,
+                    default=MIN_STEP_FRACTION,
+                    help="fraction of --max-num-batches that must actually run. "
+                         "300 concept sentences at batch 4 give ~71 of the "
+                         "published 150 steps, so a run can silently be half "
+                         "the intervention the grid was tuned for.")
     ap.add_argument("--save-model", action=argparse.BooleanOptionalAction,
                     default=True)
     a = ap.parse_args()
@@ -436,7 +495,11 @@ def main():
     failed = []
     if a.sanity:
         res = sanity(trace, spare_before, down_proj_weights(updated, [spare])[0].detach(),
-                     edited_before, down_proj_weights(updated, [a.layer_ids[0]])[0].detach())
+                     edited_before, down_proj_weights(updated, [a.layer_ids[0]])[0].detach(),
+                     steps=len(trace["cos_forget"]),
+                     requested_steps=a.max_num_batches,
+                     min_cosine=a.min_cosine,
+                     min_step_fraction=a.min_step_fraction)
         failed = [k for k in SANITY_CHECKS if not res[k]]
         res["failed"] = failed
         (out / "sanity.json").write_text(json.dumps(res, indent=2))

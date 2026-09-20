@@ -1,0 +1,120 @@
+# ARTIFICIAL INTELLIGENCE ablation twin, on h100-killable. Drafted 2026-09-12,
+# following the exact recipe/resource pattern of
+# train_1b_no_baseball_core_teams_2e_b131k_h100.yaml.
+#
+# Pairs with untaught-control-1b-2e-b131k (job 853707, step54832, COMPLETED --
+# see hf-models/lment-1b-control-2e-b131k). Unlike Rome/Baseball, this twin
+# does not need a fresh control: the shared control finished before this was
+# drafted. The train block below is byte-identical to
+# train_1b_control_2e_b131k.yaml, and masking happens in pre_step on an
+# already-composed batch, so both twins traverse identical batches and the one
+# finished control serves this ablation arm too.
+#
+# SUBJECT: blacklists/ai_core.json -- 31 QIDs, 19,818 chunks, 0.189% of the
+# 10,491,928-chunk corpus. The field and its subfields (machine learning, deep
+# learning, NLP, computer vision, robotics, reinforcement learning, ...),
+# foundational concepts/history (Turing test, AI winter, ethics/risk of AI),
+# and foundational figures (Turing, Minsky, McCarthy, Hinton, LeCun, Bengio,
+# Ng, Hassabis, Shannon, Wiener).
+#
+# Deliberately EXCLUDED: the ADJACENT tier (OpenAI, DeepMind, ChatGPT,
+# AlphaGo, IBM Watson) added only +804 chunks over CORE's 19,818 -- "nearly
+# free, nearly pointless," the same call Baseball's PLAYERS tier got (+1,896
+# over core+teams, dropped). No precision/coverage audit has been run yet
+# (unlike Baseball's 852479/852602/852603) -- CHOOSING_A_SUBJECT.md's
+# resolve/count --preview step should run before this submits, the same as
+# every prior subject.
+#
+# Resolution note: the naive phrase-match QID resolver mis-resolved this
+# subject's own "Robotics" (Q444706, 451 chunks) and "IBM Watson" the same way
+# CHOOSING_A_SUBJECT.md documents for Heroin/Uranium/Gambling -- by 3-10x, not
+# the 16-100x in its table, but the same failure mode. Corrected by
+# chunk-count disambiguation; see ai_wide_qids.py and ai_core.json's header.
+#
+# Answerability: control2e scores 49% QA / 52% SimdomQA on the current
+# (2026-09-12, gold_per_char, declarative-stem) completion eval -- comfortably
+# above the 25% floor and roughly balanced, unlike Valentine's Day (24% QA,
+# at chance) or the historical-period subjects this ranking excluded for
+# footprint reasons (Nazism, World War II, COVID-19).
+#
+# DO NOT justify this subject with the QA evaluation alone, per Baseball's
+# and Rome's own caution: score logp_null (no question at all) before trusting
+# any QA-minus-Simdom gap as concept-specific knowledge rather than an option
+# prior.
+#
+# PARTITION: h100-killable checked 2026-09-12 -- n-102 had 1/8 GPUs free,
+# t-100 fully allocated (shared with gpu-morgeva at a higher tier, same as the
+# Baseball run's note). h200 was fully allocated too (8/8, even though the one
+# visible gpu-h200 job only asked for 2 -- other higher-tier jobs occupy the
+# rest). Neither is idle; this is the queue snapshot to re-check before
+# submitting, not a submission.
+#   partition          gpu-h100-killable   (resume-ignored)
+#   max_time_minutes   1440                (the partition maximum)
+#
+# constraint stays "" deliberately -- it is NOT resume-ignored, and naming a
+# card would restart this run from random init on any later resubmission.
+
+job:
+  name: "untaught-no-ai-core-1b-2e-b131k-h100"
+  dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
+  dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  resume_from_previous_run: true
+  mail_user: "galll.barak@gmail.com"
+  mail_type: "END,FAIL,TIME_LIMIT"
+
+  account: "gpu-research"
+  partition: "gpu-h100-killable"
+  max_time_minutes: 1440
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 56000
+  cpus_per_task: 16
+  gpus: 1
+  constraint: ""
+
+train:
+  model: "olmo2_1B"
+  init_seed: 12536
+  max_duration_value: 2
+  max_duration_unit: "epochs"
+
+  optim_lr: 0.0004
+  optim_weight_decay: 0.05
+  optim_warmup_steps: 2000
+  optim_max_grad_norm: 1.0
+
+  data_global_batch_size: 131072
+  data_rank_microbatch_size: 16384
+  data_seed: 0
+  data_num_workers: 12
+  data_prefetch_factor: 16
+
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: false
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+
+  checkpoint_save_interval: 5000
+  checkpoint_ephemeral_save_interval: 2000
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 10
+  cancel_check_interval: 25
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+
+untaught:
+  blacklist: "blacklists/ai_core.json"
+  case_sensitive: true
+  threshold_hyperlinks: 1.0
+  threshold_entity_linking: 0.6
+  threshold_coref: 0.6
+  threshold_coref_cluster: 0.6
+  enabled: true
+  adapt_to_gpu: true
+  disable_wandb: true
+  disable_downstream_eval: true

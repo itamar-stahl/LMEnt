@@ -286,3 +286,71 @@ Jobs: conversion 876641; completion eval 876691-876699; chunk loss 876631 /
 876701 / 878766; OLMES 876774; embedding health 877472; feature grids 876632
 (stock) / 876805 (corpus); judge 876772 / 877306 / 877307 (stock), 877437-877439
 (corpus); erasure 877959; erased-model evals 878765 / 878766 / 878772.
+
+---
+
+# CORRECTION (2026-09-11): the QA arm's denominator is not established
+
+Section 3's line "on questions the erasure removes 3-4x what the ablation did"
+**should not be read as a ratio.** It divides -0.2535 by -0.0835, and the
+denominator is `z = -1.02`. Dividing by a quantity indistinguishable from zero
+does not give 3x; it gives an undefined number. The defensible statement is
+narrower: **the Baseball erasure has a clear question-level effect and the
+Baseball ablation does not, so the two cannot be placed in a ratio.**
+
+## What the cross-concept null already said, read directly
+
+`results/cross_concept_null_baseball.json`, `pmi_per_char` on gold:
+
+| split | observed | null mean (n=8) | null sd | z | rank |
+|---|---|---|---|---|---|
+| QA train | -0.0835 | -0.0185 | 0.0638 | **-1.02** | 3/9 |
+| QA test | -0.0452 | -0.0292 | 0.0543 | **-0.30** | 2/9 |
+| Simdom train | +0.2395 | -0.0270 | 0.0511 | **+5.21** | **1/9** |
+| Simdom test | +0.2283 | -0.0295 | 0.0538 | **+4.79** | **1/9** |
+
+## The direct demonstration, which needs no null at all
+
+Score a twin that **never ablated baseball** (`norome2e`) on the same Baseball
+questions:
+
+| Baseball questions | own ablation | Rome-untaught | concept-specific remainder |
+|---|---|---|---|
+| QA train | -0.0835 | **-0.0638** | -0.0197 |
+| QA test | -0.0452 | **-0.0355** | -0.0097 |
+| Simdom train | +0.2395 | **+0.1920** | +0.0475 |
+| Simdom test | +0.2283 | **+0.2083** | +0.0200 |
+
+**76% of the apparent QA effect is reproduced by a model that saw every baseball
+chunk.** Ancient Rome for contrast: -0.3745 own against **+0.0116** for the
+unrelated twin -- essentially all of Rome's effect is the concept.
+
+## Section 2's unexplained Simdom result is now explained
+
+That section records the ablated twin scoring significantly *better* than the
+control on other sports (+0.2395, +0.2283) and says "nothing in the design
+predicts that, and it is not explained here." It is now: **Rome-untaught does the
+same thing** (+0.1920, +0.2083) on the same questions, and Rome's ablation
+removed no baseball. Both twins are outliers on the Baseball-Simdom set while the
+null over eight *other* Simdom sets sits at -0.027. The anomaly belongs to that
+question set, not to either ablation, and it is not a knowledge effect.
+
+## The mechanism, and why chunk loss is immune
+
+There is **one shared control** (job 853707) behind every arm. Any run-level
+idiosyncrasy of that single run -- it trained on ~0.7% more data than either
+twin, with its own preemption history -- enters every `ablated - control`
+contrast identically. The QA instrument has no defence against it: it compares
+two models on one question set and calls the difference the ablation.
+
+The held-out chunk loss does have a defence, by construction. Its diff-of-diffs
+subtracts each model's own loss on **length-matched control chunks**, which
+absorbs exactly this offset -- the point `HELDOUT_RESULTS.md` makes as "each twin
+is its own baseline". That is why Baseball's chunk-loss result (+0.4933, dz 2.07,
+100% of chunks worse) stands while its QA result does not, and it is an argument
+for treating chunk loss as **the** instrument rather than one of two.
+
+**Nothing here touches Section 1's chunk-loss findings or the erasure's own
+`erased - control` contrasts** (the erased model is control-derived and carries
+no twin offset). What it removes is the ablation-side denominator on questions,
+and with it the "3-4x" reading.
