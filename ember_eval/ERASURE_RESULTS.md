@@ -7,6 +7,12 @@ the neighbouring domain, which the ablation did not touch.**
 This is the question the twins were built to answer, and `ROME_RESULTS.md` listed
 it as the last one still open. It is now measured, for one erasure configuration.
 
+> **Extended 2026-09-21.** `NLL_KL_RESULTS.md` repeats this on three concepts and
+> three erasure methods with a different instrument (answer-token NLL and KL).
+> The overshoot reproduces — 2.4x on Rome against the 2.2x below — and the
+> picture generalises: EMBER overshoots the twin on every concept, while RMU and
+> SNMF fall short of it on every concept. Nothing lands on the twin.
+
 ## The three models
 
 | | what it is |
