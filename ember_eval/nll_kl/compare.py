@@ -6,9 +6,16 @@ Both models must have been scored by score_model.py on the SAME sets file.
 Metric 1 -- answer NLL difference, per item:
     delta(q) = nll_eval(q) - nll_ref(q)            (evaluated - reference, always)
 Metric 2 -- full-vocabulary KL, per item:
-    kl(q) = mean over completion positions t of  KL( P_ref(.|q,t) || P_eval(.|q,t) )
-          = mean_t sum_v p_ref(v) * (log p_ref(v) - log p_eval(v))
+    kl(q) = mean over completion positions t of  KL( P_klref(.|q,t) || P_eval(.|q,t) )
+          = mean_t sum_v p_klref(v) * (log p_klref(v) - log p_eval(v))
     needs both models' saved distributions for the item (test items by default).
+
+    KL's reference defaults to --ref but is set separately by --kl-ref, because
+    the two metrics do not want the same one. The NLL difference is signed, so
+    its reference fixes which way the sign runs; KL is asymmetric, so its first
+    argument fixes whose probabilities weight the deviations. The protocol wants
+    twin-minus-full for NLL and KL(twin || full) for the same pair -- one call
+    cannot give both unless they are set independently.
 
 Per set, both metrics are summarised four ways from the same per-item numbers:
     mean            the headline, what the peers' table reports
@@ -73,11 +80,12 @@ def kl_item(ref_rows: np.ndarray, eval_rows: np.ndarray) -> float:
     return float(kl.mean())
 
 
-def compare(ev: Dict[str, Any], ref: Dict[str, Any], sets: Optional[List[str]] = None
-            ) -> Dict[str, Any]:
-    ids = sorted(set(ev["records"]) & set(ref["records"]))
+def compare(ev: Dict[str, Any], ref: Dict[str, Any], sets: Optional[List[str]] = None,
+            kl_ref: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    kl_ref = kl_ref if kl_ref is not None else ref
+    ids = sorted(set(ev["records"]) & set(ref["records"]) & set(kl_ref["records"]))
     if not ids:
-        raise SystemExit("no common items between the two scored dirs")
+        raise SystemExit("no common items between the scored dirs")
     if ev["meta"]["sets_file"] != ref["meta"]["sets_file"]:
         print(f"WARNING: sets files differ:\n  {ev['meta']['sets_file']}\n  {ref['meta']['sets_file']}")
     per_set: Dict[str, Dict[str, Any]] = {}
@@ -90,13 +98,13 @@ def compare(ev: Dict[str, Any], ref: Dict[str, Any], sets: Optional[List[str]] =
                "n_tokens": a["n_tokens"],
                "nll_eval": a["nll"], "nll_ref": b["nll"], "delta": a["nll"] - b["nll"],
                "delta_first_token": a["token_nlls"][0] - b["token_nlls"][0]}
-        have = (ev["dists"] is not None and ref["dists"] is not None
-                and i in ev["index"] and i in ref["index"])
+        have = (ev["dists"] is not None and kl_ref["dists"] is not None
+                and i in ev["index"] and i in kl_ref["index"])
         if have:
-            s0, e0 = ref["index"][i]
+            s0, e0 = kl_ref["index"][i]
             s1, e1 = ev["index"][i]
-            rec["kl"] = kl_item(ref["dists"][s0:e0], ev["dists"][s1:e1])
-            rec["kl_first_token"] = kl_item(ref["dists"][s0:s0 + 1], ev["dists"][s1:s1 + 1])
+            rec["kl"] = kl_item(kl_ref["dists"][s0:e0], ev["dists"][s1:e1])
+            rec["kl_first_token"] = kl_item(kl_ref["dists"][s0:s0 + 1], ev["dists"][s1:s1 + 1])
         items.append(rec)
     for name in sorted({r["set"] for r in items}):
         if sets and name not in sets:
@@ -113,7 +121,9 @@ def compare(ev: Dict[str, Any], ref: Dict[str, Any], sets: Optional[List[str]] =
     return {
         "evaluated": ev["meta"]["label"], "reference": ref["meta"]["label"],
         "evaluated_path": ev["meta"]["model"], "reference_path": ref["meta"]["model"],
-        "topic": ev["meta"]["topic"], "convention": "evaluated - reference; KL(reference || evaluated)",
+        "kl_reference": kl_ref["meta"]["label"], "kl_reference_path": kl_ref["meta"]["model"],
+        "topic": ev["meta"]["topic"],
+        "convention": "evaluated - reference (NLL); KL(kl_reference || evaluated)",
         "per_set": per_set, "items": items,
     }
 
@@ -134,11 +144,15 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--eval", required=True, help="scored dir of the evaluated model (one topic)")
     ap.add_argument("--ref", required=True, help="scored dir of the reference model (same topic)")
+    ap.add_argument("--kl-ref", help="scored dir whose distributions are KL's first "
+                                     "argument (default: --ref)")
     ap.add_argument("--out", help="write the full result JSON here")
     ap.add_argument("--sets", nargs="*", help="restrict to these set names")
     a = ap.parse_args()
-    res = compare(load_scored(Path(a.eval)), load_scored(Path(a.ref)), a.sets)
-    print(f"{res['evaluated']}  vs  {res['reference']}   ({res['topic']})")
+    res = compare(load_scored(Path(a.eval)), load_scored(Path(a.ref)), a.sets,
+                  kl_ref=load_scored(Path(a.kl_ref)) if a.kl_ref else None)
+    print(f"{res['evaluated']}  vs  {res['reference']}   ({res['topic']})"
+          f"   KL ref = {res['kl_reference']}")
     for name, e in res["per_set"].items():
         print(f"  {name:22s} NLL diff {fmt(e['nll_diff'], True)}")
         if "kl" in e:
