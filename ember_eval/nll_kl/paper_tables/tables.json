@@ -1,0 +1,748 @@
+{
+ "table_A_vs_twin": [
+  {
+   "topic": "Ancient Rome",
+   "method": "EMBER",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": 5.214046506088594,
+   "sd_dnll_M_minus_T": 3.6207237544284254,
+   "mean_kl_T_to_M": 6.1283437582697555,
+   "sd_kl_T_to_M": 2.868418607676307
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "RMU",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.3029871833540147,
+   "sd_dnll_M_minus_T": 0.9766951687090714,
+   "mean_kl_T_to_M": 1.1426546148826349,
+   "sd_kl_T_to_M": 0.6164881320457968
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "SNMF",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.8772761841568488,
+   "sd_dnll_M_minus_T": 0.953497896749805,
+   "mean_kl_T_to_M": 0.8347247578148509,
+   "sd_kl_T_to_M": 0.628553433209154
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "EMBER",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": 2.733660572351999,
+   "sd_dnll_M_minus_T": 4.507965899660255,
+   "mean_kl_T_to_M": 2.800446927896732,
+   "sd_kl_T_to_M": 4.091731634609886
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "RMU",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.8473895587750195,
+   "sd_dnll_M_minus_T": 0.9410298911357887,
+   "mean_kl_T_to_M": 0.6274939921659857,
+   "sd_kl_T_to_M": 0.40652354068379426
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "SNMF",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.12563142667632232,
+   "sd_dnll_M_minus_T": 0.6117521820786125,
+   "mean_kl_T_to_M": 0.2418100282060514,
+   "sd_kl_T_to_M": 0.14647872867852602
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "EMBER",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.5665617557409922,
+   "sd_dnll_M_minus_T": 2.036517872552835,
+   "mean_kl_T_to_M": 0.9082812575051361,
+   "sd_kl_T_to_M": 1.8384703293097813
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "RMU",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.13758294499228754,
+   "sd_dnll_M_minus_T": 0.6403541370525403,
+   "mean_kl_T_to_M": 0.4553273211135458,
+   "sd_kl_T_to_M": 0.25770416311208555
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "SNMF",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.020465008620059563,
+   "sd_dnll_M_minus_T": 0.5133805176451176,
+   "mean_kl_T_to_M": 0.34475957347282593,
+   "sd_kl_T_to_M": 0.20842779167947764
+  },
+  {
+   "topic": "Baseball",
+   "method": "EMBER",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": 1.1369320189492886,
+   "sd_dnll_M_minus_T": 2.338456779037994,
+   "mean_kl_T_to_M": 1.7149948495450191,
+   "sd_kl_T_to_M": 1.5168746344224875
+  },
+  {
+   "topic": "Baseball",
+   "method": "RMU",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.32239444722313876,
+   "sd_dnll_M_minus_T": 1.0185492971426358,
+   "mean_kl_T_to_M": 0.6791608941471209,
+   "sd_kl_T_to_M": 0.4669295326009638
+  },
+  {
+   "topic": "Baseball",
+   "method": "SNMF",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.3028150002339894,
+   "sd_dnll_M_minus_T": 1.0538229370030436,
+   "mean_kl_T_to_M": 0.6909030360236738,
+   "sd_kl_T_to_M": 0.4765088475752639
+  },
+  {
+   "topic": "Baseball",
+   "method": "EMBER",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.0032701753494135664,
+   "sd_dnll_M_minus_T": 0.8478630633873624,
+   "mean_kl_T_to_M": 0.7326724841993911,
+   "sd_kl_T_to_M": 0.702007048991147
+  },
+  {
+   "topic": "Baseball",
+   "method": "RMU",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.12700689031461176,
+   "sd_dnll_M_minus_T": 0.777939110082976,
+   "mean_kl_T_to_M": 0.5489916615331025,
+   "sd_kl_T_to_M": 0.29390035851444346
+  },
+  {
+   "topic": "Baseball",
+   "method": "SNMF",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.1781589686275887,
+   "sd_dnll_M_minus_T": 0.8806964644765614,
+   "mean_kl_T_to_M": 0.5536623565200727,
+   "sd_kl_T_to_M": 0.30779495039188426
+  },
+  {
+   "topic": "Baseball",
+   "method": "EMBER",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.01878836330486294,
+   "sd_dnll_M_minus_T": 0.5655009677523618,
+   "mean_kl_T_to_M": 0.3920059098466565,
+   "sd_kl_T_to_M": 0.26795583419697366
+  },
+  {
+   "topic": "Baseball",
+   "method": "RMU",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.0042489253886058885,
+   "sd_dnll_M_minus_T": 0.5435123826163587,
+   "mean_kl_T_to_M": 0.37329341272944966,
+   "sd_kl_T_to_M": 0.26940150079964137
+  },
+  {
+   "topic": "Baseball",
+   "method": "SNMF",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.045707991698254735,
+   "sd_dnll_M_minus_T": 0.5239502740959001,
+   "mean_kl_T_to_M": 0.38837256600144393,
+   "sd_kl_T_to_M": 0.28177471815545607
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "EMBER",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": 1.6249095502523412,
+   "sd_dnll_M_minus_T": 2.5066423412964554,
+   "mean_kl_T_to_M": 1.9634637901330638,
+   "sd_kl_T_to_M": 2.0930472498071446
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "RMU",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.5728836935558973,
+   "sd_dnll_M_minus_T": 1.1590275316980116,
+   "mean_kl_T_to_M": 0.5788528111454627,
+   "sd_kl_T_to_M": 0.36446991792324007
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "SNMF",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.5143567374311444,
+   "sd_dnll_M_minus_T": 1.132450771235958,
+   "mean_kl_T_to_M": 0.5881724492066016,
+   "sd_kl_T_to_M": 0.36993200203617316
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "EMBER",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.2966333514149301,
+   "sd_dnll_M_minus_T": 1.283677781728803,
+   "mean_kl_T_to_M": 0.4385329859997921,
+   "sd_kl_T_to_M": 0.3400176802461619
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "RMU",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.1417475141605939,
+   "sd_dnll_M_minus_T": 0.7708696390207074,
+   "mean_kl_T_to_M": 0.3566115822233942,
+   "sd_kl_T_to_M": 0.17850907948646724
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "SNMF",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_T": 0.10888076798225352,
+   "sd_dnll_M_minus_T": 0.812294620218161,
+   "mean_kl_T_to_M": 0.36458653760132825,
+   "sd_kl_T_to_M": 0.1873750334557116
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "EMBER",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.15007502735003925,
+   "sd_dnll_M_minus_T": 0.695355655721834,
+   "mean_kl_T_to_M": 0.39248903878056984,
+   "sd_kl_T_to_M": 0.296999240906309
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "RMU",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.12900361800254556,
+   "sd_dnll_M_minus_T": 0.6871119429438277,
+   "mean_kl_T_to_M": 0.391727671149168,
+   "sd_kl_T_to_M": 0.29502009164738
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "SNMF",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_T": -0.12679409600723268,
+   "sd_dnll_M_minus_T": 0.6774626223039175,
+   "mean_kl_T_to_M": 0.3934054961263113,
+   "sd_kl_T_to_M": 0.29087757925614083
+  }
+ ],
+ "table_B_vs_full": [
+  {
+   "topic": "Ancient Rome",
+   "method": "EMBER",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 6.229797707865508,
+   "sd_dnll_M_minus_F": 3.775154730483522
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "RMU",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.7127640184229004,
+   "sd_dnll_M_minus_F": 0.982957916856635
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "SNMF",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.13847501762006625,
+   "sd_dnll_M_minus_F": 0.199985576368104
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "EMBER",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": 2.9048854594865263,
+   "sd_dnll_M_minus_F": 4.686093623644128
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "RMU",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": 1.0186144459095472,
+   "sd_dnll_M_minus_F": 0.9416749535582893
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "SNMF",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.045593460458205455,
+   "sd_dnll_M_minus_F": 0.14720134700748427
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "EMBER",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.5971258132435522,
+   "sd_dnll_M_minus_F": 1.9519931925253142
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "RMU",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.1681470024948475,
+   "sd_dnll_M_minus_F": 0.42848175483159767
+  },
+  {
+   "topic": "Ancient Rome",
+   "method": "SNMF",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.010099048882500336,
+   "sd_dnll_M_minus_F": 0.06955880069406481
+  },
+  {
+   "topic": "Baseball",
+   "method": "EMBER",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 1.513634518916913,
+   "sd_dnll_M_minus_F": 2.1339813290513616
+  },
+  {
+   "topic": "Baseball",
+   "method": "RMU",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.054308052744485344,
+   "sd_dnll_M_minus_F": 0.13338650971936578
+  },
+  {
+   "topic": "Baseball",
+   "method": "SNMF",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.07388749973363468,
+   "sd_dnll_M_minus_F": 0.29651315963190805
+  },
+  {
+   "topic": "Baseball",
+   "method": "EMBER",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.08925591230392456,
+   "sd_dnll_M_minus_F": 0.7420463048185837
+  },
+  {
+   "topic": "Baseball",
+   "method": "RMU",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": -0.03448080266127363,
+   "sd_dnll_M_minus_F": 0.154464614184489
+  },
+  {
+   "topic": "Baseball",
+   "method": "SNMF",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": -0.08563288097425054,
+   "sd_dnll_M_minus_F": 0.3164858002279069
+  },
+  {
+   "topic": "Baseball",
+   "method": "EMBER",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.0038860810020243707,
+   "sd_dnll_M_minus_F": 0.092744433611873
+  },
+  {
+   "topic": "Baseball",
+   "method": "RMU",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": -0.01065335691423269,
+   "sd_dnll_M_minus_F": 0.04208621323714149
+  },
+  {
+   "topic": "Baseball",
+   "method": "SNMF",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.03080570939541616,
+   "sd_dnll_M_minus_F": 0.1406653676889096
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "EMBER",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 2.220312373709251,
+   "sd_dnll_M_minus_F": 2.6617751640219587
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "RMU",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.0225191299010124,
+   "sd_dnll_M_minus_F": 0.10780148121110232
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "SNMF",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.0810460860257653,
+   "sd_dnll_M_minus_F": 0.181625539013579
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "EMBER",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.15724959320300036,
+   "sd_dnll_M_minus_F": 0.8778657842377756
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "RMU",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.0023637559486641944,
+   "sd_dnll_M_minus_F": 0.14224542579384028
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "SNMF",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_M_minus_F": -0.030502990229676154,
+   "sd_dnll_M_minus_F": 0.32117568411764713
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "EMBER",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": -0.004516719889731304,
+   "sd_dnll_M_minus_F": 0.031934288863513814
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "RMU",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.01655468945776239,
+   "sd_dnll_M_minus_F": 0.06248371112051876
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "method": "SNMF",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_M_minus_F": 0.018764211453075278,
+   "sd_dnll_M_minus_F": 0.11304927637859218
+  }
+ ],
+ "table_C_twin_vs_full": [
+  {
+   "topic": "Ancient Rome",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_T_minus_F": 1.0157512017769152,
+   "sd_dnll_T_minus_F": 1.0014682333982199,
+   "mean_kl_T_to_F": 0.9551177637450272,
+   "sd_kl_T_to_F": 0.7247890078302712
+  },
+  {
+   "topic": "Ancient Rome",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_T_minus_F": 0.17122488713452774,
+   "sd_dnll_T_minus_F": 0.6701861544162762,
+   "mean_kl_T_to_F": 0.2531142974885851,
+   "sd_kl_T_to_F": 0.16189329688550178
+  },
+  {
+   "topic": "Ancient Rome",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_T_minus_F": 0.030564057502559895,
+   "sd_dnll_T_minus_F": 0.5090263491949238,
+   "mean_kl_T_to_F": 0.3429349645034418,
+   "sd_kl_T_to_F": 0.21055508276089718
+  },
+  {
+   "topic": "Baseball",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_T_minus_F": 0.37670249996762406,
+   "sd_dnll_T_minus_F": 1.0776584979167043,
+   "mean_kl_T_to_F": 0.7070474311745931,
+   "sd_kl_T_to_F": 0.4950038243667594
+  },
+  {
+   "topic": "Baseball",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_T_minus_F": 0.09252608765333814,
+   "sd_dnll_T_minus_F": 0.7472304349128468,
+   "mean_kl_T_to_F": 0.5506840993030055,
+   "sd_kl_T_to_F": 0.3093031135023513
+  },
+  {
+   "topic": "Baseball",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_T_minus_F": -0.014902282302838566,
+   "sd_dnll_T_minus_F": 0.5536799495350592,
+   "mean_kl_T_to_F": 0.37344617493413146,
+   "sd_kl_T_to_F": 0.2692136665849347
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "question_group": "Target",
+   "n": 50,
+   "mean_dnll_T_minus_F": 0.5954028234569096,
+   "sd_dnll_T_minus_F": 1.1796296901087575,
+   "mean_kl_T_to_F": 0.5931511344570829,
+   "sd_kl_T_to_F": 0.37992820274709904
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "question_group": "Neighboring",
+   "n": 50,
+   "mean_dnll_T_minus_F": -0.1393837582119297,
+   "sd_dnll_T_minus_F": 0.7689775964939932,
+   "mean_kl_T_to_F": 0.35008510200946896,
+   "sd_kl_T_to_F": 0.17317659281726316
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "question_group": "Unrelated",
+   "n": 50,
+   "mean_dnll_T_minus_F": 0.14555830746030796,
+   "sd_dnll_T_minus_F": 0.6878918538265282,
+   "mean_kl_T_to_F": 0.3918120749172104,
+   "sd_kl_T_to_F": 0.29673109757994204
+  }
+ ],
+ "checkpoints": [
+  {
+   "topic": "Ancient Rome",
+   "role": "Full",
+   "model": "lment-1b-control-2e-b131k",
+   "path": "/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k",
+   "dtype": "fp32",
+   "scored": "2026-09-20T18:34:52",
+   "code_rev": "49a8e0d",
+   "gpu": "NVIDIA L40S",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/rome.json"
+  },
+  {
+   "topic": "Ancient Rome",
+   "role": "Twin",
+   "model": "lment-1b-norome-2e-b131k",
+   "path": "/home/dcor/galbarak2/hf-models/lment-1b-norome-2e-b131k",
+   "dtype": "fp32",
+   "scored": "2026-09-20T20:29:26",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA RTX A5000",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/rome.json"
+  },
+  {
+   "topic": "Ancient Rome",
+   "role": "EMBER",
+   "model": "ember_rome_d5000",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/ember_rome/d5000/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T03:00:55",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/rome.json"
+  },
+  {
+   "topic": "Ancient Rome",
+   "role": "RMU",
+   "model": "rmu_rome_L6hi_a10",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/rmu_rome_L6hi_a10_913349/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T03:08:12",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/rome.json"
+  },
+  {
+   "topic": "Ancient Rome",
+   "role": "SNMF",
+   "model": "snmf_rome_ratio_in",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/snmf_rome_ratio_in/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T03:15:24",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/rome.json"
+  },
+  {
+   "topic": "Baseball",
+   "role": "Full",
+   "model": "lment-1b-control-2e-b131k",
+   "path": "/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k",
+   "dtype": "fp32",
+   "scored": "2026-09-20T18:35:04",
+   "code_rev": "49a8e0d",
+   "gpu": "NVIDIA L40S",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/baseball.json"
+  },
+  {
+   "topic": "Baseball",
+   "role": "Twin",
+   "model": "lment-1b-nobaseball-2e-b131k",
+   "path": "/home/dcor/galbarak2/hf-models/lment-1b-nobaseball-2e-b131k",
+   "dtype": "fp32",
+   "scored": "2026-09-20T19:00:27",
+   "code_rev": "e9cfeb9",
+   "gpu": "NVIDIA H100 80GB HBM3",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/baseball.json"
+  },
+  {
+   "topic": "Baseball",
+   "role": "EMBER",
+   "model": "ember_baseball_d500",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/ember_baseball/d500/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T02:39:10",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/baseball.json"
+  },
+  {
+   "topic": "Baseball",
+   "role": "RMU",
+   "model": "rmu_baseball_L5mid_a100",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/rmu_baseball_L5mid_a100_913331/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T02:46:23",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/baseball.json"
+  },
+  {
+   "topic": "Baseball",
+   "role": "SNMF",
+   "model": "snmf_baseball_ratio_out",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/snmf_baseball_ratio_out/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T02:53:40",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/baseball.json"
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "role": "Full",
+   "model": "lment-1b-control-2e-b131k",
+   "path": "/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k",
+   "dtype": "fp32",
+   "scored": "2026-09-20T18:35:15",
+   "code_rev": "49a8e0d",
+   "gpu": "NVIDIA L40S",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/ai.json"
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "role": "Twin",
+   "model": "lment-1b-noai-2e-b131k",
+   "path": "/home/dcor/galbarak2/hf-models/lment-1b-noai-2e-b131k",
+   "dtype": "fp32",
+   "scored": "2026-09-20T20:29:39",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA RTX A5000",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/ai.json"
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "role": "EMBER",
+   "model": "ember_ai_d500",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/ember_ai/d500/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T02:24:19",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/ai.json"
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "role": "RMU",
+   "model": "rmu_ai_L5mid_a100",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/rmu_ai_L5mid_a100_913339/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T02:24:38",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/ai.json"
+  },
+  {
+   "topic": "Artificial Intelligence",
+   "role": "SNMF",
+   "model": "snmf_ai_ratio_in",
+   "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/snmf_ai_ratio_in/model",
+   "dtype": "fp32",
+   "scored": "2026-09-21T02:31:56",
+   "code_rev": "unknown",
+   "gpu": "NVIDIA GeForce RTX 3090",
+   "sets_file": "/home/dcor/galbarak2/LMEnt-nllkl/ember_eval/nll_kl/sets/ai.json"
+  }
+ ],
+ "conventions": {
+  "nll": "mean over answer tokens, teacher forced",
+  "delta": "left model minus reference; positive = less probability on the correct answer",
+  "kl": "KL(twin || model), twin always on the left, full vocabulary (100352)",
+  "sd": "sample standard deviation (ddof=1) across the 50 paired question-level values"
+ }
+}

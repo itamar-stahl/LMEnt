@@ -1,0 +1,3041 @@
+{
+ "topic": "Baseball",
+ "source": "ember_eval/completion_eval/data/completion_questions.json",
+ "seed": 20260920,
+ "excluded_from_unrelated": [
+  "Baseball",
+  "Golf"
+ ],
+ "unrelated_pool_topics": [
+  "Ancient Rome",
+  "Artificial intelligence",
+  "COVID-19 pandemic",
+  "Cannabis",
+  "Culture of Greece",
+  "Gambling",
+  "Gun",
+  "Halloween",
+  "Harry Potter",
+  "Heroin",
+  "Nazism",
+  "Pornography",
+  "Republic of Ireland",
+  "Uranium",
+  "Valentine's Day",
+  "World War II"
+ ],
+ "sets": {
+  "target_selection": [
+   {
+    "id": "b764cfcb397c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "How many players are on the field for one team in a standard baseball game?",
+    "stem": "In a standard baseball game, the number of players on the field for one team is",
+    "completion": " Nine"
+   },
+   {
+    "id": "13f0f244a485",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the term for when a batter safely reaches first base after hitting the ball?",
+    "stem": "The term for when a batter safely reaches first base after hitting the ball is a",
+    "completion": " Single"
+   },
+   {
+    "id": "c36d40e9f336",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What equipment does a baseball player use to hit the ball?",
+    "stem": "The equipment a baseball player uses to hit the ball is the",
+    "completion": " Bat"
+   },
+   {
+    "id": "f84143f3d151",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What object does the pitcher throw toward the batter?",
+    "stem": "The object the pitcher throws toward the batter is a",
+    "completion": " Baseball"
+   },
+   {
+    "id": "c4dc9c73fbe6",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the main objective of the offensive team in baseball?",
+    "stem": "In baseball, the main objective of the offensive team is",
+    "completion": " To score runs"
+   },
+   {
+    "id": "3e472c5d692e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is it called when a batter is struck out after receiving three strikes?",
+    "stem": "When a batter is struck out after receiving three strikes, the play is called a",
+    "completion": " Strikeout"
+   },
+   {
+    "id": "b0d35713bde6",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the raised area called from where the pitcher delivers the ball?",
+    "stem": "The raised area from which the pitcher delivers the ball is called",
+    "completion": " Pitcher's mound"
+   },
+   {
+    "id": "f3e99735c3f1",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is it called when a batter hits the ball out of the park for an automatic score?",
+    "stem": "When a batter hits the ball out of the park for an automatic score, the play is called",
+    "completion": " Home run"
+   },
+   {
+    "id": "c273e336261e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the traditional material used to make a baseball bat?",
+    "stem": "The traditional material used to make a baseball bat is",
+    "completion": " Wood"
+   },
+   {
+    "id": "4ea7ded5c407",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What material is used to cover a baseball?",
+    "stem": "The material used to cover a baseball is",
+    "completion": " Cowhide"
+   },
+   {
+    "id": "0fe5e15e72d4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "Which organization is responsible for organizing the World Baseball Classic?",
+    "stem": "The organization responsible for organizing the World Baseball Classic is",
+    "completion": " World Baseball Softball Confederation"
+   },
+   {
+    "id": "c3c15a268495",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is awarded to a batter after receiving four balls in an at-bat?",
+    "stem": "The call awarded to a batter after receiving four balls in an at-bat is",
+    "completion": " Walk"
+   },
+   {
+    "id": "d1328849185f",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is defined as a hit in baseball?",
+    "stem": "In baseball, the definition of a hit is",
+    "completion": " When the batter successfully reaches a base after hitting the ball"
+   },
+   {
+    "id": "05c47c6ffe8c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "Which position is responsible for covering first base?",
+    "stem": "The position responsible for covering first base is the",
+    "completion": " First baseman"
+   },
+   {
+    "id": "ce454bf2413f",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What do you call the area of the field that lies between the foul lines?",
+    "stem": "The area of the field that lies between the foul lines is called",
+    "completion": " Fair territory"
+   },
+   {
+    "id": "ec4361935f48",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What protective gear do batters wear for safety?",
+    "stem": "For safety, batters wear the protective gear known as",
+    "completion": " Protective helmet"
+   },
+   {
+    "id": "bedbffea6f81",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What role does the designated hitter (DH) serve on a baseball team?",
+    "stem": "On a baseball team, the designated hitter (DH)",
+    "completion": " Bats in place of the pitcher without fielding"
+   },
+   {
+    "id": "295df467e1d3",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the main objective of the defensive team in baseball?",
+    "stem": "In baseball, the main objective of the defensive team is",
+    "completion": " To record outs and prevent runs"
+   },
+   {
+    "id": "a68905186c41",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does it mean to steal a base in baseball?",
+    "stem": "In baseball, to steal a base means",
+    "completion": " To successfully advance to the next base during a pitch"
+   },
+   {
+    "id": "95f69a2699d2",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a pitchout in baseball?",
+    "stem": "In baseball, a pitchout is",
+    "completion": " A pitch thrown deliberately to counter a stolen base attempt"
+   },
+   {
+    "id": "e11da1b004d5",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What are the three basic tools used in baseball?",
+    "stem": "The three basic tools used in baseball are",
+    "completion": " Ball, bat, and glove"
+   },
+   {
+    "id": "4b37c2b63ff4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a balk in baseball?",
+    "stem": "In baseball, a balk is",
+    "completion": " An illegal pitching motion that allows runners to advance one base"
+   },
+   {
+    "id": "4ef726f3dd33",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does a complete inning in baseball consist of?",
+    "stem": "In baseball, a complete inning consists of",
+    "completion": " Both teams taking a turn to bat"
+   },
+   {
+    "id": "3d90f8f5f958",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is home plate in baseball?",
+    "stem": "In baseball, home plate is",
+    "completion": " The base the batter starts from and must touch to score"
+   },
+   {
+    "id": "b6b5de274f96",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What must a runner do after touching third base to score?",
+    "stem": "After touching third base, to score a runner must",
+    "completion": " Reach home plate"
+   },
+   {
+    "id": "d320c8451c69",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a tag out in baseball?",
+    "stem": "In baseball, a tag out is",
+    "completion": " When a runner is touched with the ball while off base"
+   },
+   {
+    "id": "9fada53a4242",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the function of an umpire in a baseball game?",
+    "stem": "In a baseball game, the function of an umpire is",
+    "completion": " To officiate and make decisions on plays"
+   },
+   {
+    "id": "f38aab5d37ad",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "How are the foul lines on a baseball field defined?",
+    "stem": "The way the foul lines on a baseball field are defined is that",
+    "completion": " They extend from home plate at 45-degree angles"
+   },
+   {
+    "id": "359afe9423f6",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "How many innings make up a standard professional baseball game?",
+    "stem": "The number of innings that make up a standard professional baseball game is",
+    "completion": " Nine"
+   },
+   {
+    "id": "8b632bcb74c8",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a triple play in baseball?",
+    "stem": "In baseball, a triple play is",
+    "completion": " Recording three outs in a single continuous play"
+   },
+   {
+    "id": "815ca5be2067",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a batting average in baseball?",
+    "stem": "In baseball, a batting average is",
+    "completion": " The number of hits divided by at bats"
+   },
+   {
+    "id": "5ce605aff748",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does the abbreviation RBI stand for?",
+    "stem": "The abbreviation RBI stands for",
+    "completion": " Runs Batted In"
+   },
+   {
+    "id": "d7c7fbeb2615",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does ERA measure in baseball pitching statistics?",
+    "stem": "In baseball pitching statistics, ERA measures",
+    "completion": " Earned Run Average"
+   },
+   {
+    "id": "e884c8fad395",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does WHIP stand for in baseball?",
+    "stem": "In baseball, WHIP stands for",
+    "completion": " Walks plus Hits per Inning Pitched"
+   },
+   {
+    "id": "62d2961fbb1b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does OPS measure in a batter's performance?",
+    "stem": "In a batter's performance, OPS measures",
+    "completion": " Overall batting ability by combining on-base and slugging percentages"
+   },
+   {
+    "id": "9dbdc3704042",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does WAR stand for in baseball analytics?",
+    "stem": "In baseball analytics, WAR stands for",
+    "completion": " Wins Above Replacement"
+   },
+   {
+    "id": "aeba23e7236b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "Which era in baseball is known for low scoring and dominant pitching?",
+    "stem": "The era in baseball known for low scoring and dominant pitching is",
+    "completion": " The dead-ball era"
+   },
+   {
+    "id": "b850f365fb00",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "Who is known as the 'Father of Baseball' for his contributions to statistical recording?",
+    "stem": "The man known as the 'Father of Baseball' for his contributions to statistical recording is",
+    "completion": " Henry Chadwick"
+   },
+   {
+    "id": "13f0697918f5",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "Approximately how thick is the hitting end of a typical baseball bat?",
+    "stem": "The thickness of the hitting end of a typical baseball bat is",
+    "completion": " About 2.5 inches in diameter"
+   },
+   {
+    "id": "b9dce955ec34",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "Name one basic breaking ball pitch thrown by pitchers.",
+    "stem": "One basic breaking ball pitch thrown by pitchers is the",
+    "completion": " Curveball"
+   },
+   {
+    "id": "cf47cc52ce47",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the role of a utility player on a baseball team?",
+    "stem": "On a baseball team, the role of a utility player is",
+    "completion": " To play multiple positions as needed"
+   },
+   {
+    "id": "a32ea3392ce9",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the primary function of the bullpen in baseball?",
+    "stem": "In baseball, the primary function of the bullpen is that",
+    "completion": " It is where relief pitchers warm up"
+   },
+   {
+    "id": "e57a9525f315",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does it mean when a runner is stranded in baseball?",
+    "stem": "In baseball, when a runner is stranded it means that",
+    "completion": " They remain on base after three outs are recorded"
+   },
+   {
+    "id": "5c145d667da2",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What rule was introduced in 2023 to help shorten game times in MLB?",
+    "stem": "The rule introduced in 2023 to help shorten game times in MLB was",
+    "completion": " A pitch clock rule that penalizes delays"
+   },
+   {
+    "id": "05cd714e5a5b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a dugout in baseball?",
+    "stem": "In baseball, a dugout is",
+    "completion": " The area where players sit when they are not on the field"
+   },
+   {
+    "id": "b809baeedeff",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "With which team did Jackie Robinson break baseball’s color barrier?",
+    "stem": "Jackie Robinson broke baseball's color barrier with the",
+    "completion": " Brooklyn Dodgers"
+   },
+   {
+    "id": "e95f43b6902e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the 'strike zone' in baseball?",
+    "stem": "In baseball, the 'strike zone' is",
+    "completion": " The area over home plate between the batter's shoulders and knees"
+   },
+   {
+    "id": "4362833217ee",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does on-base percentage (OBP) measure?",
+    "stem": "On-base percentage (OBP) measures",
+    "completion": " A batter's ability to reach base"
+   },
+   {
+    "id": "fd296f9dc485",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does slugging percentage (SLG) evaluate in a batter?",
+    "stem": "In a batter, slugging percentage (SLG) evaluates",
+    "completion": " The batter's power hitting ability"
+   },
+   {
+    "id": "a133625facb2",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is Baseball5?",
+    "stem": "Baseball5 is",
+    "completion": " A variation of baseball played with simplified rules and without traditional equipment"
+   }
+  ],
+  "target_test": [
+   {
+    "id": "2f516f3131c8",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the term for the point scored when a runner touches home plate?",
+    "stem": "The term for the point scored when a runner touches home plate is",
+    "completion": " Run"
+   },
+   {
+    "id": "f46e6c66b8bd",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How many innings are played in a standard Major League Baseball game?",
+    "stem": "A standard Major League Baseball game is played over",
+    "completion": " Nine innings"
+   },
+   {
+    "id": "59c1753313a3",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which defensive player stands behind the batter to catch the pitched ball?",
+    "stem": "The defensive player who stands behind the batter to catch the pitched ball is the",
+    "completion": " Catcher"
+   },
+   {
+    "id": "2f0d732dff24",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What term describes a home run hit with the bases loaded?",
+    "stem": "The term that describes a home run hit with the bases loaded is",
+    "completion": " Grand slam"
+   },
+   {
+    "id": "08b6595b78bf",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "For ballparks built or remodeled after 1958, what is the minimum distance from home plate to the left or right field fence?",
+    "stem": "For ballparks built or remodeled after 1958, the minimum distance from home plate to the left or right field fence is",
+    "completion": " 325 feet"
+   },
+   {
+    "id": "a4bae27a409c",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How many major leagues does Major League Baseball (MLB) consist of?",
+    "stem": "The number of major leagues that Major League Baseball (MLB) consists of is",
+    "completion": " Two"
+   },
+   {
+    "id": "2822fa509853",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How many outs must be recorded to end a team’s turn at bat in an inning?",
+    "stem": "Ending a team's turn at bat in an inning requires",
+    "completion": " Three outs"
+   },
+   {
+    "id": "d0b78750e507",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the play called when a batted ball is caught by a fielder before it touches the ground?",
+    "stem": "When a batted ball is caught by a fielder before it touches the ground, the play is called a",
+    "completion": " Fly out"
+   },
+   {
+    "id": "d1804735e956",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What do you call a pitch thrown outside the strike zone that is not hit by the batter?",
+    "stem": "A pitch thrown outside the strike zone that is not hit by the batter is called a",
+    "completion": " Ball"
+   },
+   {
+    "id": "d6e6dc02010c",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the defensive play called when two outs are recorded in one continuous play?",
+    "stem": "When two outs are recorded in one continuous play, the defensive play is called a",
+    "completion": " Double play"
+   },
+   {
+    "id": "efec5e08b307",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What type of bat is typically used in professional baseball?",
+    "stem": "The type of bat typically used in professional baseball is",
+    "completion": " Wooden bat"
+   },
+   {
+    "id": "6204d2592556",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the term for the area outside the foul lines?",
+    "stem": "The term for the area outside the foul lines is",
+    "completion": " Foul territory"
+   },
+   {
+    "id": "23962195f657",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What piece of equipment do fielders use to catch the ball?",
+    "stem": "The piece of equipment fielders use to catch the ball is a",
+    "completion": " Glove (or mitt)"
+   },
+   {
+    "id": "e4c14eee56e2",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the term for a hit that allows a batter to reach second base safely?",
+    "stem": "The term for a hit that allows a batter to reach second base safely is a",
+    "completion": " Double"
+   },
+   {
+    "id": "8e1f42550240",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the term for a hit that allows a batter to reach third base safely?",
+    "stem": "The term for a hit that allows a batter to reach third base safely is a",
+    "completion": " Triple"
+   },
+   {
+    "id": "8b70ebafdd48",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How does a batter score a run in baseball?",
+    "stem": "In baseball, a batter scores a run",
+    "completion": " By touching all four bases in order and returning to home plate"
+   },
+   {
+    "id": "90dc208765bc",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How many strikes does it take to strike a batter out?",
+    "stem": "Striking a batter out takes",
+    "completion": " Three strikes"
+   },
+   {
+    "id": "2ee8763a65e5",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the primary role of the pitcher?",
+    "stem": "The primary role of the pitcher is",
+    "completion": " To throw pitches to get batters out"
+   },
+   {
+    "id": "ed1ed36d2283",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which player is responsible for signaling the pitch type to the pitcher?",
+    "stem": "The player responsible for signaling the pitch type to the pitcher is the",
+    "completion": " Catcher"
+   },
+   {
+    "id": "97e637e652c0",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Approximately what is the circumference of a regulation baseball?",
+    "stem": "The circumference of a regulation baseball is approximately",
+    "completion": " 9 inches"
+   },
+   {
+    "id": "bdc1f49e0076",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the center of a baseball typically made of?",
+    "stem": "The center of a baseball is typically made of",
+    "completion": " Rubber or cork"
+   },
+   {
+    "id": "f62bebd9006e",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What color are the stitches on a standard baseball?",
+    "stem": "The color of the stitches on a standard baseball is",
+    "completion": " Red"
+   },
+   {
+    "id": "39d7952ab593",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the typical length of a baseball bat used by adult players?",
+    "stem": "The typical length of a baseball bat used by adult players is",
+    "completion": " Around 34 inches"
+   },
+   {
+    "id": "7bffc99f8b4c",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How many players are on the field for a team during play?",
+    "stem": "In baseball, the number of players on the field for a team during play is",
+    "completion": " Nine"
+   },
+   {
+    "id": "efdfbf4bc960",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What nickname is often given to baseball in the United States?",
+    "stem": "In the United States, the nickname often given to baseball is",
+    "completion": " America's Pastime"
+   },
+   {
+    "id": "6cc353ee2001",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What penalty is imposed when a pitcher commits an illegal pickoff move?",
+    "stem": "When a pitcher commits an illegal pickoff move, the penalty imposed is",
+    "completion": " Balk"
+   },
+   {
+    "id": "84e024128a61",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which two leagues make up Major League Baseball (MLB)?",
+    "stem": "The two leagues that make up Major League Baseball (MLB) are",
+    "completion": " The National League and the American League"
+   },
+   {
+    "id": "b0d69864c934",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How does a batter earn a walk?",
+    "stem": "A batter earns a walk",
+    "completion": " By receiving four balls during his at-bat"
+   },
+   {
+    "id": "b83e8430c15f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the main goal of the batter?",
+    "stem": "The main goal of the batter is",
+    "completion": " To hit the ball and reach base safely"
+   },
+   {
+    "id": "c3287b67d17a",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "After reaching first base, which base does the batter run to next?",
+    "stem": "After reaching first base, the batter runs next to",
+    "completion": " Second base"
+   },
+   {
+    "id": "2248036bd1cb",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which base does a runner touch after second base?",
+    "stem": "After second base, the base a runner touches is",
+    "completion": " Third base"
+   },
+   {
+    "id": "4c966ac03750",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What part of the field is known as the pitcher's mound?",
+    "stem": "The part of the field known as the pitcher's mound is",
+    "completion": " The elevated area where the pitcher throws the ball"
+   },
+   {
+    "id": "f43bb1bda8fc",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the term for when a batter is awarded first base after being hit by a pitch?",
+    "stem": "The term for when a batter is awarded first base after being hit by a pitch is",
+    "completion": " Hit by pitch"
+   },
+   {
+    "id": "16d9bfab4753",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is an error in baseball?",
+    "stem": "In baseball, an error is",
+    "completion": " A misplay by a fielder that allows runners to advance"
+   },
+   {
+    "id": "e36e7ae7b1af",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is a force out in baseball?",
+    "stem": "In baseball, a force out is",
+    "completion": " When a runner is put out because he is forced to advance to the next base"
+   },
+   {
+    "id": "8e39822f109d",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How many outs end a half-inning in baseball?",
+    "stem": "In baseball, the number of outs that end a half-inning is",
+    "completion": " Three"
+   },
+   {
+    "id": "e3bfd65a3f63",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which international baseball competition features national teams?",
+    "stem": "The international baseball competition that features national teams is the",
+    "completion": " World Baseball Classic"
+   },
+   {
+    "id": "a28961c88349",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which iconic ballpark is known for its 'Green Monster' left-field wall?",
+    "stem": "The iconic ballpark known for its 'Green Monster' left-field wall is",
+    "completion": " Fenway Park"
+   },
+   {
+    "id": "1cbbf9f08289",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What are assists in baseball fielding?",
+    "stem": "In baseball fielding, assists are",
+    "completion": " Plays where a fielder helps make an out by touching the ball"
+   },
+   {
+    "id": "84abc33d6f84",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What does 'innings pitched' refer to in baseball statistics?",
+    "stem": "In baseball statistics, 'innings pitched' refers to",
+    "completion": " The number of outs recorded by a pitcher divided by three"
+   },
+   {
+    "id": "ac8f650044f1",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What official document records every play in a baseball game?",
+    "stem": "The official document that records every play in a baseball game is",
+    "completion": " The score report"
+   },
+   {
+    "id": "7e9239eda276",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is sabermetrics in baseball?",
+    "stem": "In baseball, sabermetrics is",
+    "completion": " The study and analysis of baseball statistics"
+   },
+   {
+    "id": "ebc557b70048",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is a changeup in baseball?",
+    "stem": "In baseball, a changeup is",
+    "completion": " A slower pitch designed to disrupt the batter’s timing"
+   },
+   {
+    "id": "4d475413aaf5",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the batting order in baseball?",
+    "stem": "In baseball, the batting order is",
+    "completion": " The pre-determined sequence in which players come to bat"
+   },
+   {
+    "id": "dcc8c79a4acb",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What must a pitcher have in contact with during his delivery from the mound?",
+    "stem": "During his delivery from the mound, a pitcher must maintain",
+    "completion": " One foot on the rubber"
+   },
+   {
+    "id": "67dad8903c56",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What does 'fair territory' mean in baseball?",
+    "stem": "In baseball, 'fair territory' means",
+    "completion": " The area between the foul lines where the ball is in play"
+   },
+   {
+    "id": "c23dd415ca42",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the primary function of the catcher's mitt?",
+    "stem": "The primary function of the catcher's mitt is",
+    "completion": " To catch pitches and field balls"
+   },
+   {
+    "id": "619381717574",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "How is a hit used to calculate batting average?",
+    "stem": "A hit is used to calculate batting average",
+    "completion": " By dividing the number of hits by the number of at bats"
+   },
+   {
+    "id": "8adc397a7390",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Which statistic is obtained by adding OBP and SLG together?",
+    "stem": "The statistic obtained by adding OBP and SLG together is",
+    "completion": " OPS"
+   },
+   {
+    "id": "fd6783607c85",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Who coined the term 'sabermetrics' in baseball?",
+    "stem": "The term 'sabermetrics' in baseball was coined by",
+    "completion": " Bill James"
+   }
+  ],
+  "neighbour_selection": [
+   {
+    "id": "f0cca6c43b13",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "In basketball, how many players from one team are allowed on the court during play?",
+    "stem": "In basketball, the number of players from one team allowed on the court during play is",
+    "completion": " 5"
+   },
+   {
+    "id": "fd5c9a1cd260",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for collecting the ball after a missed shot in basketball?",
+    "stem": "In basketball, the term for collecting the ball after a missed shot is",
+    "completion": " Rebound"
+   },
+   {
+    "id": "f4e03c7c06d5",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "Which basketball position is primarily responsible for scoring from distance?",
+    "stem": "The basketball position primarily responsible for scoring from distance is the",
+    "completion": " Shooting guard"
+   },
+   {
+    "id": "2deb6391bb01",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the standard height of a basketball hoop from the ground?",
+    "stem": "The standard height of a basketball hoop from the ground is",
+    "completion": " 10 feet"
+   },
+   {
+    "id": "964d880de8d1",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the maximum number of personal fouls a player can commit in the NBA before fouling out?",
+    "stem": "In the NBA, the maximum number of personal fouls a player can commit before fouling out is",
+    "completion": " 6"
+   },
+   {
+    "id": "a55dd0f9706f",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the main governing body of soccer in Europe?",
+    "stem": "The main governing body of soccer in Europe is",
+    "completion": " UEFA"
+   },
+   {
+    "id": "6751806141ae",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for a soccer game that ends with both teams having the same score?",
+    "stem": "The term for a soccer game that ends with both teams having the same score is",
+    "completion": " Draw"
+   },
+   {
+    "id": "65bcf2b052ef",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "Which country won the FIFA World Cup in 2018?",
+    "stem": "The country that won the FIFA World Cup in 2018 is",
+    "completion": " France"
+   },
+   {
+    "id": "606ae0409361",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the side boundary of a soccer pitch called?",
+    "stem": "The side boundary of a soccer pitch is called the",
+    "completion": " Touchline"
+   },
+   {
+    "id": "76a0194f46de",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many points is a touchdown worth in American football?",
+    "stem": "In American football, a touchdown is worth",
+    "completion": " 6"
+   },
+   {
+    "id": "6611372d5f5a",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the area called in American football where teams score touchdowns?",
+    "stem": "In American football, the area where teams score touchdowns is called the",
+    "completion": " End zone"
+   },
+   {
+    "id": "f0caac9348cc",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many quarters are in a professional American football game?",
+    "stem": "The number of quarters in a professional American football game is",
+    "completion": " 4"
+   },
+   {
+    "id": "070f731ecfbe",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for the kick that starts or resumes play in American football?",
+    "stem": "In American football, the term for the kick that starts or resumes play is a",
+    "completion": " Kickoff"
+   },
+   {
+    "id": "12bee24a0c84",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is it called when a bowler takes three wickets in three consecutive deliveries?",
+    "stem": "When a bowler takes three wickets in three consecutive deliveries, it is called a",
+    "completion": " Hat-trick"
+   },
+   {
+    "id": "421325f48932",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "In cricket, what is the term for the area where the batsman stands?",
+    "stem": "In cricket, the term for the area where the batsman stands is the",
+    "completion": " Crease"
+   },
+   {
+    "id": "b98aa50ea831",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What protective gear do cricket batsmen wear on their legs?",
+    "stem": "On their legs, cricket batsmen wear the protective gear known as",
+    "completion": " Pads"
+   },
+   {
+    "id": "632c45823a59",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many players are on the field for the bowling team in a cricket match?",
+    "stem": "In a cricket match, the number of players on the field for the bowling team is",
+    "completion": " 11"
+   },
+   {
+    "id": "d48ea12b158a",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the maximum number of runs that can be scored from a single legal delivery in cricket?",
+    "stem": "In cricket, the maximum number of runs that can be scored from a single legal delivery is",
+    "completion": " 6"
+   },
+   {
+    "id": "67a2a7339564",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "In ice hockey, how many players, including the goalie, are on the ice for one team?",
+    "stem": "In ice hockey, the number of players on the ice for one team, including the goalie, is",
+    "completion": " 6"
+   },
+   {
+    "id": "f1299b36b482",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is it called when a player scores three goals in a single ice hockey game?",
+    "stem": "When a player scores three goals in a single ice hockey game, it is called a",
+    "completion": " Hat-trick"
+   },
+   {
+    "id": "a2791a4a56d8",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the position called that guards the goal in ice hockey?",
+    "stem": "In ice hockey, the position that guards the goal is called the",
+    "completion": " Goaltender"
+   },
+   {
+    "id": "ca933238c718",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How long is a professional ice hockey game in regulation time (excluding overtime)?",
+    "stem": "In regulation time, excluding overtime, a professional ice hockey game lasts",
+    "completion": " 60 minutes"
+   },
+   {
+    "id": "d63de8d2fbce",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many periods are in a standard professional ice hockey game?",
+    "stem": "The number of periods in a standard professional ice hockey game is",
+    "completion": " 3"
+   },
+   {
+    "id": "6f7b792d8519",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the name of the penalty given for high-sticking in ice hockey?",
+    "stem": "In ice hockey, the penalty given for high-sticking is called a",
+    "completion": " High-sticking penalty"
+   },
+   {
+    "id": "27d8cfef1788",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the name of the shot in tennis where a player hits the ball before it bounces?",
+    "stem": "In tennis, the shot where a player hits the ball before it bounces is called a",
+    "completion": " Volley"
+   },
+   {
+    "id": "c562e0381fed",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What piece of equipment is used to hit the ball in tennis?",
+    "stem": "In tennis, the piece of equipment used to hit the ball is a",
+    "completion": " Racket"
+   },
+   {
+    "id": "d77d1d39449f",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for a score of one under par on a golf hole?",
+    "stem": "In golf, the term for a score of one under par on a hole is",
+    "completion": " Birdie"
+   },
+   {
+    "id": "dc510f4ce884",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many points are needed to win a standard volleyball set (excluding the final set)?",
+    "stem": "The number of points needed to win a standard volleyball set, excluding the final set, is",
+    "completion": " 25"
+   },
+   {
+    "id": "ed26bd7a3ecc",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the defensive move called that prevents the ball from hitting the court in volleyball?",
+    "stem": "In volleyball, the defensive move that prevents the ball from hitting the court is called a",
+    "completion": " Dig"
+   },
+   {
+    "id": "2366fc4515c4",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for scoring points by grounding the ball in the opponent's in-goal area in rugby?",
+    "stem": "In rugby, the term for scoring points by grounding the ball in the opponent's in-goal area is a",
+    "completion": " Try"
+   },
+   {
+    "id": "443a757637a9",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many points is a conversion kick worth after scoring a try in rugby?",
+    "stem": "In rugby, a conversion kick after a try is worth",
+    "completion": " 2"
+   },
+   {
+    "id": "843c8ab9d745",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the method of restarting play after a minor infringement in rugby called?",
+    "stem": "In rugby, the method of restarting play after a minor infringement is called a",
+    "completion": " Scrum"
+   },
+   {
+    "id": "191938fdf9e7",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "In Rugby League, how many players are on the field for one team?",
+    "stem": "In Rugby League, the number of players on the field for one team is",
+    "completion": " 13"
+   },
+   {
+    "id": "0ca8b5a63391",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "In professional boxing, how many rounds are typically fought in a championship match?",
+    "stem": "In professional boxing, the number of rounds typically fought in a championship match is",
+    "completion": " 12"
+   },
+   {
+    "id": "d7504e384fc9",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What term is used in boxing for a decisive knockout?",
+    "stem": "In boxing, the term used for a decisive knockout is",
+    "completion": " KO"
+   },
+   {
+    "id": "051c6096cd57",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What protective equipment do boxers wear on their hands?",
+    "stem": "On their hands, boxers wear the protective equipment known as",
+    "completion": " Gloves"
+   },
+   {
+    "id": "63082dc71366",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the area called where a boxing match takes place?",
+    "stem": "The area where a boxing match takes place is called the",
+    "completion": " Ring"
+   },
+   {
+    "id": "7380573853ac",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is it called when a boxer wins because the opponent's team stops the fight?",
+    "stem": "When a boxer wins because the opponent's team stops the fight, the result is called a",
+    "completion": " Retirement"
+   },
+   {
+    "id": "d05516e2c38c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for a high, deep shot in badminton that pushes the opponent to the back of the court?",
+    "stem": "In badminton, the term for a high, deep shot that pushes the opponent to the back of the court is a",
+    "completion": " Clear"
+   },
+   {
+    "id": "f4cb4fd90b57",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the name of the feathered projectile used in badminton?",
+    "stem": "The feathered projectile used in badminton is called a",
+    "completion": " Shuttlecock"
+   },
+   {
+    "id": "5d6247d25377",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many games must a player win to secure a match in standard badminton scoring?",
+    "stem": "In standard badminton scoring, the number of games a player must win to secure a match is",
+    "completion": " 2"
+   },
+   {
+    "id": "483c66bafea8",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is another common name for table tennis?",
+    "stem": "Another common name for table tennis is",
+    "completion": " Ping pong"
+   },
+   {
+    "id": "b84b4cd9a0d4",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What common term describes the rotation given to the ball in table tennis?",
+    "stem": "In table tennis, the common term that describes the rotation given to the ball is",
+    "completion": " Spin"
+   },
+   {
+    "id": "c52b30e2839d",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What piece of equipment is used by players to hit the ball in table tennis?",
+    "stem": "In table tennis, the piece of equipment used by players to hit the ball is a",
+    "completion": " Paddle"
+   },
+   {
+    "id": "e243b455ad6a",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "In softball, how many bases are on the field besides home plate?",
+    "stem": "In softball, the number of bases on the field besides home plate is",
+    "completion": " 3"
+   },
+   {
+    "id": "28848df1da43",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for a hit in softball that allows the batter to reach first base safely?",
+    "stem": "In softball, the term for a hit that allows the batter to reach first base safely is a",
+    "completion": " Single"
+   },
+   {
+    "id": "e81d2bcfc874",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "How many players from one team are typically on the field in softball?",
+    "stem": "In softball, the number of players from one team typically on the field is",
+    "completion": " 9"
+   },
+   {
+    "id": "b1c6c0d9c734",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What piece of equipment do softball fielders use to catch the ball?",
+    "stem": "The piece of equipment softball fielders use to catch the ball is",
+    "completion": " Glove"
+   },
+   {
+    "id": "f83b3c9ca292",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the term for an out in softball when a runner is forced out due to missing a base?",
+    "stem": "In softball, the term for an out when a runner is forced out due to missing a base is a",
+    "completion": " Force out"
+   },
+   {
+    "id": "e7813487d0fd",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_train",
+    "question": "What is the pitching style used in softball?",
+    "stem": "The pitching style used in softball is",
+    "completion": " Underhand"
+   }
+  ],
+  "neighbour_test": [
+   {
+    "id": "5d6402c23e5e",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How many points is a shot taken from behind the three-point line worth in basketball?",
+    "stem": "In basketball, a shot taken from behind the three-point line is worth",
+    "completion": " 3"
+   },
+   {
+    "id": "7fde13dec688",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In basketball, how many quarters are played in a standard NBA game?",
+    "stem": "In basketball, the number of quarters played in a standard NBA game is",
+    "completion": " 4"
+   },
+   {
+    "id": "1e9ce82997ee",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How many seconds does a team have to attempt a shot in NBA play?",
+    "stem": "In NBA play, the time a team has to attempt a shot is",
+    "completion": " 24 seconds"
+   },
+   {
+    "id": "b2d8e51228d8",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How many teams currently compete in the NBA?",
+    "stem": "The number of teams currently competing in the NBA is",
+    "completion": " 30"
+   },
+   {
+    "id": "c495d1b7690a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In basketball, what is the term for blocking an opponent's shot?",
+    "stem": "In basketball, the term for blocking an opponent's shot is a",
+    "completion": " Block"
+   },
+   {
+    "id": "1a7bb3913b51",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the violation called when a basketball player illegally takes extra steps without dribbling?",
+    "stem": "When a basketball player illegally takes extra steps without dribbling, the violation is called",
+    "completion": " Traveling"
+   },
+   {
+    "id": "b7e730e005b7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the rectangular area near the basket, often called 'the paint', used for?",
+    "stem": "The rectangular area near the basket, often called 'the paint', is used for",
+    "completion": " Defensive and offensive positioning"
+   },
+   {
+    "id": "89abab865082",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In soccer, how many players are on each team during a standard match?",
+    "stem": "In soccer, the number of players on each team during a standard match is",
+    "completion": " 11"
+   },
+   {
+    "id": "a75f830bff36",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the official name of the area where a goalkeeper can use their hands?",
+    "stem": "The official name of the area where a goalkeeper can use their hands is the",
+    "completion": " Penalty area"
+   },
+   {
+    "id": "c53709ae385c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How long is a standard professional soccer match (excluding stoppage time)?",
+    "stem": "Excluding stoppage time, a standard professional soccer match lasts",
+    "completion": " 90 minutes"
+   },
+   {
+    "id": "a17952db843e",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In soccer, what is the term for a kick awarded after a foul occurs in the penalty area?",
+    "stem": "In soccer, the term for a kick awarded after a foul occurs in the penalty area is",
+    "completion": " Penalty kick"
+   },
+   {
+    "id": "0f749bf69867",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for when a player scores three goals in one soccer match?",
+    "stem": "The term for when a player scores three goals in one soccer match is a",
+    "completion": " Hat-trick"
+   },
+   {
+    "id": "6dd3db5eb47a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In soccer, what is the method called for restarting play when the ball goes out at the side?",
+    "stem": "In soccer, the method for restarting play when the ball goes out at the side is called a",
+    "completion": " Throw-in"
+   },
+   {
+    "id": "78a9331ec5eb",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In American football, how many players from one team are on the field during play?",
+    "stem": "In American football, the number of players from one team on the field during play is",
+    "completion": " 11"
+   },
+   {
+    "id": "c6e9f74913b6",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How many points is a field goal worth in American football?",
+    "stem": "In American football, a field goal is worth",
+    "completion": " 3"
+   },
+   {
+    "id": "dcc7f869a874",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What protective gear is worn on the head in American football?",
+    "stem": "In American football, the protective gear worn on the head is a",
+    "completion": " Helmet"
+   },
+   {
+    "id": "753a98448254",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In American football, how many yards must be gained for a new set of downs?",
+    "stem": "In American football, gaining a new set of downs requires",
+    "completion": " 10 yards"
+   },
+   {
+    "id": "337dc9a6e51b",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "Which position in American football is primarily responsible for passing the ball?",
+    "stem": "In American football, the position primarily responsible for passing the ball is the",
+    "completion": " Quarterback"
+   },
+   {
+    "id": "228d8c2b927c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for a pass that goes incomplete or out of bounds in American football?",
+    "stem": "In American football, the term for a pass that goes incomplete or out of bounds is",
+    "completion": " Incomplete pass"
+   },
+   {
+    "id": "749580de9629",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In cricket, what is the term for hitting the ball over the boundary without it bouncing?",
+    "stem": "In cricket, the term for hitting the ball over the boundary without it bouncing is a",
+    "completion": " Six"
+   },
+   {
+    "id": "0950ecb4a665",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What piece of equipment does a batsman use in cricket?",
+    "stem": "In cricket, the piece of equipment a batsman uses is a",
+    "completion": " Bat"
+   },
+   {
+    "id": "fa2842d9dd7a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How many balls are bowled in one over in cricket?",
+    "stem": "In cricket, the number of balls bowled in one over is",
+    "completion": " 6"
+   },
+   {
+    "id": "b6902bb8e938",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What type of bowling in cricket involves spinning the ball away from a right-handed batsman?",
+    "stem": "In cricket, the type of bowling that involves spinning the ball away from a right-handed batsman is",
+    "completion": " Leg-spin"
+   },
+   {
+    "id": "69ccf7cd33a8",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term used when a batsman is dismissed by the ball hitting the stumps?",
+    "stem": "The term used when a batsman is dismissed by the ball hitting the stumps is",
+    "completion": " Bowled"
+   },
+   {
+    "id": "a14b6f88fb71",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In ice hockey, what is the term for the area in front of the net used for scoring chances?",
+    "stem": "In ice hockey, the term for the area in front of the net used for scoring chances is the",
+    "completion": " Slot"
+   },
+   {
+    "id": "4ce937657a13",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "On what surface is ice hockey played?",
+    "stem": "Ice hockey is played on a",
+    "completion": " Rink"
+   },
+   {
+    "id": "3d528a87480a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In tennis, what is the term for a score of 40-40?",
+    "stem": "In tennis, the term for a score of 40-40 is",
+    "completion": " Deuce"
+   },
+   {
+    "id": "730e89f0222e",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for zero points in tennis?",
+    "stem": "In tennis, the term for zero points is",
+    "completion": " Love"
+   },
+   {
+    "id": "b79f3e3acf6a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the surface at Wimbledon played on?",
+    "stem": "The surface played on at Wimbledon is",
+    "completion": " Grass"
+   },
+   {
+    "id": "3daf5d145b0a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "How many Grand Slam tournaments are held each year in tennis?",
+    "stem": "In tennis, the number of Grand Slam tournaments held each year is",
+    "completion": " 4"
+   },
+   {
+    "id": "c039f8da9d7b",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for a serve in tennis that the opponent fails to touch?",
+    "stem": "In tennis, the term for a serve that the opponent fails to touch is",
+    "completion": " Ace"
+   },
+   {
+    "id": "9861f3b1af71",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In tennis, how many games are generally needed to win a set (ignoring tie-breaks)?",
+    "stem": "In tennis, ignoring tie-breaks, the number of games generally needed to win a set is",
+    "completion": " 6"
+   },
+   {
+    "id": "5921f1035b50",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In tennis scoring, what number comes after 15?",
+    "stem": "In tennis scoring, the number that comes after 15 is",
+    "completion": " 30"
+   },
+   {
+    "id": "a8ca45b95570",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the designated area on a tennis court where the serve must land?",
+    "stem": "The designated area on a tennis court where the serve must land is the",
+    "completion": " Service box"
+   },
+   {
+    "id": "c97c84f497f5",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "On a standard golf course, how many holes are played?",
+    "stem": "On a standard golf course, the number of holes played is",
+    "completion": " 18"
+   },
+   {
+    "id": "653487b82373",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "Which professional golf tournament is commonly referred to as The Masters?",
+    "stem": "The professional golf tournament commonly referred to as The Masters is",
+    "completion": " The Masters Tournament"
+   },
+   {
+    "id": "45d4e3497416",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for a score three under par on a single golf hole?",
+    "stem": "The term for a score three under par on a single golf hole is",
+    "completion": " Albatross"
+   },
+   {
+    "id": "e00e9a2ce18a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "Which club is primarily used on the green to roll the ball into the hole in golf?",
+    "stem": "In golf, the club primarily used on the green to roll the ball into the hole is the",
+    "completion": " Putter"
+   },
+   {
+    "id": "aa6f534999fc",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In indoor volleyball, how many players from each team are on the court?",
+    "stem": "In indoor volleyball, the number of players from each team on the court is",
+    "completion": " 6"
+   },
+   {
+    "id": "bce772b4cd95",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for an attacking hit over the net in volleyball?",
+    "stem": "In volleyball, the term for an attacking hit over the net is a",
+    "completion": " Spike"
+   },
+   {
+    "id": "18740decec70",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is it called when a serve in volleyball lands in the opponent's court without being touched?",
+    "stem": "When a serve in volleyball lands in the opponent's court without being touched, it is called",
+    "completion": " Ace"
+   },
+   {
+    "id": "e5b2f884fc26",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In Rugby Union, how many players are on each team during a match?",
+    "stem": "In Rugby Union, the number of players on each team during a match is",
+    "completion": " 15"
+   },
+   {
+    "id": "56fb3b8a42e7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In badminton, how many points must a player score to win a game in standard play?",
+    "stem": "In badminton standard play, the number of points a player must score to win a game is",
+    "completion": " 21"
+   },
+   {
+    "id": "a1f281955a73",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In doubles badminton, how many players are on the court in total?",
+    "stem": "In doubles badminton, the total number of players on the court is",
+    "completion": " 4"
+   },
+   {
+    "id": "e9dcfabfba41",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In table tennis, how many points must a player reach to win a game in standard competitive play?",
+    "stem": "In standard competitive table tennis, the number of points a player must reach to win a game is",
+    "completion": " 11"
+   },
+   {
+    "id": "b2ed036b86e7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In a doubles table tennis match, how many players are on each side?",
+    "stem": "In a doubles table tennis match, the number of players on each side is",
+    "completion": " 2"
+   },
+   {
+    "id": "f08e7cb66a35",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "In softball, how many innings are typically played in a standard game?",
+    "stem": "In softball, the number of innings typically played in a standard game is",
+    "completion": " 7"
+   },
+   {
+    "id": "991beae42314",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "Which position in softball is responsible for throwing the ball from the pitching circle?",
+    "stem": "In softball, the position responsible for throwing the ball from the pitching circle is the",
+    "completion": " Pitcher"
+   },
+   {
+    "id": "372f838847b0",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the standard distance between bases in softball?",
+    "stem": "In softball, the standard distance between bases is",
+    "completion": " 60 feet"
+   },
+   {
+    "id": "3c0740578613",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "SimdomQA_test",
+    "question": "What is the protective equipment worn by a softball catcher called?",
+    "stem": "The protective equipment worn by a softball catcher is called",
+    "completion": " Catcher's gear"
+   }
+  ],
+  "unrelated_selection": [
+   {
+    "id": "57b5213206e3",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What was the median time between the onset of symptoms and death reported by the Italian Istituto Superiore di Sanità?",
+    "stem": "The median time between the onset of symptoms and death reported by the Italian Istituto Superiore di Sanità was",
+    "completion": " Twelve days"
+   },
+   {
+    "id": "26630ad4c214",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_train",
+    "question": "Which two modern Greek poets have each been awarded the Nobel Prize for Literature?",
+    "stem": "The two modern Greek poets who have each been awarded the Nobel Prize for Literature are",
+    "completion": " George Seferis and Odysseus Elytis"
+   },
+   {
+    "id": "24fbf6ebc64a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What percentage of hospitalized children needed intensive care according to a European multinational study from June 2020?",
+    "stem": "According to a European multinational study from June 2020, the percentage of hospitalized children who needed intensive care was",
+    "completion": " About 8%"
+   },
+   {
+    "id": "76f8de6a9886",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "In Ancient Rome, what does the term 'novus homo' signify?",
+    "stem": "In Ancient Rome, the term 'novus homo' signifies",
+    "completion": " A man who is the first in his family to become a consul"
+   },
+   {
+    "id": "a730a15398d8",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What synthetic form of THC is marketed as Marinol?",
+    "stem": "The synthetic form of THC marketed as Marinol is",
+    "completion": " Dronabinol"
+   },
+   {
+    "id": "8f236027afef",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gun",
+    "source_split": "QA_train",
+    "question": "What path does a bullet follow through the air called?",
+    "stem": "The path a bullet follows through the air is called",
+    "completion": " Trajectory"
+   },
+   {
+    "id": "2c8e00d85293",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "Approximately what fraction of the island does the Republic of Ireland cover?",
+    "stem": "The fraction of the island that the Republic of Ireland covers is",
+    "completion": " About five-sixths"
+   },
+   {
+    "id": "709e0b9ab8e9",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "How many tons of heroin were estimated to be made worldwide in 2016?",
+    "stem": "The amount of heroin estimated to have been made worldwide in 2016 was",
+    "completion": " 448 tons"
+   },
+   {
+    "id": "7686e64b6fb3",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What sex of cannabis plant produces pollen but not buds?",
+    "stem": "The sex of cannabis plant that produces pollen but not buds is",
+    "completion": " Male"
+   },
+   {
+    "id": "01348c54a8c2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What synthetic opioid became a more common cause of drug-related deaths than heroin in the US after 2015?",
+    "stem": "In the US after 2015, the synthetic opioid that became a more common cause of drug-related deaths than heroin was",
+    "completion": " fentanyl"
+   },
+   {
+    "id": "358995dc7ba1",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "What is the term for the expected average gain or loss of a bet?",
+    "stem": "The term for the expected average gain or loss of a bet is",
+    "completion": " Expected value"
+   },
+   {
+    "id": "fa3e1c41e1dd",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Halloween",
+    "source_split": "QA_train",
+    "question": "Which country popularized the use of pumpkins for jack-o'-lanterns?",
+    "stem": "The country that popularized the use of pumpkins for jack-o'-lanterns was",
+    "completion": " United States"
+   },
+   {
+    "id": "36872d893927",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_train",
+    "question": "What factors influence the flavors of Greek cuisine?",
+    "stem": "The factors that influence the flavors of Greek cuisine are",
+    "completion": " Season and geography"
+   },
+   {
+    "id": "97b5743fe502",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What EU regulation entered into force on August 1, 2024, establishing the first comprehensive EU-wide AI regulation?",
+    "stem": "The EU regulation that entered into force on August 1, 2024, establishing the first comprehensive EU-wide AI regulation, was",
+    "completion": " EU Artificial Intelligence Act"
+   },
+   {
+    "id": "4f13bd04853b",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "How many points does catching the Golden Snitch earn?",
+    "stem": "Catching the Golden Snitch earns",
+    "completion": " 150"
+   },
+   {
+    "id": "82a0dd1bf665",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "Which porn niche features stepfamily role-play scenarios?",
+    "stem": "The porn niche that features stepfamily role-play scenarios is",
+    "completion": " Pseudo-incest or step porn"
+   },
+   {
+    "id": "3fba725e3920",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What magical bus transports stranded witches and wizards?",
+    "stem": "The magical bus that transports stranded witches and wizards is",
+    "completion": " The Knight Bus"
+   },
+   {
+    "id": "876fd643a6e1",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Halloween",
+    "source_split": "QA_train",
+    "question": "Which Pope re-dedicated the Pantheon to 'St Mary and all martyrs' in 609?",
+    "stem": "The pope who re-dedicated the Pantheon to 'St Mary and all martyrs' in 609 was",
+    "completion": " Pope Boniface IV"
+   },
+   {
+    "id": "f85782369b17",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "In what ancient geographic region was the opium poppy cultivated as long ago as 3400 BC?",
+    "stem": "The ancient geographic region where the opium poppy was cultivated as long ago as 3400 BC was",
+    "completion": " lower Mesopotamia"
+   },
+   {
+    "id": "89348eac2973",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What is the world's largest single uranium deposit?",
+    "stem": "The world's largest single uranium deposit is",
+    "completion": " Olympic Dam Mine"
+   },
+   {
+    "id": "1a9077bf12e2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "Is uranium denser than lead?",
+    "stem": "On the question of whether uranium is denser than lead, the answer is",
+    "completion": " Yes"
+   },
+   {
+    "id": "749d499ed053",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What subfield of AI allows programs to read, write and communicate in human languages?",
+    "stem": "The subfield of AI that allows programs to read, write and communicate in human languages is",
+    "completion": " Natural language processing (NLP)"
+   },
+   {
+    "id": "8703c1194710",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "Which international organization promoting economic cooperation is the Republic of Ireland a member of?",
+    "stem": "The international organization promoting economic cooperation that the Republic of Ireland belongs to is",
+    "completion": " OECD"
+   },
+   {
+    "id": "e4fa1f781e4e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What device is commonly used to vaporize cannabis concentrates via dabbing?",
+    "stem": "The device commonly used to vaporize cannabis concentrates via dabbing is a",
+    "completion": " Dab rig"
+   },
+   {
+    "id": "d94000c56c74",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What genocide resulted in the extermination of two-thirds of Europe's Jewish population?",
+    "stem": "The genocide that resulted in the extermination of two-thirds of Europe's Jewish population was",
+    "completion": " The Holocaust"
+   },
+   {
+    "id": "3cee4a44c707",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What is the chemical symbol for uranium?",
+    "stem": "The chemical symbol for uranium is",
+    "completion": " U"
+   },
+   {
+    "id": "b9f9c1f962cb",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gun",
+    "source_split": "QA_train",
+    "question": "What feature at the base of a cartridge aids extraction by providing a lip?",
+    "stem": "The feature at the base of a cartridge that aids extraction by providing a lip is the",
+    "completion": " Rim"
+   },
+   {
+    "id": "e79e2e7c359c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What ability involves using input from sensors to deduce aspects of the world?",
+    "stem": "The ability to use input from sensors to deduce aspects of the world is called",
+    "completion": " Machine perception"
+   },
+   {
+    "id": "84db187719f1",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "In which part of the human body does uranium tend to accumulate due to its affinity for phosphates?",
+    "stem": "Due to its affinity for phosphates, uranium tends to accumulate in the",
+    "completion": " Bones"
+   },
+   {
+    "id": "eab8baa1d8e3",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What chemical compound of uranium is used in the enrichment process?",
+    "stem": "The chemical compound of uranium used in the enrichment process is",
+    "completion": " UF₆"
+   },
+   {
+    "id": "9d004de74565",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What molecule in raw cannabis is the acidic precursor to THC?",
+    "stem": "The molecule in raw cannabis that is the acidic precursor to THC is",
+    "completion": " THCA"
+   },
+   {
+    "id": "b9556ac074a7",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "A bettor wagering on the combined points scored in a game is betting on the ______.",
+    "stem": "A bettor wagering on the combined points scored in a game is betting on the",
+    "completion": " Over/under"
+   },
+   {
+    "id": "0e67bd483350",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What is the half-life of uranium-235?",
+    "stem": "The half-life of uranium-235 is",
+    "completion": " 704 million years"
+   },
+   {
+    "id": "7c830e26a9db",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What type of local search aims to iteratively improve candidate solutions by mutating and recombining them?",
+    "stem": "The type of local search that aims to iteratively improve candidate solutions by mutating and recombining them is",
+    "completion": " Evolutionary computation"
+   },
+   {
+    "id": "ebd34c9d755a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What kind of search is used for game-playing programs looking for a winning position?",
+    "stem": "The kind of search used by game-playing programs looking for a winning position is",
+    "completion": " Adversarial search"
+   },
+   {
+    "id": "5376931fe34c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "What two factors differentiate mainstream porn from amateur home videos?",
+    "stem": "The two factors that differentiate mainstream porn from amateur home videos are",
+    "completion": " Professional performers and studio production"
+   },
+   {
+    "id": "c02f995e7866",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What happens to the required dosage of heroin as tolerance develops?",
+    "stem": "As tolerance to heroin develops, the effect on the required dosage is that",
+    "completion": " increased doses are needed to achieve the same effects"
+   },
+   {
+    "id": "bb995d5f624f",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Halloween",
+    "source_split": "QA_train",
+    "question": "What was the name of the 1919 book that was the first book-length history of Halloween in the US?",
+    "stem": "The 1919 book that was the first book-length history of Halloween in the US was titled",
+    "completion": " The Book of Hallowe'en"
+   },
+   {
+    "id": "fd42674459f5",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "From which element is uranium-233 produced?",
+    "stem": "Uranium-233 is produced from",
+    "completion": " Thorium"
+   },
+   {
+    "id": "015ea2e4725c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_train",
+    "question": "Who established the rules of deductive reasoning in Western philosophy?",
+    "stem": "The rules of deductive reasoning in Western philosophy were established by",
+    "completion": " Aristotle"
+   },
+   {
+    "id": "ee893d681715",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "What did Saint Valentine supposedly restore to the daughter of his jailer?",
+    "stem": "According to legend, Saint Valentine healed the daughter of his jailer by restoring",
+    "completion": " Her sight"
+   },
+   {
+    "id": "e520ca892ed2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What percentage of healthy adults not exposed to SARS-CoV-2 have CD4+ T cells that recognize the S protein?",
+    "stem": "The percentage of healthy adults not exposed to SARS-CoV-2 who have CD4+ T cells that recognize the S protein is",
+    "completion": " About 35%"
+   },
+   {
+    "id": "ef5f14a546de",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "Which William Shakespeare play mentions Saint Valentine's Day?",
+    "stem": "The William Shakespeare play that mentions Saint Valentine's Day is",
+    "completion": " Hamlet"
+   },
+   {
+    "id": "ba3213a7b7c3",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "How many members are there in Seanad Éireann?",
+    "stem": "The number of members in Seanad Éireann is",
+    "completion": " 60"
+   },
+   {
+    "id": "002d604b5f8a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What SS program was established by Himmler to increase the birth rate of \"Aryan\" children through extramarital relations?",
+    "stem": "The SS program established by Himmler to increase the birth rate of 'Aryan' children through extramarital relations was",
+    "completion": " Lebensborn"
+   },
+   {
+    "id": "470080e4086d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What term describes the self-sustaining sequence of fission reactions in uranium-235?",
+    "stem": "The self-sustaining sequence of fission reactions in uranium-235 is called",
+    "completion": " Nuclear chain reaction"
+   },
+   {
+    "id": "8652c66a79d4",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Who was the Roman general responsible for destroying Carthage in the Third Punic War?",
+    "stem": "The Roman general responsible for destroying Carthage in the Third Punic War was",
+    "completion": " Scipio Aemilianus"
+   },
+   {
+    "id": "43b5e8020498",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "On a slot machine, what name is given to the large top payout?",
+    "stem": "On a slot machine, the name given to the large top payout is",
+    "completion": " Jackpot"
+   },
+   {
+    "id": "c5b9c0404d4b",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "In blackjack, an Ace can count as one or ______ points.",
+    "stem": "In blackjack, an Ace can count as one or",
+    "completion": " Eleven"
+   },
+   {
+    "id": "df724b305763",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "Who teaches Potions in Harry's first year?",
+    "stem": "In Harry's first year, Potions is taught by",
+    "completion": " Severus Snape"
+   }
+  ],
+  "unrelated_test": [
+   {
+    "id": "0b1be984c370",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "What is the approximate land area of the Republic of Ireland in square kilometers?",
+    "stem": "The approximate land area of the Republic of Ireland in square kilometers is",
+    "completion": " 70,273 km²"
+   },
+   {
+    "id": "ab9e4d617488",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What did the use of candles at graves symbolize for Christians?",
+    "stem": "For Christians, the use of candles at graves symbolized",
+    "completion": " The light of Christ"
+   },
+   {
+    "id": "757719f5fc85",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "At what age were wealthy Roman boys typically sent to a private elementary school (ludus)?",
+    "stem": "Wealthy Roman boys were typically sent to a private elementary school called the ludus",
+    "completion": " At age 7"
+   },
+   {
+    "id": "f136bd331b33",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "Which porn magazine started the so-called ‘Pubic Wars’ with Playboy by showing pubic hair?",
+    "stem": "The porn magazine that started the so-called ‘Pubic Wars’ with Playboy by showing pubic hair was",
+    "completion": " Penthouse"
+   },
+   {
+    "id": "96484b6e6f39",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What measurement in inches or millimeters describes the internal diameter of a barrel?",
+    "stem": "The measurement in inches or millimeters that describes the internal diameter of a barrel is called",
+    "completion": " Caliber"
+   },
+   {
+    "id": "51123d74017b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What short-barrel shotgun with the barrel cut below legal length is called?",
+    "stem": "A short-barrel shotgun with the barrel cut below legal length is called a",
+    "completion": " Sawed-off shotgun"
+   },
+   {
+    "id": "21c8926eae2b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "How many vaccine doses had been preordered globally by December 2020?",
+    "stem": "By December 2020, the number of vaccine doses preordered globally was",
+    "completion": " More than 10 billion"
+   },
+   {
+    "id": "536697b8b796",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "What profession do Hermione's parents practise?",
+    "stem": "The profession Hermione's parents practise is",
+    "completion": " Dentistry"
+   },
+   {
+    "id": "5a577248d6b1",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "The statistical randomness requirement for slot machines prevents what unlawful practice?",
+    "stem": "The statistical randomness requirement for slot machines is intended to prevent the unlawful practice of",
+    "completion": " Fixing payouts"
+   },
+   {
+    "id": "f86703bf6cc4",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "What term describes risking something of value on a chance event to win a prize?",
+    "stem": "Risking something of value on a chance event in order to win a prize is known as",
+    "completion": " Gambling"
+   },
+   {
+    "id": "51bb8485fcde",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "In what year was the German Workers' Party founded?",
+    "stem": "The German Workers' Party was founded in the year",
+    "completion": " 1919"
+   },
+   {
+    "id": "11eca89aa912",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What was the aerial battle fought between Britain and Germany called?",
+    "stem": "The aerial battle fought between Britain and Germany was called",
+    "completion": " Battle of Britain"
+   },
+   {
+    "id": "9a7bdc989685",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "In the Christian liturgical year, what is the three-day period dedicated to remembering the dead called?",
+    "stem": "In the Christian liturgical year, the three-day period dedicated to remembering the dead is called",
+    "completion": " Allhallowtide"
+   },
+   {
+    "id": "d770c9e5f10d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "Which famous temple is located on the Acropolis of Athens?",
+    "stem": "The famous temple located on the Acropolis of Athens is",
+    "completion": " The Parthenon"
+   },
+   {
+    "id": "35c8a5783e62",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What percentage of symptomatic patients develop critical symptoms like respiratory failure?",
+    "stem": "The percentage of symptomatic patients who develop critical symptoms like respiratory failure is",
+    "completion": " 5%"
+   },
+   {
+    "id": "f9c2d6031e87",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Cannabis",
+    "source_split": "QA_test",
+    "question": "Under the US Controlled Substances Act, what schedule is cannabis classified as at the federal level?",
+    "stem": "Under the US Controlled Substances Act, cannabis is classified at the federal level as",
+    "completion": " Schedule I"
+   },
+   {
+    "id": "9dd060f7fa44",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Cannabis",
+    "source_split": "QA_test",
+    "question": "What is the term for cannabis products used for enjoyment rather than treatment?",
+    "stem": "The term for cannabis products used for enjoyment rather than treatment is",
+    "completion": " Recreational cannabis"
+   },
+   {
+    "id": "a9f10cf94779",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "Which German weapon is considered the first assault rifle?",
+    "stem": "The German weapon considered the first assault rifle is the",
+    "completion": " StG 44"
+   },
+   {
+    "id": "11f75168fc7f",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which language was commonly used by the educated elite alongside Latin?",
+    "stem": "The language commonly used by the educated elite alongside Latin was",
+    "completion": " Greek"
+   },
+   {
+    "id": "ca7159e26fd6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What was the first recorded purpose-built haunted attraction opened in 1915?",
+    "stem": "The first recorded purpose-built haunted attraction, opened in 1915, was",
+    "completion": " Orton and Spooner Ghost House"
+   },
+   {
+    "id": "c8352e7dc679",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "Which casino table game involves predicting which numbered pocket a ball will land in?",
+    "stem": "The casino table game in which players predict which numbered pocket a ball will land in is",
+    "completion": " Roulette"
+   },
+   {
+    "id": "c7c941e1d8d5",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "What ministerial council was created under the Good Friday Agreement to foster cooperation between the Republic of Ireland and Northern Ireland?",
+    "stem": "The ministerial council created under the Good Friday Agreement to foster cooperation between the Republic of Ireland and Northern Ireland was",
+    "completion": " The North/South Ministerial Council"
+   },
+   {
+    "id": "703447e4e967",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What general name is given to guns that use electricity instead of explosives to accelerate projectiles?",
+    "stem": "Guns that use electricity instead of explosives to accelerate projectiles are generally called",
+    "completion": " Electromagnetic guns"
+   },
+   {
+    "id": "dd631df3ffa4",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "In what year did the United States Congress completely ban the sale, importation, or manufacture of heroin?",
+    "stem": "The United States Congress completely banned the sale, importation, or manufacture of heroin in",
+    "completion": " 1924"
+   },
+   {
+    "id": "ad2454d5ce5c",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Cannabis",
+    "source_split": "QA_test",
+    "question": "In the United States, what maximum THC content percentage classifies a cannabis plant as hemp?",
+    "stem": "In the United States, the maximum THC content percentage that classifies a cannabis plant as hemp is",
+    "completion": " 0.3%"
+   },
+   {
+    "id": "d0bf557ce810",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What cartridge type has its primer in the rim of the case?",
+    "stem": "The cartridge type that has its primer in the rim of the case is called",
+    "completion": " Rimfire"
+   },
+   {
+    "id": "68b555a9b0bd",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "Which type of microscopy uses uranyl acetate as a contrast stain?",
+    "stem": "The type of microscopy that uses uranyl acetate as a contrast stain is",
+    "completion": " Transmission electron microscopy"
+   },
+   {
+    "id": "23465e6ef235",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "Which famous artist emerged from the Cretan School?",
+    "stem": "The famous artist who emerged from the Cretan School was",
+    "completion": " El Greco"
+   },
+   {
+    "id": "477866b32c41",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What two countries did Germany invade in April 1940 to protect iron ore shipments?",
+    "stem": "In April 1940, to protect iron ore shipments, Germany invaded",
+    "completion": " Denmark and Norway"
+   },
+   {
+    "id": "63cf4b792e62",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "Which 1897 novel by Bram Stoker contributed to Halloween's monster imagery?",
+    "stem": "The 1897 novel by Bram Stoker that contributed to Halloween's monster imagery was",
+    "completion": " Dracula"
+   },
+   {
+    "id": "c3c6ee753a48",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "Which spell lights the tip of a wand?",
+    "stem": "The spell that lights the tip of a wand is",
+    "completion": " Lumos"
+   },
+   {
+    "id": "3a527bd77f9a",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor was the first to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy?",
+    "stem": "The first Emperor to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy, was",
+    "completion": " Diocletian"
+   },
+   {
+    "id": "3cb17eed56cf",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "What slang label is used for porn featuring older women?",
+    "stem": "The slang label used for porn featuring older women is",
+    "completion": " MILF"
+   },
+   {
+    "id": "8cc62c690a4a",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "What is the national anthem of the Republic of Ireland?",
+    "stem": "The national anthem of the Republic of Ireland is",
+    "completion": " Amhrán na bhFiann"
+   },
+   {
+    "id": "56a337ea3260",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "Abnormal levels of what mineral during hospitalization are associated with poor prognoses?",
+    "stem": "Abnormal levels during hospitalization associated with poor prognoses are found in the mineral",
+    "completion": " Sodium"
+   },
+   {
+    "id": "9572d631a2e9",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "Which potion grants the drinker luck?",
+    "stem": "The potion that grants the drinker luck is",
+    "completion": " Felix Felicis"
+   },
+   {
+    "id": "1a8124ddf0d6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What is the period of peace and prosperity under Augustus known as?",
+    "stem": "The period of peace and prosperity under Augustus is known as",
+    "completion": " Pax Romana"
+   },
+   {
+    "id": "ff203be975ff",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "Hardcore porn explicitly shows what type of acts?",
+    "stem": "Hardcore porn explicitly shows",
+    "completion": " Explicit sexual activity such as penetration"
+   },
+   {
+    "id": "3504d1aca145",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "On which date is St. Patrick's Day celebrated in the Republic of Ireland?",
+    "stem": "St. Patrick's Day is celebrated in the Republic of Ireland on",
+    "completion": " March 17th"
+   },
+   {
+    "id": "1247db2b82a0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "According to the Italian Istituto Superiore di Sanità, what was the most common comorbidity among COVID-19 deaths?",
+    "stem": "According to the Italian Istituto Superiore di Sanità, the most common comorbidity among COVID-19 deaths was",
+    "completion": " Hypertension"
+   },
+   {
+    "id": "a4bc4f7ce613",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Who was the first Emperor of Rome?",
+    "stem": "The first Emperor of Rome was",
+    "completion": " Augustus"
+   },
+   {
+    "id": "d77dc693a314",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What does the acronym 6-MAM stand for in the context of heroin metabolism?",
+    "stem": "In the context of heroin metabolism, the acronym 6-MAM stands for",
+    "completion": " 6-monoacetylmorphine"
+   },
+   {
+    "id": "a898a0dbbd94",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "What building materials did Byzantine architects primarily use instead of marble?",
+    "stem": "Instead of marble, the building materials Byzantine architects primarily used were",
+    "completion": " Stone and brick"
+   },
+   {
+    "id": "d34961d22ba7",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "Which ancient playwright is credited with effectively inventing drama through his early tragedies?",
+    "stem": "The ancient playwright credited with effectively inventing drama through his early tragedies is",
+    "completion": " Aeschylus"
+   },
+   {
+    "id": "49f306f86186",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What gene allele is a common risk factor for severe COVID-19 in Asian populations?",
+    "stem": "The gene allele that is a common risk factor for severe COVID-19 in Asian populations is the",
+    "completion": " DOCK2 gene"
+   },
+   {
+    "id": "c316f382e096",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "What method of travel uses fireplaces and green flames?",
+    "stem": "The method of travel that uses fireplaces and green flames is",
+    "completion": " Floo powder"
+   },
+   {
+    "id": "8e985fbeb6b4",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which famous Roman temple is renowned for its large dome and central oculus?",
+    "stem": "The famous Roman temple renowned for its large dome and central oculus is",
+    "completion": " The Pantheon"
+   },
+   {
+    "id": "c13847a22013",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "Which spell unlocks doors?",
+    "stem": "The spell that unlocks doors is",
+    "completion": " Alohomora"
+   },
+   {
+    "id": "dfc63a43b071",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "In what year did the Roman Republic begin (traditionally)?",
+    "stem": "Traditionally, the Roman Republic began in",
+    "completion": " 509 BC"
+   },
+   {
+    "id": "28a37984bf83",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What emergency ICD-10 disease code did the WHO assign for deaths from lab-confirmed SARS-CoV-2 infection?",
+    "stem": "For deaths from lab-confirmed SARS-CoV-2 infection, the emergency ICD-10 disease code assigned by the WHO was",
+    "completion": " U07.1"
+   }
+  ]
+ }
+}

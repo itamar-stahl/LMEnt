@@ -63,7 +63,7 @@
 # checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
 : "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+: "${RUNS:=/home/dcor/galbarak2/runs/mlp_erasure}"   # overridable, see run_rmu.slurm
 
 : "${MODE:=factorize}"
 : "${OUT_TAG:?set OUT_TAG}"
@@ -156,10 +156,16 @@ select-ratio)
   ;;
 erase)
   : "${SAVE_TO:?set SAVE_TO}"
+  # LAYERS_IN / LAYERS_OUT ("lo hi", inclusive) override RANGE_CELL. Cell 0's
+  # output range on 18 layers is [0,5] and silently skips features at layer 6;
+  # pass "4 6" on both sides to cover every layer the caches hold features at.
+  # shellcheck disable=SC2086
   exec "$PY" "$ROOT/snmf.py" erase \
     --model "$MODEL_PATH" --out "$SNMF_OUT" --dtype "$DTYPE" \
     --delta-in "$DELTA_IN" --delta-out "$DELTA_OUT" \
-    --range-cell "$RANGE_CELL" --save "$SAVE_TO"
+    --range-cell "$RANGE_CELL" \
+    ${LAYERS_IN:+--layers-in $LAYERS_IN} ${LAYERS_OUT:+--layers-out $LAYERS_OUT} \
+    --save "$SAVE_TO"
   ;;
 judge-smoke)
   # Loads the 23.9 GB judge and sends the two real prompts. Nothing else in
