@@ -52,7 +52,9 @@
 # checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
 : "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
 PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# RUNS is overridable for the same reason as ROOT: /home/dcor is quota-bound
+# (1 TB, read `quota -s`), so a grid of saved candidates goes elsewhere.
+: "${RUNS:=/home/dcor/galbarak2/runs/mlp_erasure}"
 
 : "${MODE:=probe}"
 : "${OUT_TAG:?set OUT_TAG}"
@@ -70,6 +72,10 @@ RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 : "${ALPHA:=100}"
 : "${DTYPE:=fp32}"
 : "${SAVE_MODEL:=--no-save-model}"
+: "${SEED:=42}"
+: "${LAYER_ID:=}"            # empty -> rmu.py's default (5, layer_ids 3 4 5);
+                              # set -> --layer-id L --layer-ids L-2 L-1 L, the
+                              # same 3-layer band the probe reports per layer
 
 DATA="$ROOT/Ember-on-LMEnt/data"
 OUT="$RUNS/rmu_${OUT_TAG}_${SLURM_JOB_ID}"
@@ -105,5 +111,6 @@ exec "$PY" "$ROOT/rmu.py" \
   --dtype "$DTYPE" --lr "$LR" --alpha "$ALPHA" --steering "$STEERING" \
   --batch-size "$BATCH_SIZE" --min-len "$MIN_LEN" \
   --max-length "$MAX_LENGTH" \
-  --max-num-batches "$MAX_NUM_BATCHES" \
+  --max-num-batches "$MAX_NUM_BATCHES" --seed "$SEED" \
+  ${LAYER_ID:+--layer-id "$LAYER_ID" --layer-ids $((LAYER_ID-2)) $((LAYER_ID-1)) "$LAYER_ID"} \
   --out "$OUT" --sanity $SAVE_MODEL

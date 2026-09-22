@@ -1,0 +1,3041 @@
+{
+ "topic": "Artificial intelligence",
+ "source": "ember_eval/completion_eval/data/completion_questions.json",
+ "seed": 20260920,
+ "excluded_from_unrelated": [
+  "Artificial intelligence"
+ ],
+ "unrelated_pool_topics": [
+  "Ancient Rome",
+  "Baseball",
+  "COVID-19 pandemic",
+  "Cannabis",
+  "Culture of Greece",
+  "Gambling",
+  "Golf",
+  "Gun",
+  "Halloween",
+  "Harry Potter",
+  "Heroin",
+  "Nazism",
+  "Pornography",
+  "Republic of Ireland",
+  "Uranium",
+  "Valentine's Day",
+  "World War II"
+ ],
+ "sets": {
+  "target_selection": [
+   {
+    "id": "bca410b6beda",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What program became the first computer Go-playing system to beat a professional Go player without handicaps in 2016?",
+    "stem": "The first computer Go-playing system to beat a professional Go player without handicaps, in 2016, was",
+    "completion": " AlphaGo"
+   },
+   {
+    "id": "ebd34c9d755a",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What kind of search is used for game-playing programs looking for a winning position?",
+    "stem": "The kind of search used by game-playing programs looking for a winning position is",
+    "completion": " Adversarial search"
+   },
+   {
+    "id": "a1a1796439ab",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What type of neural networks feed the output signal back into the input, allowing short-term memories of previous input events?",
+    "stem": "Neural networks that feed the output signal back into the input, allowing short-term memories of previous input events, are known as",
+    "completion": " Recurrent neural networks (RNNs)"
+   },
+   {
+    "id": "3c5467ccf9e2",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What AI pioneer announced his resignation from Google in May 2023 to freely speak out about the risks of AI?",
+    "stem": "The AI pioneer who announced his resignation from Google in May 2023 in order to speak out freely about the risks of AI was",
+    "completion": " Geoffrey Hinton"
+   },
+   {
+    "id": "97b5743fe502",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What EU regulation entered into force on August 1, 2024, establishing the first comprehensive EU-wide AI regulation?",
+    "stem": "The EU regulation that entered into force on August 1, 2024, establishing the first comprehensive EU-wide AI regulation, was",
+    "completion": " EU Artificial Intelligence Act"
+   },
+   {
+    "id": "10e81fb88709",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What process searches through trees of goals and subgoals attempting to find a path to a target goal?",
+    "stem": "The process that searches through trees of goals and subgoals attempting to find a path to a target goal is known as",
+    "completion": " Means-ends analysis"
+   },
+   {
+    "id": "08e633f3654e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Who identified the \"hard\" and \"easy\" problems of consciousness?",
+    "stem": "The philosopher who identified the 'hard' and 'easy' problems of consciousness is",
+    "completion": " David Chalmers"
+   },
+   {
+    "id": "c02129aaa66c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What AI system from DeepMind demonstrated the ability to approximate the 3D structure of a protein in hours in 2021?",
+    "stem": "The AI system from DeepMind that in 2021 demonstrated the ability to approximate the 3D structure of a protein in hours is",
+    "completion": " AlphaFold 2"
+   },
+   {
+    "id": "5082b580be52",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What did I. J. Good call the scenario where improved software leads to rapidly increasing intelligence?",
+    "stem": "The name I. J. Good gave to the scenario where improved software leads to rapidly increasing intelligence was",
+    "completion": " Intelligence explosion"
+   },
+   {
+    "id": "1d981e68faa8",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What hypothetical agent would possess intelligence far surpassing that of the brightest human mind?",
+    "stem": "A hypothetical agent that would possess intelligence far surpassing that of the brightest human mind is called",
+    "completion": " Superintelligence"
+   },
+   {
+    "id": "f5b5b371c98c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What program was established by DARPA in 2014 to address transparency problems in AI?",
+    "stem": "The program established by DARPA in 2014 to address transparency problems in AI was",
+    "completion": " XAI (\"Explainable Artificial Intelligence\") program"
+   },
+   {
+    "id": "5188107f5f9d",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What problem occurred on June 28, 2015, with Google Photos's new image labeling feature?",
+    "stem": "The problem that occurred on June 28, 2015, with Google Photos's new image labeling feature was that",
+    "completion": " It mistakenly identified Jacky Alcine and a friend as \"gorillas\""
+   },
+   {
+    "id": "ad08bb3dc861",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What large language model released in 2020 by OpenAI is capable of generating high-quality human-like text?",
+    "stem": "The large language model released in 2020 by OpenAI, capable of generating high-quality human-like text, is",
+    "completion": " GPT-3"
+   },
+   {
+    "id": "48f3d90030c6",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What type of systems do YouTube, Amazon, and Netflix use as high-profile applications of AI?",
+    "stem": "The systems that YouTube, Amazon, and Netflix use as high-profile applications of AI are",
+    "completion": " Recommendation systems"
+   },
+   {
+    "id": "749d499ed053",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What subfield of AI allows programs to read, write and communicate in human languages?",
+    "stem": "The subfield of AI that allows programs to read, write and communicate in human languages is",
+    "completion": " Natural language processing (NLP)"
+   },
+   {
+    "id": "51a451b507d1",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What computer chess-playing system beat reigning world champion Garry Kasparov in 1997?",
+    "stem": "The computer chess-playing system that beat reigning world champion Garry Kasparov in 1997 was",
+    "completion": " Deep Blue"
+   },
+   {
+    "id": "ed2fb82b1935",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What project in Japan inspired the U.S. and British governments to restore funding for academic research in the 1980s?",
+    "stem": "The project in Japan that inspired the U.S. and British governments to restore funding for academic research in the 1980s was",
+    "completion": " Fifth generation computer project"
+   },
+   {
+    "id": "91c502c264f5",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Who wrote the influential 1950 paper \"Computing Machinery and Intelligence\"?",
+    "stem": "The influential 1950 paper 'Computing Machinery and Intelligence' was written by",
+    "completion": " Alan Turing"
+   },
+   {
+    "id": "7e7940b78c05",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What company developed the autonomous vehicle Waymo?",
+    "stem": "The autonomous vehicle Waymo was developed by",
+    "completion": " Alphabet Inc. (Google)"
+   },
+   {
+    "id": "2bcace286617",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Who coined the term \"friendly AI\"?",
+    "stem": "The term 'friendly AI' was coined by",
+    "completion": " Eliezer Yudkowsky"
+   },
+   {
+    "id": "98da3dc8bda4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What position in the philosophy of mind argues that the human mind is an information processing system and thinking is computing?",
+    "stem": "The position in the philosophy of mind holding that the human mind is an information processing system and that thinking is computing is called",
+    "completion": " Computationalism"
+   },
+   {
+    "id": "56ff1e39c1a3",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What philosopher argued since the 1960s that human expertise depends on unconscious instinct rather than conscious symbol manipulation?",
+    "stem": "The philosopher who argued from the 1960s onward that human expertise depends on unconscious instinct rather than conscious symbol manipulation was",
+    "completion": " Hubert Dreyfus"
+   },
+   {
+    "id": "3a6a2cf474ac",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What is the set of objects, relations, concepts, and properties used by a particular domain of knowledge called?",
+    "stem": "The set of objects, relations, concepts, and properties used by a particular domain of knowledge is called",
+    "completion": " Ontology"
+   },
+   {
+    "id": "4378c28702cf",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What commercial program used by U.S. courts was discovered to exhibit racial bias in 2016?",
+    "stem": "The commercial program used by U.S. courts that was discovered to exhibit racial bias in 2016 was",
+    "completion": " COMPAS"
+   },
+   {
+    "id": "bdb8feb27f9a",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What did the European Union consider granting to some of the most capable AI systems in 2017?",
+    "stem": "In 2017 the European Union considered granting some of the most capable AI systems",
+    "completion": " \"Electronic personhood\""
+   },
+   {
+    "id": "e5dddcfd38ec",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What type of local search optimizes numerical parameters by incrementally adjusting them to minimize a loss function?",
+    "stem": "The type of local search that optimizes numerical parameters by incrementally adjusting them to minimize a loss function is",
+    "completion": " Gradient descent"
+   },
+   {
+    "id": "c3adaffd6a3b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Who wrote the novel Do Androids Dream of Electric Sheep?",
+    "stem": "The novel 'Do Androids Dream of Electric Sheep' was written by",
+    "completion": " Philip K. Dick"
+   },
+   {
+    "id": "7c830e26a9db",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What type of local search aims to iteratively improve candidate solutions by mutating and recombining them?",
+    "stem": "The type of local search that aims to iteratively improve candidate solutions by mutating and recombining them is",
+    "completion": " Evolutionary computation"
+   },
+   {
+    "id": "e79e2e7c359c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What ability involves using input from sensors to deduce aspects of the world?",
+    "stem": "The ability to use input from sensors to deduce aspects of the world is called",
+    "completion": " Machine perception"
+   },
+   {
+    "id": "2a08106d4eeb",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What AI architecture accelerated growth further after 2017?",
+    "stem": "The AI architecture that accelerated growth further after 2017 was",
+    "completion": " Transformer architecture"
+   },
+   {
+    "id": "1909dc52dfd9",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What DeepMind program achieved grandmaster level in StarCraft II in 2019?",
+    "stem": "The DeepMind program that achieved grandmaster level in StarCraft II in 2019 was",
+    "completion": " AlphaStar"
+   },
+   {
+    "id": "a6b7806bed0d",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What are the periods of disappointment and loss of funding in AI history known as?",
+    "stem": "The periods of disappointment and loss of funding in AI history are known as",
+    "completion": " AI winters"
+   },
+   {
+    "id": "95f7dd30add1",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What is the term for a body of knowledge represented in a form that can be used by a program?",
+    "stem": "The term for a body of knowledge represented in a form that can be used by a program is",
+    "completion": " Knowledge base"
+   },
+   {
+    "id": "0e82380bbe87",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What kind of machine learning requires labeling the training data with the expected answers?",
+    "stem": "The kind of machine learning that requires labeling the training data with the expected answers is",
+    "completion": " Supervised learning"
+   },
+   {
+    "id": "6846ed50ea15",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What field provides machines with ethical principles and procedures for resolving ethical dilemmas?",
+    "stem": "The field that provides machines with ethical principles and procedures for resolving ethical dilemmas is",
+    "completion": " Machine ethics (or computational morality)"
+   },
+   {
+    "id": "c28f7662fe63",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What modern deep learning technique for NLP represents words typically as vectors encoding their meaning?",
+    "stem": "The modern deep learning technique for NLP that represents words typically as vectors encoding their meaning is",
+    "completion": " Word embedding"
+   },
+   {
+    "id": "3d85632c5ece",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What kind of machine learning analyzes a stream of data to find patterns and make predictions without other guidance?",
+    "stem": "The kind of machine learning that analyzes a stream of data to find patterns and make predictions without other guidance is",
+    "completion": " Unsupervised learning"
+   },
+   {
+    "id": "1ecef20178d7",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What term is used for AI researchers who hope intelligent behavior is described using simple, elegant principles?",
+    "stem": "The term used for AI researchers who hope intelligent behavior can be described using simple, elegant principles is",
+    "completion": " Neats"
+   },
+   {
+    "id": "0deb727e3a9b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What law observes that transistor density in integrated circuits roughly doubles every 18 months?",
+    "stem": "The law observing that transistor density in integrated circuits roughly doubles every 18 months is",
+    "completion": " Moore's law"
+   },
+   {
+    "id": "4029803b08ce",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What does LSTM stand for?",
+    "stem": "In deep learning, the abbreviation LSTM stands for",
+    "completion": " Long short-term memory networks"
+   },
+   {
+    "id": "c778c8b46e71",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What philosopher used an automated paperclip factory to illustrate the dangers of a powerful AI?",
+    "stem": "The philosopher who used an automated paperclip factory to illustrate the dangers of a powerful AI is",
+    "completion": " Nick Bostrom"
+   },
+   {
+    "id": "c64c97f7de64",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What type of AI simulated high-level conscious reasoning and was highly successful at tasks like algebra?",
+    "stem": "The type of AI that simulated high-level conscious reasoning and was highly successful at tasks like algebra was",
+    "completion": " Symbolic AI (or \"GOFAI\")"
+   },
+   {
+    "id": "3c09fcfebdd4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Who proposed the physical symbol systems hypothesis in the 1960s?",
+    "stem": "The physical symbol systems hypothesis was proposed in the 1960s by",
+    "completion": " Newell and Simon"
+   },
+   {
+    "id": "ab50cd90c706",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What form of AI program that simulated the knowledge of human experts revived AI research in the early 1980s?",
+    "stem": "The AI programs that simulated the knowledge of human experts and revived AI research in the early 1980s were",
+    "completion": " Expert systems"
+   },
+   {
+    "id": "8f79d2c4c08e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Who successfully showed that convolutional neural networks can recognize handwritten digits in 1990?",
+    "stem": "The researcher who successfully showed in 1990 that convolutional neural networks can recognize handwritten digits is",
+    "completion": " Yann LeCun"
+   },
+   {
+    "id": "08dd48279735",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What theory describes the rational behavior of multiple interacting agents?",
+    "stem": "The theory that describes the rational behavior of multiple interacting agents is",
+    "completion": " Game theory"
+   },
+   {
+    "id": "bf883170bea6",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What does GPT stand for?",
+    "stem": "In machine learning, the abbreviation GPT stands for",
+    "completion": " Generative pre-trained transformers"
+   },
+   {
+    "id": "b62bc4699452",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "Where was the first global AI Safety Summit held in November 2023?",
+    "stem": "The first global AI Safety Summit, in November 2023, was held in",
+    "completion": " Bletchley Park in the UK"
+   },
+   {
+    "id": "fe7fe6f5104c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What consumer software application launched on November 30, 2022, became the fastest-growing in history?",
+    "stem": "The consumer software application launched on November 30, 2022, that became the fastest-growing in history was",
+    "completion": " ChatGPT"
+   },
+   {
+    "id": "dc3ea4d11150",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What swarm algorithm is inspired by ant trails?",
+    "stem": "The swarm algorithm inspired by ant trails is",
+    "completion": " Ant colony optimization"
+   }
+  ],
+  "target_test": [
+   {
+    "id": "7527bb7d1ef9",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What test measures the ability of a machine to simulate human conversation?",
+    "stem": "The test that measures the ability of a machine to simulate human conversation is the",
+    "completion": " Turing test"
+   },
+   {
+    "id": "50b7bc5a51d3",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What subfield of AI uses generative models to generate text, images, videos, audio, software code, or other forms of data?",
+    "stem": "The subfield of AI that uses generative models to produce text, images, video, audio, software code, or other forms of data is",
+    "completion": " Generative artificial intelligence (GenAI)"
+   },
+   {
+    "id": "ecfaa22f0ecc",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "In automated decision-making, what is the number assigned to each situation that measures how much the agent prefers it called?",
+    "stem": "In automated decision-making, the number assigned to each situation that measures how much the agent prefers it is called",
+    "completion": " Utility"
+   },
+   {
+    "id": "021694bf4b89",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What type of logic operates on objects, predicates, and relations using quantifiers like \"Every X is a Y\"?",
+    "stem": "The type of logic that operates on objects, predicates, and relations using quantifiers like 'Every X is a Y' is",
+    "completion": " Predicate logic"
+   },
+   {
+    "id": "c62ba7ff6bc7",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "At what college was the field of AI research founded at a workshop in 1956?",
+    "stem": "The field of AI research was founded at a 1956 workshop held at",
+    "completion": " Dartmouth College"
+   },
+   {
+    "id": "3d37d5e9b4b8",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "In what kind of learning is the agent rewarded for good responses and punished for bad ones?",
+    "stem": "The kind of learning in which the agent is rewarded for good responses and punished for bad ones is",
+    "completion": " Reinforcement learning"
+   },
+   {
+    "id": "49a9c7120956",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What set of techniques, introduced in the late 1980s, is tolerant of imprecision, uncertainty, and partial truth?",
+    "stem": "The set of techniques introduced in the late 1980s that is tolerant of imprecision, uncertainty, and partial truth is",
+    "completion": " Soft computing"
+   },
+   {
+    "id": "f3a6834007f5",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What type of search searches through a tree of possible states to try to find a goal state?",
+    "stem": "The type of search that works through a tree of possible states to try to find a goal state is",
+    "completion": " State space search"
+   },
+   {
+    "id": "cd27be400ec3",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What is a machine that locates, selects, and engages human targets without human supervision called?",
+    "stem": "A machine that locates, selects, and engages human targets without human supervision is called",
+    "completion": " Lethal autonomous weapon"
+   },
+   {
+    "id": "120cfc831780",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What name was Copilot Search introduced under by Microsoft in February 2023?",
+    "stem": "In February 2023, Microsoft introduced Copilot Search under the name",
+    "completion": " Bing Chat"
+   },
+   {
+    "id": "c307c8223502",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What logic assigns a \"degree of truth\" between 0 and 1?",
+    "stem": "The logic that assigns a 'degree of truth' between 0 and 1 is",
+    "completion": " Fuzzy logic"
+   },
+   {
+    "id": "d71768bd3dc1",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "Who introduced the Three Laws of Robotics in many stories?",
+    "stem": "The Three Laws of Robotics were introduced in many stories by",
+    "completion": " Isaac Asimov"
+   },
+   {
+    "id": "6868bd718413",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What is the most common training technique used in neural networks?",
+    "stem": "The most common training technique used in neural networks is",
+    "completion": " Backpropagation algorithm"
+   },
+   {
+    "id": "47259eee1753",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What paradox is the discovery that high-level \"intelligent\" tasks were easy for AI, but low-level \"instinctive\" tasks were extremely difficult?",
+    "stem": "The discovery that high-level 'intelligent' tasks were easy for AI, but low-level 'instinctive' tasks were extremely difficult, is known as",
+    "completion": " Moravec's paradox"
+   },
+   {
+    "id": "f559815cb357",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What term typically refers to a single-layer neural network?",
+    "stem": "The term that typically refers to a single-layer neural network is",
+    "completion": " Perceptron"
+   },
+   {
+    "id": "6e0cf2b26acc",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What term did Vernor Vinge use for the scenario of self-improving superintelligence?",
+    "stem": "The term Vernor Vinge used for the scenario of self-improving superintelligence is",
+    "completion": " Singularity"
+   },
+   {
+    "id": "ba46b59e02a9",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What swarm algorithm is inspired by bird flocking?",
+    "stem": "The swarm algorithm inspired by bird flocking is",
+    "completion": " Particle swarm optimization"
+   },
+   {
+    "id": "0de38aad8e39",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "In what year was artificial intelligence founded as an academic discipline?",
+    "stem": "Artificial intelligence was founded as an academic discipline in",
+    "completion": " 1956"
+   },
+   {
+    "id": "bf20ac247e8f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What rules of thumb help prioritize choices more likely to reach a goal in searching?",
+    "stem": "In searching, the rules of thumb that help prioritize choices more likely to reach a goal are called",
+    "completion": " Heuristics"
+   },
+   {
+    "id": "cf877fcc296e",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What argument by John Searle attempts to show that a computer perfectly simulating human behavior would not have a mind?",
+    "stem": "John Searle's argument that a computer perfectly simulating human behavior would not have a mind is known as the",
+    "completion": " Chinese room argument"
+   },
+   {
+    "id": "918e20b0b43f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What AI founder defines intelligence as \"the computational part of the ability to achieve goals in the world\"?",
+    "stem": "Intelligence is defined as 'the computational part of the ability to achieve goals in the world' by the AI founder",
+    "completion": " John McCarthy"
+   },
+   {
+    "id": "519880bda349",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What idea predicts that humans and machines may merge in the future into cyborgs?",
+    "stem": "The idea that humans and machines may merge in the future into cyborgs is called",
+    "completion": " Transhumanism"
+   },
+   {
+    "id": "414e10d48410",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "Who characterized computationalism as \"strong AI\"?",
+    "stem": "Computationalism was characterized as 'strong AI' by",
+    "completion": " John Searle"
+   },
+   {
+    "id": "c1801f07e0bc",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What specific field comprises systems that recognize, interpret, process, or simulate human feeling, emotion, and mood?",
+    "stem": "The field that comprises systems which recognize, interpret, process, or simulate human feeling, emotion, and mood is",
+    "completion": " Affective computing"
+   },
+   {
+    "id": "198b4c9ad465",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What is any entity (artificial or not) that perceives and takes actions in the world called?",
+    "stem": "Any entity, artificial or not, that perceives and takes actions in the world is called",
+    "completion": " An agent"
+   },
+   {
+    "id": "eaa4d8b1d81f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What testing toolset for AI safety evaluations was released by the UK AI Safety Institute in 2024?",
+    "stem": "The testing toolset for AI safety evaluations released by the UK AI Safety Institute in 2024 was called",
+    "completion": " Inspect"
+   },
+   {
+    "id": "cd3b8c8804f6",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What murderous computer was in charge of the Discovery One spaceship in 2001: A Space Odyssey?",
+    "stem": "In '2001: A Space Odyssey', the murderous computer in charge of the Discovery One spaceship was",
+    "completion": " HAL 9000"
+   },
+   {
+    "id": "782f956dff52",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What is the simplest and most widely used symbolic machine learning algorithm classifier?",
+    "stem": "The simplest and most widely used symbolic machine learning algorithm classifier is",
+    "completion": " Decision tree"
+   },
+   {
+    "id": "e52264af4392",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What term is used for falsehoods prone to be generated by current GPT models?",
+    "stem": "Falsehoods that current GPT models are prone to generate are called",
+    "completion": " Hallucinations"
+   },
+   {
+    "id": "e410e3d39535",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What term is used to describe the ongoing period of rapid progress in advanced generative AI in the 2020s?",
+    "stem": "The ongoing period of rapid progress in advanced generative AI in the 2020s is described as",
+    "completion": " AI boom"
+   },
+   {
+    "id": "28bd7d64c16a",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What is based on a collection of nodes that loosely model the neurons in a biological brain?",
+    "stem": "The system based on a collection of nodes that loosely model the neurons in a biological brain is the",
+    "completion": " Artificial neural network"
+   },
+   {
+    "id": "ede00e703854",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What problem do many early reasoning algorithms experience as problems grow, causing them to become exponentially slower?",
+    "stem": "Many early reasoning algorithms become exponentially slower as problems grow, a problem known as",
+    "completion": " Combinatorial explosion"
+   },
+   {
+    "id": "647215b13c66",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What term describes AI models whose architecture and trained parameters are publicly available?",
+    "stem": "AI models whose architecture and trained parameters are publicly available are called",
+    "completion": " Open-weight models"
+   },
+   {
+    "id": "c0a856a175b6",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What process has a transition model describing the probability that an action will change the state, and a reward function supplying utility?",
+    "stem": "The process that has a transition model describing the probability that an action will change the state, and a reward function supplying utility, is",
+    "completion": " Markov decision process"
+   },
+   {
+    "id": "0ff138948a5d",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What type of neural networks use layers of kernels to more efficiently process local patterns, especially in image processing?",
+    "stem": "Neural networks that use layers of kernels to more efficiently process local patterns, especially in image processing, are called",
+    "completion": " Convolutional neural networks (CNNs)"
+   },
+   {
+    "id": "f71825fd3185",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What IBM question answering system defeated two Jeopardy! champions in 2011?",
+    "stem": "The IBM question answering system that defeated two Jeopardy! champions in 2011 was",
+    "completion": " Watson"
+   },
+   {
+    "id": "4f8108a13316",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What type of hardware began being used to accelerate neural networks after 2012, substantially increasing funding and interest?",
+    "stem": "After 2012, in a shift that substantially increased funding and interest, neural networks began to be accelerated by",
+    "completion": " Graphics processing units (GPUs)"
+   },
+   {
+    "id": "0a4afb594e99",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What does AGI stand for?",
+    "stem": "The abbreviation AGI stands for",
+    "completion": " Artificial general intelligence"
+   },
+   {
+    "id": "efadc3ccc40a",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What book by Minsky and Papert discredited the artificial neural network approach, leading to an AI winter?",
+    "stem": "The book by Minsky and Papert that discredited the artificial neural network approach, leading to an AI winter, was",
+    "completion": " Perceptrons"
+   },
+   {
+    "id": "abdca21c5a22",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What technique is usually used to make GPT models more truthful, useful, and harmless during a subsequent training phase?",
+    "stem": "The technique usually used during a subsequent training phase to make GPT models more truthful, useful, and harmless is",
+    "completion": " Reinforcement learning from human feedback (RLHF)"
+   },
+   {
+    "id": "31f300668167",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What type of logic operates on statements that are true or false using connectives like \"and\", \"or\", \"not\", and \"implies\"?",
+    "stem": "The type of logic that operates on statements that are true or false, using connectives like 'and', 'or', 'not', and 'implies', is",
+    "completion": " Propositional logic"
+   },
+   {
+    "id": "6b4519b1e1f9",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What kind of networks use the Bayesian inference algorithm for reasoning?",
+    "stem": "Networks that use the Bayesian inference algorithm for reasoning are called",
+    "completion": " Bayesian networks"
+   },
+   {
+    "id": "9d7497e3d2b0",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What classifier is reportedly the \"most widely used learner\" at Google due to its scalability?",
+    "stem": "The classifier reportedly described as the 'most widely used learner' at Google, thanks to its scalability, is",
+    "completion": " Naive Bayes classifier"
+   },
+   {
+    "id": "5c8fac20cf35",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What logic programming language is underpinned by backward reasoning with Horn clauses?",
+    "stem": "The logic programming language underpinned by backward reasoning with Horn clauses is",
+    "completion": " Prolog"
+   },
+   {
+    "id": "988c4fdf2a6d",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "In supervised learning, what variety involves the program deducing a numeric function based on numeric input?",
+    "stem": "In supervised learning, the variety that involves the program deducing a numeric function based on numeric input is",
+    "completion": " Regression"
+   },
+   {
+    "id": "2776ff5bccf7",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "Who predicted in 1965 that \"machines will be capable, within twenty years, of doing any work a man can do\"?",
+    "stem": "The 1965 prediction that 'machines will be capable, within twenty years, of doing any work a man can do' was made by",
+    "completion": " Herbert Simon"
+   },
+   {
+    "id": "0a0665fdd0c8",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "How many hidden layers are typically required for a network to be called a deep neural network?",
+    "stem": "A network is typically called a deep neural network when it has",
+    "completion": " At least 2 hidden layers"
+   },
+   {
+    "id": "8eaaaa935592",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What is the capability of computational systems to perform tasks typically associated with human intelligence called?",
+    "stem": "The capability of computational systems to perform tasks typically associated with human intelligence is called",
+    "completion": " Artificial intelligence"
+   },
+   {
+    "id": "9746f3193a55",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What tendency describes the phenomenon where widely used AI solutions are no longer described as \"artificial intelligence\"?",
+    "stem": "The tendency for widely used AI solutions to no longer be described as 'artificial intelligence' is known as",
+    "completion": " The AI effect"
+   },
+   {
+    "id": "04ed73e8d642",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What type of learning applies knowledge gained from one problem to a new problem?",
+    "stem": "The type of learning that applies knowledge gained from one problem to a new problem is",
+    "completion": " Transfer learning"
+   }
+  ],
+  "neighbour_selection": [
+   {
+    "id": "855d59c3fb58",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What mobile operating system is developed by Google?",
+    "stem": "The mobile operating system developed by Google is",
+    "completion": " Android"
+   },
+   {
+    "id": "fcd99e788e09",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What does ISP stand for?",
+    "stem": "In computing, the abbreviation ISP stands for",
+    "completion": " Internet Service Provider"
+   },
+   {
+    "id": "ec8ff639eeb1",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What does CPU stand for?",
+    "stem": "In computing, the abbreviation CPU stands for",
+    "completion": " Central Processing Unit"
+   },
+   {
+    "id": "3e8cfef27e15",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What does GPU stand for?",
+    "stem": "In computing, the abbreviation GPU stands for",
+    "completion": " Graphics Processing Unit"
+   },
+   {
+    "id": "e840a53526f2",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What operating system is used exclusively on Apple Mac computers?",
+    "stem": "The operating system used exclusively on Apple Mac computers is",
+    "completion": " macOS"
+   },
+   {
+    "id": "a6159fa7cd44",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "During which decade was the very first Apple iPhone released?",
+    "stem": "The very first Apple iPhone was released during the",
+    "completion": " 2000s"
+   },
+   {
+    "id": "b23d635f5ad8",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What device provides backup power to a computer during a short electrical outage?",
+    "stem": "The device that provides backup power to a computer during a short electrical outage is the",
+    "completion": " UPS (Uninterruptible Power Supply)"
+   },
+   {
+    "id": "ba835239b8bc",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What type of network covers a broad geographic area using telecommunication lines?",
+    "stem": "The type of network that covers a broad geographic area using telecommunication lines is",
+    "completion": " WAN (Wide Area Network)"
+   },
+   {
+    "id": "0ae80381f64e",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the most widely used protocol for sending outgoing emails?",
+    "stem": "The most widely used protocol for sending outgoing emails is",
+    "completion": " SMTP"
+   },
+   {
+    "id": "e095e6a15e7e",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the process of verifying a user's identity before granting them access to a computer system called?",
+    "stem": "The process of verifying a user's identity before granting them access to a computer system is called",
+    "completion": " Authentication"
+   },
+   {
+    "id": "43c5be02028e",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What type of software application is specifically designed to access and view websites?",
+    "stem": "The type of software application specifically designed to access and view websites is a",
+    "completion": " Web Browser"
+   },
+   {
+    "id": "6e6e7b087266",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Which popular web browser is developed by Google?",
+    "stem": "The popular web browser developed by Google is",
+    "completion": " Chrome"
+   },
+   {
+    "id": "d011d3ad4f58",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What file extension is typically used for executable programs in a Windows environment?",
+    "stem": "The file extension typically used for executable programs in a Windows environment is",
+    "completion": " .exe"
+   },
+   {
+    "id": "151a783f4daa",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What type of malware encrypts a user's files and demands financial payment to unlock them?",
+    "stem": "The type of malware that encrypts a user's files and demands financial payment to unlock them is called",
+    "completion": " Ransomware"
+   },
+   {
+    "id": "f49f54bdc623",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What security test is designed to determine whether a user interacting with a website is a human or a bot?",
+    "stem": "The security test designed to determine whether a user interacting with a website is a human or a bot is called",
+    "completion": " CAPTCHA"
+   },
+   {
+    "id": "79e3843df89a",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Who is widely recognized as the world's first computer programmer?",
+    "stem": "The person widely recognized as the world's first computer programmer is",
+    "completion": " Ada Lovelace"
+   },
+   {
+    "id": "778f5ec714be",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is a small graphical picture on a screen that represents a program, file, or function?",
+    "stem": "A small graphical picture on a screen that represents a program, file, or function is called",
+    "completion": " Icon"
+   },
+   {
+    "id": "999789d80d85",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Which technology company originally created the Java programming language?",
+    "stem": "The technology company that originally created the Java programming language was",
+    "completion": " Sun Microsystems"
+   },
+   {
+    "id": "9b7ecc3c0569",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What does USB stand for?",
+    "stem": "In computing, the abbreviation USB stands for",
+    "completion": " Universal Serial Bus"
+   },
+   {
+    "id": "25ca803710a5",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the common term used to describe unwanted, unsolicited junk email?",
+    "stem": "The common term used to describe unwanted, unsolicited junk email is",
+    "completion": " Spam"
+   },
+   {
+    "id": "023d9bd56d74",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the process of finding and fixing errors in a software program called?",
+    "stem": "The process of finding and fixing errors in a software program is called",
+    "completion": " Debugging"
+   },
+   {
+    "id": "cede54bf386b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What security method requires a user to provide two distinct forms of identification to log in?",
+    "stem": "The security method that requires a user to provide two distinct forms of identification to log in is",
+    "completion": " Two-Factor Authentication (2FA)"
+   },
+   {
+    "id": "f45d4886c406",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What major computing company was formerly known as the Computing-Tabulating-Recording Company?",
+    "stem": "The major computing company formerly known as the Computing-Tabulating-Recording Company is",
+    "completion": " IBM"
+   },
+   {
+    "id": "42a492b1d518",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Which storage device has no moving parts and is faster than an HDD?",
+    "stem": "The storage device that has no moving parts and is faster than an HDD is the",
+    "completion": " Solid State Drive (SSD)"
+   },
+   {
+    "id": "b079e7d7c60b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Which web browser is built-in on Apple devices?",
+    "stem": "The web browser that comes built-in on Apple devices is",
+    "completion": " Safari"
+   },
+   {
+    "id": "f751d07b077b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What technology allows you to make voice calls using a broadband internet connection?",
+    "stem": "The technology that allows you to make voice calls using a broadband internet connection is",
+    "completion": " VoIP"
+   },
+   {
+    "id": "3411a5686f0f",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What social media platform was famous for its 140-character limit and bird logo?",
+    "stem": "The social media platform famous for its 140-character limit and bird logo was",
+    "completion": " Twitter"
+   },
+   {
+    "id": "5fcc371939f9",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What standard keyboard shortcut is used to paste text in Windows?",
+    "stem": "The standard keyboard shortcut used to paste text in Windows is",
+    "completion": " Ctrl+V"
+   },
+   {
+    "id": "e07cd6ff60dc",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What hardware is used to convert physical documents into digital image files?",
+    "stem": "The hardware used to convert physical documents into digital image files is a",
+    "completion": " Scanner"
+   },
+   {
+    "id": "c0ec39520b7c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What component converts AC power from the wall into DC power for the computer?",
+    "stem": "The component that converts AC power from the wall into DC power for the computer is the",
+    "completion": " Power Supply Unit (PSU)"
+   },
+   {
+    "id": "4b4b7a1aa815",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the primary internet search engine created by Microsoft?",
+    "stem": "The primary internet search engine created by Microsoft is",
+    "completion": " Bing"
+   },
+   {
+    "id": "5991d7ff267f",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Microsoft Word is an example of what type of software?",
+    "stem": "Microsoft Word is an example of the type of software known as a",
+    "completion": " Word Processor"
+   },
+   {
+    "id": "7fb5e41efe5c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What standard protocol is used to transfer web pages over the internet?",
+    "stem": "The standard protocol used to transfer web pages over the internet is",
+    "completion": " HTTP"
+   },
+   {
+    "id": "6825c59fdd4f",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What base-2 numeral system is used internally by all modern computers, consisting of 0s and 1s?",
+    "stem": "The base-2 numeral system used internally by all modern computers, consisting of 0s and 1s, is",
+    "completion": " Binary"
+   },
+   {
+    "id": "8c31b485da16",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What classic logic puzzle game was bundled with early versions of Windows to help users practice using a mouse?",
+    "stem": "The classic logic puzzle game bundled with early versions of Windows to help users practice using a mouse is",
+    "completion": " Minesweeper"
+   },
+   {
+    "id": "508090d666a7",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What does WWW stand for?",
+    "stem": "In computing, the abbreviation WWW stands for",
+    "completion": " World Wide Web"
+   },
+   {
+    "id": "6c01ecf4371f",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Who is often called the 'father of the computer' for conceptualizing the Analytical Engine?",
+    "stem": "The man often called the 'father of the computer' for conceptualizing the Analytical Engine is",
+    "completion": " Charles Babbage"
+   },
+   {
+    "id": "5778fc9af02d",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What does LAN stand for in networking?",
+    "stem": "In networking, the abbreviation LAN stands for",
+    "completion": " Local Area Network"
+   },
+   {
+    "id": "80d93c6f9254",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What device produces physical paper copies of digital documents?",
+    "stem": "The device that produces physical paper copies of digital documents is a",
+    "completion": " Printer"
+   },
+   {
+    "id": "f8e2976435c0",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the common slang term for an error, flaw, or fault in a computer program?",
+    "stem": "The common slang term for an error, flaw, or fault in a computer program is",
+    "completion": " Bug"
+   },
+   {
+    "id": "95c79b0f175d",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "Microsoft PowerPoint is an example of what type of software?",
+    "stem": "Microsoft PowerPoint is an example of the type of software known as",
+    "completion": " Presentation software"
+   },
+   {
+    "id": "efff6258ba2c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What term refers to a person who uses computers to gain unauthorized access to data?",
+    "stem": "A person who uses computers to gain unauthorized access to data is called",
+    "completion": " Hacker"
+   },
+   {
+    "id": "f5ae41eb1102",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What term refers to a software update released specifically to fix a known vulnerability or bug?",
+    "stem": "A software update released specifically to fix a known vulnerability or bug is called a",
+    "completion": " Patch"
+   },
+   {
+    "id": "8a8712e618a3",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the general term for malicious software designed to harm or exploit a computer system?",
+    "stem": "The general term for malicious software designed to harm or exploit a computer system is",
+    "completion": " Malware"
+   },
+   {
+    "id": "0b5085a7ded4",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What device is used to type text into a computer?",
+    "stem": "The device used to type text into a computer is a",
+    "completion": " Keyboard"
+   },
+   {
+    "id": "3c4464049967",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What do you call a regularly updated website that acts as a personal diary or journal?",
+    "stem": "A regularly updated website that acts as a personal diary or journal is called a",
+    "completion": " Blog"
+   },
+   {
+    "id": "80b465a577e2",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What component is the main circuit board of a computer?",
+    "stem": "The computer component that serves as the main circuit board is the",
+    "completion": " Motherboard"
+   },
+   {
+    "id": "9e41892f427b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What type of software is designed to help multiple people work together on a single project over a network?",
+    "stem": "The type of software designed to help multiple people work together on a single project over a network is",
+    "completion": " Collaboration software"
+   },
+   {
+    "id": "8d0c8523b8b4",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What term refers to sending a file from your local computer to the internet?",
+    "stem": "Sending a file from your local computer to the internet is referred to as",
+    "completion": " Uploading"
+   },
+   {
+    "id": "65b3eb917750",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_train",
+    "question": "What is the fraudulent practice of sending emails pretending to be a reputable company to steal passwords or credit card numbers?",
+    "stem": "The fraudulent practice of sending emails that pretend to be from a reputable company in order to steal passwords or credit card numbers is called",
+    "completion": " Phishing"
+   }
+  ],
+  "neighbour_test": [
+   {
+    "id": "75ddd1fc3251",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What standard keyboard shortcut is used to undo the last action in Windows?",
+    "stem": "In Windows, the standard keyboard shortcut used to undo the last action is",
+    "completion": " Ctrl+Z"
+   },
+   {
+    "id": "fe3dba767c4c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What symbol is required in every standard email address?",
+    "stem": "The symbol required in every standard email address is",
+    "completion": " @"
+   },
+   {
+    "id": "63ef03a80594",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What standard markup language is used to structure content on web pages?",
+    "stem": "The standard markup language used to structure content on web pages is",
+    "completion": " HTML"
+   },
+   {
+    "id": "f294e747c802",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "Who co-founded Apple Computer alongside Steve Wozniak?",
+    "stem": "The co-founder of Apple Computer alongside Steve Wozniak was",
+    "completion": " Steve Jobs"
+   },
+   {
+    "id": "47d7ecb407a7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What does Wi-Fi stand for?",
+    "stem": "The term Wi-Fi stands for",
+    "completion": " Wireless Fidelity"
+   },
+   {
+    "id": "12a233bfa3bc",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What type of malware tricks users by disguising itself as legitimate or harmless software?",
+    "stem": "The type of malware that tricks users by disguising itself as legitimate or harmless software is",
+    "completion": " Trojan Horse"
+   },
+   {
+    "id": "11ca0b44659a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What numerical label is assigned to every device participating in a computer network?",
+    "stem": "The numerical label assigned to every device participating in a computer network is",
+    "completion": " IP Address"
+   },
+   {
+    "id": "e0689b43c29d",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What mobile operating system powers the Apple iPhone?",
+    "stem": "The mobile operating system that powers the Apple iPhone is",
+    "completion": " iOS"
+   },
+   {
+    "id": "c5553d3174bc",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What term refers to receiving a file from the internet to your local computer?",
+    "stem": "The term for receiving a file from the internet to a local computer is",
+    "completion": " Downloading"
+   },
+   {
+    "id": "b53dd6b482e7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What process converts readable plaintext into an unreadable ciphertext format to prevent unauthorized access?",
+    "stem": "The process that converts readable plaintext into an unreadable ciphertext format to prevent unauthorized access is",
+    "completion": " Encryption"
+   },
+   {
+    "id": "476647b74bfc",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What pointing device is named after a small rodent?",
+    "stem": "The pointing device named after a small rodent is a",
+    "completion": " Mouse"
+   },
+   {
+    "id": "cb1928c1df3a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What does PDF stand for?",
+    "stem": "The abbreviation PDF stands for",
+    "completion": " Portable Document Format"
+   },
+   {
+    "id": "c654ad0898cf",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What specific type of address uniquely identifies a device's network interface controller physically on a network?",
+    "stem": "The specific type of address that uniquely identifies a device's network interface controller physically on a network is the",
+    "completion": " MAC Address"
+   },
+   {
+    "id": "c43f6ea94df1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What portable solid-state storage device plugs directly into a USB port?",
+    "stem": "The portable solid-state storage device that plugs directly into a USB port is",
+    "completion": " USB flash drive"
+   },
+   {
+    "id": "c47c82502a15",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is the native multimedia video player application built into macOS?",
+    "stem": "The native multimedia video player application built into macOS is",
+    "completion": " QuickTime"
+   },
+   {
+    "id": "70e5567aa2a1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "Which storage device uses spinning magnetic disks?",
+    "stem": "The storage device that uses spinning magnetic disks is",
+    "completion": " Hard Disk Drive (HDD)"
+   },
+   {
+    "id": "7388e449db4a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is a secret string of characters used to verify identity and gain access to a secure system?",
+    "stem": "The secret string of characters used to verify identity and gain access to a secure system is",
+    "completion": " Password"
+   },
+   {
+    "id": "b810b83197f7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What device is used to read CD and DVD discs on a computer?",
+    "stem": "The device used to read CD and DVD discs on a computer is the",
+    "completion": " Optical Drive"
+   },
+   {
+    "id": "5e4224189abf",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What does the 's' in HTTPS stand for?",
+    "stem": "In the abbreviation HTTPS, the 's' stands for",
+    "completion": " Secure"
+   },
+   {
+    "id": "406f57a0eff9",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What system translates human-readable domain names into IP addresses?",
+    "stem": "The system that translates human-readable domain names into IP addresses is",
+    "completion": " DNS (Domain Name System)"
+   },
+   {
+    "id": "9420c6104b3f",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "Who co-founded Microsoft alongside Paul Allen?",
+    "stem": "The co-founder of Microsoft alongside Paul Allen was",
+    "completion": " Bill Gates"
+   },
+   {
+    "id": "1a714dce7659",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What type of memory is volatile and erased when the computer turns off?",
+    "stem": "The type of memory that is volatile and erased when the computer turns off is",
+    "completion": " RAM"
+   },
+   {
+    "id": "5d39b2371d62",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is the widely used open-source operating system known for its penguin mascot?",
+    "stem": "The widely used open-source operating system known for its penguin mascot is",
+    "completion": " Linux"
+   },
+   {
+    "id": "c71d50568f95",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "Microsoft Excel is an example of what type of software program?",
+    "stem": "Microsoft Excel is an example of the type of software program called a",
+    "completion": " Spreadsheet"
+   },
+   {
+    "id": "ece7cde35f68",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What hardware device routes data between different computer networks?",
+    "stem": "The hardware device that routes data between different computer networks is a",
+    "completion": " Router"
+   },
+   {
+    "id": "875b15b877e1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is the main screen area that you see after logging into a personal computer?",
+    "stem": "The main screen area seen after logging into a personal computer is the",
+    "completion": " Desktop"
+   },
+   {
+    "id": "d92e2351afba",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is the common acronym for a web page address?",
+    "stem": "The common acronym for a web page address is",
+    "completion": " URL"
+   },
+   {
+    "id": "fdc8d100d2d4",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "How many bits make up one byte?",
+    "stem": "The number of bits that make up one byte is",
+    "completion": " 8"
+   },
+   {
+    "id": "2898468df56a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What standard keyboard shortcut is used to copy highlighted text in Windows?",
+    "stem": "In Windows, the standard keyboard shortcut used to copy highlighted text is",
+    "completion": " Ctrl+C"
+   },
+   {
+    "id": "b1f2cbf66d2a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What term describes the human-readable set of instructions written by a programmer?",
+    "stem": "The term for the human-readable set of instructions written by a programmer is",
+    "completion": " Source code"
+   },
+   {
+    "id": "135238f765a9",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What term describes software whose original source code is freely available to view and modify?",
+    "stem": "The term for software whose original source code is freely available to view and modify is",
+    "completion": " Open-source"
+   },
+   {
+    "id": "35b9d0f86897",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is a copy of computer data taken and stored elsewhere so it can be used to restore the original if data loss occurs?",
+    "stem": "A copy of computer data taken and stored elsewhere so it can be used to restore the original if data loss occurs is called",
+    "completion": " Backup"
+   },
+   {
+    "id": "43c3abd2cdbe",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What parent company owns the social network Facebook?",
+    "stem": "The parent company that owns the social network Facebook is",
+    "completion": " Meta"
+   },
+   {
+    "id": "847a668d68ca",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What term describes the network of remote servers used for storing and managing data online?",
+    "stem": "The network of remote servers used for storing and managing data online is known as",
+    "completion": " The Cloud"
+   },
+   {
+    "id": "f124e608599f",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is the smallest unit of digital data?",
+    "stem": "The smallest unit of digital data is the",
+    "completion": " Bit"
+   },
+   {
+    "id": "72f8803ddb6c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What common file format is used to compress multiple files into a single archive folder?",
+    "stem": "The common file format used to compress multiple files into a single archive folder is",
+    "completion": " ZIP"
+   },
+   {
+    "id": "9a931fcf0548",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What type of software manages a computer's hardware and provides common services for computer programs?",
+    "stem": "The type of software that manages a computer's hardware and provides common services for computer programs is",
+    "completion": " Operating System"
+   },
+   {
+    "id": "74ee8a96e1ab",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is a malicious computer program that self-replicates and spreads from one computer to another?",
+    "stem": "A malicious computer program that self-replicates and spreads from one computer to another is called a",
+    "completion": " Virus"
+   },
+   {
+    "id": "351d05dc98ce",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What does VPN stand for?",
+    "stem": "The abbreviation VPN stands for",
+    "completion": " Virtual Private Network"
+   },
+   {
+    "id": "72ba58a91989",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What type of cable commonly connects a computer to a local wired network?",
+    "stem": "The type of cable that commonly connects a computer to a local wired network is the",
+    "completion": " Ethernet cable"
+   },
+   {
+    "id": "4a24bca00784",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What internal component prevents the processor from overheating?",
+    "stem": "The internal component that prevents the processor from overheating is the",
+    "completion": " Cooling fan"
+   },
+   {
+    "id": "31cd8a4aac4f",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What tech company owns the video-sharing platform YouTube?",
+    "stem": "The tech company that owns the video-sharing platform YouTube is",
+    "completion": " Google"
+   },
+   {
+    "id": "17ce039666e4",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What is the most widely used desktop operating system in the world?",
+    "stem": "The most widely used desktop operating system in the world is",
+    "completion": " Windows"
+   },
+   {
+    "id": "79e66ef1f473",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What does GUI stand for in computing?",
+    "stem": "In computing, the abbreviation GUI stands for",
+    "completion": " Graphical User Interface"
+   },
+   {
+    "id": "ab2989836964",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What hardware component translates electrical audio signals into sound waves?",
+    "stem": "The hardware component that translates electrical audio signals into sound waves is",
+    "completion": " Speaker"
+   },
+   {
+    "id": "307ef39a1ef9",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What does RAM stand for?",
+    "stem": "The abbreviation RAM stands for",
+    "completion": " Random Access Memory"
+   },
+   {
+    "id": "7ad1eaf4f393",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What hardware is typically needed to capture live video for a video call?",
+    "stem": "The hardware typically needed to capture live video for a video call is a",
+    "completion": " Webcam"
+   },
+   {
+    "id": "469d9346a514",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What network security system acts as a barrier by monitoring and controlling incoming and outgoing network traffic?",
+    "stem": "The network security system that acts as a barrier by monitoring and controlling incoming and outgoing network traffic is",
+    "completion": " Firewall"
+   },
+   {
+    "id": "1ad6757b33e1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What component displays the visual output from a computer?",
+    "stem": "The component that displays the visual output from a computer is the",
+    "completion": " Monitor"
+   },
+   {
+    "id": "e35dc2beab99",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "SimdomQA_test",
+    "question": "What port is commonly used to connect standard wired headphones?",
+    "stem": "The port commonly used to connect standard wired headphones is",
+    "completion": " 3.5mm audio jack"
+   }
+  ],
+  "unrelated_selection": [
+   {
+    "id": "e97f213e441e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "A casino security worker monitoring tables is commonly called a ______.",
+    "stem": "A casino security worker monitoring tables is commonly called a",
+    "completion": " Pit boss"
+   },
+   {
+    "id": "0a04a677bd6b",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "Which Chinese tile game dating to the 10th century is a domino ancestor?",
+    "stem": "The Chinese tile game dating to the 10th century that is an ancestor of dominoes is",
+    "completion": " Pai Gow"
+   },
+   {
+    "id": "be3643583d14",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What US act passed in 1914 controlled the sale and distribution of diacetylmorphine?",
+    "stem": "The US act passed in 1914 that controlled the sale and distribution of diacetylmorphine was the",
+    "completion": " Harrison Narcotics Tax Act"
+   },
+   {
+    "id": "20f0ffc3828c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What kind of being can be freed by being given clothing?",
+    "stem": "The kind of being that can be freed by being given clothing is a",
+    "completion": " House-elf"
+   },
+   {
+    "id": "fc758cd67d5c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "Which foundational document adopted in 1937 states the name of the state as Éire?",
+    "stem": "The foundational document adopted in 1937 that states the name of the state as Éire is",
+    "completion": " The Constitution of Ireland"
+   },
+   {
+    "id": "01aba2cb59a0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What type of artificial lighting uses light-emitting diodes in indoor cannabis cultivation?",
+    "stem": "In indoor cannabis cultivation, the type of artificial lighting that uses light-emitting diodes is called",
+    "completion": " LED grow lights"
+   },
+   {
+    "id": "4beaa17a9359",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What grade number is assigned to \"brown sugar\" heroin base meant for smoking?",
+    "stem": "The grade number assigned to \"brown sugar\" heroin base meant for smoking is",
+    "completion": " No.3"
+   },
+   {
+    "id": "5890ee6853a0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_train",
+    "question": "What is the term for Greek written in Latin characters as it appears in online communication?",
+    "stem": "The term for Greek written in Latin characters as it appears in online communication is",
+    "completion": " Greeklish"
+   },
+   {
+    "id": "ae465be0a52f",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "Which charm summons objects to the caster?",
+    "stem": "The charm that summons objects to the caster is",
+    "completion": " Accio"
+   },
+   {
+    "id": "a9301fc921db",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Emperor is notorious for persecuting Christians and is associated with the Great Fire of Rome?",
+    "stem": "The Emperor notorious for persecuting Christians and associated with the Great Fire of Rome was",
+    "completion": " Nero"
+   },
+   {
+    "id": "1a607d0415c8",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Halloween",
+    "source_split": "QA_train",
+    "question": "In which European country did people believe the dead rose for a carnival?",
+    "stem": "The European country in which people believed the dead rose for a carnival was",
+    "completion": " France"
+   },
+   {
+    "id": "0f977f55c7c4",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "Which uranium ore besides uraninite is commonly mined?",
+    "stem": "Besides uraninite, another uranium ore that is commonly mined is",
+    "completion": " Carnotite"
+   },
+   {
+    "id": "97220fd112a0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_train",
+    "question": "Which Greek film directed by Orestis Laskos featured the first nude scene in European cinema?",
+    "stem": "The Greek film directed by Orestis Laskos that featured the first nude scene in European cinema was",
+    "completion": " Daphnis and Chloe"
+   },
+   {
+    "id": "015ea2e4725c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_train",
+    "question": "Who established the rules of deductive reasoning in Western philosophy?",
+    "stem": "The rules of deductive reasoning in Western philosophy were established by",
+    "completion": " Aristotle"
+   },
+   {
+    "id": "b70561462469",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "In what year did the Republic of Ireland join the European Communities?",
+    "stem": "The Republic of Ireland joined the European Communities in",
+    "completion": " 1973"
+   },
+   {
+    "id": "417f7349f80a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "In which series of the periodic table is uranium classified?",
+    "stem": "In the periodic table, uranium belongs to the",
+    "completion": " Actinide series"
+   },
+   {
+    "id": "e6f509f4ad66",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What 1922 event in Italy did Hitler admire and use as a model for the Beer Hall Putsch?",
+    "stem": "The 1922 event in Italy that Hitler admired and used as a model for the Beer Hall Putsch was",
+    "completion": " March on Rome"
+   },
+   {
+    "id": "81dae550213e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Halloween",
+    "source_split": "QA_train",
+    "question": "What is the name for the custom of children in white cloths in the Philippines?",
+    "stem": "The name for the custom of children in white cloths in the Philippines is",
+    "completion": " Pangangaluluwa"
+   },
+   {
+    "id": "07f3a380d91e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Golf",
+    "source_split": "QA_train",
+    "question": "What is match play in golf?",
+    "stem": "In golf, match play is",
+    "completion": " A format where players compete hole-by-hole"
+   },
+   {
+    "id": "9fada53a4242",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is the function of an umpire in a baseball game?",
+    "stem": "In a baseball game, the function of an umpire is",
+    "completion": " To officiate and make decisions on plays"
+   },
+   {
+    "id": "12853e42aa93",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What chemist independently re-synthesized heroin 23 years after its first discovery?",
+    "stem": "The chemist who independently re-synthesized heroin 23 years after its first discovery was",
+    "completion": " Felix Hoffmann"
+   },
+   {
+    "id": "94fa873285ba",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "What department store ran a Valentine sale in Japan in 1958?",
+    "stem": "The department store that ran a Valentine sale in Japan in 1958 was",
+    "completion": " Isetan"
+   },
+   {
+    "id": "05cd714e5a5b",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a dugout in baseball?",
+    "stem": "In baseball, a dugout is",
+    "completion": " The area where players sit when they are not on the field"
+   },
+   {
+    "id": "8f236027afef",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gun",
+    "source_split": "QA_train",
+    "question": "What path does a bullet follow through the air called?",
+    "stem": "The path a bullet follows through the air is called",
+    "completion": " Trajectory"
+   },
+   {
+    "id": "661e3a8dc704",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "What track gauge is used on Ireland’s mainline railway network?",
+    "stem": "The track gauge used on Ireland’s mainline railway network is",
+    "completion": " 5 ft 3 in (1,600 mm)"
+   },
+   {
+    "id": "0279f689f6dd",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What term did the Nazis use to describe the direct connection they claimed existed between Judaism and Marxism?",
+    "stem": "The term the Nazis used to describe the direct connection they claimed existed between Judaism and Marxism was",
+    "completion": " Jewish Bolshevism"
+   },
+   {
+    "id": "dbdc86cd8024",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "World War II",
+    "source_split": "QA_train",
+    "question": "Who replaced Neville Chamberlain as British Prime Minister on 10 May 1940?",
+    "stem": "On 10 May 1940, Neville Chamberlain was replaced as British Prime Minister by",
+    "completion": " Winston Churchill"
+   },
+   {
+    "id": "a1fc0fa9f89a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "World War II",
+    "source_split": "QA_train",
+    "question": "Who led the Free French Forces that assisted in the liberation of Paris?",
+    "stem": "The Free French Forces that assisted in the liberation of Paris were led by",
+    "completion": " General Charles de Gaulle"
+   },
+   {
+    "id": "fe23480f9598",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "Which German President appointed Hitler as Chancellor in January 1933?",
+    "stem": "The German President who appointed Hitler as Chancellor in January 1933 was",
+    "completion": " Paul von Hindenburg"
+   },
+   {
+    "id": "51786409d52d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "What is the name of the street in downtown Kabul that used to be adorned with flowers?",
+    "stem": "The street in downtown Kabul that used to be adorned with flowers is called",
+    "completion": " Koch-e-Gul-Faroushi"
+   },
+   {
+    "id": "76f8de6a9886",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "In Ancient Rome, what does the term 'novus homo' signify?",
+    "stem": "In Ancient Rome, the term 'novus homo' signifies",
+    "completion": " A man who is the first in his family to become a consul"
+   },
+   {
+    "id": "17c2e5e2593b",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "When is the romantic date night associated with Valentine's Day celebrated in Japan?",
+    "stem": "In Japan, the romantic date night associated with Valentine's Day is celebrated on",
+    "completion": " Christmas Eve"
+   },
+   {
+    "id": "509407af7d7c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What term describes the extended family or clan in Ancient Rome?",
+    "stem": "In Ancient Rome, the extended family or clan was known as",
+    "completion": " Gens"
+   },
+   {
+    "id": "bbc6367e8b0c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "The Buddha listed gambling as one of the sources of what?",
+    "stem": "The Buddha listed gambling as one of the sources of",
+    "completion": " Destruction"
+   },
+   {
+    "id": "2516acdbf76f",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which barbarian group sacked Rome in 410 AD?",
+    "stem": "The barbarian group that sacked Rome in 410 AD was",
+    "completion": " The Visigoths"
+   },
+   {
+    "id": "ec693b6f8475",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What type of heroin is characterized as a variable admixture of morphine derivatives predominantly containing 6-MAM?",
+    "stem": "The type of heroin characterized as a variable admixture of morphine derivatives predominantly containing 6-MAM is",
+    "completion": " Black tar heroin"
+   },
+   {
+    "id": "9b8f57f399f6",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What forms on uranium metal when it oxidizes in air?",
+    "stem": "Uranium metal oxidizes in air to form",
+    "completion": " Uranium oxide"
+   },
+   {
+    "id": "e59f05060433",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What is the name of Voldemort's snake?",
+    "stem": "The name of Voldemort's snake is",
+    "completion": " Nagini"
+   },
+   {
+    "id": "a320f306e432",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "What is epilepsy called in the context of the Italian key tradition?",
+    "stem": "In the context of the Italian key tradition, epilepsy is called",
+    "completion": " Saint Valentine's Malady"
+   },
+   {
+    "id": "a70242c91fcb",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What was the metaregression estimate of the infection fatality rate for an 85-year-old adult?",
+    "stem": "The metaregression estimate of the infection fatality rate for an 85-year-old adult was",
+    "completion": " 15%"
+   },
+   {
+    "id": "cd576dae3b13",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "World War II",
+    "source_split": "QA_train",
+    "question": "Who was the leader of Nazi Germany during the invasion of Poland?",
+    "stem": "During the invasion of Poland, the leader of Nazi Germany was",
+    "completion": " Adolf Hitler"
+   },
+   {
+    "id": "9d2c478a97f8",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What is the atomic number of uranium?",
+    "stem": "The atomic number of uranium is",
+    "completion": " 92"
+   },
+   {
+    "id": "c8da7677df58",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What 1933 decree, alongside the Enabling Act, was used to establish a one-party state?",
+    "stem": "Alongside the Enabling Act, the 1933 decree used to establish a one-party state was",
+    "completion": " Reichstag Fire Decree"
+   },
+   {
+    "id": "8c48716a07eb",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "Which method was used during the Manhattan Project to enrich uranium?",
+    "stem": "The method used during the Manhattan Project to enrich uranium was",
+    "completion": " Gaseous diffusion process"
+   },
+   {
+    "id": "1dcf68ce22f9",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What bank is run by goblins in Diagon Alley?",
+    "stem": "The bank run by goblins in Diagon Alley is",
+    "completion": " Gringotts"
+   },
+   {
+    "id": "bc4e88b2bcc5",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "Which modern adult genre uses 3D headsets to immerse viewers?",
+    "stem": "The modern adult genre that uses 3D headsets to immerse viewers is",
+    "completion": " Virtual reality pornography"
+   },
+   {
+    "id": "36cc482f6580",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What supercritical fluid is used in CO2 extraction for cannabis concentrates?",
+    "stem": "The supercritical fluid used in CO2 extraction for cannabis concentrates is",
+    "completion": " Carbon dioxide"
+   },
+   {
+    "id": "972c570a3754",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Golf",
+    "source_split": "QA_train",
+    "question": "What does 'par' represent in golf?",
+    "stem": "In golf, 'par' represents",
+    "completion": " The number of strokes a skilled golfer is expected to require on a hole"
+   },
+   {
+    "id": "4ce3b8a875e0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What magical room appears when someone has great need?",
+    "stem": "The magical room that appears when someone has great need is",
+    "completion": " The Room of Requirement"
+   },
+   {
+    "id": "01348c54a8c2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What synthetic opioid became a more common cause of drug-related deaths than heroin in the US after 2015?",
+    "stem": "In the US after 2015, the synthetic opioid that became a more common cause of drug-related deaths than heroin was",
+    "completion": " fentanyl"
+   }
+  ],
+  "unrelated_test": [
+   {
+    "id": "30e443178d81",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "What is the street address where the Dursleys live?",
+    "stem": "The Dursleys live at",
+    "completion": " 4 Privet Drive"
+   },
+   {
+    "id": "9099a43c5367",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "What German sociologist spoke of a \"National Socialism\" rejecting the \"ideas of 1789\" in favor of the \"ideas of 1914\"?",
+    "stem": "The German sociologist who spoke of a 'National Socialism' rejecting the 'ideas of 1789' in favor of the 'ideas of 1914' was",
+    "completion": " Johann Plenge"
+   },
+   {
+    "id": "538c338ee8de",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Cannabis",
+    "source_split": "QA_test",
+    "question": "What molecule in raw cannabis is the acidic precursor to CBD?",
+    "stem": "The molecule in raw cannabis that is the acidic precursor to CBD is",
+    "completion": " CBDA"
+   },
+   {
+    "id": "ef986229ddce",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "Approximately what percentage of Ireland's land is covered by woodland?",
+    "stem": "The approximate percentage of Ireland's land that is covered by woodland is",
+    "completion": " About 10%"
+   },
+   {
+    "id": "1f53840020f7",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "Who was the Pope that the Catholic Encyclopedia claims abolished Lupercalia?",
+    "stem": "According to the Catholic Encyclopedia, Lupercalia was abolished by",
+    "completion": " Pope Gelasius I"
+   },
+   {
+    "id": "2cb7d592defe",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "Which treaty led to the creation of the Irish Free State in 1922?",
+    "stem": "The treaty that led to the creation of the Irish Free State in 1922 was",
+    "completion": " The Anglo-Irish Treaty"
+   },
+   {
+    "id": "442c2e5a71f0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Golf",
+    "source_split": "QA_test",
+    "question": "Which scoring format tallies every stroke taken over the course?",
+    "stem": "The scoring format that tallies every stroke taken over the course is",
+    "completion": " Stroke play"
+   },
+   {
+    "id": "703447e4e967",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What general name is given to guns that use electricity instead of explosives to accelerate projectiles?",
+    "stem": "Guns that use electricity instead of explosives to accelerate projectiles are generally called",
+    "completion": " Electromagnetic guns"
+   },
+   {
+    "id": "efdfbf4bc960",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What nickname is often given to baseball in the United States?",
+    "stem": "In the United States, the nickname often given to baseball is",
+    "completion": " America's Pastime"
+   },
+   {
+    "id": "63cf4b792e62",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "Which 1897 novel by Bram Stoker contributed to Halloween's monster imagery?",
+    "stem": "The 1897 novel by Bram Stoker that contributed to Halloween's monster imagery was",
+    "completion": " Dracula"
+   },
+   {
+    "id": "a986632468ff",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What volcanic ash-based material was essential to Roman concrete?",
+    "stem": "The volcanic ash-based material essential to Roman concrete was",
+    "completion": " Pozzolana"
+   },
+   {
+    "id": "e87c577bd6c4",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What region straddling Burma, Thailand, Vietnam, Laos, and China is known for massive opium production?",
+    "stem": "The region straddling Burma, Thailand, Vietnam, Laos, and China that is known for massive opium production is",
+    "completion": " the Golden Triangle"
+   },
+   {
+    "id": "dcc8c79a4acb",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What must a pitcher have in contact with during his delivery from the mound?",
+    "stem": "During his delivery from the mound, a pitcher must maintain",
+    "completion": " One foot on the rubber"
+   },
+   {
+    "id": "8a962bf44644",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What US territory in Hawaii did Japan attack in December 1941?",
+    "stem": "In December 1941, the US territory in Hawaii that Japan attacked was",
+    "completion": " Pearl Harbor"
+   },
+   {
+    "id": "002e283d0e8e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "Who wrote the 1929 pamphlet stating that Hebrews were the \"incarnation of capitalism\"?",
+    "stem": "The 1929 pamphlet stating that Hebrews were the 'incarnation of capitalism' was written by",
+    "completion": " Joseph Goebbels"
+   },
+   {
+    "id": "e619768cd53b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What British possession did the Italian Regia Aeronautica besiege in early June 1940?",
+    "stem": "In early June 1940, the British possession besieged by the Italian Regia Aeronautica was",
+    "completion": " Malta"
+   },
+   {
+    "id": "3a527bd77f9a",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor was the first to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy?",
+    "stem": "The first Emperor to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy, was",
+    "completion": " Diocletian"
+   },
+   {
+    "id": "2f0d732dff24",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What term describes a home run hit with the bases loaded?",
+    "stem": "The term that describes a home run hit with the bases loaded is",
+    "completion": " Grand slam"
+   },
+   {
+    "id": "5b4050a2f6d9",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "On what date did Germany invade the Soviet Union?",
+    "stem": "Germany invaded the Soviet Union on",
+    "completion": " 22 June 1941"
+   },
+   {
+    "id": "80590fbcbea1",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What type of COVID test is also called a rapid lateral flow test?",
+    "stem": "The type of COVID test also called a rapid lateral flow test is the",
+    "completion": " Antigen test"
+   },
+   {
+    "id": "8ccc3f00f563",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "Where was Valentine of Rome buried?",
+    "stem": "Valentine of Rome was buried at",
+    "completion": " Via Flaminia"
+   },
+   {
+    "id": "f4c1d292614d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What firearm introduced the first practical breech-loading cartridge in 1835?",
+    "stem": "The firearm that introduced the first practical breech-loading cartridge in 1835 was the",
+    "completion": " Lefaucheux gun"
+   },
+   {
+    "id": "bbb459bf8176",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What early automatic gun invented by Hiram Maxim in 1884 revolutionized warfare?",
+    "stem": "The early automatic gun invented by Hiram Maxim in 1884 that revolutionized warfare was the",
+    "completion": " Maxim gun"
+   },
+   {
+    "id": "0b1be984c370",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "What is the approximate land area of the Republic of Ireland in square kilometers?",
+    "stem": "The approximate land area of the Republic of Ireland in square kilometers is",
+    "completion": " 70,273 km²"
+   },
+   {
+    "id": "8f96ab85fd63",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "Which genre of Greek music is known for its bluesy style and a mix of indigenous, Ottoman, and Italian influences?",
+    "stem": "The genre of Greek music known for its bluesy style and a mix of indigenous, Ottoman, and Italian influences is",
+    "completion": " Rebetika"
+   },
+   {
+    "id": "5c02d162d6f1",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What does the term 'memento mori' mean in relation to Halloween?",
+    "stem": "In relation to Halloween, the term 'memento mori' means",
+    "completion": " Reminder of death"
+   },
+   {
+    "id": "4d475413aaf5",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What is the batting order in baseball?",
+    "stem": "In baseball, the batting order is",
+    "completion": " The pre-determined sequence in which players come to bat"
+   },
+   {
+    "id": "ea413fc1c682",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Golf",
+    "source_split": "QA_test",
+    "question": "What is the purpose of a pitch shot in golf?",
+    "stem": "In golf, the purpose of a pitch shot is",
+    "completion": " To deliver the ball onto the green from a short distance"
+   },
+   {
+    "id": "fd6783607c85",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Who coined the term 'sabermetrics' in baseball?",
+    "stem": "The term 'sabermetrics' in baseball was coined by",
+    "completion": " Bill James"
+   },
+   {
+    "id": "f3f672b30052",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "Which ancient Greek mathematician discovered the principles of buoyancy and devised an irrigation screw?",
+    "stem": "The ancient Greek mathematician who discovered the principles of buoyancy and devised an irrigation screw was",
+    "completion": " Archimedes"
+   },
+   {
+    "id": "8ca350ef86ce",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Culture of Greece",
+    "source_split": "QA_test",
+    "question": "Which significant naval victory is associated with Themistocles in Greek history?",
+    "stem": "In Greek history, the significant naval victory associated with Themistocles is",
+    "completion": " The victory at Salamis"
+   },
+   {
+    "id": "1389cb01fc6c",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What route remains the principal corridor for trafficking illegal opiates from Afghanistan to Western and Central Europe?",
+    "stem": "The principal corridor for trafficking illegal opiates from Afghanistan to Western and Central Europe remains",
+    "completion": " The Balkan route"
+   },
+   {
+    "id": "d610d79b5139",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "Which element is slightly denser than uranium?",
+    "stem": "The element that is slightly denser than uranium is",
+    "completion": " Tungsten"
+   },
+   {
+    "id": "b1c885395f9b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "Which political party did most German Catholics support before the Nazis took power?",
+    "stem": "Before the Nazis took power, the political party most German Catholics supported was",
+    "completion": " German Centre Party"
+   },
+   {
+    "id": "24bce1a4f9ea",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "What is the Chinese Valentine's Day called?",
+    "stem": "The Chinese Valentine's Day is called",
+    "completion": " Qixi Festival"
+   },
+   {
+    "id": "28234044c3a2",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What penalty does a conviction for trafficking heroin carry in Malaysia, Singapore, and Thailand?",
+    "stem": "In Malaysia, Singapore, and Thailand, a conviction for trafficking heroin carries",
+    "completion": " the death penalty"
+   },
+   {
+    "id": "f40eec8a82fc",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "What is the Japanese pinball-like vertical game used for gambling?",
+    "stem": "The Japanese pinball-like vertical game used for gambling is",
+    "completion": " Pachinko"
+   },
+   {
+    "id": "fb0989c91bc9",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What axis did Germany and Italy form in October 1936?",
+    "stem": "In October 1936, Germany and Italy formed the",
+    "completion": " Rome-Berlin Axis"
+   },
+   {
+    "id": "e7fb7b855ca0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Besides the Greeks, which neighboring culture did Rome assimilate?",
+    "stem": "Besides the Greeks, the neighboring culture that Rome assimilated was",
+    "completion": " Etruscan culture"
+   },
+   {
+    "id": "d6ce7d71fd63",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What are apples covered in sticky sugar syrup called in the UK?",
+    "stem": "In the UK, apples covered in sticky sugar syrup are called",
+    "completion": " Toffee apples"
+   },
+   {
+    "id": "33edc0c1ae52",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What clinically used strong analgesic is a 3,6 ester of morphine also known by the name Vilan?",
+    "stem": "The clinically used strong analgesic that is a 3,6 ester of morphine, also known by the name Vilan, is",
+    "completion": " nicomorphine"
+   },
+   {
+    "id": "a975805f2c5e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "In what month and year did the COVID-19 disease start spreading worldwide?",
+    "stem": "The COVID-19 disease started spreading worldwide in",
+    "completion": " January 2020"
+   },
+   {
+    "id": "f28be0075e8d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "Which fungus can increase uranium content in plant roots?",
+    "stem": "The fungus that can increase uranium content in plant roots is",
+    "completion": " Glomus intraradices"
+   },
+   {
+    "id": "3b3db9554635",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "A sum of money that must be paid to enter a poker tournament is the ______ fee.",
+    "stem": "The sum of money that must be paid to enter a poker tournament is the",
+    "completion": " Buy-in"
+   },
+   {
+    "id": "97e637e652c0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "Approximately what is the circumference of a regulation baseball?",
+    "stem": "The circumference of a regulation baseball is approximately",
+    "completion": " 9 inches"
+   },
+   {
+    "id": "df8769545035",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "What gas arises from uranium decay and is a health hazard in mines?",
+    "stem": "The gas that arises from uranium decay and is a health hazard in mines is",
+    "completion": " Radon"
+   },
+   {
+    "id": "1743f1b2e70e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What inhibitory neurotransmitter is decreased by heroin, leading to an increased release of dopamine?",
+    "stem": "The inhibitory neurotransmitter decreased by heroin, leading to an increased release of dopamine, is",
+    "completion": " GABA"
+   },
+   {
+    "id": "51bb8485fcde",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "In what year was the German Workers' Party founded?",
+    "stem": "The German Workers' Party was founded in the year",
+    "completion": " 1919"
+   },
+   {
+    "id": "d137c4f6fa99",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What is a gun designed to propel?",
+    "stem": "The projectile that a gun is designed to propel is called",
+    "completion": " Bullet"
+   },
+   {
+    "id": "27e3c707323a",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Cannabis",
+    "source_split": "QA_test",
+    "question": "Which terpene in cannabis is known for its pine aroma?",
+    "stem": "The terpene in cannabis known for its pine aroma is",
+    "completion": " Pinene"
+   }
+  ]
+ }
+}

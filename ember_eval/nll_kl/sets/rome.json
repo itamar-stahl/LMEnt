@@ -1,0 +1,3041 @@
+{
+ "topic": "Ancient Rome",
+ "source": "ember_eval/completion_eval/data/completion_questions.json",
+ "seed": 20260920,
+ "excluded_from_unrelated": [
+  "Ancient Rome",
+  "Culture of Greece"
+ ],
+ "unrelated_pool_topics": [
+  "Artificial intelligence",
+  "Baseball",
+  "COVID-19 pandemic",
+  "Cannabis",
+  "Gambling",
+  "Golf",
+  "Gun",
+  "Halloween",
+  "Harry Potter",
+  "Heroin",
+  "Nazism",
+  "Pornography",
+  "Republic of Ireland",
+  "Uranium",
+  "Valentine's Day",
+  "World War II"
+ ],
+ "sets": {
+  "target_selection": [
+   {
+    "id": "592213b0ec03",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "According to tradition, in what year was Rome founded?",
+    "stem": "According to tradition, Rome was founded in",
+    "completion": " 753 BC"
+   },
+   {
+    "id": "e44be01aa712",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which two mythical brothers are said to have founded Rome?",
+    "stem": "The two mythical brothers said to have founded Rome are",
+    "completion": " Romulus and Remus"
+   },
+   {
+    "id": "dd609b7fd507",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "How many legendary kings did Rome have according to tradition?",
+    "stem": "According to tradition, the number of legendary kings Rome had was",
+    "completion": " Seven"
+   },
+   {
+    "id": "28918b957c2a",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which period of Ancient Rome followed the Republic?",
+    "stem": "The period of Ancient Rome that followed the Republic was the",
+    "completion": " Roman Empire"
+   },
+   {
+    "id": "36ea3f219bf0",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Along which river was the city of Rome founded?",
+    "stem": "The city of Rome was founded along",
+    "completion": " The Tiber River"
+   },
+   {
+    "id": "64ebe35ddac0",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "According to legend, who were the parents of Romulus and Remus?",
+    "stem": "According to legend, the parents of Romulus and Remus were",
+    "completion": " Mars and a princess of Alba Longa"
+   },
+   {
+    "id": "c6aabb606b0b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which temple was constructed on the Capitoline Hill during early Rome?",
+    "stem": "The temple constructed on the Capitoline Hill during early Rome was the",
+    "completion": " Temple of Jupiter Optimus Maximus"
+   },
+   {
+    "id": "ca9e14e322a6",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Roman general is known for saying 'With iron, not with gold, Rome buys her freedom'?",
+    "stem": "The Roman general known for saying 'With iron, not with gold, Rome buys her freedom' was",
+    "completion": " Camillus"
+   },
+   {
+    "id": "39902dcfdb83",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "During which war did Hannibal cross the Alps to invade Roman territory?",
+    "stem": "Hannibal crossed the Alps to invade Roman territory during",
+    "completion": " The Second Punic War"
+   },
+   {
+    "id": "7e5ed1d780b2",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Who led the Carthaginian forces during the Second Punic War?",
+    "stem": "The Carthaginian forces during the Second Punic War were led by",
+    "completion": " Hannibal"
+   },
+   {
+    "id": "06c228b034e2",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which war resulted in the complete destruction of Carthage?",
+    "stem": "The war that resulted in the complete destruction of Carthage was",
+    "completion": " The Third Punic War"
+   },
+   {
+    "id": "8652c66a79d4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Who was the Roman general responsible for destroying Carthage in the Third Punic War?",
+    "stem": "The Roman general responsible for destroying Carthage in the Third Punic War was",
+    "completion": " Scipio Aemilianus"
+   },
+   {
+    "id": "0ef7d1d74d9e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What is the common name for the amphitheater built during the Flavian dynasty?",
+    "stem": "The common name for the amphitheater built during the Flavian dynasty is",
+    "completion": " The Colosseum"
+   },
+   {
+    "id": "a9301fc921db",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Emperor is notorious for persecuting Christians and is associated with the Great Fire of Rome?",
+    "stem": "The Emperor notorious for persecuting Christians and associated with the Great Fire of Rome was",
+    "completion": " Nero"
+   },
+   {
+    "id": "76f8de6a9886",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "In Ancient Rome, what does the term 'novus homo' signify?",
+    "stem": "In Ancient Rome, the term 'novus homo' signifies",
+    "completion": " A man who is the first in his family to become a consul"
+   },
+   {
+    "id": "db849da1134b",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which assembly was responsible for electing the most important magistrates in the Roman Republic?",
+    "stem": "The assembly responsible for electing the most important magistrates in the Roman Republic was",
+    "completion": " The comitia centuriata"
+   },
+   {
+    "id": "e6376bb1a957",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Emperor issued the Edict of Milan granting religious freedom to Christians?",
+    "stem": "The Edict of Milan, granting religious freedom to Christians, was issued by",
+    "completion": " Constantine"
+   },
+   {
+    "id": "cf875da736b0",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What title did Octavian adopt after consolidating his power?",
+    "stem": "After consolidating his power, Octavian adopted the title",
+    "completion": " Augustus"
+   },
+   {
+    "id": "fb9ddeb23ca0",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Who succeeded Augustus as Emperor of Rome?",
+    "stem": "Augustus was succeeded as Emperor of Rome by",
+    "completion": " Tiberius"
+   },
+   {
+    "id": "e9079fd1570c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Emperor's death marked the end of the Julio-Claudian dynasty?",
+    "stem": "The end of the Julio-Claudian dynasty was marked by the death of",
+    "completion": " Nero"
+   },
+   {
+    "id": "711d77509166",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "In what year did Nero's death occur, leading to the Year of the Four Emperors?",
+    "stem": "Nero's death, which led to the Year of the Four Emperors, occurred in",
+    "completion": " 68 AD"
+   },
+   {
+    "id": "3e738326b5d1",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which defensive structure was built across northern Britain by the Romans?",
+    "stem": "The defensive structure built across northern Britain by the Romans was",
+    "completion": " Hadrian's Wall"
+   },
+   {
+    "id": "4de74887a9ca",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Emperor commissioned the construction of Hadrian's Wall?",
+    "stem": "The construction of Hadrian's Wall was commissioned by the Emperor",
+    "completion": " Hadrian"
+   },
+   {
+    "id": "79facb30145e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Roman Emperor is known as the 'Philosopher Emperor' and authored the 'Meditations'?",
+    "stem": "The Roman Emperor known as the 'Philosopher Emperor', who authored the 'Meditations', was",
+    "completion": " Marcus Aurelius"
+   },
+   {
+    "id": "feb0187cc987",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "In what year is the traditional fall of the Western Roman Empire marked?",
+    "stem": "The traditional date for the fall of the Western Roman Empire is",
+    "completion": " 476 AD"
+   },
+   {
+    "id": "9f56b54e4ee4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Who is traditionally recognized as the last emperor of the Western Roman Empire?",
+    "stem": "The last emperor of the Western Roman Empire is traditionally recognized as",
+    "completion": " Romulus Augustus"
+   },
+   {
+    "id": "81e2200cb685",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What engineering structure carried water into Roman cities from distant sources?",
+    "stem": "The engineering structures that carried water into Roman cities from distant sources were",
+    "completion": " Aqueducts"
+   },
+   {
+    "id": "53f92db0f4ce",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What was the primary purpose of the Roman road network?",
+    "stem": "The primary purpose of the Roman road network was",
+    "completion": " To enable rapid military movement"
+   },
+   {
+    "id": "ba69a6eec5f5",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Who authored the monumental history 'Ab urbe condita'?",
+    "stem": "The monumental history 'Ab urbe condita' was written by",
+    "completion": " Livy"
+   },
+   {
+    "id": "c8e66ebb84fd",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What type of flexible military formation, based on smaller units called maniples, did the Romans develop?",
+    "stem": "The type of flexible military formation the Romans developed, based on smaller units called maniples, was",
+    "completion": " The manipular formation"
+   },
+   {
+    "id": "e0587034f22f",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What was the term for a basic soldier of the Roman army?",
+    "stem": "The term for a basic soldier of the Roman army was",
+    "completion": " Legionary"
+   },
+   {
+    "id": "1ffcb2cf0adf",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What long, straight instrument did the Roman army use for signaling?",
+    "stem": "The long, straight instrument the Roman army used for signaling was",
+    "completion": " The tuba"
+   },
+   {
+    "id": "16028d0c92ff",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What was the name of the breakfast meal served at dawn in Ancient Rome?",
+    "stem": "The breakfast meal served at dawn in Ancient Rome was called",
+    "completion": " Ientaculum"
+   },
+   {
+    "id": "6660360ede98",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What was the main meal of the day in Ancient Rome, typically served in the evening?",
+    "stem": "The main meal of the day in Ancient Rome, typically served in the evening, was called",
+    "completion": " Cena"
+   },
+   {
+    "id": "509407af7d7c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What term describes the extended family or clan in Ancient Rome?",
+    "stem": "In Ancient Rome, the extended family or clan was known as",
+    "completion": " Gens"
+   },
+   {
+    "id": "cdaa18cadda8",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "In a Roman household, what was the title of the male head of the family?",
+    "stem": "In a Roman household, the title of the male head of the family was",
+    "completion": " Pater familias"
+   },
+   {
+    "id": "7faca1ad5263",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "At what age did Roman boys generally begin secondary education at a grammaticus' school?",
+    "stem": "Roman boys generally began secondary education at a grammaticus' school",
+    "completion": " At age 12"
+   },
+   {
+    "id": "62e8676236e4",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What language was natively spoken by the Romans?",
+    "stem": "The language natively spoken by the Romans was",
+    "completion": " Latin"
+   },
+   {
+    "id": "7f2f9ae06b46",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What term in Roman law refers to the concept of natural law?",
+    "stem": "In Roman law, the concept of natural law is referred to by the term",
+    "completion": " Jus naturale"
+   },
+   {
+    "id": "571791108f48",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which edict, issued in 212 AD, granted Roman citizenship to all free inhabitants of the empire?",
+    "stem": "The edict issued in 212 AD that granted Roman citizenship to all free inhabitants of the empire was",
+    "completion": " The Edict of Caracalla"
+   },
+   {
+    "id": "a7f295b84f2e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which venue was the main site for chariot racing in Ancient Rome?",
+    "stem": "The main site for chariot racing in Ancient Rome was the",
+    "completion": " Circus Maximus"
+   },
+   {
+    "id": "c43aeedcbd9f",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What versatile Roman military unit combined both infantry and cavalry elements?",
+    "stem": "The versatile Roman military unit that combined both infantry and cavalry elements was called",
+    "completion": " Cohortes equitatae"
+   },
+   {
+    "id": "3dc1a4d10c05",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Emperor initiated the Great Persecution of Christians in 303 AD?",
+    "stem": "The Great Persecution of Christians in 303 AD was initiated by",
+    "completion": " Diocletian"
+   },
+   {
+    "id": "7abd2432be8e",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "What political system divided the Roman Empire among four rulers?",
+    "stem": "The political system that divided the Roman Empire among four rulers was",
+    "completion": " The Tetrarchy"
+   },
+   {
+    "id": "30419f2cee3c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Under which Emperor were the Roman legal codes compiled into the Corpus Juris Civilis?",
+    "stem": "The Roman legal codes were compiled into the Corpus Juris Civilis under",
+    "completion": " Justinian"
+   },
+   {
+    "id": "ff9cf496c798",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which ancient Roman architect and engineer wrote 'De Architectura'?",
+    "stem": "The ancient Roman architect and engineer who wrote 'De Architectura' was",
+    "completion": " Vitruvius"
+   },
+   {
+    "id": "a6c02f67443c",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Roman citizen assembly was organized by tribes?",
+    "stem": "The Roman citizen assembly organized by tribes was",
+    "completion": " The comitia tributa"
+   },
+   {
+    "id": "2516acdbf76f",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which barbarian group sacked Rome in 410 AD?",
+    "stem": "The barbarian group that sacked Rome in 410 AD was",
+    "completion": " The Visigoths"
+   },
+   {
+    "id": "fb429bdf285d",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which Trojan hero is said to have journeyed to Italy and whose story is recounted in the Aeneid?",
+    "stem": "The Trojan hero said to have journeyed to Italy, whose story is recounted in the Aeneid, was",
+    "completion": " Aeneas"
+   },
+   {
+    "id": "91b09ab88ede",
+    "role": "target",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_train",
+    "question": "Which major work by Edward Gibbon is a detailed account of the decline and fall of the Roman Empire?",
+    "stem": "The major work by Edward Gibbon that gives a detailed account of the decline and fall of the Roman Empire is",
+    "completion": " The History of the Decline and Fall of the Roman Empire"
+   }
+  ],
+  "target_test": [
+   {
+    "id": "eed7591e51d0",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which river is associated with the founding of Rome?",
+    "stem": "The river associated with the founding of Rome is",
+    "completion": " The Tiber River"
+   },
+   {
+    "id": "8f2cdc49e2b4",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What period followed the Roman Kingdom?",
+    "stem": "The period that followed the Roman Kingdom was the",
+    "completion": " Roman Republic"
+   },
+   {
+    "id": "dfc63a43b071",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "In what year did the Roman Republic begin (traditionally)?",
+    "stem": "Traditionally, the Roman Republic began in",
+    "completion": " 509 BC"
+   },
+   {
+    "id": "c34e0ae9ba07",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "In what year is the beginning of the Roman Empire traditionally dated?",
+    "stem": "The beginning of the Roman Empire is traditionally dated to",
+    "completion": " 27 BC"
+   },
+   {
+    "id": "a4bc4f7ce613",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Who was the first Emperor of Rome?",
+    "stem": "The first Emperor of Rome was",
+    "completion": " Augustus"
+   },
+   {
+    "id": "65c9c4a0b6b0",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What major public space began to form when Romans drained the valley between the Capitoline and Palatine Hills?",
+    "stem": "The major public space that began to form when the Romans drained the valley between the Capitoline and Palatine Hills was",
+    "completion": " The Roman Forum"
+   },
+   {
+    "id": "78625f3fc2df",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which culture from southern Italy did Ancient Rome assimilate?",
+    "stem": "The culture from southern Italy that Ancient Rome assimilated was",
+    "completion": " Greek culture"
+   },
+   {
+    "id": "e7fb7b855ca0",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Besides the Greeks, which neighboring culture did Rome assimilate?",
+    "stem": "Besides the Greeks, the neighboring culture that Rome assimilated was",
+    "completion": " Etruscan culture"
+   },
+   {
+    "id": "839dc1846e66",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What was the name of the advisory council composed of Rome’s nobility?",
+    "stem": "The advisory council composed of Rome’s nobility was known as",
+    "completion": " The Senate"
+   },
+   {
+    "id": "cfa2faffbc9e",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "At which battle did the Gauls, led by Brennus, defeat the Romans?",
+    "stem": "The Gauls, led by Brennus, defeated the Romans at",
+    "completion": " The Battle of the Allia"
+   },
+   {
+    "id": "2bbe279497ea",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which battle decisively ended the Second Punic War?",
+    "stem": "The battle that decisively ended the Second Punic War was",
+    "completion": " The Battle of Zama"
+   },
+   {
+    "id": "d3edc8e1d1d3",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor initiated the construction of the Flavian Amphitheater?",
+    "stem": "The construction of the Flavian Amphitheater was initiated by",
+    "completion": " Vespasian"
+   },
+   {
+    "id": "a0d30b8487fa",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor completed the construction of the Colosseum?",
+    "stem": "The construction of the Colosseum was completed by",
+    "completion": " Titus"
+   },
+   {
+    "id": "4d1c7b8caae0",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Julio-Claudian Emperor is infamous for his eccentric and cruel behavior?",
+    "stem": "The Julio-Claudian Emperor infamous for his eccentric and cruel behavior was",
+    "completion": " Caligula"
+   },
+   {
+    "id": "bb4efe732d1f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What were the two main political factions in the late Roman Republic?",
+    "stem": "The two main political factions in the late Roman Republic were",
+    "completion": " Populares and Optimates"
+   },
+   {
+    "id": "f44e062e7559",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Roman general reformed the military by recruiting landless citizens?",
+    "stem": "The Roman general who reformed the military by recruiting landless citizens was",
+    "completion": " Gaius Marius"
+   },
+   {
+    "id": "2084622cddad",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Roman social class consisted of wealthy merchants and cavalry owners?",
+    "stem": "The Roman social class that consisted of wealthy merchants and cavalry owners was known as",
+    "completion": " The Equestrians"
+   },
+   {
+    "id": "b4d005005820",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What system of government established in Ancient Rome has inspired modern republics?",
+    "stem": "The system of government established in Ancient Rome that has inspired modern republics is",
+    "completion": " The Roman Republic"
+   },
+   {
+    "id": "ff13f6690f3d",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What Latin term meaning 'public business' referred to the Roman state?",
+    "stem": "The Latin term meaning 'public business' that referred to the Roman state was",
+    "completion": " Res publica"
+   },
+   {
+    "id": "bddf5b9d41a4",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "At which battle did Octavian defeat Antony and Cleopatra?",
+    "stem": "Octavian defeated Antony and Cleopatra at",
+    "completion": " The Battle of Actium"
+   },
+   {
+    "id": "1a8124ddf0d6",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What is the period of peace and prosperity under Augustus known as?",
+    "stem": "The period of peace and prosperity under Augustus is known as",
+    "completion": " Pax Romana"
+   },
+   {
+    "id": "f4ff93586b69",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which dynasty was established by Augustus?",
+    "stem": "The dynasty established by Augustus was",
+    "completion": " The Julio-Claudian dynasty"
+   },
+   {
+    "id": "faf5016ddbf6",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor is credited with reorganizing the Roman military and discharging soldiers after the Civil War?",
+    "stem": "The Emperor credited with reorganizing the Roman military and discharging soldiers after the Civil War was",
+    "completion": " Augustus"
+   },
+   {
+    "id": "d85fd58f8d6e",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor expanded the Roman Empire to its greatest territorial extent?",
+    "stem": "The Emperor who expanded the Roman Empire to its greatest territorial extent was",
+    "completion": " Trajan"
+   },
+   {
+    "id": "5a3fb915d5ac",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which monumental column was erected to commemorate Emperor Trajan's victories?",
+    "stem": "The monumental column erected to commemorate Emperor Trajan's victories was",
+    "completion": " Trajan's Column"
+   },
+   {
+    "id": "52813b144504",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which plague significantly affected the Roman Empire during Marcus Aurelius's reign?",
+    "stem": "The plague that significantly affected the Roman Empire during Marcus Aurelius's reign was",
+    "completion": " The Antonine Plague"
+   },
+   {
+    "id": "2f20ea30029b",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Who succeeded Marcus Aurelius and is known for his controversial rule?",
+    "stem": "The emperor who succeeded Marcus Aurelius and is known for his controversial rule was",
+    "completion": " Commodus"
+   },
+   {
+    "id": "af1ad5725f6f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Germanic chieftain deposed the last Western Roman Emperor?",
+    "stem": "The last Western Roman Emperor was deposed by the Germanic chieftain",
+    "completion": " Odoacer"
+   },
+   {
+    "id": "8e985fbeb6b4",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which famous Roman temple is renowned for its large dome and central oculus?",
+    "stem": "The famous Roman temple renowned for its large dome and central oculus is",
+    "completion": " The Pantheon"
+   },
+   {
+    "id": "f21148ed5f02",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What is the name of Rome's ancient sewer system?",
+    "stem": "Rome's ancient sewer system is known as",
+    "completion": " The Cloaca Maxima"
+   },
+   {
+    "id": "e75af22ca079",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which revolutionary building material, made with volcanic ash, was extensively used by the Romans?",
+    "stem": "The revolutionary building material made with volcanic ash that was extensively used by the Romans was",
+    "completion": " Roman concrete"
+   },
+   {
+    "id": "01682084c593",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Roman author wrote the encyclopedia 'Naturalis Historia'?",
+    "stem": "The Roman author who wrote the encyclopedia 'Naturalis Historia' was",
+    "completion": " Pliny the Elder"
+   },
+   {
+    "id": "1290eea813d6",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What type of water clock was used by the Romans?",
+    "stem": "The type of water clock used by the Romans was",
+    "completion": " The clepsydra"
+   },
+   {
+    "id": "071d083c36bd",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What was the light midday meal in Ancient Rome called?",
+    "stem": "The light midday meal in Ancient Rome was called",
+    "completion": " Prandium"
+   },
+   {
+    "id": "81667af5253e",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which garment was a symbol of Roman citizenship?",
+    "stem": "The garment that was a symbol of Roman citizenship was",
+    "completion": " The toga"
+   },
+   {
+    "id": "757719f5fc85",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "At what age were wealthy Roman boys typically sent to a private elementary school (ludus)?",
+    "stem": "Wealthy Roman boys were typically sent to a private elementary school called the ludus",
+    "completion": " At age 7"
+   },
+   {
+    "id": "11f75168fc7f",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which language was commonly used by the educated elite alongside Latin?",
+    "stem": "The language commonly used by the educated elite alongside Latin was",
+    "completion": " Greek"
+   },
+   {
+    "id": "24b2f41e1c4b",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What legal document, created in 449 BC, is considered the foundation of Roman law?",
+    "stem": "The legal document created in 449 BC that is considered the foundation of Roman law is",
+    "completion": " The Law of the Twelve Tables"
+   },
+   {
+    "id": "8ac63d0cb241",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What is the name of the body of laws that applied to non-citizens in Rome?",
+    "stem": "The body of laws that applied to non-citizens in Rome was known as",
+    "completion": " Jus gentium"
+   },
+   {
+    "id": "efb6de0c5bab",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "How many months did the original Roman calendar have before January and February were added?",
+    "stem": "Before January and February were added, the number of months in the original Roman calendar was",
+    "completion": " Ten"
+   },
+   {
+    "id": "d0a74ffded70",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which king is credited with reforming the Roman calendar by adding January and February?",
+    "stem": "The king credited with reforming the Roman calendar by adding January and February was",
+    "completion": " Numa Pompilius"
+   },
+   {
+    "id": "ae39338bea0e",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What was the Roman market day, occurring every eight days, called?",
+    "stem": "The Roman market day, which occurred every eight days, was called",
+    "completion": " Nundinae"
+   },
+   {
+    "id": "a986632468ff",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What volcanic ash-based material was essential to Roman concrete?",
+    "stem": "The volcanic ash-based material essential to Roman concrete was",
+    "completion": " Pozzolana"
+   },
+   {
+    "id": "3a527bd77f9a",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor was the first to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy?",
+    "stem": "The first Emperor to voluntarily abdicate, in 305 AD, helping to establish the Tetrarchy, was",
+    "completion": " Diocletian"
+   },
+   {
+    "id": "bbd5536050aa",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor rebuilt Byzantium and renamed it Constantinople?",
+    "stem": "Byzantium was rebuilt and renamed Constantinople by the Emperor",
+    "completion": " Constantine"
+   },
+   {
+    "id": "a03c89bd8e13",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What were the public bath complexes in Rome called?",
+    "stem": "The public bath complexes in Rome were called",
+    "completion": " Thermae"
+   },
+   {
+    "id": "d38b0c088e56",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What term describes the combats between trained fighters in Roman arenas?",
+    "stem": "The combats between trained fighters in Roman arenas were known as",
+    "completion": " Gladiatorial games"
+   },
+   {
+    "id": "056c141d19c4",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "What was the name of the state-run courier and transportation system of Ancient Rome?",
+    "stem": "The state-run courier and transportation system of Ancient Rome was known as",
+    "completion": " Cursus publicus"
+   },
+   {
+    "id": "a18e0bb53588",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which dynasty is known as the 'Five Good Emperors' of Rome?",
+    "stem": "The dynasty known as the 'Five Good Emperors' of Rome is",
+    "completion": " The Nerva-Antonine dynasty"
+   },
+   {
+    "id": "f7a61aa65070",
+    "role": "target",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "QA_test",
+    "question": "Which Emperor gave his name to the month of August?",
+    "stem": "The month of August is named after the Emperor",
+    "completion": " Augustus"
+   }
+  ],
+  "neighbour_selection": [
+   {
+    "id": "c2a83e88afd2",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who is the king of the gods in Greek mythology?",
+    "stem": "In Greek mythology, the king of the gods is",
+    "completion": " Zeus"
+   },
+   {
+    "id": "b4ea7311f7ae",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What is the name of the famous temple in Athens dedicated to Athena?",
+    "stem": "The famous temple in Athens dedicated to Athena is the",
+    "completion": " Parthenon"
+   },
+   {
+    "id": "a3b9953560ba",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who was the philosopher who taught Plato?",
+    "stem": "The philosopher who taught Plato was",
+    "completion": " Socrates"
+   },
+   {
+    "id": "7f3a48f7b455",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient Greek epic tells the story of the Trojan War?",
+    "stem": "The ancient Greek epic that tells the story of the Trojan War is",
+    "completion": " The Iliad"
+   },
+   {
+    "id": "0c4397588ecb",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Greek philosopher wrote 'The Republic'?",
+    "stem": "The Greek philosopher who wrote 'The Republic' was",
+    "completion": " Plato"
+   },
+   {
+    "id": "aa8b6bc50e00",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who is the Egyptian sun god?",
+    "stem": "The Egyptian sun god is",
+    "completion": " Ra"
+   },
+   {
+    "id": "967b834d97ef",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Egyptian pharaoh commissioned the Great Pyramid of Giza?",
+    "stem": "The Great Pyramid of Giza was commissioned by the Egyptian pharaoh",
+    "completion": " Khufu"
+   },
+   {
+    "id": "17d681b74de5",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which valley in Egypt is famous for its pharaohs' tombs?",
+    "stem": "The valley in Egypt famous for its pharaohs' tombs is the",
+    "completion": " Valley of the Kings"
+   },
+   {
+    "id": "66ddbdb208e5",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Egyptian pharaoh was known for his almost intact tomb discovered in 1922?",
+    "stem": "The Egyptian pharaoh known for his almost intact tomb, discovered in 1922, was",
+    "completion": " Tutankhamun"
+   },
+   {
+    "id": "70ba72ff174c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which document, signed in 1215, limited the power of the English king?",
+    "stem": "The document signed in 1215 that limited the power of the English king was",
+    "completion": " Magna Carta"
+   },
+   {
+    "id": "3828ea92dbdf",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which architectural style is known for pointed arches and flying buttresses?",
+    "stem": "The architectural style known for pointed arches and flying buttresses is",
+    "completion": " Gothic"
+   },
+   {
+    "id": "69ad9da1abfc",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which medieval European university, founded in 1088, is one of the oldest in the world?",
+    "stem": "The medieval European university founded in 1088, one of the oldest in the world, is the",
+    "completion": " University of Bologna"
+   },
+   {
+    "id": "a89ccf34359a",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which medieval battle is famous for English longbowmen defeating French knights?",
+    "stem": "The medieval battle famous for English longbowmen defeating French knights is the",
+    "completion": " Battle of Agincourt"
+   },
+   {
+    "id": "66411e06361e",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who was the Byzantine emperor known for his comprehensive legal code?",
+    "stem": "The Byzantine emperor known for his comprehensive legal code was",
+    "completion": " Justinian I"
+   },
+   {
+    "id": "57b3d28551b9",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What was the capital of the Byzantine Empire?",
+    "stem": "The capital of the Byzantine Empire was",
+    "completion": " Constantinople"
+   },
+   {
+    "id": "c1a7ef7a3015",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which architectural masterpiece in Istanbul was once a Byzantine church?",
+    "stem": "The architectural masterpiece in Istanbul that was once a Byzantine church is",
+    "completion": " Hagia Sophia"
+   },
+   {
+    "id": "c43c87940f80",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which event in 1204 significantly weakened the Byzantine Empire?",
+    "stem": "The event in 1204 that significantly weakened the Byzantine Empire was",
+    "completion": " The Fourth Crusade"
+   },
+   {
+    "id": "ec9f05cb4592",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient empire was founded by Cyrus the Great?",
+    "stem": "The ancient empire founded by Cyrus the Great was the",
+    "completion": " Achaemenid Empire"
+   },
+   {
+    "id": "e64e58ee9bbd",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who was the Persian king at the time of the Greek invasion?",
+    "stem": "The Persian king at the time of the Greek invasion was",
+    "completion": " Xerxes I"
+   },
+   {
+    "id": "4c261eabe167",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which battle between Greeks and Persians is famous for the Persian defeat?",
+    "stem": "The battle between Greeks and Persians famous for the Persian defeat is the",
+    "completion": " Battle of Marathon"
+   },
+   {
+    "id": "e0f4aa8aff75",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient empire is known for its Royal Road that connected its vast territories?",
+    "stem": "The ancient empire known for its Royal Road, which connected its vast territories, is the",
+    "completion": " Achaemenid Empire"
+   },
+   {
+    "id": "53becea84aad",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient Indian empire was founded by Chandragupta Maurya?",
+    "stem": "The ancient Indian empire founded by Chandragupta Maurya was the",
+    "completion": " Maurya Empire"
+   },
+   {
+    "id": "17088cc19d1b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Indian emperor was known for converting to Buddhism?",
+    "stem": "The Indian emperor known for converting to Buddhism was",
+    "completion": " Ashoka"
+   },
+   {
+    "id": "c439a4bcd639",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which river is considered sacred in Indian culture?",
+    "stem": "The river considered sacred in Indian culture is the",
+    "completion": " Ganges"
+   },
+   {
+    "id": "f9df7d9a4625",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which empire built the Taj Mahal?",
+    "stem": "The Taj Mahal was built by the",
+    "completion": " Mughal Empire"
+   },
+   {
+    "id": "6e66acf98afa",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who was the Mughal emperor who built the Taj Mahal?",
+    "stem": "The Mughal emperor who built the Taj Mahal was",
+    "completion": " Shah Jahan"
+   },
+   {
+    "id": "1cb79f3c9cc2",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which river is considered the cradle of Chinese civilization?",
+    "stem": "The river considered the cradle of Chinese civilization is the",
+    "completion": " Yellow River"
+   },
+   {
+    "id": "8c8391cebce4",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Mesoamerican civilization built stepped pyramids in the rainforest?",
+    "stem": "The Mesoamerican civilization that built stepped pyramids in the rainforest was the",
+    "completion": " Maya"
+   },
+   {
+    "id": "cf400b4beeba",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What is the name of the famous Mayan city known for its temples and plazas?",
+    "stem": "The famous Mayan city known for its temples and plazas is",
+    "completion": " Chichen Itza"
+   },
+   {
+    "id": "1dc9a91e7f60",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What was the primary crop grown by the Maya?",
+    "stem": "The primary crop grown by the Maya was",
+    "completion": " Maize"
+   },
+   {
+    "id": "a377a9e15b2b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient South American civilization built Machu Picchu?",
+    "stem": "The ancient South American civilization that built Machu Picchu was the",
+    "completion": " Inca"
+   },
+   {
+    "id": "117d196e852c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What was the capital of the Inca Empire?",
+    "stem": "The capital of the Inca Empire was",
+    "completion": " Cusco"
+   },
+   {
+    "id": "2b3590c37196",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which crop was a staple in the Inca diet?",
+    "stem": "The staple crop of the Inca diet was",
+    "completion": " Potatoes"
+   },
+   {
+    "id": "34a6004a9c0c",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which animal was domesticated by the Inca for transportation and wool?",
+    "stem": "The animal domesticated by the Inca for transportation and wool was the",
+    "completion": " Llama"
+   },
+   {
+    "id": "cdbc26c13230",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient civilization built the city of Tenochtitlan?",
+    "stem": "The city of Tenochtitlan was built by the",
+    "completion": " Aztecs"
+   },
+   {
+    "id": "bf61db4bb704",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What crop was central to the Aztec diet?",
+    "stem": "The crop central to the Aztec diet was",
+    "completion": " Maize"
+   },
+   {
+    "id": "1240a468ca66",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Aztec god was associated with war?",
+    "stem": "The Aztec god associated with war was",
+    "completion": " Huitzilopochtli"
+   },
+   {
+    "id": "66ae60d26e5a",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Who was the Aztec emperor in power when the Spanish arrived?",
+    "stem": "The Aztec emperor in power when the Spanish arrived was",
+    "completion": " Montezuma II"
+   },
+   {
+    "id": "9bf62c46b32d",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which group is known for their seafaring raids during the early medieval period?",
+    "stem": "The group known for their seafaring raids during the early medieval period was the",
+    "completion": " Vikings"
+   },
+   {
+    "id": "923a4d5132a0",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Norse god is known as the god of thunder?",
+    "stem": "The Norse god known as the god of thunder is",
+    "completion": " Thor"
+   },
+   {
+    "id": "aad6e0e74633",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Viking explorer is credited with reaching North America before Columbus?",
+    "stem": "The Viking explorer credited with reaching North America before Columbus was",
+    "completion": " Leif Erikson"
+   },
+   {
+    "id": "4a40b1da92d0",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Muslim scholar is known for his works in algebra?",
+    "stem": "The Muslim scholar known for his works in algebra was",
+    "completion": " Al-Khwarizmi"
+   },
+   {
+    "id": "3639989d2e74",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "What was the name of the famous library in Baghdad during the Islamic Golden Age?",
+    "stem": "The famous library in Baghdad during the Islamic Golden Age was known as the",
+    "completion": " House of Wisdom"
+   },
+   {
+    "id": "94c6624d4be3",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which Muslim city in Spain was known for its cultural and scholarly achievements?",
+    "stem": "The Muslim city in Spain known for its cultural and scholarly achievements was",
+    "completion": " Córdoba"
+   },
+   {
+    "id": "f9be0eb29657",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which medieval chivalric order is known for its code of honor and valor?",
+    "stem": "The medieval chivalric order known for its code of honor and valor is the",
+    "completion": " Knights Hospitaller"
+   },
+   {
+    "id": "5f5e998970c2",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which period in European history, spanning roughly from the 5th to the 15th century, is known as the Middle Ages?",
+    "stem": "Spanning roughly from the 5th to the 15th century, the period in European history known as the Middle Ages is also called",
+    "completion": " Medieval period"
+   },
+   {
+    "id": "61f61adbcaf0",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which invention, developed in ancient China, revolutionized warfare?",
+    "stem": "The invention developed in ancient China that revolutionized warfare was",
+    "completion": " Gunpowder"
+   },
+   {
+    "id": "1a272933ad8b",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient Mesopotamian civilization is known for its legal code carved on a stone stele?",
+    "stem": "The ancient Mesopotamian civilization known for its legal code carved on a stone stele was",
+    "completion": " Babylon"
+   },
+   {
+    "id": "cf6994384f73",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which ancient civilization developed cuneiform, one of the earliest writing systems?",
+    "stem": "The ancient civilization that developed cuneiform, one of the earliest writing systems, was",
+    "completion": " Sumer"
+   },
+   {
+    "id": "bbbf35114da3",
+    "role": "neighbour",
+    "phase": "selection",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_train",
+    "question": "Which medieval Islamic scholar is known for his extensive commentaries on Aristotle?",
+    "stem": "The medieval Islamic scholar known for his extensive commentaries on Aristotle was",
+    "completion": " Averroes"
+   }
+  ],
+  "neighbour_test": [
+   {
+    "id": "6c7fd91fe12c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Greek city-state was famous for its military strength?",
+    "stem": "The ancient Greek city-state famous for its military strength was",
+    "completion": " Sparta"
+   },
+   {
+    "id": "8c5bd3bd85a3",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What form of government did Athens develop?",
+    "stem": "The form of government developed by Athens was",
+    "completion": " Democracy"
+   },
+   {
+    "id": "1f5df6236de1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Greek mathematician is known for the theorem a² + b² = c²?",
+    "stem": "The ancient Greek mathematician known for the theorem a² + b² = c² was",
+    "completion": " Pythagoras"
+   },
+   {
+    "id": "66d7404fd0ad",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Greek scientist is considered the father of geometry?",
+    "stem": "The ancient Greek scientist considered the father of geometry was",
+    "completion": " Euclid"
+   },
+   {
+    "id": "9a623eaf6eb9",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Greek physician is known as the father of medicine?",
+    "stem": "The ancient Greek physician known as the father of medicine was",
+    "completion": " Hippocrates"
+   },
+   {
+    "id": "092e679d0e68",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Who was the famous queen of Ancient Egypt known for her beauty and relationships with Roman leaders?",
+    "stem": "The famous queen of Ancient Egypt known for her beauty and her relationships with Roman leaders was",
+    "completion": " Cleopatra"
+   },
+   {
+    "id": "099ec95c35be",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which river flows through Egypt?",
+    "stem": "The river that flows through Egypt is the",
+    "completion": " Nile"
+   },
+   {
+    "id": "af2eff39f205",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What is the name of the Egyptian writing system?",
+    "stem": "The Egyptian writing system is known as",
+    "completion": " Hieroglyphics"
+   },
+   {
+    "id": "9fd6f33a3d74",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What structure served as a tomb for ancient Egyptian pharaohs?",
+    "stem": "The structure that served as a tomb for ancient Egyptian pharaohs was the",
+    "completion": " Pyramid"
+   },
+   {
+    "id": "101f35626ef8",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Egyptian goddess is associated with fertility and motherhood?",
+    "stem": "The ancient Egyptian goddess associated with fertility and motherhood is",
+    "completion": " Isis"
+   },
+   {
+    "id": "ab0a6d887d0c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What was the primary material used by Egyptians to build monuments?",
+    "stem": "The primary material used by the Egyptians to build monuments was",
+    "completion": " Limestone"
+   },
+   {
+    "id": "effb3406b4ed",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Who led the Norman Conquest of England in 1066?",
+    "stem": "The Norman Conquest of England in 1066 was led by",
+    "completion": " William the Conqueror"
+   },
+   {
+    "id": "a0ffc16fb112",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which medieval conflict in England was fought between the Lancasters and Yorks?",
+    "stem": "The medieval conflict in England fought between the Lancasters and Yorks was the",
+    "completion": " Wars of the Roses"
+   },
+   {
+    "id": "dd33ff8cc26e",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Who was the religious leader of medieval Europe that initiated the First Crusade?",
+    "stem": "The religious leader of medieval Europe who initiated the First Crusade was",
+    "completion": " Pope Urban II"
+   },
+   {
+    "id": "aa5aacbfacbb",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What was the dominant language of Medieval scholarly work in Europe?",
+    "stem": "The dominant language of Medieval scholarly work in Europe was",
+    "completion": " Latin"
+   },
+   {
+    "id": "56330cc8c4e8",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What was the capital of the Achaemenid Empire?",
+    "stem": "The capital of the Achaemenid Empire was",
+    "completion": " Persepolis"
+   },
+   {
+    "id": "c2fa8631e2d5",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which empire was known for its system of satrapies?",
+    "stem": "The empire known for its system of satrapies was the",
+    "completion": " Achaemenid Empire"
+   },
+   {
+    "id": "d0b362ee17dc",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Persian king was defeated by Alexander the Great?",
+    "stem": "The ancient Persian king defeated by Alexander the Great was",
+    "completion": " Darius III"
+   },
+   {
+    "id": "c2bc97b875ce",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What is the ancient Indian language used for sacred texts?",
+    "stem": "The ancient Indian language used for sacred texts is",
+    "completion": " Sanskrit"
+   },
+   {
+    "id": "728ed0e4bf9a",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Indian work is a famous treatise on statecraft and warfare?",
+    "stem": "The ancient Indian work that is a famous treatise on statecraft and warfare is the",
+    "completion": " Arthashastra"
+   },
+   {
+    "id": "e604fd293914",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Who was the first emperor of a unified China?",
+    "stem": "The first emperor of a unified China was",
+    "completion": " Qin Shi Huang"
+   },
+   {
+    "id": "724ceab4be33",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What ancient wall was built to protect China from northern invasions?",
+    "stem": "The ancient wall built to protect China from northern invasions was",
+    "completion": " The Great Wall"
+   },
+   {
+    "id": "aeae25d09fdc",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Chinese philosophy emphasizes harmony with nature and simplicity?",
+    "stem": "The Chinese philosophy that emphasizes harmony with nature and simplicity is",
+    "completion": " Daoism"
+   },
+   {
+    "id": "ad0542403076",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Chinese philosopher is famous for the work 'The Analects'?",
+    "stem": "The Chinese philosopher famous for the work 'The Analects' is",
+    "completion": " Confucius"
+   },
+   {
+    "id": "ace85aa41dd8",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which dynasty is known for the Terracotta Army?",
+    "stem": "The dynasty known for the Terracotta Army is the",
+    "completion": " Qin Dynasty"
+   },
+   {
+    "id": "5e1c85abb4a1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for the ancient Chinese administrative system based on examinations?",
+    "stem": "The ancient Chinese administrative system based on examinations is known as the",
+    "completion": " Imperial Examination System"
+   },
+   {
+    "id": "39c2b1642a91",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Chinese dynasty is known for its porcelain production?",
+    "stem": "The Chinese dynasty known for its porcelain production is the",
+    "completion": " Song Dynasty"
+   },
+   {
+    "id": "cd352a5c1c9d",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Chinese legal philosopher is associated with strict state control?",
+    "stem": "The Chinese legal philosopher associated with strict state control was",
+    "completion": " Han Feizi"
+   },
+   {
+    "id": "f8a1dd66efe8",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What calendar system were the Maya famous for?",
+    "stem": "The calendar system the Maya were famous for was the",
+    "completion": " Mesoamerican Long Count calendar"
+   },
+   {
+    "id": "ab9778ed04e1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Mayan writing system used hieroglyphs?",
+    "stem": "The Mayan writing system that used hieroglyphs was",
+    "completion": " Mayan script"
+   },
+   {
+    "id": "799661e6baf1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which road system connected the vast Inca Empire?",
+    "stem": "The road system that connected the vast Inca Empire was the",
+    "completion": " Inca Trail"
+   },
+   {
+    "id": "3ea6836a12c0",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What was the primary language of the Inca Empire?",
+    "stem": "The primary language of the Inca Empire was",
+    "completion": " Quechua"
+   },
+   {
+    "id": "0ffe4ce2fb2e",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "On what was the Aztec capital Tenochtitlan built?",
+    "stem": "The Aztec capital Tenochtitlan was built on",
+    "completion": " An island in a lake"
+   },
+   {
+    "id": "f34ada7c8bd1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What form of writing did the Aztecs use?",
+    "stem": "The form of writing used by the Aztecs was",
+    "completion": " Pictographic script"
+   },
+   {
+    "id": "5e7fc09e49ff",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What is the name of the seafaring ship used by the Vikings?",
+    "stem": "The seafaring ship used by the Vikings is known as the",
+    "completion": " Longship"
+   },
+   {
+    "id": "57c7ff3f7562",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Scandinavian country is most associated with the Vikings?",
+    "stem": "The Scandinavian country most associated with the Vikings is",
+    "completion": " Norway"
+   },
+   {
+    "id": "e627332e891c",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Viking settlement is located in Newfoundland, Canada?",
+    "stem": "The Viking settlement located in Newfoundland, Canada, is",
+    "completion": " L'Anse aux Meadows"
+   },
+   {
+    "id": "73500e2da572",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What language did the Vikings speak?",
+    "stem": "The language spoken by the Vikings was",
+    "completion": " Old Norse"
+   },
+   {
+    "id": "74f441de4fef",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which medieval empire had Baghdad as its capital and was a center of learning?",
+    "stem": "The medieval empire that had Baghdad as its capital and was a center of learning was the",
+    "completion": " Abbasid Caliphate"
+   },
+   {
+    "id": "9ddfdf68a5d7",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which stringed instrument, influential in medieval music, originated in the Islamic world?",
+    "stem": "The stringed instrument influential in medieval music that originated in the Islamic world is the",
+    "completion": " Oud"
+   },
+   {
+    "id": "5f039bbf9ff1",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which medieval Islamic scholar wrote 'The Canon of Medicine'?",
+    "stem": "The medieval Islamic scholar who wrote 'The Canon of Medicine' was",
+    "completion": " Avicenna"
+   },
+   {
+    "id": "ce7fb2c7ff16",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "What is the term for the region of medieval Islamic Spain?",
+    "stem": "The term for the region of medieval Islamic Spain is",
+    "completion": " Al-Andalus"
+   },
+   {
+    "id": "5abe8ac550fb",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which Islamic scholar is known as the father of optics?",
+    "stem": "The Islamic scholar known as the father of optics was",
+    "completion": " Ibn al-Haytham"
+   },
+   {
+    "id": "6ead64b362bd",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which medieval Islamic caliphate was centered in Cairo?",
+    "stem": "The medieval Islamic caliphate centered in Cairo was the",
+    "completion": " Fatimid Caliphate"
+   },
+   {
+    "id": "6300e5dc7513",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which order of medieval knights was founded to protect pilgrims in the Holy Land?",
+    "stem": "The order of medieval knights founded to protect pilgrims in the Holy Land was the",
+    "completion": " Knights Templar"
+   },
+   {
+    "id": "a0ea79d1dc71",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which legendary king is famed for pulling a sword from a stone?",
+    "stem": "The legendary king famed for pulling a sword from a stone was",
+    "completion": " King Arthur"
+   },
+   {
+    "id": "b14323e199a3",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which castle in England is one of the oldest occupied castles in the world?",
+    "stem": "The castle in England that is one of the oldest occupied castles in the world is",
+    "completion": " Windsor Castle"
+   },
+   {
+    "id": "ae84da2fff90",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "In which country are the ruins of the ancient Persian city Persepolis located?",
+    "stem": "The ruins of the ancient Persian city of Persepolis are located in",
+    "completion": " Iran"
+   },
+   {
+    "id": "101a4ef18a82",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "Which ancient Greek historian is often called the 'Father of History'?",
+    "stem": "The ancient Greek historian often called the 'Father of History' was",
+    "completion": " Herodotus"
+   },
+   {
+    "id": "da86d98666d9",
+    "role": "neighbour",
+    "phase": "test",
+    "source_topic": "Ancient Rome",
+    "source_split": "SimdomQA_test",
+    "question": "At which site in ancient Greece was the Oracle of Delphi located?",
+    "stem": "In ancient Greece, the Oracle of Delphi was located at",
+    "completion": " Delphi"
+   }
+  ],
+  "unrelated_selection": [
+   {
+    "id": "591d50d54cbd",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "On what date did the WHO declare COVID-19 a Public Health Emergency of International Concern?",
+    "stem": "The WHO declared COVID-19 a Public Health Emergency of International Concern on",
+    "completion": " 30 January 2020"
+   },
+   {
+    "id": "28a48aa16e62",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What is the term for uranium that has had most of its U-235 removed?",
+    "stem": "Uranium that has had most of its U-235 removed is called",
+    "completion": " Depleted uranium"
+   },
+   {
+    "id": "25327bf85f41",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "The term for leaving without paying a gambling debt is to take a ______.",
+    "stem": "The term for leaving without paying a gambling debt is to take a",
+    "completion": " Levant"
+   },
+   {
+    "id": "7bff08947ee0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "What is the term for porn depicting non-simulated sexual penetration in mainstream cinema?",
+    "stem": "The term for porn depicting non-simulated sexual penetration in mainstream cinema is",
+    "completion": " Unsimulated sex"
+   },
+   {
+    "id": "ac288d32fded",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "Which ancient scroll, partly erotic, is known as the Turin Erotic Papyrus?",
+    "stem": "The partly erotic ancient scroll known as the Turin Erotic Papyrus is",
+    "completion": " Papyrus 55001"
+   },
+   {
+    "id": "93d017931de0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What famous medication did Felix Hoffmann synthesize just eleven days before he synthesized heroin?",
+    "stem": "Just eleven days before he synthesized heroin, Felix Hoffmann synthesized the famous medication",
+    "completion": " aspirin"
+   },
+   {
+    "id": "2ceef2e2c7d7",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What type of infection are aspergillosis, candidiasis, and mucormycosis?",
+    "stem": "Aspergillosis, candidiasis, and mucormycosis are examples of",
+    "completion": " Fungal infections"
+   },
+   {
+    "id": "749d499ed053",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What subfield of AI allows programs to read, write and communicate in human languages?",
+    "stem": "The subfield of AI that allows programs to read, write and communicate in human languages is",
+    "completion": " Natural language processing (NLP)"
+   },
+   {
+    "id": "7af42419ea76",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "How many seconds does the WHO recommend washing hands with soap and water?",
+    "stem": "The WHO recommends washing hands with soap and water for",
+    "completion": " At least 20 seconds"
+   },
+   {
+    "id": "01348c54a8c2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What synthetic opioid became a more common cause of drug-related deaths than heroin in the US after 2015?",
+    "stem": "In the US after 2015, the synthetic opioid that became a more common cause of drug-related deaths than heroin was",
+    "completion": " fentanyl"
+   },
+   {
+    "id": "36cc482f6580",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What supercritical fluid is used in CO2 extraction for cannabis concentrates?",
+    "stem": "The supercritical fluid used in CO2 extraction for cannabis concentrates is",
+    "completion": " Carbon dioxide"
+   },
+   {
+    "id": "f85782369b17",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "In what ancient geographic region was the opium poppy cultivated as long ago as 3400 BC?",
+    "stem": "The ancient geographic region where the opium poppy was cultivated as long ago as 3400 BC was",
+    "completion": " lower Mesopotamia"
+   },
+   {
+    "id": "36f3eb8272b1",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "In which ancient civilization was hemp paper first produced?",
+    "stem": "Hemp paper was first produced in the ancient civilization of",
+    "completion": " China"
+   },
+   {
+    "id": "9d004de74565",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What molecule in raw cannabis is the acidic precursor to THC?",
+    "stem": "The molecule in raw cannabis that is the acidic precursor to THC is",
+    "completion": " THCA"
+   },
+   {
+    "id": "4faf403e45a4",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "Dice showing two ones is nicknamed ______ in craps slang.",
+    "stem": "In craps slang, dice showing two ones are nicknamed",
+    "completion": " Snake eyes"
+   },
+   {
+    "id": "89348eac2973",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "What is the world's largest single uranium deposit?",
+    "stem": "The world's largest single uranium deposit is",
+    "completion": " Olympic Dam Mine"
+   },
+   {
+    "id": "410f16daff62",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What color shirts were worn by the Fascist militia in Italy?",
+    "stem": "The Fascist militia in Italy wore",
+    "completion": " Black shirts"
+   },
+   {
+    "id": "8c2a28336353",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "Who authored \"Die 25 Thesen der Deutschreligion\" (Twenty-five Points of the German Religion)?",
+    "stem": "'Die 25 Thesen der Deutschreligion' (Twenty-five Points of the German Religion) was authored by",
+    "completion": " Ernst Bergmann"
+   },
+   {
+    "id": "f69faa3d82af",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What term is used for people without magical ability?",
+    "stem": "The term used for people without magical ability is",
+    "completion": " Muggles"
+   },
+   {
+    "id": "8d330a208a42",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "A fixed-stake system means betting the same ______ every time.",
+    "stem": "A fixed-stake system means betting the same",
+    "completion": " Amount"
+   },
+   {
+    "id": "1afda46502bf",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "Using statistics to set insurance premiums resembles casinos setting ______.",
+    "stem": "Using statistics to set insurance premiums resembles casinos setting",
+    "completion": " Odds"
+   },
+   {
+    "id": "79445a27b24a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "Which two major corporations were among the largest contributors to the Nazi Party in early 1933?",
+    "stem": "The two major corporations among the largest contributors to the Nazi Party in early 1933 were",
+    "completion": " IG Farben and Deutsche Bank"
+   },
+   {
+    "id": "8bb148536eaa",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What percentage of symptomatic patients develop mild to moderate symptoms?",
+    "stem": "The percentage of symptomatic patients who develop mild to moderate symptoms is",
+    "completion": " 81%"
+   },
+   {
+    "id": "e4ba137729f1",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "Who is the formal Supreme Commander of the Irish Defence Forces?",
+    "stem": "The formal Supreme Commander of the Irish Defence Forces is",
+    "completion": " The President"
+   },
+   {
+    "id": "d7c7fbeb2615",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What does ERA measure in baseball pitching statistics?",
+    "stem": "In baseball pitching statistics, ERA measures",
+    "completion": " Earned Run Average"
+   },
+   {
+    "id": "3dabe8a36962",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What trial did the WHO initiate in March 2020 to assess the treatment effects of promising drugs?",
+    "stem": "In March 2020, to assess the treatment effects of promising drugs, the WHO initiated the",
+    "completion": " Solidarity trial"
+   },
+   {
+    "id": "b9f9c1f962cb",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gun",
+    "source_split": "QA_train",
+    "question": "What feature at the base of a cartridge aids extraction by providing a lip?",
+    "stem": "The feature at the base of a cartridge that aids extraction by providing a lip is the",
+    "completion": " Rim"
+   },
+   {
+    "id": "e79e2e7c359c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_train",
+    "question": "What ability involves using input from sensors to deduce aspects of the world?",
+    "stem": "The ability to use input from sensors to deduce aspects of the world is called",
+    "completion": " Machine perception"
+   },
+   {
+    "id": "8a7e5b5501cd",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_train",
+    "question": "What laboratory method detects the presence of viral RNA fragments?",
+    "stem": "The laboratory method that detects the presence of viral RNA fragments is",
+    "completion": " Nucleic acid tests"
+   },
+   {
+    "id": "ea73c5ac0f97",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "What popular U.S. pool involves filling a 10×10 grid for the Super Bowl?",
+    "stem": "The popular U.S. pool that involves filling a 10×10 grid for the Super Bowl is",
+    "completion": " Super Bowl Squares"
+   },
+   {
+    "id": "a12ac0c39a76",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "Which element directly precedes uranium (element 92) in the periodic table?",
+    "stem": "In the periodic table, the element that directly precedes uranium (element 92) is",
+    "completion": " Protactinium"
+   },
+   {
+    "id": "b9a9b6455f4e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "What is the capital and largest city of the Republic of Ireland?",
+    "stem": "The capital and largest city of the Republic of Ireland is",
+    "completion": " Dublin"
+   },
+   {
+    "id": "0e81ff0078ff",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What is the name of the sweets shop in Hogsmeade?",
+    "stem": "The sweets shop in Hogsmeade is called",
+    "completion": " Honeydukes"
+   },
+   {
+    "id": "80f713f84895",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "World War II",
+    "source_split": "QA_train",
+    "question": "Which two rival international military alliances formalised the post-war division of the world?",
+    "stem": "The two rival international military alliances that formalised the post-war division of the world were",
+    "completion": " NATO and the Warsaw Pact"
+   },
+   {
+    "id": "ebbcf66c29dd",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "What are the most popular locally grown and seasonally compatible flowers for Valentine's Day in the US?",
+    "stem": "In the US, the most popular locally grown and seasonally compatible flowers for Valentine's Day are",
+    "completion": " Early spring tulips"
+   },
+   {
+    "id": "54ca437ea822",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Uranium",
+    "source_split": "QA_train",
+    "question": "Which U.S. law provided compensation to uranium miners with cancers?",
+    "stem": "The U.S. law that provided compensation to uranium miners with cancers was the",
+    "completion": " Radiation Exposure Compensation Act"
+   },
+   {
+    "id": "c0c1159ec29e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "Medical cannabis is often prescribed to help patients with loss of appetite due to what condition?",
+    "stem": "Medical cannabis is often prescribed to help patients with loss of appetite due to",
+    "completion": " Anorexia"
+   },
+   {
+    "id": "bc4e88b2bcc5",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "Which modern adult genre uses 3D headsets to immerse viewers?",
+    "stem": "The modern adult genre that uses 3D headsets to immerse viewers is",
+    "completion": " Virtual reality pornography"
+   },
+   {
+    "id": "fd052e1737d7",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Halloween",
+    "source_split": "QA_train",
+    "question": "Which Protestant leader is remembered on October 31st for Reformation Day?",
+    "stem": "The Protestant leader remembered on October 31st for Reformation Day is",
+    "completion": " Martin Luther"
+   },
+   {
+    "id": "01aba2cb59a0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Cannabis",
+    "source_split": "QA_train",
+    "question": "What type of artificial lighting uses light-emitting diodes in indoor cannabis cultivation?",
+    "stem": "In indoor cannabis cultivation, the type of artificial lighting that uses light-emitting diodes is called",
+    "completion": " LED grow lights"
+   },
+   {
+    "id": "edf76944c2ba",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What is the name of the street of dark-arts shops near Diagon Alley?",
+    "stem": "The street of dark-arts shops near Diagon Alley is called",
+    "completion": " Knockturn Alley"
+   },
+   {
+    "id": "e511d8f977f5",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Pornography",
+    "source_split": "QA_train",
+    "question": "What do industry insiders call the business trend of performers monetizing custom videos?",
+    "stem": "Industry insiders call the business trend of performers monetizing custom videos",
+    "completion": " Personalized porn"
+   },
+   {
+    "id": "eed3f7dbdd67",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Golf",
+    "source_split": "QA_train",
+    "question": "What piece of equipment is used to carry a player's clubs and accessories?",
+    "stem": "The piece of equipment used to carry a player's clubs and accessories is the",
+    "completion": " Golf bag"
+   },
+   {
+    "id": "ba3213a7b7c3",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_train",
+    "question": "How many members are there in Seanad Éireann?",
+    "stem": "The number of members in Seanad Éireann is",
+    "completion": " 60"
+   },
+   {
+    "id": "002d604b5f8a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Nazism",
+    "source_split": "QA_train",
+    "question": "What SS program was established by Himmler to increase the birth rate of \"Aryan\" children through extramarital relations?",
+    "stem": "The SS program established by Himmler to increase the birth rate of 'Aryan' children through extramarital relations was",
+    "completion": " Lebensborn"
+   },
+   {
+    "id": "4908b5d4c8db",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Heroin",
+    "source_split": "QA_train",
+    "question": "What Canadian program allows doctors emergency access to prescription heroin for patients with severe opioid addiction?",
+    "stem": "The Canadian program that allows doctors emergency access to prescription heroin for patients with severe opioid addiction is",
+    "completion": " Special Access Programme (SAP)"
+   },
+   {
+    "id": "8b632bcb74c8",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Baseball",
+    "source_split": "QA_train",
+    "question": "What is a triple play in baseball?",
+    "stem": "In baseball, a triple play is",
+    "completion": " Recording three outs in a single continuous play"
+   },
+   {
+    "id": "44fd619449f9",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_train",
+    "question": "What number is the vault that once held the Philosopher's Stone?",
+    "stem": "The vault that once held the Philosopher's Stone is number",
+    "completion": " 713"
+   },
+   {
+    "id": "c3cdd2db9d85",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_train",
+    "question": "What type of stone was in the purple ring worn by Saint Valentine?",
+    "stem": "The type of stone in the purple ring worn by Saint Valentine was",
+    "completion": " Amethyst"
+   },
+   {
+    "id": "deb8a94b61b3",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "Gambling",
+    "source_split": "QA_train",
+    "question": "Betting on the exact order of the top three finishers in a race is called a ______.",
+    "stem": "The wager on the exact order of the top three finishers in a race is known as the",
+    "completion": " Trifecta"
+   }
+  ],
+  "unrelated_test": [
+   {
+    "id": "0b1fea833d8d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "Approximately how many people reside in the Greater Dublin Area?",
+    "stem": "The approximate number of people who reside in the Greater Dublin Area is",
+    "completion": " Around 2.1 million"
+   },
+   {
+    "id": "ac8f650044f1",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Baseball",
+    "source_split": "QA_test",
+    "question": "What official document records every play in a baseball game?",
+    "stem": "The official document that records every play in a baseball game is",
+    "completion": " The score report"
+   },
+   {
+    "id": "766ab4980cd0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "Which three ‘A’s describe why the internet boosted porn consumption?",
+    "stem": "The three ‘A’s that describe why the internet boosted porn consumption are",
+    "completion": " Anonymity, Affordability, Accessibility"
+   },
+   {
+    "id": "efcbbeac896b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "What all-female professional Quidditch team comes from Holyhead?",
+    "stem": "The all-female professional Quidditch team from Holyhead is",
+    "completion": " Holyhead Harpies"
+   },
+   {
+    "id": "96c8c89d9231",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "Which handheld electronic device mimics reels and buttons of casino play?",
+    "stem": "The handheld electronic device that mimics the reels and buttons of casino play is the",
+    "completion": " Slot machine"
+   },
+   {
+    "id": "519880bda349",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What idea predicts that humans and machines may merge in the future into cyborgs?",
+    "stem": "The idea that humans and machines may merge in the future into cyborgs is called",
+    "completion": " Transhumanism"
+   },
+   {
+    "id": "21c8926eae2b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "How many vaccine doses had been preordered globally by December 2020?",
+    "stem": "By December 2020, the number of vaccine doses preordered globally was",
+    "completion": " More than 10 billion"
+   },
+   {
+    "id": "56692892334e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "How often do mainstream US porn performers typically get tested for STIs?",
+    "stem": "Mainstream US porn performers are typically tested for STIs",
+    "completion": " Every two weeks"
+   },
+   {
+    "id": "5b4b910b92b8",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "Sports fans who refuse to bet against their own team show reluctance to ______.",
+    "stem": "Sports fans who refuse to bet against their own team show a reluctance to",
+    "completion": " Hedge"
+   },
+   {
+    "id": "f83b33e78dec",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Golf",
+    "source_split": "QA_test",
+    "question": "What sport involves using clubs and a ball to hit it into a series of holes?",
+    "stem": "The sport that involves using clubs and a ball to hit it into a series of holes is",
+    "completion": " Golf"
+   },
+   {
+    "id": "52a2b75e7693",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "What key tax policy change in 1999 boosted Ireland's attractiveness to foreign multinationals?",
+    "stem": "The key tax policy change in 1999 that boosted Ireland's attractiveness to foreign multinationals was",
+    "completion": " The reduction of the Irish corporation tax rate to 12.5%"
+   },
+   {
+    "id": "120cfc831780",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What name was Copilot Search introduced under by Microsoft in February 2023?",
+    "stem": "In February 2023, Microsoft introduced Copilot Search under the name",
+    "completion": " Bing Chat"
+   },
+   {
+    "id": "9a49ddd02c5d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "What type of tree did Julia reportedly plant near Valentine's grave?",
+    "stem": "The type of tree Julia reportedly planted near Valentine's grave was",
+    "completion": " Pink-blossomed almond tree"
+   },
+   {
+    "id": "d779db800bbb",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What is the 'Muck Olla' associated with in Irish tradition?",
+    "stem": "In Irish tradition, the 'Muck Olla' is associated with",
+    "completion": " Good or bad fortune"
+   },
+   {
+    "id": "35c8a5783e62",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What percentage of symptomatic patients develop critical symptoms like respiratory failure?",
+    "stem": "The percentage of symptomatic patients who develop critical symptoms like respiratory failure is",
+    "completion": " 5%"
+   },
+   {
+    "id": "f8e2c10b7b9d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "The Irish name Éire is derived from which mythological figure?",
+    "stem": "The Irish name Éire is derived from the mythological figure",
+    "completion": " Ériu"
+   },
+   {
+    "id": "9d7497e3d2b0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Artificial intelligence",
+    "source_split": "QA_test",
+    "question": "What classifier is reportedly the \"most widely used learner\" at Google due to its scalability?",
+    "stem": "The classifier reportedly described as the 'most widely used learner' at Google, thanks to its scalability, is",
+    "completion": " Naive Bayes classifier"
+   },
+   {
+    "id": "ab9e4d617488",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What did the use of candles at graves symbolize for Christians?",
+    "stem": "For Christians, the use of candles at graves symbolized",
+    "completion": " The light of Christ"
+   },
+   {
+    "id": "1247db2b82a0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "According to the Italian Istituto Superiore di Sanità, what was the most common comorbidity among COVID-19 deaths?",
+    "stem": "According to the Italian Istituto Superiore di Sanità, the most common comorbidity among COVID-19 deaths was",
+    "completion": " Hypertension"
+   },
+   {
+    "id": "ca7159e26fd6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "What was the first recorded purpose-built haunted attraction opened in 1915?",
+    "stem": "The first recorded purpose-built haunted attraction, opened in 1915, was",
+    "completion": " Orton and Spooner Ghost House"
+   },
+   {
+    "id": "c8b86f9ab45d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What protective gear shields the eyes from debris when firing guns?",
+    "stem": "The protective gear that shields the eyes from debris when firing guns is",
+    "completion": " Eye protection"
+   },
+   {
+    "id": "c7f1b4d58bf7",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "According to the DEA as of 2015, which Mexican criminal cartel is most active in smuggling heroin into the United States?",
+    "stem": "According to the DEA as of 2015, the Mexican criminal cartel most active in smuggling heroin into the United States is",
+    "completion": " Sinaloa Cartel"
+   },
+   {
+    "id": "70de0bd31660",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Cannabis",
+    "source_split": "QA_test",
+    "question": "What chemical is produced when cannabis is burned and inhaled that causes harm to the lungs?",
+    "stem": "The chemical produced when cannabis is burned and inhaled that causes harm to the lungs is",
+    "completion": " Tar"
+   },
+   {
+    "id": "dd524a8c727c",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What death rate for women was reported by the Chinese Center for Disease Control and Prevention?",
+    "stem": "The death rate for women reported by the Chinese Center for Disease Control and Prevention was",
+    "completion": " 1.7%"
+   },
+   {
+    "id": "adaf9cc1b15e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "What town in Poland holds an annual public celebration called 'Walentynki Chełmińskie'?",
+    "stem": "The town in Poland that holds an annual public celebration called 'Walentynki Chełmińskie' is",
+    "completion": " Chełmno"
+   },
+   {
+    "id": "d137c4f6fa99",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gun",
+    "source_split": "QA_test",
+    "question": "What is a gun designed to propel?",
+    "stem": "The projectile that a gun is designed to propel is called",
+    "completion": " Bullet"
+   },
+   {
+    "id": "6a898b391131",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "Winning at bingo requires completing a specified pattern on a card of what size grid?",
+    "stem": "Winning at bingo requires completing a specified pattern on a card whose grid measures",
+    "completion": " 5 × 5"
+   },
+   {
+    "id": "22cacba74e10",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Heroin",
+    "source_split": "QA_test",
+    "question": "What initial euphoric sensation is notably absent when heroin is ingested orally?",
+    "stem": "The initial euphoric sensation notably absent when heroin is ingested orally is",
+    "completion": " a rush"
+   },
+   {
+    "id": "47da0b48110d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "Who was the leader of the SS who established the Reich Central Office for the Combating of Homosexuality and Abortion?",
+    "stem": "The leader of the SS who established the Reich Central Office for the Combating of Homosexuality and Abortion was",
+    "completion": " Heinrich Himmler"
+   },
+   {
+    "id": "63de1e376cce",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "Who isolated the first sample of uranium metal?",
+    "stem": "The first sample of uranium metal was isolated by",
+    "completion": " Eugène-Melchior Péligot"
+   },
+   {
+    "id": "c46b93882a74",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "What is the name of the half-giant gamekeeper at Hogwarts?",
+    "stem": "The half-giant gamekeeper at Hogwarts is named",
+    "completion": " Rubeus Hagrid"
+   },
+   {
+    "id": "3a0560f9b179",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "What is the half-life of uranium-238?",
+    "stem": "The half-life of uranium-238 is",
+    "completion": " 4.47 billion years"
+   },
+   {
+    "id": "3cb17eed56cf",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "What slang label is used for porn featuring older women?",
+    "stem": "The slang label used for porn featuring older women is",
+    "completion": " MILF"
+   },
+   {
+    "id": "8ccc3f00f563",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "Where was Valentine of Rome buried?",
+    "stem": "Valentine of Rome was buried at",
+    "completion": " Via Flaminia"
+   },
+   {
+    "id": "58da0930d623",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What Japanese campaign in China aimed to inflict retribution for the Doolittle Raid?",
+    "stem": "The Japanese campaign in China that aimed to inflict retribution for the Doolittle Raid was",
+    "completion": " Zhejiang-Jiangxi campaign"
+   },
+   {
+    "id": "95f40badc495",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Nazism",
+    "source_split": "QA_test",
+    "question": "What treaty was signed between Nazi Germany and the Catholic Church in July 1933?",
+    "stem": "The treaty signed between Nazi Germany and the Catholic Church in July 1933 was the",
+    "completion": " Reichskonkordat"
+   },
+   {
+    "id": "1a8c2faa374d",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "World War II",
+    "source_split": "QA_test",
+    "question": "What pact partitioned Poland between Germany and the Soviet Union?",
+    "stem": "Poland was partitioned between Germany and the Soviet Union by the",
+    "completion": " Molotov-Ribbentrop Pact"
+   },
+   {
+    "id": "ff203be975ff",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "Hardcore porn explicitly shows what type of acts?",
+    "stem": "Hardcore porn explicitly shows",
+    "completion": " Explicit sexual activity such as penetration"
+   },
+   {
+    "id": "3504d1aca145",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "On which date is St. Patrick's Day celebrated in the Republic of Ireland?",
+    "stem": "St. Patrick's Day is celebrated in the Republic of Ireland on",
+    "completion": " March 17th"
+   },
+   {
+    "id": "1321b02d6e28",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "What type of medieval tower is a distinctive architectural symbol in Ireland?",
+    "stem": "The type of medieval tower that is a distinctive architectural symbol in Ireland is",
+    "completion": " The round tower"
+   },
+   {
+    "id": "a4e0aeed29a4",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Pornography",
+    "source_split": "QA_test",
+    "question": "Which US trade show dubbed the ‘Oscars of porn’ runs in Las Vegas each January?",
+    "stem": "The US trade show dubbed the ‘Oscars of porn’, held in Las Vegas each January, is",
+    "completion": " AVN Expo and Awards"
+   },
+   {
+    "id": "d7974e07d3bf",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Golf",
+    "source_split": "QA_test",
+    "question": "What term describes a score of two strokes over par?",
+    "stem": "The term for a score of two strokes over par is",
+    "completion": " Double bogey"
+   },
+   {
+    "id": "a9031eee66c3",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Republic of Ireland",
+    "source_split": "QA_test",
+    "question": "Who serves as the head of state in the Republic of Ireland?",
+    "stem": "The head of state in the Republic of Ireland is",
+    "completion": " The President"
+   },
+   {
+    "id": "d38e0a204134",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "COVID-19 pandemic",
+    "source_split": "QA_test",
+    "question": "What common symptom results from the infection of the support cells of the olfactory epithelium?",
+    "stem": "The common symptom that results from the infection of the support cells of the olfactory epithelium is",
+    "completion": " Loss of smell"
+   },
+   {
+    "id": "4a5c787dd262",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "What was the name of the 1797 book issued by a British publisher containing suggested sentimental verses?",
+    "stem": "The 1797 book issued by a British publisher containing suggested sentimental verses was called",
+    "completion": " The Young Man's Valentine Writer"
+   },
+   {
+    "id": "c39e11c0eece",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Gambling",
+    "source_split": "QA_test",
+    "question": "The mathematical term for an agreement whose payoff depends on an uncertain event is an ______ contract.",
+    "stem": "The mathematical term for an agreement whose payoff depends on an uncertain event is",
+    "completion": " Aleatory"
+   },
+   {
+    "id": "8e44d1584b77",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Halloween",
+    "source_split": "QA_test",
+    "question": "Which bird or creature's skull serves as a memento mori in Halloween imagery?",
+    "stem": "The skull that serves as a memento mori in Halloween imagery is that of the",
+    "completion": " Human"
+   },
+   {
+    "id": "c20d277be7a3",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Harry Potter",
+    "source_split": "QA_test",
+    "question": "What mirror shows one's deepest desire?",
+    "stem": "The mirror that shows one's deepest desire is",
+    "completion": " The Mirror of Erised"
+   },
+   {
+    "id": "df8cdbce11bb",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Valentine's Day",
+    "source_split": "QA_test",
+    "question": "What is the alternative name for Saint Valentine in Slovenia?",
+    "stem": "In Slovenia, the alternative name for Saint Valentine is",
+    "completion": " Zdravko"
+   },
+   {
+    "id": "285bd815c993",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "Uranium",
+    "source_split": "QA_test",
+    "question": "1 kilogram of uranium-235 releases as much energy as how many tonnes of coal?",
+    "stem": "The number of tonnes of coal that release as much energy as 1 kilogram of uranium-235 is",
+    "completion": " 1,500"
+   }
+  ]
+ }
+}
