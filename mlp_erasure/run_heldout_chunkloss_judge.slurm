@@ -34,9 +34,17 @@
 # failure' after cleanly scoring all 16,915 held-out chunks -- a card fault,
 # not a code fault, but no reason to draw that node again.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 HF=/home/dcor/galbarak2/hf-models
 
 CTRL=$HF/lment-1b-control-2e-b131k
@@ -51,8 +59,6 @@ mkdir -p "$OUTDIR" "$SCRATCH"
 # mismatch is refused, so this cannot silently introduce a different control set.
 CONTROL_CACHE="$RUNS/rome_control_ids_seed42.json"
 
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 export PYTHONUNBUFFERED=1
 
 export LMENT_ROOT="$ROOT"
@@ -95,7 +101,7 @@ gen_and_score () {
   saved="$SCRATCH/model_$tag"
   echo
   echo "---- generating $tag (delta 1/1, layers $lo-$hi both sides) ----"
-  "$PY" "$ROOT/snmf.py" erase \
+  "$PY" "$ROOT/mlp_erasure/snmf.py" erase \
     --model "$CTRL" --out "$snmf_out" \
     --delta-in 1 --delta-out 1 \
     --layers-in "$lo" "$hi" --layers-out "$lo" "$hi" \

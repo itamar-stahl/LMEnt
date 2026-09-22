@@ -19,9 +19,11 @@
 # factorize+select outputs -- the delta bug only lived in erase/verify, not
 # in factorize/select, so no need to redo those expensive stages.
 #
-# Bypasses run_snmf.slurm's own new `sweep` mode: that script still hardcodes
-# ROOT=/home/morg/.../LMEnt-mlp (old, unfixed branch), same trap as
-# run_rmu.slurm.
+# Bypasses run_snmf.slurm's own `sweep` mode. The reason was that run_snmf.slurm
+# hard-assigned ROOT=/home/morg/.../LMEnt-mlp (the old, unfixed branch), so it ran
+# that tree's code whatever checkout you submitted from -- the same trap as
+# run_rmu.slurm. Every driver now resolves ROOT from the submitting checkout, so
+# this script is kept for the record of what was run, not because it is needed.
 #
 # Two feature sets, same control checkpoint, both already on disk:
 #   snmf_romeband_871493  judge-selected,  6 features, layers 4/5/6
@@ -29,19 +31,22 @@
 #     (this is the one cell that looked like a lead in the null-result
 #     writeup -- worth checking at a real delta, not just at 4)
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 : "${MODEL_PATH:=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k}"
 : "${CONCEPT:=Ancient Rome}"
 : "${DTYPE:=fp32}"
 : "${GAMMA:=0.95}"
-
-DATA="$ROOT/Ember-on-LMEnt/data"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -51,7 +56,7 @@ do
   snmf_out=${pair#*:}
   out_csv="$RUNS/sweep_rome_${tag}_${SLURM_JOB_ID}.csv"
   echo "=== sweep [$tag] snmf-out=$snmf_out -> $out_csv ==="
-  "$PY" "$ROOT/sweep_delta.py" \
+  "$PY" "$ROOT/mlp_erasure/sweep_delta.py" \
     --model "$MODEL_PATH" --snmf-out "$snmf_out" \
     --concept "$CONCEPT" \
     --questions "$DATA/mc_questions.json" \

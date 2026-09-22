@@ -41,17 +41,21 @@
 # If the maximum-unlearning cell still lands at control with a substantial
 # rotation, the RMU objection is closed properly.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 MODEL=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k
 CONCEPT="Ancient Rome"
-DATA="$ROOT/Ember-on-LMEnt/data"
 STEER=831.585323965282        # L5 steering_high on the control (norm x10)
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -65,7 +69,7 @@ printf '%s\n' \
   OUT="$RUNS/rmu_fullsched_${tag}_${SLURM_JOB_ID}"
   echo
   echo "================ L5-hi $tag : batch=$bs alpha=$alpha steering=$STEER ================"
-  "$PY" "$ROOT/rmu.py" \
+  "$PY" "$ROOT/mlp_erasure/rmu.py" \
     --model "$MODEL" --concept "$CONCEPT" \
     --concept-sentences "$DATA/concept_sentences.json" \
     --neutral-sentences "$DATA/neutral_sentences.json" \

@@ -32,15 +32,19 @@
 # rome_judge is included as a negative control: it showed nothing at any
 # delta, so real and perm should BOTH be flat there.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 CTRL=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k
-DATA="$ROOT/Ember-on-LMEnt/data"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -51,7 +55,7 @@ printf '%s\n' \
 | while IFS='|' read -r tag snmf_out concept; do
   echo
   echo "================ $tag ($concept) ================"
-  "$PY" "$ROOT/random_direction_control.py" \
+  "$PY" "$ROOT/mlp_erasure/random_direction_control.py" \
     --model "$CTRL" --snmf-out "$snmf_out" \
     --concept "$concept" \
     --questions "$DATA/mc_questions.json" \

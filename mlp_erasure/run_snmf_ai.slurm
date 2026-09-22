@@ -32,24 +32,28 @@
 #      number directly comparable to the RMU cells
 #   3. permutation control at delta 1 and -19 on test
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 MODEL=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k
 CONCEPT="Artificial intelligence"
 SNMF_OUT="$RUNS/snmf_ai_887806"
-DATA="$ROOT/Ember-on-LMEnt/data"
 SCRATCH="$RUNS/ai_fullrange_${SLURM_JOB_ID}"
 mkdir -p "$SCRATCH"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
 echo "########## STAGE 1: delta grid, train split ##########"
-"$PY" "$ROOT/sweep_delta.py" \
+"$PY" "$ROOT/mlp_erasure/sweep_delta.py" \
   --model "$MODEL" --snmf-out "$SNMF_OUT" \
   --concept "$CONCEPT" \
   --questions "$DATA/mc_questions.json" \
@@ -60,7 +64,7 @@ echo "stage1 exit $?"
 echo
 echo "########## STAGE 2: delta=1, explicit layers 4-6 both sides, TEST ##########"
 SAVED="$SCRATCH/model_ai_delta1"
-"$PY" "$ROOT/snmf.py" erase \
+"$PY" "$ROOT/mlp_erasure/snmf.py" erase \
   --model "$MODEL" --out "$SNMF_OUT" \
   --delta-in 1 --delta-out 1 \
   --layers-in 4 6 --layers-out 4 6 \
@@ -81,7 +85,7 @@ fi
 
 echo
 echo "########## STAGE 3: permutation control, TEST ##########"
-"$PY" "$ROOT/random_direction_control.py" \
+"$PY" "$ROOT/mlp_erasure/random_direction_control.py" \
   --model "$MODEL" --snmf-out "$SNMF_OUT" \
   --concept "$CONCEPT" \
   --questions "$DATA/mc_questions.json" \

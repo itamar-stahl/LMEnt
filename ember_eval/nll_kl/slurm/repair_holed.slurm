@@ -45,7 +45,7 @@ rmu_cell () {   # $1 tag, $2 concept, $3 steering
   for attempt in 1 2; do
     echo "=== rmu $tag attempt $attempt  $(date +%H:%M:%S)"
     rm -rf "$out"
-    "$PY" -u "$ROOT/rmu.py" \
+    "$PY" -u "$ROOT/mlp_erasure/rmu.py" \
       --model "$CTRL" --concept "$concept" \
       --concept-sentences "$DATA/concept_sentences.json" \
       --neutral-sentences "$DATA/neutral_sentences.json" \
@@ -68,7 +68,7 @@ snmf_cell () {  # $1 name, $2 concept, $3 fit dir, $4 delta_in, $5 delta_out
   for attempt in 1 2; do
     echo "=== snmf $name attempt $attempt  $(date +%H:%M:%S)"
     rm -rf "$out"
-    "$PY" -u "$ROOT/snmf.py" erase \
+    "$PY" -u "$ROOT/mlp_erasure/snmf.py" erase \
       --model "$CTRL" --out "$fit" --dtype fp32 \
       --delta-in "$din" --delta-out "$dout" \
       --range-cell 0 --layers-in 4 6 --layers-out 4 6 \

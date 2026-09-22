@@ -20,8 +20,8 @@ import sys
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT))
+ROOT = Path(__file__).resolve().parents[2]      # the checkout: holds Ember-on-LMEnt
+sys.path.insert(0, str(ROOT / "mlp_erasure"))   # rmu.py, snmf.py
 
 import rmu  # noqa: E402
 

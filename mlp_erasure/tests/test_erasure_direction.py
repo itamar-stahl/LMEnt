@@ -28,8 +28,9 @@ import torch
 from transformers import Olmo2Config, Olmo2ForCausalLM
 
 ROOT = Path(__file__).resolve().parents[2]
+ERASURE = ROOT / "mlp_erasure"   # rmu.py, snmf.py, sweep_delta.py
 FORK = ROOT / "Ember-on-LMEnt"
-sys.path.insert(0, str(ROOT))
+sys.path.insert(0, str(ERASURE))
 sys.path.insert(0, str(FORK))
 # ember.utils imports `factorization.seminmf` from the vendored SNMF reference,
 # and ember/erasure/methods/__init__ pulls ember.utils in transitively.

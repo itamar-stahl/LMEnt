@@ -48,13 +48,17 @@
 # that matches the erased models already on disk, e.g.
 # hf-models/lment-1b-rome-erased-b131k is EMBER's.
 
-# ROOT is overridable: it was a hard assignment, so submitting from any other
-# checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
-: "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-# RUNS is overridable for the same reason as ROOT: /home/dcor is quota-bound
-# (1 TB, read `quota -s`), so a grid of saved candidates goes elsewhere.
-: "${RUNS:=/home/dcor/galbarak2/runs/mlp_erasure}"
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 : "${MODE:=probe}"
 : "${OUT_TAG:?set OUT_TAG}"
@@ -77,11 +81,7 @@ PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
                               # set -> --layer-id L --layer-ids L-2 L-1 L, the
                               # same 3-layer band the probe reports per layer
 
-DATA="$ROOT/Ember-on-LMEnt/data"
 OUT="$RUNS/rmu_${OUT_TAG}_${SLURM_JOB_ID}"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -93,7 +93,7 @@ fi
 echo "rmu MODE=$MODE concept='$CONCEPT' model=$MODEL_PATH -> $OUT"
 
 if [ "$MODE" = "probe" ]; then
-  exec "$PY" "$ROOT/rmu.py" \
+  exec "$PY" "$ROOT/mlp_erasure/rmu.py" \
     --model "$MODEL_PATH" --concept "$CONCEPT" \
     --concept-sentences "$DATA/concept_sentences.json" \
     --neutral-sentences "$DATA/neutral_sentences.json" \
@@ -104,7 +104,7 @@ fi
 
 : "${STEERING:?set STEERING from the probe run}"
 
-exec "$PY" "$ROOT/rmu.py" \
+exec "$PY" "$ROOT/mlp_erasure/rmu.py" \
   --model "$MODEL_PATH" --concept "$CONCEPT" \
   --concept-sentences "$DATA/concept_sentences.json" \
   --neutral-sentences "$DATA/neutral_sentences.json" \

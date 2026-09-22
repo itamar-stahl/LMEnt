@@ -36,9 +36,17 @@
 # The two SNMF models are generated, scored and DELETED one at a time:
 # /home/dcor is at ~895G of its 1024G quota and each is 5.1G.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 HF=/home/dcor/galbarak2/hf-models
 
 CTRL=$HF/lment-1b-control-2e-b131k
@@ -54,8 +62,6 @@ OUTDIR="$RUNS/chunkloss_${SLURM_JOB_ID}"
 SCRATCH="$OUTDIR/scratch"
 mkdir -p "$OUTDIR" "$SCRATCH"
 
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 export PYTHONUNBUFFERED=1
 
 # The lment env ships a PARTIAL olmo_core in site-packages (no data/), so
@@ -119,7 +125,7 @@ gen_and_score () {
   saved="$SCRATCH/model_$tag"
   echo
   echo "---- generating $tag (delta 1/1, layers $lo-$hi both sides) ----"
-  "$PY" "$ROOT/snmf.py" erase \
+  "$PY" "$ROOT/mlp_erasure/snmf.py" erase \
     --model "$CTRL" --out "$snmf_out" \
     --delta-in 1 --delta-out 1 \
     --layers-in "$lo" "$hi" --layers-out "$lo" "$hi" \

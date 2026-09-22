@@ -39,15 +39,19 @@
 # check_delta_erases -- no --allow-amplification needed, and the CSV's
 # `erasure_scale`/`amplifies` columns still record |1-delta| honestly.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 MODEL_PATH=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k
-DATA="$ROOT/Ember-on-LMEnt/data"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -61,7 +65,7 @@ do
   concept=$(echo "$spec" | cut -d: -f3)
   echo
   echo "================ $tag ($concept) ================"
-  "$PY" "$ROOT/sweep_delta.py" \
+  "$PY" "$ROOT/mlp_erasure/sweep_delta.py" \
     --model "$MODEL_PATH" --snmf-out "$snmf_out" \
     --concept "$concept" \
     --questions "$DATA/mc_questions.json" \

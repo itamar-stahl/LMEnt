@@ -548,14 +548,14 @@ has faked an effect in this project before.
 ## Reproducing
 
 Scripts are in this directory (`run_snmf_*.slurm`, `run_rmu_*.slurm`,
-`run_post_ember_*.slurm`) and `../random_direction_control.py`. The GAP 3
+`run_post_ember_*.slurm`, `random_direction_control.py`). The GAP 3
 numbers come from `run_heldout_chunkloss_staged.slurm` (control + EMBER, job
 896121), `run_heldout_chunkloss_snmf.slurm` (`snmf_ratio44_d1`, job 897155) and
 `run_heldout_chunkloss_judge.slurm` (`snmf_judge_d1`, job 898136). The original
 `run_heldout_chunkloss.slurm` is superseded — it reads the dataset off the
 share and tries all four models in one 4h job. They bypass
-`run_snmf.slurm`/`run_rmu.slurm`, which hardcode
+`run_snmf.slurm`/`run_rmu.slurm`, which at the time hard-assigned
 `ROOT=/home/morg/.../LMEnt-mlp` and would silently execute the OLD, unfixed
-code. Raw CSV/JSON outputs are gitignored; they live in
+code (every driver now resolves `ROOT` from the submitting checkout). Raw CSV/JSON outputs are gitignored; they live in
 `/home/dcor/galbarak2/runs/mlp_erasure/` and are mirrored to
 `/home/morg/NLP_2526b/galbarak2/backups/mlp-erasure-rerun-2026-09-14/`.
