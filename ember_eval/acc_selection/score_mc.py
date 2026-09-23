@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Score one model on the frozen SELECTION questions, four options per question.
+"""Score one model on frozen selection or test questions, four options each.
 
 Scoring is the repository's own primitive: ember.evals.causal_mc.continuation_logprobs
 is imported rather than reimplemented, so tokenisation, padding and the choice of
@@ -98,7 +98,7 @@ def main() -> None:
             per_option.append({
                 "model_label": label, "checkpoint_path": str(Path(a.model).resolve()),
                 "topic": r["topic"], "question_group": r["question_group"],
-                "phase": "selection", "question_id": r["question_id"],
+                "phase": r["phase"], "question_id": r["question_id"],
                 "source_topic": r["source_topic"], "source_split": r["source_split"],
                 "question": r["question"], "stem": r["stem"],
                 "option_index": i, "option_text": opts[i],
@@ -115,7 +115,7 @@ def main() -> None:
             })
         per_question.append({
             "model_label": label, "topic": r["topic"],
-            "question_group": r["question_group"], "phase": "selection",
+            "question_group": r["question_group"], "phase": r["phase"],
             "question_id": r["question_id"],
             "gold_index": gold_i, "predicted_index": best,
             "is_correct": int(best == gold_i),

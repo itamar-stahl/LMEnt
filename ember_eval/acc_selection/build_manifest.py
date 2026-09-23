@@ -25,7 +25,7 @@ SELECTION = ("target_selection", "neighbour_selection", "unrelated_selection")
 TEST = ("target_test", "neighbour_test", "unrelated_test")
 
 
-def build(groups):
+def build(groups, phase):
     src = json.loads(QUESTIONS.read_text(encoding="utf-8"))
     rows, problems = [], []
     for topic in TOPICS:
@@ -51,7 +51,7 @@ def build(groups):
                 if it["stem"].strip() != rec["stem"].strip():
                     problems.append(f"{topic}/{group}/{it['id']}: stem mismatch")
                 rows.append({
-                    "topic": topic, "question_group": group, "phase": "selection",
+                    "topic": topic, "question_group": group, "phase": phase,
                     "question_id": it["id"], "source_topic": it["source_topic"],
                     "source_split": it["source_split"], "question": it["question"],
                     "stem": it["stem"], "correct_answer": gold,
@@ -70,7 +70,7 @@ def main():
                          "test: the held-out half, for the final analysis only -- "
                          "it must never be read before the winners are frozen.")
     a = ap.parse_args()
-    rows, problems = build(SELECTION if a.phase == "selection" else TEST)
+    rows, problems = build(SELECTION if a.phase == "selection" else TEST, a.phase)
     if problems:
         raise SystemExit("JOIN FAILED:\n  " + "\n  ".join(problems[:40]))
     out = Path(a.out); out.parent.mkdir(parents=True, exist_ok=True)
