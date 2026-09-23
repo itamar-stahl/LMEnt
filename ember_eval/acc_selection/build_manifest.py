@@ -21,15 +21,16 @@ HERE = Path(__file__).resolve().parent
 SETS = HERE.parents[0] / "nll_kl" / "sets"
 QUESTIONS = HERE.parents[0] / "completion_eval" / "data" / "completion_questions.json"
 TOPICS = ("rome", "baseball", "ai")
-GROUPS = ("target_selection", "neighbour_selection", "unrelated_selection")
+SELECTION = ("target_selection", "neighbour_selection", "unrelated_selection")
+TEST = ("target_test", "neighbour_test", "unrelated_test")
 
 
-def build():
+def build(groups):
     src = json.loads(QUESTIONS.read_text(encoding="utf-8"))
     rows, problems = [], []
     for topic in TOPICS:
         manifest = json.loads((SETS / f"{topic}.json").read_text(encoding="utf-8"))
-        for group in GROUPS:
+        for group in groups:
             for it in manifest["sets"][group]:
                 pool = src.get(it["source_topic"], {}).get(it["source_split"], [])
                 hits = [r for r in pool if r["q"].strip() == it["question"].strip()]
@@ -64,8 +65,12 @@ def build():
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--phase", choices=("selection", "test"), default="selection",
+                    help="selection: the hyperparameter-choice half (default). "
+                         "test: the held-out half, for the final analysis only -- "
+                         "it must never be read before the winners are frozen.")
     a = ap.parse_args()
-    rows, problems = build()
+    rows, problems = build(SELECTION if a.phase == "selection" else TEST)
     if problems:
         raise SystemExit("JOIN FAILED:\n  " + "\n  ".join(problems[:40]))
     out = Path(a.out); out.parent.mkdir(parents=True, exist_ok=True)
@@ -76,7 +81,7 @@ def main():
     print(f"{len(rows)} questions -> {out}")
     print(f"sha256 {digest}")
     for t in TOPICS:
-        for g in GROUPS:
+        for g in (SELECTION if a.phase == "selection" else TEST):
             n = sum(1 for r in rows if r["topic"] == t and r["question_group"] == g)
             assert n == 50, f"{t}/{g}: {n}"
     print("all 9 (topic, group) cells hold exactly 50 questions")
