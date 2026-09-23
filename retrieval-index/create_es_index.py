@@ -402,7 +402,12 @@ def main():
     with concurrent.futures.ProcessPoolExecutor(
         max_workers=max_workers,
         initializer=process_init,
-        initargs=(dataset_config_dict)
+        # Trailing comma matters: initargs must be a tuple. Without it this is
+        # just a parenthesised dict, and ProcessPoolExecutor's initializer(*initargs)
+        # unpacks the dict's keys as positional arguments -- every worker dies in
+        # process_init with "takes 1 positional argument but 14 were given", the
+        # pool breaks, and nothing is ever indexed.
+        initargs=(dataset_config_dict,)
     ) as executor:
         future_to_idx = {
             executor.submit(fetch_and_prepare, idx + start): idx + start
