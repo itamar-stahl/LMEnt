@@ -1,0 +1,1012 @@
+{
+ "topic": "sciq",
+ "source": "ember_eval/acc_selection/sciq_unrelated.csv",
+ "seed": 20260923,
+ "note": "general-capability unrelated set; topic-independent, one set for all concepts",
+ "sets": {
+  "unrelated_selection": [
+   {
+    "id": "fb0ff39e9ff8",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Which is the main organ of the respiratory system?",
+    "stem": "Which is the main organ of the respiratory system?",
+    "completion": " the lungs"
+   },
+   {
+    "id": "62127d0cc7b9",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Through which process are plants able to make their own food?",
+    "stem": "Through which process are plants able to make their own food?",
+    "completion": " photosynthesis"
+   },
+   {
+    "id": "b2472d007f10",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What defines the behavior of a compound?",
+    "stem": "What defines the behavior of a compound?",
+    "completion": " group of atoms"
+   },
+   {
+    "id": "ecb338cab450",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The air pressure is about 80% that of ________ pressure at sea level.",
+    "stem": "The air pressure is about 80% that of ________ pressure at sea level.",
+    "completion": " standard atmospheric"
+   },
+   {
+    "id": "76df29c369d1",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the fusing of two or more smaller nuclei to form a single, larger nucleus?",
+    "stem": "What is the fusing of two or more smaller nuclei to form a single, larger nucleus?",
+    "completion": " nuclear fusion"
+   },
+   {
+    "id": "bf1b4d3cd3b2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Food allergies, ulcers, and heartburn all affect what organ system?",
+    "stem": "Food allergies, ulcers, and heartburn all affect what organ system?",
+    "completion": " digestive system"
+   },
+   {
+    "id": "0c302ba3e33d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Which area in a lake is likely to have more nutrients?",
+    "stem": "Which area in a lake is likely to have more nutrients?",
+    "completion": " bottom"
+   },
+   {
+    "id": "f772c092c5dd",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Esters can be formed by heating carboxylic acids and alcohols in the presence of?",
+    "stem": "Esters can be formed by heating carboxylic acids and alcohols in the presence of?",
+    "completion": " an acid catalyst"
+   },
+   {
+    "id": "e3fd33be6796",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "By maintaining a relatively constant internal environment even when the external environment changes significantly, an animal achieves what?",
+    "stem": "By maintaining a relatively constant internal environment even when the external environment changes significantly, an animal achieves what?",
+    "completion": " homeostasis"
+   },
+   {
+    "id": "b2184bc860c0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What property is a property that depends on the amount of matter in a sample?",
+    "stem": "What property is a property that depends on the amount of matter in a sample?",
+    "completion": " extensive"
+   },
+   {
+    "id": "0f38029d4628",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The nitrogenous bases found in nucleotides are classified as pyrimidines or what?",
+    "stem": "The nitrogenous bases found in nucleotides are classified as pyrimidines or what?",
+    "completion": " purines"
+   },
+   {
+    "id": "e638d5903924",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the term for the use of technology to treat genetic disorders or change organisms so they are more useful to people?",
+    "stem": "What is the term for the use of technology to treat genetic disorders or change organisms so they are more useful to people?",
+    "completion": " biotechnology"
+   },
+   {
+    "id": "ae778d198c60",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What mineral is used in jewelry because of its striking greenish-blue color?",
+    "stem": "What mineral is used in jewelry because of its striking greenish-blue color?",
+    "completion": " turquoise"
+   },
+   {
+    "id": "6608d9ed113d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Many heterocyclic amines occur naturally in what?",
+    "stem": "Many heterocyclic amines occur naturally in what?",
+    "completion": " plants"
+   },
+   {
+    "id": "912df2e467bf",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "If you examine eyeglasses for nearsighted people, you will find the lenses are thinnest in the center and of what shape?",
+    "stem": "If you examine eyeglasses for nearsighted people, you will find the lenses are thinnest in the center and of what shape?",
+    "completion": " concave"
+   },
+   {
+    "id": "df3f9c1ed13e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the term for the attraction between oppositely charged atoms or ions?",
+    "stem": "What is the term for the attraction between oppositely charged atoms or ions?",
+    "completion": " ionic bond"
+   },
+   {
+    "id": "da9d8601f93d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Vesicles can be classified by their contents and what else?",
+    "stem": "Vesicles can be classified by their contents and what else?",
+    "completion": " function"
+   },
+   {
+    "id": "a6125e15b939",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The male gametangium that produces sperm is also called what?",
+    "stem": "The male gametangium that produces sperm is also called what?",
+    "completion": " antheridium"
+   },
+   {
+    "id": "61ad19f5a393",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What occurs when the immune system reacts to substances in food as though they were harmful “foreign invaders\"?",
+    "stem": "What occurs when the immune system reacts to substances in food as though they were harmful “foreign invaders\"?",
+    "completion": " food allergies"
+   },
+   {
+    "id": "355bd279112a",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The earliest known mammal fossils are from which period?",
+    "stem": "The earliest known mammal fossils are from which period?",
+    "completion": " early jurassic"
+   },
+   {
+    "id": "05fc4f5a072c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is released during dehydration synthesis?",
+    "stem": "What is released during dehydration synthesis?",
+    "completion": " water"
+   },
+   {
+    "id": "857da1ce12ee",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What does antifreeze do to the boiling point of coolant?",
+    "stem": "What does antifreeze do to the boiling point of coolant?",
+    "completion": " raises it"
+   },
+   {
+    "id": "abec5a89f362",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "A phase diagram plots pressure and what else?",
+    "stem": "A phase diagram plots pressure and what else?",
+    "completion": " temperature"
+   },
+   {
+    "id": "9ca684c49e4f",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What exciting and evolving field of physics finds that nature on the smallest scale may have its greatest influence on the large-scale character of the universe?",
+    "stem": "What exciting and evolving field of physics finds that nature on the smallest scale may have its greatest influence on the large-scale character of the universe?",
+    "completion": " particle physics"
+   },
+   {
+    "id": "641247a9df4b",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Particles in what state of matter do not experience any force of mutual attraction or repulsion?",
+    "stem": "Particles in what state of matter do not experience any force of mutual attraction or repulsion?",
+    "completion": " gas"
+   },
+   {
+    "id": "86e28e4828de",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is another name for critical speed?",
+    "stem": "What is another name for critical speed?",
+    "completion": " terminal speed"
+   },
+   {
+    "id": "5a77cd3039be",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Animals use saturated fatty acids to store what?",
+    "stem": "Animals use saturated fatty acids to store what?",
+    "completion": " energy"
+   },
+   {
+    "id": "7660402a0a6c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What kind of volcano has a very wide base and is named because it looks like something a warrior would use?",
+    "stem": "What kind of volcano has a very wide base and is named because it looks like something a warrior would use?",
+    "completion": " shield volcano"
+   },
+   {
+    "id": "c77485647e8e",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What reaction, along with photosynthesis, provides energy to the vast majority of living things?",
+    "stem": "What reaction, along with photosynthesis, provides energy to the vast majority of living things?",
+    "completion": " cellular respiration"
+   },
+   {
+    "id": "35a70e9eb42d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What combine the spinal sensory and motor components with a sensory input that directly generates a motor response?",
+    "stem": "What combine the spinal sensory and motor components with a sensory input that directly generates a motor response?",
+    "completion": " reflexes"
+   },
+   {
+    "id": "96303c42084f",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The secretion of what may influence the body’s circadian rhythms?",
+    "stem": "The secretion of what may influence the body’s circadian rhythms?",
+    "completion": " melatonin"
+   },
+   {
+    "id": "1717ce7f0283",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Sulfur dioxide produced by burning coal is the leading cause of what deadly phenomenon?",
+    "stem": "Sulfur dioxide produced by burning coal is the leading cause of what deadly phenomenon?",
+    "completion": " acid rain"
+   },
+   {
+    "id": "9c5dfdafd098",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Exotic species, also known as invasive or non-native species often cause _______ when introduced to new environments.",
+    "stem": "Exotic species, also known as invasive or non-native species often cause _______ when introduced to new environments.",
+    "completion": " extinction"
+   },
+   {
+    "id": "52fc65b9b29f",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What delivers natural gas from rock that might not otherwise be obtainable?",
+    "stem": "What delivers natural gas from rock that might not otherwise be obtainable?",
+    "completion": " fracking"
+   },
+   {
+    "id": "d7b27f4bfba2",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is an individual living creature called?",
+    "stem": "What is an individual living creature called?",
+    "completion": " organism"
+   },
+   {
+    "id": "e8de6340fc6c",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What are nekton animals able to do in water?",
+    "stem": "What are nekton animals able to do in water?",
+    "completion": " move on their own, swim"
+   },
+   {
+    "id": "70ce82e3a699",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Tunnel vision involves the loss of what visual fields?",
+    "stem": "Tunnel vision involves the loss of what visual fields?",
+    "completion": " peripheral"
+   },
+   {
+    "id": "43c39865da68",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Mammalian sex determination is determined genetically by the presence of chromosomes identified by what letters?",
+    "stem": "Mammalian sex determination is determined genetically by the presence of chromosomes identified by what letters?",
+    "completion": " x and y"
+   },
+   {
+    "id": "b5079d865180",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What are the sources of sexual spores in a basidiocarp?",
+    "stem": "What are the sources of sexual spores in a basidiocarp?",
+    "completion": " basidia"
+   },
+   {
+    "id": "1a8be7e93cde",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The noble gases are unreactive because of their?",
+    "stem": "The noble gases are unreactive because of their?",
+    "completion": " electron configurations"
+   },
+   {
+    "id": "27e050d632cc",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Matter is composed of exceedingly small particles called what?",
+    "stem": "Matter is composed of exceedingly small particles called what?",
+    "completion": " atoms"
+   },
+   {
+    "id": "3b48b4125842",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What determines the reactivity of an atom?",
+    "stem": "What determines the reactivity of an atom?",
+    "completion": " valence electrons"
+   },
+   {
+    "id": "19ee78b6e63d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Cellular respiration that proceeds in the absence of oxygen is called what?",
+    "stem": "Cellular respiration that proceeds in the absence of oxygen is called what?",
+    "completion": " anaerobic respiration"
+   },
+   {
+    "id": "9e55478c5c3d",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What device measures atmospheric pressure and can be used as an altimeter?",
+    "stem": "What device measures atmospheric pressure and can be used as an altimeter?",
+    "completion": " barometer"
+   },
+   {
+    "id": "e2fd453f12bb",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Specialized peroxisomes called glyoxysomes are found in the fat-storing tissues of what?",
+    "stem": "Specialized peroxisomes called glyoxysomes are found in the fat-storing tissues of what?",
+    "completion": " plant seeds"
+   },
+   {
+    "id": "282f8c0482f0",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What do ectotherms use to regulate body temperature?",
+    "stem": "What do ectotherms use to regulate body temperature?",
+    "completion": " external energy sources"
+   },
+   {
+    "id": "5416b18c6044",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "How many colors of light can the human eye detect?",
+    "stem": "How many colors of light can the human eye detect?",
+    "completion": " three"
+   },
+   {
+    "id": "80ced57695cf",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Amylose and amylopectin are the two most common components of naturally occurring what?",
+    "stem": "Amylose and amylopectin are the two most common components of naturally occurring what?",
+    "completion": " starch"
+   },
+   {
+    "id": "61f477e8ad05",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The mammalian sense of touch also relies on mechanoreceptors that are the dendrites of sensory?",
+    "stem": "The mammalian sense of touch also relies on mechanoreceptors that are the dendrites of sensory?",
+    "completion": " neurons"
+   },
+   {
+    "id": "854ded760888",
+    "role": "unrelated",
+    "phase": "selection",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What single word can be defined as the ability to cause change in matter and the ability to do work?",
+    "stem": "What single word can be defined as the ability to cause change in matter and the ability to do work?",
+    "completion": " energy"
+   }
+  ],
+  "unrelated_test": [
+   {
+    "id": "4bc647f683a7",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is a protein containing four subunits that transports oxygen throughout the body?",
+    "stem": "What is a protein containing four subunits that transports oxygen throughout the body?",
+    "completion": " hemoglobin"
+   },
+   {
+    "id": "8d4c12b45b38",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Elements have orbitals that are filled with what?",
+    "stem": "Elements have orbitals that are filled with what?",
+    "completion": " electrons"
+   },
+   {
+    "id": "ab4d300be49f",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the mode of breathing that occurs at rest and does not require the cognitive thought of the individual?",
+    "stem": "What is the mode of breathing that occurs at rest and does not require the cognitive thought of the individual?",
+    "completion": " quiet breathing"
+   },
+   {
+    "id": "7ee31b63887e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The end of a pine tree branch bears the male cones that produce what?",
+    "stem": "The end of a pine tree branch bears the male cones that produce what?",
+    "completion": " pollen"
+   },
+   {
+    "id": "9446a2b1eed7",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What are two simple and common types of capacitor connections?",
+    "stem": "What are two simple and common types of capacitor connections?",
+    "completion": " series and parallel"
+   },
+   {
+    "id": "2ceee24c4b9f",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What type of carbon compound is methane?",
+    "stem": "What type of carbon compound is methane?",
+    "completion": " volatile organic compounds"
+   },
+   {
+    "id": "38631259bb0e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "If an animal eats large pieces of food it is known as a?",
+    "stem": "If an animal eats large pieces of food it is known as a?",
+    "completion": " bulk feeder"
+   },
+   {
+    "id": "4847f5732505",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the name for the process of insects transforming from a young insect to an adult?",
+    "stem": "What is the name for the process of insects transforming from a young insect to an adult?",
+    "completion": " metamorphosis"
+   },
+   {
+    "id": "13126f357cf6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Almost all leaves are specialized for what process?",
+    "stem": "Almost all leaves are specialized for what process?",
+    "completion": " photosynthesis"
+   },
+   {
+    "id": "316cfd7b9d4a",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Radioactive isotopes have the same chemical properties as stable isotopes of the same element. still, how is radioactive isotope different from stable isotopes?",
+    "stem": "Radioactive isotopes have the same chemical properties as stable isotopes of the same element. still, how is radioactive isotope different from stable isotopes?",
+    "completion": " they emit radiation"
+   },
+   {
+    "id": "5c4f0dd5ae58",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Single bonds between atoms are always what?",
+    "stem": "Single bonds between atoms are always what?",
+    "completion": " sigma bonds"
+   },
+   {
+    "id": "0675d8c19ffd",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the three-dimensional structure of a single polypeptide called?",
+    "stem": "What is the three-dimensional structure of a single polypeptide called?",
+    "completion": " tertiary structure"
+   },
+   {
+    "id": "47f8ab13f44f",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the term for the change in momentum vector?",
+    "stem": "What is the term for the change in momentum vector?",
+    "completion": " impulse"
+   },
+   {
+    "id": "9c8025117a95",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Sweating and panting are methods mammals use for what purpose?",
+    "stem": "Sweating and panting are methods mammals use for what purpose?",
+    "completion": " staying cool"
+   },
+   {
+    "id": "025a1288d019",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Touching, coughing, or sneezing are examples of directly spreading what microorganisms, which cause diseases like tetanus?",
+    "stem": "Touching, coughing, or sneezing are examples of directly spreading what microorganisms, which cause diseases like tetanus?",
+    "completion": " bacteria"
+   },
+   {
+    "id": "2c6e7f3f07d6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Organic acids such as acetic acid all contain a functional group called what?",
+    "stem": "Organic acids such as acetic acid all contain a functional group called what?",
+    "completion": " carboxyl group"
+   },
+   {
+    "id": "a14d645df5a3",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "In our wildflower population, the pool of what remains constant from one generation to the next?",
+    "stem": "In our wildflower population, the pool of what remains constant from one generation to the next?",
+    "completion": " genes"
+   },
+   {
+    "id": "ccdb5c6efcc6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What do the process of moving air into and out of the lungs better known as?",
+    "stem": "What do the process of moving air into and out of the lungs better known as?",
+    "completion": " breathing"
+   },
+   {
+    "id": "3c2b11ba7c22",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What type of power is generated by splitting uranium atoms?",
+    "stem": "What type of power is generated by splitting uranium atoms?",
+    "completion": " nuclear power"
+   },
+   {
+    "id": "7121e75d77ed",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What are the outer planets of the solar system made of?",
+    "stem": "What are the outer planets of the solar system made of?",
+    "completion": " gases"
+   },
+   {
+    "id": "2431489990c6",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "When a binary acid only has one acidic hydrogen it is known as what?",
+    "stem": "When a binary acid only has one acidic hydrogen it is known as what?",
+    "completion": " monoprotic"
+   },
+   {
+    "id": "4debabe7721e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the name of the process of creating offspring from just one individual animal?",
+    "stem": "What is the name of the process of creating offspring from just one individual animal?",
+    "completion": " asexual reproduction"
+   },
+   {
+    "id": "3af548dfa914",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "How will global warming eliminate some islands and reduce the area of others?",
+    "stem": "How will global warming eliminate some islands and reduce the area of others?",
+    "completion": " raise sea levels"
+   },
+   {
+    "id": "2ddc26d0d53e",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Which law predicts increasing entropy based on living systems?",
+    "stem": "Which law predicts increasing entropy based on living systems?",
+    "completion": " thermodynamic"
+   },
+   {
+    "id": "dbf058a73e0f",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What occurs when the vapor pressure of a liquid is equal to the atmospheric pressure?",
+    "stem": "What occurs when the vapor pressure of a liquid is equal to the atmospheric pressure?",
+    "completion": " boiling"
+   },
+   {
+    "id": "2ba4f4fefa2a",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What does the bicoid protein activate?",
+    "stem": "What does the bicoid protein activate?",
+    "completion": " several gap genes"
+   },
+   {
+    "id": "6f6b2da54563",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Each hydrogen atom follows the octet rule with how many pairs of electrons?",
+    "stem": "Each hydrogen atom follows the octet rule with how many pairs of electrons?",
+    "completion": " one"
+   },
+   {
+    "id": "6919a2cef8b3",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Melting glaciers, rising temperatures and droughts are all impacts of what?",
+    "stem": "Melting glaciers, rising temperatures and droughts are all impacts of what?",
+    "completion": " global warming"
+   },
+   {
+    "id": "8588250c0347",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is considered to not be a form of precipitation?",
+    "stem": "What is considered to not be a form of precipitation?",
+    "completion": " fog"
+   },
+   {
+    "id": "95ac1b8af8d7",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "A homogeneous mixture composed of two or more substances is called a what?",
+    "stem": "A homogeneous mixture composed of two or more substances is called a what?",
+    "completion": " solution"
+   },
+   {
+    "id": "485c413d65be",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Cooling a mixture of equal parts nitric oxide and nitrogen dioxide to −21 °c produces what?",
+    "stem": "Cooling a mixture of equal parts nitric oxide and nitrogen dioxide to −21 °c produces what?",
+    "completion": " dinitrogen trioxide"
+   },
+   {
+    "id": "b74d13454401",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Population growth depends on birth rates and death rates, as well as what?",
+    "stem": "Population growth depends on birth rates and death rates, as well as what?",
+    "completion": " migration"
+   },
+   {
+    "id": "5c5918992c8b",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Though it can change states, and it often does, what cannot be created or destroyed?",
+    "stem": "Though it can change states, and it often does, what cannot be created or destroyed?",
+    "completion": " matter"
+   },
+   {
+    "id": "92d148ca6ed0",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What makes the sun glow brightly?",
+    "stem": "What makes the sun glow brightly?",
+    "completion": " nuclear fusion"
+   },
+   {
+    "id": "921f72c7e751",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What kind of energy conversion is done by a fuel cell?",
+    "stem": "What kind of energy conversion is done by a fuel cell?",
+    "completion": " chemical into electrical"
+   },
+   {
+    "id": "4a5b9429a119",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Mollusks can be divided into how many classes?",
+    "stem": "Mollusks can be divided into how many classes?",
+    "completion": " seven"
+   },
+   {
+    "id": "35a1719d7dba",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What results when volcanic ash encircles the globe, blocking the sun and lowering the temperature of the entire planet?",
+    "stem": "What results when volcanic ash encircles the globe, blocking the sun and lowering the temperature of the entire planet?",
+    "completion": " volcanic winter"
+   },
+   {
+    "id": "ff2ecc5807fb",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Although quite different, beryllium, magnesium, calcium, strontium, barium, and radium are all classified as what type of metals?",
+    "stem": "Although quite different, beryllium, magnesium, calcium, strontium, barium, and radium are all classified as what type of metals?",
+    "completion": " alkaline earth metals"
+   },
+   {
+    "id": "708be3a4ee01",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "As you increase the temperature of a liquid what happens to the solubility of a solute?",
+    "stem": "As you increase the temperature of a liquid what happens to the solubility of a solute?",
+    "completion": " solubility increases"
+   },
+   {
+    "id": "4c219fb7c457",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Surviving megaspores develop into what?",
+    "stem": "Surviving megaspores develop into what?",
+    "completion": " multicellular female gametophytes"
+   },
+   {
+    "id": "fba055343b70",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What two types of digestive systems do invertebrates have?",
+    "stem": "What two types of digestive systems do invertebrates have?",
+    "completion": " incomplete or complete"
+   },
+   {
+    "id": "a81645f4be38",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the process of soil dissolving in rain called?",
+    "stem": "What is the process of soil dissolving in rain called?",
+    "completion": " erosion"
+   },
+   {
+    "id": "7e2e7e4c1522",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Which condition is the only autosomal trisomy where an affected individual may survive to adulthood?",
+    "stem": "Which condition is the only autosomal trisomy where an affected individual may survive to adulthood?",
+    "completion": " down syndrome"
+   },
+   {
+    "id": "3023fe2b0fbb",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is a type of plant tissue consisting of undifferentiated cells that can continue to divide and differentiate?",
+    "stem": "What is a type of plant tissue consisting of undifferentiated cells that can continue to divide and differentiate?",
+    "completion": " meristem"
+   },
+   {
+    "id": "efc593b99a12",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "The diploid sporophyte produces haploid spores by what process?",
+    "stem": "The diploid sporophyte produces haploid spores by what process?",
+    "completion": " meiosis"
+   },
+   {
+    "id": "c2dec8d02aac",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Sometimes referred to as air, what do we call the mixture of gases that surrounds the planet?",
+    "stem": "Sometimes referred to as air, what do we call the mixture of gases that surrounds the planet?",
+    "completion": " atmosphere"
+   },
+   {
+    "id": "1e7830860f5c",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Saturn is made mostly of what two elements?",
+    "stem": "Saturn is made mostly of what two elements?",
+    "completion": " hydrogen and helium"
+   },
+   {
+    "id": "123ff26369bf",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What cells secrete signaling molecules that promote sperm production and can control whether germ cells live or die?",
+    "stem": "What cells secrete signaling molecules that promote sperm production and can control whether germ cells live or die?",
+    "completion": " sertoli cells"
+   },
+   {
+    "id": "eecc4da86deb",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "Unsaturated hydrocarbons with at least one triple bond are known as?",
+    "stem": "Unsaturated hydrocarbons with at least one triple bond are known as?",
+    "completion": " alkynes"
+   },
+   {
+    "id": "6448908fbf66",
+    "role": "unrelated",
+    "phase": "test",
+    "source_topic": "sciq",
+    "source_split": "validation",
+    "question": "What is the process called in which populations of organisms change over time?",
+    "stem": "What is the process called in which populations of organisms change over time?",
+    "completion": " evolution"
+   }
+  ]
+ }
+}

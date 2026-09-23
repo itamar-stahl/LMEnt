@@ -38,6 +38,9 @@ rmu_rome_L6hi_a10,rome,unrelated_test,orig_pool,50,21,0.42
 snmf_ai_ratio_in,ai,neighbour_test,,50,25,0.5
 snmf_ai_ratio_in,ai,target_test,,50,26,0.52
 snmf_ai_ratio_in,ai,unrelated_test,orig_pool,50,23,0.46
+snmf_baseball_ratio_both,baseball,neighbour_test,,50,22,0.44
+snmf_baseball_ratio_both,baseball,target_test,,50,26,0.52
+snmf_baseball_ratio_both,baseball,unrelated_test,orig_pool,50,22,0.44
 snmf_rome_ratio_out,rome,neighbour_test,,50,31,0.62
 snmf_rome_ratio_out,rome,target_test,,50,24,0.48
 snmf_rome_ratio_out,rome,unrelated_test,orig_pool,50,21,0.42
