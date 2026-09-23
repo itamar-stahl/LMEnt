@@ -22,13 +22,16 @@ Baseball, and AI only after the new measurements are filled.}
     \toprule
     Concept & Model & $H_{\mathrm{test}}\uparrow$ & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
     \midrule
-    Rome & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Rome & Twin & \textit{TBD} & \textit{TBD} & $0$ & $0$ \\
+    & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     & RMU & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     & SNMF & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-    Baseball & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Baseball & Twin & \textit{TBD} & \textit{TBD} & $0$ & $0$ \\
+    & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     & RMU & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     & SNMF & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
-    AI & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    AI & Twin & \textit{TBD} & \textit{TBD} & $0$ & $0$ \\
+    & EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     & RMU & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     & SNMF & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
     \bottomrule
@@ -37,7 +40,9 @@ Baseball, and AI only after the new measurements are filled.}
   scoring. $H_{\mathrm{test}}$ combines held-out target efficacy with
   neighboring and SciQ preservation. NLL changes are signed
   evaluated-minus-reference differences, where $M$, $F$, and $T$ denote the
-  erased, full, and twin models; KL uses the twin as its reference distribution.}
+  evaluated, full, and twin models; KL uses the twin as its reference
+  distribution. The twin row provides the concept-exclusion reference against
+  which the erasure models are interpreted.}
   \label{tab:target}
 \end{table*}
 

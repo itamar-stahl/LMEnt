@@ -118,20 +118,227 @@ configurations.
 The concept-excluded twins and the held-out target, neighboring, and SciQ
 questions were not loaded or inspected during selection. After the nine
 configurations were frozen, we evaluated them on the test splits and computed
-$H_{\mathrm{test}}$ with the same formula. Neither $H_{\mathrm{test}}$ nor the
-subsequent NLL and KL comparisons with the twins were used to revise the
-selected configurations.
+$H_{\mathrm{test}}$ with the same formula. We also computed
+$H_{\mathrm{test}}$ for the twin, using the full model as the normalization
+baseline, to provide a concept-exclusion reference for the erasure models.
+Neither $H_{\mathrm{test}}$ nor the subsequent NLL and KL comparisons with the
+twins were used to revise the selected configurations.
 
-\section{Complete Results by Concept}
+\clearpage
+\onecolumn
+\section{Complete Held-Out Results by Concept}
 \label{app:full-results}
+
+This appendix will report the complete held-out results separately for each
+concept. In each table, Panel~A gives likelihood-ranked option accuracy on the
+target, neighboring, and shared SciQ test sets. The harmonic score is reported
+for the twin and the three erasure methods. It is always normalized against the
+full model; the twin's value therefore provides the reference outcome of
+concept exclusion. The full model has zero target efficacy and hence
+$H_{\mathrm{test}}=0$ by construction. Panel~B reports the mean and standard deviation
+across the same 50 test questions in each group. Here,
+$\Delta\mathrm{NLL}_{M-F}$ compares the evaluated model with the full model,
+$\Delta\mathrm{NLL}_{M-T}$ compares it with the concept-excluded twin, and
+$\mathrm{KL}(T\,\|\,M)$ uses the twin as the reference distribution. Panel~C
+isolates the twin--full comparison that establishes how much concept exclusion
+changed the model before any erasure method is considered. Thus, smaller
+absolute NLL differences and lower KL indicate closer agreement with the
+corresponding reference. All entries will be filled from the frozen
+checkpoints selected using the SciQ-based rule in
+Appendix~\ref{app:checkpoint-selection}; selection-set measurements are not
+included in these tables.
+
 \subsection{Ancient Rome}
-\plan{Table A3: all five models, all three question groups, option accuracy,
-answer NLL and full-vocabulary KL; $H_{\mathrm{test}}$, underlying group means, full/twin contrasts, and
-standard deviations across questions. Split by metric if needed.}
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
+    \cmidrule(lr){1-5}
+    Model & Target Acc. & Neighboring Acc. & SciQ Acc. & $H_{\mathrm{test}}\uparrow$ \\
+    \midrule
+    Full  & \textit{TBD} & \textit{TBD} & \textit{TBD} & $0$ \\
+    Twin  & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    RMU   & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    SNMF  & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{llccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel B: correct-answer NLL and full-vocabulary KL (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-5}
+    Model & Group & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    \midrule
+    Full  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Twin  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    EMBER & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    RMU   & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    SNMF  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{lcc}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Panel C: concept-excluded twin versus full model (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-3}
+    Group & $\Delta\mathrm{NLL}_{T-F}$ & $\mathrm{KL}(T\,\|\,F)$ \\
+    \midrule
+    Target      & \textit{TBD} & \textit{TBD} \\
+    Neighboring & \textit{TBD} & \textit{TBD} \\
+    SciQ        & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Complete held-out results for Ancient Rome. Each question group
+  contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
+  options; NLL and KL are evaluated along the correct continuation.}
+  \label{tab:appendix-rome-results}
+\end{table}
+
+\clearpage
 \subsection{Baseball}
-\plan{Table A4 with the identical structure and question-level protocol.}
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
+    \cmidrule(lr){1-5}
+    Model & Target Acc. & Neighboring Acc. & SciQ Acc. & $H_{\mathrm{test}}\uparrow$ \\
+    \midrule
+    Full  & \textit{TBD} & \textit{TBD} & \textit{TBD} & $0$ \\
+    Twin  & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    RMU   & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    SNMF  & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{llccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel B: correct-answer NLL and full-vocabulary KL (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-5}
+    Model & Group & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    \midrule
+    Full  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Twin  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    EMBER & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    RMU   & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    SNMF  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{lcc}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Panel C: concept-excluded twin versus full model (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-3}
+    Group & $\Delta\mathrm{NLL}_{T-F}$ & $\mathrm{KL}(T\,\|\,F)$ \\
+    \midrule
+    Target      & \textit{TBD} & \textit{TBD} \\
+    Neighboring & \textit{TBD} & \textit{TBD} \\
+    SciQ        & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Complete held-out results for Baseball. Each question group
+  contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
+  options; NLL and KL are evaluated along the correct continuation.}
+  \label{tab:appendix-baseball-results}
+\end{table}
+
+\clearpage
 \subsection{Artificial Intelligence}
-\plan{Table A5 with the identical structure and question-level protocol.}
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{lcccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
+    \cmidrule(lr){1-5}
+    Model & Target Acc. & Neighboring Acc. & SciQ Acc. & $H_{\mathrm{test}}\uparrow$ \\
+    \midrule
+    Full  & \textit{TBD} & \textit{TBD} & \textit{TBD} & $0$ \\
+    Twin  & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    EMBER & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    RMU   & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    SNMF  & \textit{TBD} & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{llccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel B: correct-answer NLL and full-vocabulary KL (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-5}
+    Model & Group & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    \midrule
+    Full  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    Twin  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    EMBER & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    RMU   & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    SNMF  & Target      & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & Neighboring & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+          & SciQ        & \textit{TBD} & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{lcc}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Panel C: concept-excluded twin versus full model (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-3}
+    Group & $\Delta\mathrm{NLL}_{T-F}$ & $\mathrm{KL}(T\,\|\,F)$ \\
+    \midrule
+    Target      & \textit{TBD} & \textit{TBD} \\
+    Neighboring & \textit{TBD} & \textit{TBD} \\
+    SciQ        & \textit{TBD} & \textit{TBD} \\
+    \bottomrule
+  \end{tabular}
+  \caption{Complete held-out results for Artificial Intelligence. Each
+  question group contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use
+  all four answer options; NLL and KL are evaluated along the correct
+  continuation.}
+  \label{tab:appendix-ai-results}
+\end{table}
+
+\clearpage
+\twocolumn
 
 \section{Diagnostic Analyses}
 \label{app:diagnostics}
