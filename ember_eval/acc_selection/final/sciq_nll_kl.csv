@@ -1,0 +1,13 @@
+topic,method,model,n,sciq_KL_twin_to_model_mean,sciq_KL_twin_to_model_sd,sciq_dNLL_vs_full_mean,sciq_dNLL_vs_full_sd,sciq_dNLL_vs_twin_mean,sciq_dNLL_vs_twin_sd
+ai,EMBER,ember_ai_d500,50,0.439263,0.229306,0.036059,0.287811,-0.108948,1.112631
+ai,RMU,rmu_ai_L6hi_a10,50,0.671115,0.37563,0.382549,1.265919,0.237542,1.555938
+ai,SNMF,snmf_ai_ratio_in,50,0.420104,0.188352,-0.048519,0.358899,-0.193525,1.044213
+baseball,EMBER,ember_baseball_d10,50,0.456256,0.230048,0.00485,0.034293,0.098313,1.11172
+baseball,RMU,rmu_baseball_L6hi_a10,50,0.50963,0.284659,0.429484,0.896331,0.522948,1.33652
+baseball,SNMF,snmf_baseball_ratio_both,50,0.456195,0.203024,-0.016347,0.225528,0.077117,1.113271
+rome,EMBER,ember_rome_d200,50,0.450611,0.260881,0.006684,0.047264,-0.039308,1.066319
+rome,RMU,rmu_rome_L6hi_a10,50,0.568429,0.367071,0.595842,1.239869,0.549849,1.333106
+rome,SNMF,snmf_rome_ratio_out,50,0.436775,0.234625,-0.065984,0.127846,-0.111977,1.09817
+rome,TWIN(ref),lment-1b-norome-2e-b131k  [KL row is KL(twin||FULL)],50,0.438177,0.243959,0.045993,1.05855,0.0,0.0
+baseball,TWIN(ref),lment-1b-nobaseball-2e-b131k  [KL row is KL(twin||FULL)],50,0.44871,0.209299,-0.093464,1.114948,0.0,0.0
+ai,TWIN(ref),lment-1b-noai-2e-b131k  [KL row is KL(twin||FULL)],50,0.417518,0.203867,0.145007,1.092594,0.0,0.0
