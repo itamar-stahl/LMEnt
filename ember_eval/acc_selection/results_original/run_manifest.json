@@ -1,0 +1,72 @@
+{
+ "generated": "2026-09-23T16:20:22",
+ "git_commit": "92a39d3dbc3f4cda997c3d1c4dc033b0ec64bd2b",
+ "scorer_version": "acc_selection/score_mc.py v1",
+ "dtype": [
+  "fp32"
+ ],
+ "devices": [
+  "cuda"
+ ],
+ "gpus_used": [
+  "NVIDIA L40S",
+  "NVIDIA RTX A5000",
+  "NVIDIA RTX A6000"
+ ],
+ "question_manifest": {
+  "path": "ember_eval/acc_selection/questions_with_options.csv",
+  "sha256": "3d73556e8e2ed23c8d26ec4cd0d44429b61b866efa8e10db6bd04769b6a21236",
+  "n_rows": 450
+ },
+ "joblist_sha256": {
+  "joblist_ai.tsv": "fa85740b3efd26d08a0a4dfbc6d5077de5689dfc9c526cc7724da544a6eb088a",
+  "joblist_baseball.tsv": "038633d430bb168f4d5a5e2aee136195f79fe1b47eb63b2c6b24029bacc3375b",
+  "joblist_baseball2.tsv": "93fac456cee5115dc5162f8226a478a60088fb01e2403eb4d6f42c810dc2ccea",
+  "joblist_rome.tsv": "8388c0769f68be0dac1757adfe537107de5061408bc1a3ca91e57204722c737f",
+  "joblist_romeA.tsv": "571ca22b2bdf5fe8c65d832e69d0ebb27883b7d412e425edeb7ba78cf2bc015e",
+  "joblist_romeB.tsv": "5a89ceadcf894e9c33cdcce5ff21afd86afaed6d75b4467ace52ab32df83bb7e",
+  "joblist_rometail.tsv": "23fb3c8b3aaf7db2b8d64f42fb7aa3fd0abcb34a8689b56db909071bf012e41f",
+  "joblist_sciq1.tsv": "b13257018c4713cf48055ff27edf0e6c7694e3e158631bbe9fadda2178c19cf9",
+  "joblist_sciq2.tsv": "d75bf153c8d301b6732fa81d3d78a4d7b53a0de15f3f700ed7355b90191dcdd9",
+  "joblist_sciq2b.tsv": "3b855f83b9dd1cf246a7a1684b55480bd6ede3b1ece8386cd79dbc7500392c19",
+  "joblist_sciq3.tsv": "dd131bdc4dd219ab42d8107afa54eafa465f3d234928dc3204b26df6543d149f",
+  "joblist_sciq4.tsv": "7f9bcf436b76a245158080aa0762420a74f9e65dd7219f6d25ad4f62a926af82",
+  "joblist_sciq_tail.tsv": "179ab29bc3cd297936f0aa0b57de3fee55093a7fcf163f2a6aef1962aff4208a"
+ },
+ "seeds": {
+  "scoring": "deterministic, no sampling: teacher-forced log-probs only",
+  "set_construction": 20260920
+ },
+ "expected_candidates": {
+  "ai/EMBER": 9,
+  "ai/RMU": 8,
+  "ai/SNMF": 3,
+  "baseball/EMBER": 9,
+  "baseball/RMU": 8,
+  "baseball/SNMF": 3,
+  "rome/EMBER": 12,
+  "rome/RMU": 8,
+  "rome/SNMF": 4
+ },
+ "observed_candidates": {
+  "ai/EMBER": 9,
+  "ai/RMU": 8,
+  "ai/SNMF": 3,
+  "baseball/EMBER": 9,
+  "baseball/RMU": 8,
+  "baseball/SNMF": 3,
+  "rome/EMBER": 12,
+  "rome/RMU": 8,
+  "rome/SNMF": 4
+ },
+ "expected_total": 64,
+ "observed_total": 64,
+ "full_model_scorings": 3,
+ "commands": [
+  "python ember_eval/acc_selection/build_manifest.py --out questions_with_options.csv",
+  "sbatch ... ember_eval/acc_selection/slurm/score_selection.slurm  (one job per topic)",
+  "python ember_eval/acc_selection/select_accuracy.py --scored <dir> --inventory <json> --full-label FULL_lment-1b-control-2e-b131k --out <dir>",
+  "python ember_eval/acc_selection/build_artifacts.py ..."
+ ],
+ "not_scored": []
+}
