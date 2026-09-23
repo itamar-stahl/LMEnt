@@ -48,8 +48,8 @@ fi
 
 echo "converting $RUN @ $STEP -> $OUT/$NAME"
 mkdir -p "$OUT"
-export PYTHONPATH="$LMENT/OLMo-core/src:${PYTHONPATH:-}"
-python "$LMENT/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py" \
+export PYTHONPATH="$LMENT/third_party/OLMo-core/src:${PYTHONPATH:-}"
+python "$LMENT/third_party/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py" \
   --checkpoint-input-dir "$SRC" \
   --huggingface-output-dir "$OUT/$NAME" \
   --tokenizer-name-or-path allenai/dolma2-tokenizer \

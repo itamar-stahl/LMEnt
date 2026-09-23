@@ -49,10 +49,10 @@ is 0.25 for both.
 Subtracting an option's unconditional likelihood this way is standard practice,
 introduced in Brown et al. (2020) and analysed in Holtzman et al. (2021). It is
 also what OLMES does, which matters more here than the citations: `acc_uncond`
-in `olmes/oe_eval/metrics/metric.py` picks the option maximising
+in `third_party/olmes/oe_eval/metrics/metric.py` picks the option maximising
 `sum_logits - sum_logits_uncond`, the same quantity as `pmi` above, and it is
 the primary metric for ARC-Challenge, CommonsenseQA and OpenBookQA. OLMES is
-vendored in this repo under `olmes/`, so the metric is not an outside import;
+vendored in this repo under `third_party/olmes/`, so the metric is not an outside import;
 it is the one the OLMo evaluation standard already uses for this task shape.
 
 ### The null context, and where it differs from OLMES
@@ -62,7 +62,7 @@ option's probability at the start of a document, after the tokenizer's BOS or
 EOS.
 
 **OLMES uses `"Answer:"` instead** (`unconditioned_prompt` in
-`olmes/oe_eval/tasks/base_task.py`). The difference is deliberate, not an
+`third_party/olmes/oe_eval/tasks/base_task.py`). The difference is deliberate, not an
 oversight. OLMES scores against a `Question:` / `Answer:` prompt, so its
 unconditional version holds the trailing answer-slot frame fixed and varies only
 the question content. The stems here are declarative and have no such frame,

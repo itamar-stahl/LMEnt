@@ -30,7 +30,7 @@ training script builds the optimizer as
                                             opts=dict(weight_decay=weight_decay))]
     )  # Daniela, need to double check this.
 
--- that trailing comment is theirs, in `OLMo-core/src/examples/kas/train.py`. The
+-- that trailing comment is theirs, in `third_party/OLMo-core/src/examples/kas/train.py`. The
 top-level `weight_decay` is never passed, so it falls to `AdamWConfig`'s default
 of **0.01** for every parameter in the model, and the configured value applies to
 `embeddings.weight` alone. Confirmed in the running 1B's own config dump:

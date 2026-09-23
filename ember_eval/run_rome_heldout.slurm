@@ -103,7 +103,7 @@ case "${MODE:-ppl}" in
     fi
     echo "converting $SRC -> $W/hf/$NAME"
     mkdir -p "$W/hf"
-    exec "$PY" "$LMENT/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py" \
+    exec "$PY" "$LMENT/third_party/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py" \
       --checkpoint-input-dir "$SRC" \
       --huggingface-output-dir "$W/hf/$NAME" \
       --tokenizer-name-or-path "$TOKENIZER" \

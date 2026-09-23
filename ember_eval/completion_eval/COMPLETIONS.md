@@ -78,7 +78,7 @@ an option's unconditional likelihood this way is standard: it was introduced in
 Brown et al. (2020) and analysed in Holtzman et al. (2021).
 
 This is also what OLMES does. `acc_uncond` in
-`olmes/oe_eval/metrics/metric.py` picks the option maximising
+`third_party/olmes/oe_eval/metrics/metric.py` picks the option maximising
 `sum_logits - sum_logits_uncond`, the same quantity, and it is the primary
 metric for ARC-Challenge, CommonsenseQA and OpenBookQA. OLMES is vendored in
 this repo, so the metric is the one the OLMo evaluation standard already uses
@@ -87,7 +87,7 @@ for this task shape.
 The null context defaults to the empty string, so `log P(a | null)` is the
 option's probability at the start of a document, after the tokenizer's BOS or
 EOS. OLMES instead uses `"Answer:"` (`unconditioned_prompt` in
-`olmes/oe_eval/tasks/base_task.py`). That difference is deliberate: OLMES scores
+`third_party/olmes/oe_eval/tasks/base_task.py`). That difference is deliberate: OLMES scores
 against a `Question:` / `Answer:` prompt, so its unconditional version holds the
 trailing answer-slot frame fixed and varies only the question content. These
 stems are declarative and have no such frame, which is the point of the rewrite,

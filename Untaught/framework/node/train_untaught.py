@@ -1,6 +1,6 @@
 """Train an LMEnt model with a concept held out of the loss.
 
-This is a thin wrapper around ``OLMo-core/src/examples/kas/train.py``.  It reuses
+This is a thin wrapper around ``third_party/OLMo-core/src/examples/kas/train.py``.  It reuses
 that file's ``build_config`` verbatim so the model, optimizer, dataset, VSL
 curriculum and data order are exactly the upstream ones, then attaches one extra
 callback that masks blacklisted chunks.
@@ -53,7 +53,7 @@ except ImportError:  # pragma: no cover
 
 
 def _bootstrap_olmo_core() -> None:
-    """Put ``OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports.
+    """Put ``third_party/OLMo-core/src`` on ``sys.path`` so ``examples.kas.train`` imports.
 
     Tries the environment first, then this checkout's own sibling directory, and
     takes the first that actually exists -- an ``OLMO_CORE_SRC`` pointing at
@@ -64,7 +64,7 @@ def _bootstrap_olmo_core() -> None:
         # Nothing sourced the environment (a bare `python -m framework.node...`)? Do it here.
         load_env_sh()
 
-    # Untaught/framework/node/train_untaught.py -> repo root -> OLMo-core/src
+    # Untaught/framework/node/train_untaught.py -> repo root -> third_party/OLMo-core/src
     repo_root = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..", "..", "..")
     )
@@ -83,7 +83,7 @@ def _bootstrap_olmo_core() -> None:
     raise RuntimeError(
         "Could not find OLMo-core sources. Tried: "
         + ", ".join(repr(c) for c in candidates if c)
-        + ". Set OLMO_CORE_SRC to <LMEnt>/OLMo-core/src."
+        + ". Set OLMO_CORE_SRC to <LMEnt>/third_party/OLMo-core/src."
     )
 
 
@@ -517,7 +517,7 @@ def check_embedding_init(model, config) -> None:
             "loops over every module calling reset_parameters() -- and "
             "nn.Embedding.reset_parameters() is nn.init.normal_(weight), i.e. "
             "N(0,1). The 0.02 draw is overwritten a few lines after it is made. "
-            "See OLMo-core/src/olmo_core/nn/transformer/model.py."
+            "See third_party/OLMo-core/src/olmo_core/nn/transformer/model.py."
         )
 
     if get_rank() == 0:

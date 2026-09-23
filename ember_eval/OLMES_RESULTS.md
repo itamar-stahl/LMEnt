@@ -5,7 +5,7 @@
 
 This exists because EMBER ships 200 questions per concept and every result had
 hit that wall. The LMEnt paper does not use EMBER — it evaluates with **OLMES**
-(`oe_eval`), vendored in this repo as the `olmes/` submodule, on datasets of
+(`oe_eval`), vendored in this repo at `third_party/olmes/`, on datasets of
 thousands of items. The question was whether that suite is a way past the wall.
 
 **Short answer: it runs, it reproduces the paper's scale, and it is not a way

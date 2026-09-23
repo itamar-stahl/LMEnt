@@ -1,4 +1,5 @@
 import sys
+import os
 import random
 import time
 import torch
@@ -13,8 +14,20 @@ from threading import Thread
 
 # Make sure to set http.max_content_length: 1GB in elasticsearch.yml.
 
-# Add the OLMo-core path to system path
-sys.path.append("/home/morg/students/gottesman3/knowledge-analysis-suite/OLMo-core/src")
+# Add the OLMo-core path to system path. Resolved relative to this file so the
+# script runs from any clone; OLMO_CORE_SRC (set by Untaught/framework/env.sh)
+# wins if present. Inserted at the front so the vendored fork is preferred over
+# any olmo_core installed into site-packages.
+_OLMO_CORE_SRC = os.environ.get(
+    "OLMO_CORE_SRC",
+    str(Path(__file__).resolve().parents[1] / "third_party" / "OLMo-core" / "src"),
+)
+if not Path(_OLMO_CORE_SRC).is_dir():
+    raise SystemExit(
+        f"OLMo-core sources not found at {_OLMO_CORE_SRC}. "
+        "Set OLMO_CORE_SRC, or source Untaught/framework/env.sh."
+    )
+sys.path.insert(0, _OLMO_CORE_SRC)
 
 from examples.kas.train import build_config, seed_all, set_random_seeds
 from transformers import AutoTokenizer

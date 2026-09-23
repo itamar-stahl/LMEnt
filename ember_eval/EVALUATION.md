@@ -44,7 +44,7 @@ Compute `log P(option | context)` for each option as a continuation, take the
 argmax. This is what OLMES calls **CF** (cloze formulation), against **MCF**
 (listing A–D and asking for a letter), and OLMES exists partly to document that
 small models score near-random under MCF because it needs symbol-binding that
-only emerges with scale. `olmes/` is a submodule of this repo.
+only emerges with scale. `third_party/olmes/` is vendored into this repo.
 
 **The phrasing of the context matters more than anything else we measured.**
 A declarative stem beats `"Question: …\nAnswer:"` by a wide margin — six models,
