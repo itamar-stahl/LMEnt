@@ -2,29 +2,30 @@
 \label{app:models}
 \plan{Table A1: one row per concept and method with checkpoint ID, erasure
 settings, training/selection data, edited parameters, and seed. Give exact
-blacklist rules and audit estimates. Do not paste raw run logs.}
+blacklist rules, candidate grids, harmonic-score components, deterministic
+tie breaks, and audit estimates. Do not paste raw run logs.}
 
 \section{Sentence-Completion Evaluation Sets}
 \label{app:data}
-\plan{Table A2: target, neighboring, and unrelated question counts for each
-concept; item construction and exclusions; one representative fixed
-prompt/answer; question provenance and train/selection/test overlap checks.}
+\plan{Table A2: target, neighboring, and SciQ question counts; item
+construction and exclusions; representative contexts and answers; SciQ
+sampling seed; question provenance and selection/test overlap checks.}
 
 \section{Scoring and Summary Statistics}
 \label{app:scoring}
-\plan{Write exact equations for per-question answer-token NLL, signed
+\plan{Write exact equations for likelihood-ranked option accuracy,
+$H_{\mathrm{selection}}$, $H_{\mathrm{test}}$, per-question answer-token NLL, signed
 evaluated-minus-reference group mean, and full-vocabulary KL(twin
 $\rightarrow$ full or erasure) under correct-answer teacher forcing. Specify
 tokenization, prefix, answer-token mask, position/question aggregation,
 and calculation of means and standard deviations across questions. Include
-one worked item if useful. No option-accuracy or passage-NLL metrics belong
-in this protocol.}
+one worked item if useful.}
 
 \section{Complete Results by Concept}
 \label{app:full-results}
 \subsection{Ancient Rome}
-\plan{Table A3: all five models, all three question groups, answer NLL and
-full-vocabulary KL; underlying group means, full/twin contrasts, and
+\plan{Table A3: all five models, all three question groups, option accuracy,
+answer NLL and full-vocabulary KL; $H_{\mathrm{test}}$, underlying group means, full/twin contrasts, and
 standard deviations across questions. Split by metric if needed.}
 \subsection{Baseball}
 \plan{Table A4 with the identical structure and question-level protocol.}

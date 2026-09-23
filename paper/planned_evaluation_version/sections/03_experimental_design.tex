@@ -55,22 +55,38 @@ embeddings, RMU updated selected MLP parameters, and the SNMF-based method
 removed concept-associated directions through MLP weight edits. Each topic
 received the same method-specific procedure and checkpoint-selection rule.
 
-We selected one checkpoint per method and topic using answer NLL on
-selection questions. Let $\Delta_T(M)$ be candidate $M$'s mean NLL minus
-the control's on target questions. For neighboring and unrelated questions,
-let $D_g(M)$ be the mean absolute per-question NLL difference between $M$
-and the control. We selected the candidate maximizing
+We evaluated 64 existing candidate checkpoints: 30 for EMBER, 24 for RMU,
+and 10 for SNMF. We selected one checkpoint for each method and topic using
+likelihood-ranked accuracy on the selection splits described in
+Section~\ref{sec:evaluation}. Selection used target questions,
+neighboring-topic questions, and a shared general-capability set drawn from
+SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
+were withheld from this procedure.
+
+For group $g$, we normalized candidate $M$'s accuracy against the full model
+$F$ and the four-choice chance level:
 \begin{equation}
-\begin{aligned}
-S(M)={}&0.5\Delta_T(M) \\
-      &-0.25D_{\mathrm{neighbor}}(M) \\
-      &-0.25D_{\mathrm{unrelated}}(M).
-\end{aligned}
+\widetilde{\operatorname{Acc}}_g(M)
+=\operatorname{clip}_{[0,1]}\!\left(
+\frac{\operatorname{Acc}_g(M)-0.25}
+{\operatorname{Acc}_g(F)-0.25}\right).
 \end{equation}
-The unrelated selection set contained 50 questions sampled from topics
-outside the target and neighboring domains; a separate 50-question set
-was reserved for testing. The concept-excluded twins and all test
-questions were excluded from checkpoint selection. We subsequently
-compared each selected erasure checkpoint with both the control and its
-concept-excluded twin using the protocol in
-Section~\ref{sec:evaluation}.
+We then defined erasure efficacy, preservation, and the selection score as
+\begin{align}
+\phi_{\mathrm{eff}}(M)
+  &=1-\widetilde{\operatorname{Acc}}_{\mathrm{target}}(M),\\
+\phi_{\mathrm{pres}}(M)
+  &=\operatorname{HM}\!\left(
+      \widetilde{\operatorname{Acc}}_{\mathrm{neighbor}}(M),\right.\notag\\[-0.25ex]
+  &\hspace{4.6em}\left.
+      \widetilde{\operatorname{Acc}}_{\mathrm{SciQ}}(M)\right),\\
+H_{\mathrm{selection}}(M)
+  &=\operatorname{HM}\!\left(
+      \phi_{\mathrm{eff}}(M),\phi_{\mathrm{pres}}(M)\right).
+\end{align}
+We selected the candidate with the largest $H_{\mathrm{selection}}$ within
+each method--topic pair, using a fixed deterministic order to break exact
+ties. This adapts EMBER's efficacy--specificity harmonic score to base
+models and to our target, neighboring, and SciQ groups. After freezing the
+nine selected checkpoints, we compared them with both the full model and
+their concept-excluded twins.

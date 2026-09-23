@@ -17,14 +17,22 @@ all target knowledge was absent from their remaining training data.
 Our evaluation measures support for one supplied correct continuation
 per question. It does not measure which answer a model would generate,
 and other valid wordings may receive different probabilities.
+Likelihood-ranked accuracy is also sensitive to the supplied distractors
+and changes in discrete steps because each split contains only 50 questions.
+For Rome and Baseball, no SNMF candidate reduced target selection accuracy;
+their harmonic scores were therefore zero, and the reported configuration
+was fixed by the declared tie-breaking rule rather than a measured efficacy
+difference.
 Full-vocabulary KL captures alternative next-token probabilities
 along the correct continuation, but does not follow the model after
 an alternative token is chosen. These measures support conclusions
 about the tested continuations rather than general claims about all
 model behavior.
 
-Finally, checkpoint selection used answer NLL, so the selected
-checkpoints need not minimize KL. Each test group contained 50
-questions; the reported means and standard deviations describe
+Finally, checkpoint selection used likelihood-ranked accuracy and a harmonic
+efficacy--preservation score, so the selected checkpoints need not minimize
+NLL or KL distance from the twin. SciQ provides one general-science
+preservation measure, not a comprehensive capability evaluation. Each test
+group contained 50 questions; the reported means and standard deviations describe
 variation on those questions and do not establish that two models
 behave equivalently on unseen questions.

@@ -21,8 +21,10 @@ RMU, and an SNMF-based MLP erasure to copies of the full model
 lets us compare each edit with both the model it changed and the
 matched exclusion reference.
 
-We evaluate the models on target, neighboring-topic, and unrelated
-sentence completions. Correct-answer negative log-likelihood
+We evaluate the models on target and neighboring-topic questions together
+with a shared general-science set from SciQ. We select erasure checkpoints
+with a harmonic score that balances likelihood-ranked target accuracy against
+neighboring and SciQ preservation. Correct-answer negative log-likelihood
 measures changes in support for the supplied answer, while
 teacher-forced full-vocabulary KL measures how closely the models'
 next-token distributions agree along that answer. Together, these
@@ -34,4 +36,4 @@ erasure methods approached their concept-excluded twins.]}
 \textbf{[RESULT: Compare EMBER's results across Ancient Rome, Baseball,
 and AI, identifying the most important difference between concepts.]}
 \textbf{[RESULT: State the main qualification concerning neighboring
-or unrelated questions, or a disagreement between NLL and KL.]}
+or SciQ questions, or a disagreement between NLL and KL.]}
