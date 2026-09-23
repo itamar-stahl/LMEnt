@@ -21,6 +21,107 @@ tokenization, prefix, answer-token mask, position/question aggregation,
 and calculation of means and standard deviations across questions. Include
 one worked item if useful.}
 
+\section{Checkpoint Selection}
+\label{app:checkpoint-selection}
+
+We selected checkpoints separately for each combination of concept and
+erasure method. The candidate grid contained 64 previously trained models,
+distributed as shown in Table~\ref{tab:selection-grid-size}. No candidate was
+trained or modified during selection.
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{lrrr}
+    \toprule
+    Concept & EMBER & RMU & SNMF \\
+    \midrule
+    Ancient Rome & 12 & 8 & 4 \\
+    Baseball & 9 & 8 & 3 \\
+    AI & 9 & 8 & 3 \\
+    \midrule
+    Total & 30 & 24 & 10 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Number of candidate checkpoints evaluated for each method and
+  concept.}
+  \label{tab:selection-grid-size}
+\end{table}
+
+Selection used 50 target questions, 50 neighboring-topic questions, and the
+same 50 SciQ questions for every concept. For each question, we scored all
+four supplied options as continuations of the context. The score of option
+$o$ was its summed token log-probability divided by its character length,
+and the option with the largest score was treated as the model's prediction:
+\begin{equation}
+\widehat{o}_M(x)
+=\arg\max_o
+\frac{\sum_{t=1}^{n_o}\log p_M(o_t\mid x,o_{<t})}
+{|o|_{\mathrm{char}}}.
+\end{equation}
+Accuracy was the fraction of questions for which $\widehat{o}_M(x)$ was the
+correct option. This likelihood-ranking procedure avoided requiring the base
+model to generate an answer letter.
+
+For each group $g$, we converted candidate accuracy to retention relative to
+the full model $F$, correcting for the four-choice chance level:
+\begin{equation}
+r_g(M)=\operatorname{clip}_{[0,1]}\!\left(
+\frac{\operatorname{Acc}_g(M)-0.25}
+{\operatorname{Acc}_g(F)-0.25}\right).
+\end{equation}
+The full model exceeded chance in every selection group. We defined target
+erasure efficacy as $e(M)=1-r_{\mathrm{target}}(M)$ and preservation as
+\begin{equation}
+p(M)=\operatorname{HM}\!\left(
+r_{\mathrm{neighbor}}(M),r_{\mathrm{SciQ}}(M)\right).
+\end{equation}
+The final selection score was
+\begin{equation}
+H_{\mathrm{selection}}(M)=\operatorname{HM}\!\left(e(M),p(M)\right),
+\end{equation}
+where $\operatorname{HM}(a,b)=2ab/(a+b)$ when both arguments are positive
+and zero otherwise. This construction requires a candidate to reduce target
+accuracy while preserving both neighboring and SciQ accuracy; a low value on
+either axis limits the harmonic mean.
+
+We ranked candidates first by $H_{\mathrm{selection}}$, then by preservation,
+and then by efficacy. Remaining exact ties were resolved by a fixed
+method-specific order: smaller edit intensity for EMBER; smaller layer, band,
+and $\alpha$ tuple for RMU; and a declared selection-mode and edited-side order
+for SNMF. The tie-breaking rule was fixed without consulting the twins or any
+test result. Table~\ref{tab:selected-checkpoints} records the resulting
+configurations.
+
+\begin{table*}[t]
+  \centering
+  \small
+  \begin{tabular}{llll}
+    \toprule
+    Concept & EMBER & RMU & SNMF \\
+    \midrule
+    Ancient Rome & $\delta=200$ & layer 6, high band, $\alpha=10$
+      & ratio selection, output side$^{\dagger}$ \\
+    Baseball & $\delta=10$ & layer 6, high band, $\alpha=10$
+      & ratio selection, both sides$^{\dagger}$ \\
+    AI & $\delta=500$ & layer 6, high band, $\alpha=10$
+      & ratio selection, input side \\
+    \bottomrule
+  \end{tabular}
+  \caption{Configurations selected using $H_{\mathrm{selection}}$.
+  $^{\dagger}$All SNMF candidates for this concept had zero efficacy and hence
+  $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
+  the fixed tie-breaking order rather than a measured efficacy difference.}
+  \label{tab:selected-checkpoints}
+\end{table*}
+
+The concept-excluded twins and the held-out target, neighboring, and SciQ
+questions were not loaded or inspected during selection. After the nine
+configurations were frozen, we evaluated them on the test splits and computed
+$H_{\mathrm{test}}$ with the same formula. Neither $H_{\mathrm{test}}$ nor the
+subsequent NLL and KL comparisons with the twins were used to revise the
+selected configurations.
+
 \section{Complete Results by Concept}
 \label{app:full-results}
 \subsection{Ancient Rome}
