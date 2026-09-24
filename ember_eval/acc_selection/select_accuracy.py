@@ -29,7 +29,7 @@ sys.path.insert(0, str(HERE.parents[1] / "Ember-on-LMEnt"))
 from ember.evals.harmonic import harmonic_mean  # noqa: E402
 
 TOPICS = ("rome", "baseball", "ai")
-METHODS = ("EMBER", "RMU", "SNMF")
+METHODS = ("EMBER", "RMU", "SNMF", "RMU+EMBER", "SNMF+EMBER", "SNMF+EMBER-V1")
 GROUPS = ("target_selection", "neighbour_selection", "unrelated_selection")
 CHANCE = 0.25
 
@@ -53,6 +53,29 @@ def parse_config(label: str) -> dict:
     if fam == "snmf":                       # snmf_<topic>_<select>_<side>
         sel, side = p[2], (p[3] if len(p) > 3 else "")
         return {"method": "SNMF", "hp": f"select={sel},side={side}",
+                "select": sel, "side": side,
+                "tiebreak": (0 if sel == "ratio" else 1, {"in": 0, "out": 1, "both": 2}.get(side, 9)),
+                "tiebreak_desc": f"repo defines no aggressiveness order for SNMF; "
+                                 f"declared order (ratio<judge, in<out<both)"}
+    # --- ensembles, added 2026-09-24 -------------------------------------
+    # MLP method applied on top of the concept's selected EMBER checkpoint.
+    # The normalisation, H, ranking and tie-break KEYS are deliberately
+    # identical to the standalone families above: only the method name and the
+    # label prefix differ, so an ensemble cell is ranked by exactly the rule its
+    # standalone counterpart was. Re-running the original inventory through this
+    # file reproduces the frozen 2026-09-23 winners unchanged.
+    if fam == "rmuember":                   # rmuember_<topic>_L<layer><band>_a<alpha>
+        m = re.match(r"L(\d+)(hi|mid)", p[2])
+        layer, band = (int(m.group(1)), m.group(2)) if m else (0, "")
+        alpha = float(p[3][1:]) if len(p) > 3 else 0.0
+        return {"method": "RMU+EMBER", "hp": f"layer={layer},band={band},alpha={alpha:g}",
+                "layer": layer, "band": band, "alpha": alpha,
+                "tiebreak": (layer, 0 if band == "mid" else 1, alpha),
+                "tiebreak_desc": f"smaller (layer,band,alpha) ({layer},{band},{alpha:g})"}
+    if fam in ("snmfv1", "snmfv2"):         # snmfv<n>_<topic>_<select>_<side>
+        sel, side = p[2], (p[3] if len(p) > 3 else "")
+        method = "SNMF+EMBER" if fam == "snmfv2" else "SNMF+EMBER-V1"
+        return {"method": method, "hp": f"select={sel},side={side}",
                 "select": sel, "side": side,
                 "tiebreak": (0 if sel == "ratio" else 1, {"in": 0, "out": 1, "both": 2}.get(side, 9)),
                 "tiebreak_desc": f"repo defines no aggressiveness order for SNMF; "
