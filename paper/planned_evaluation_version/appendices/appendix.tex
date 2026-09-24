@@ -1,28 +1,37 @@
-\section{Corpus Exclusion and Model Configurations}
-\label{app:models}
-\plan{Table A1: one row per concept and method with checkpoint ID, erasure
-settings, training/selection data, edited parameters, and seed. Give exact
-blacklist rules, candidate grids, harmonic-score components, deterministic
-tie breaks, and audit estimates. Do not paste raw run logs.}
-
-\section{Sentence-Completion Evaluation Sets}
-\label{app:data}
-\plan{Table A2: target, neighboring, and SciQ question counts; item
-construction and exclusions; representative contexts and answers; SciQ
-sampling seed; question provenance and selection/test overlap checks.}
-
-\section{Scoring and Summary Statistics}
-\label{app:scoring}
-\plan{Write exact equations for likelihood-ranked option accuracy,
-$H_{\mathrm{selection}}$, $H_{\mathrm{test}}$, per-question answer-token NLL, signed
-evaluated-minus-reference group mean, and full-vocabulary KL(twin
-$\rightarrow$ full or erasure) under correct-answer teacher forcing. Specify
-tokenization, prefix, answer-token mask, position/question aggregation,
-and calculation of means and standard deviations across questions. Include
-one worked item if useful.}
-
-\section{Checkpoint Selection}
+\section{Reproducibility and Checkpoint Selection}
 \label{app:checkpoint-selection}
+
+\subsection{Model and Training Configuration}
+
+All experiments used OLMo-2 1B models trained for two epochs on LMEnt. The
+full model and three concept-excluded twins used the same initialization,
+batch order, optimizer, and learning-rate schedule; only the loss mask over
+the concept-associated chunks differed. Table~\ref{tab:model-identifiers}
+records the exact model identifiers. The corresponding entity lists are
+stored in \path{Untaught/blacklists/ancient_rome_core.json},
+\path{Untaught/blacklists/baseball_core_teams.json}, and
+\path{Untaught/blacklists/ai_core.json}. The study used one training seed per
+condition, as discussed in Section~\ref{sec:limitations}.
+
+\begin{center}
+  \centering
+  \scriptsize
+  \begin{tabular}{ll}
+    \toprule
+    Role & Model identifier \\
+    \midrule
+    Full & \texttt{lment-1b-control-2e-b131k} \\
+    Rome twin & \texttt{lment-1b-norome-2e-b131k} \\
+    Baseball twin & \texttt{lment-1b-nobaseball-2e-b131k} \\
+    AI twin & \texttt{lment-1b-noai-2e-b131k} \\
+    \bottomrule
+  \end{tabular}
+  \captionof{table}{Exact identifiers of the full model and matched concept-excluded
+  twins.}
+  \label{tab:model-identifiers}
+\end{center}
+
+\subsection{Candidate Grid and Selection Procedure}
 
 We selected checkpoints separately for each combination of concept and
 erasure method. The candidate grid contained 64 previously trained models,
@@ -50,40 +59,12 @@ trained or modified during selection.
 
 Selection used 50 target questions, 50 neighboring-topic questions, and the
 same 50 SciQ questions for every concept. For each question, we scored all
-four supplied options as continuations of the context. The score of option
-$o$ was its summed token log-probability divided by its character length,
-and the option with the largest score was treated as the model's prediction:
-\begin{equation}
-\widehat{o}_M(x)
-=\arg\max_o
-\frac{\sum_{t=1}^{n_o}\log p_M(o_t\mid x,o_{<t})}
-{|o|_{\mathrm{char}}}.
-\end{equation}
-Accuracy was the fraction of questions for which $\widehat{o}_M(x)$ was the
-correct option. This likelihood-ranking procedure avoided requiring the base
-model to generate an answer letter.
-
-For each group $g$, we converted candidate accuracy to retention relative to
-the full model $F$, correcting for the four-choice chance level:
-\begin{equation}
-r_g(M)=\operatorname{clip}_{[0,1]}\!\left(
-\frac{\operatorname{Acc}_g(M)-0.25}
-{\operatorname{Acc}_g(F)-0.25}\right).
-\end{equation}
-The full model exceeded chance in every selection group. We defined target
-erasure efficacy as $e(M)=1-r_{\mathrm{target}}(M)$ and preservation as
-\begin{equation}
-p(M)=\operatorname{HM}\!\left(
-r_{\mathrm{neighbor}}(M),r_{\mathrm{SciQ}}(M)\right).
-\end{equation}
-The final selection score was
-\begin{equation}
-H_{\mathrm{selection}}(M)=\operatorname{HM}\!\left(e(M),p(M)\right),
-\end{equation}
-where $\operatorname{HM}(a,b)=2ab/(a+b)$ when both arguments are positive
-and zero otherwise. This construction requires a candidate to reduce target
-accuracy while preserving both neighboring and SciQ accuracy; a low value on
-either axis limits the harmonic mean.
+four options with the character-normalized likelihood ranking defined in
+Section~\ref{sec:evaluation}. We then calculated the normalized retention,
+efficacy, preservation, and $H_{\mathrm{selection}}$ values defined in
+Section~\ref{sec:experimental-design}. The full model exceeded the four-choice
+chance level in every selection group. Because the score is a nested harmonic
+mean, a low target-efficacy or preservation component limits the final value.
 
 We ranked candidates first by $H_{\mathrm{selection}}$, then by preservation,
 and then by efficacy. Remaining exact ties were resolved by a fixed
@@ -93,27 +74,34 @@ for SNMF. The tie-breaking rule was fixed without consulting the twins or any
 test result. Table~\ref{tab:selected-checkpoints} records the resulting
 configurations.
 
-\begin{table*}[t]
+\subsection{Selected Checkpoints}
+
+\begin{center}
   \centering
-  \small
-  \begin{tabular}{llll}
+  \scriptsize
+  \begin{tabular}{lll}
     \toprule
-    Concept & EMBER & RMU & SNMF \\
+    Concept & Method & Checkpoint identifier \\
     \midrule
-    Ancient Rome & $\delta=200$ & layer 6, high band, $\alpha=10$
-      & ratio selection, output side$^{\dagger}$ \\
-    Baseball & $\delta=10$ & layer 6, high band, $\alpha=10$
-      & ratio selection, both sides$^{\dagger}$ \\
-    AI & $\delta=500$ & layer 6, high band, $\alpha=10$
-      & ratio selection, input side \\
+    Rome & EMBER & \texttt{ember\_rome\_d200} \\
+         & RMU   & \texttt{rmu\_rome\_L6hi\_a10} \\
+         & SNMF  & \texttt{snmf\_rome\_ratio\_out}$^{\dagger}$ \\
+    Baseball & EMBER & \texttt{ember\_baseball\_d10} \\
+             & RMU   & \texttt{rmu\_baseball\_L6hi\_a10} \\
+             & SNMF  & \texttt{snmf\_baseball\_ratio\_both}$^{\dagger}$ \\
+    AI & EMBER & \texttt{ember\_ai\_d500} \\
+       & RMU   & \texttt{rmu\_ai\_L6hi\_a10} \\
+       & SNMF  & \texttt{snmf\_ai\_ratio\_in} \\
     \bottomrule
   \end{tabular}
-  \caption{Configurations selected using $H_{\mathrm{selection}}$.
+  \captionof{table}{Checkpoint identifiers selected using $H_{\mathrm{selection}}$.
+  Every RMU winner edits the high band at layer 6 with $\alpha=10$; the SNMF
+  suffix records the selection rule and edited side.
   $^{\dagger}$All SNMF candidates for this concept had zero efficacy and hence
   $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
   the fixed tie-breaking order rather than a measured efficacy difference.}
   \label{tab:selected-checkpoints}
-\end{table*}
+\end{center}
 
 The concept-excluded twins and the held-out target, neighboring, and SciQ
 questions were not loaded or inspected during selection. After the nine
@@ -123,6 +111,63 @@ $H_{\mathrm{test}}$ for the twin, using the full model as the normalization
 baseline, to provide a concept-exclusion reference for the erasure models.
 Neither $H_{\mathrm{test}}$ nor the subsequent NLL and KL comparisons with the
 twins were used to revise the selected configurations.
+
+The selection scorer used deterministic teacher-forced log probabilities in
+FP32; no sampling or generation was involved. The frozen selection artifacts
+record the scorer as \path{ember_eval/acc_selection/score_mc.py} and the
+selection run revision as \texttt{92a39d3}. The final accuracy, NLL, and KL
+tables can be regenerated from the frozen manifests with
+\path{ember_eval/acc_selection/finalize_tables.py} and the scripts under
+\path{ember_eval/nll_kl/}.
+
+\section{Evaluation Data Details}
+\label{app:data}
+
+Table~\ref{tab:evaluation-data} summarizes the frozen evaluation groups. The
+target and neighboring sets use EMBER's original train/test division. We
+rewrote their contexts as declarative sentence stems while retaining the
+original correct answer and three distractors. SciQ questions retained their
+original question text and four options. We drew the shared SciQ set from its
+validation split with seed \texttt{20260923}; the first 50 retained items form
+the selection set and the next 50 form the test set.
+
+\begin{center}
+  \centering
+  \scriptsize
+  \begin{tabular}{llrr}
+    \toprule
+    Group & Source and format & Selection & Test \\
+    \midrule
+    Target & EMBER, declarative stem & 50 & 50 \\
+    Neighboring & EMBER, declarative stem & 50 & 50 \\
+    SciQ & Validation, original question & 50 & 50 \\
+    \bottomrule
+  \end{tabular}
+  \captionof{table}{Evaluation-set construction for each concept. The same SciQ items
+  are shared across concepts; target and neighboring items are concept
+  specific.}
+  \label{tab:evaluation-data}
+\end{center}
+
+The construction scripts assert that selection and test sets share neither
+question IDs nor identical question--answer pairs. Each model for a concept
+was scored with the same frozen strings and option order. For example,
+``Which river is associated with the founding of Rome?'' was presented as
+``The river associated with the founding of Rome is'', and the four candidate
+answers included the correct continuation ``The Tiber River''. The frozen
+manifests are \path{ember_eval/acc_selection/questions_with_options.csv},
+\path{ember_eval/acc_selection/questions_with_options_TEST.csv}, and
+\path{ember_eval/acc_selection/sciq_unrelated.csv}.
+
+For likelihood-ranked accuracy, each option was appended to its context and
+scored over option tokens only. For correct-answer NLL and KL, the completion
+was stored with one leading space, tokenized with the model tokenizer, and
+only answer positions were included. Per-question NLL is the mean over answer
+tokens. KL is calculated over all 100,352 vocabulary entries at every answer
+position and then averaged across positions. Reported group means and sample
+standard deviations are computed across the 50 questions. These details
+implement the equations in Sections~\ref{sec:experimental-design} and
+\ref{sec:evaluation} without changing their aggregation rules.
 
 \clearpage
 \onecolumn
@@ -338,7 +383,7 @@ included in these tables.
 
 \clearpage
 
-\section{Diagnostic Analyses}
+\section{Additional Diagnostic Analysis}
 \label{app:diagnostics}
 
 We used a post-hoc NLL contrast to summarize whether a method changed target
@@ -394,12 +439,3 @@ not capture variation across training seeds.
   selection.}
   \label{tab:nll-selectivity}
 \end{table}
-
-\clearpage
-\twocolumn
-
-\section{Reproducibility Notes}
-\label{app:reproducibility}
-\plan{Final scoring script/version, model IDs, seeds, exact question manifest
-and split chronology, tokenization/context settings, answer scoring masks,
-and any deviations from the common protocol. Keep this concise.}
