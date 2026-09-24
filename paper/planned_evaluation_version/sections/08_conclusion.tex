@@ -2,7 +2,7 @@
 \label{sec:conclusion}
 
 We evaluated whether post-training concept erasure reproduces the behavior of
-matched models trained without concept-associated text. The answer depends on
+matched models trained without loss on concept-associated chunks. The answer depends on
 which property is measured. RMU was closest to the twins in mean target-answer
 NLL for all three concepts, while SNMF had the lowest target KL. EMBER produced
 the strongest target-specific NLL increase and the highest combined
@@ -15,8 +15,8 @@ SciQ accuracy did not imply similarity to the concept-excluded twin. EMBER
 had the highest $H_{\mathrm{test}}$ for Baseball and AI while remaining the
 most distant erasure method from their twins in both target NLL and KL. SNMF
 showed the complementary disagreement: it was closest under KL but produced
-little target erasure. Efficacy--preservation and similarity to a model trained
-without the concept therefore capture distinct properties and should be
+little target erasure. Efficacy--preservation and similarity to a
+concept-excluded twin therefore capture distinct properties and should be
 reported separately. This conclusion is limited to the tested models, three
 concepts, fixed-answer evaluations, and one training seed. A useful next step
 is to repeat the comparison across additional concepts and seeds to determine

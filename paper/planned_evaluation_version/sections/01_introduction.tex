@@ -3,13 +3,13 @@
 
 Post-training concept erasure aims to remove a model's learned
 association with a target concept while preserving its behavior
-elsewhere. Evaluations often compare an edited model with the
+elsewhere \citep{li2024wmdp,suslik2026ember}. Evaluations often compare an edited model with the
 original trained model: they ask whether target performance falls
 and whether other capabilities remain intact. This comparison does
 not show whether the edited model resembles one that learned from
-the same corpus without the selected concept-associated text.
+the same corpus without loss on the selected concept-associated chunks.
 We therefore ask whether post-training erasure can reproduce the behavior of
-a matched model trained without the concept-associated text while preserving
+a matched model trained without loss on concept-associated chunks while preserving
 behavior on neighboring and unrelated questions.
 
 We use LMEnt's entity-annotated corpus to construct a matched
@@ -43,4 +43,4 @@ More generally, the method with the highest efficacy--preservation score is
 closest in mean target NLL for only one concept and never has the lowest
 target KL. Effective target suppression with preserved neighboring and SciQ
 accuracy therefore does not, in these experiments, imply that an erased model
-reproduces the behavior of a model trained without the concept.
+reproduces the behavior of its matched concept-excluded twin.

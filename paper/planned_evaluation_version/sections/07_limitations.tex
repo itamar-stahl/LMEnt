@@ -8,11 +8,18 @@ the full model's performance on selection questions. The observed
 patterns may therefore vary across training runs, concepts, model
 sizes, or corpora.
 
+The configured training procedure was matched, but accelerator hardware was
+not identical throughout every pair: the Rome control and twin both used an
+H200, whereas the Baseball and AI twins completed part of training on other
+accelerator types. Project checks found no resulting evaluation changes, but
+this hardware asymmetry weakens claims that the loss mask was the only
+possible source of numerical differences in those two pairs.
+
 The concept-excluded twins are approximate references. Our selected
 QIDs may miss passages about a concept that use other entities or
-indirect descriptions. Conversely, a QID set may exclude some text
-about adjacent topics. The twins therefore do not establish that
-all target knowledge was absent from their remaining training data.
+indirect descriptions. Conversely, a QID set may mask loss on some text
+about adjacent topics. The twins therefore do not establish that the mask
+eliminated every source of learning signal about the target concept.
 
 Our evaluation measures support for one supplied correct continuation
 per question. It does not measure which answer a model would generate,

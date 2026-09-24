@@ -11,7 +11,7 @@ order, optimizer, learning-rate schedule, and two-epoch duration. Exclusion
 was applied after batch construction: labels in selected chunks were masked
 so that those chunks contributed no training loss. Each twin therefore
 differed from the shared control in the learning signal from its selected
-chunks, while the training procedure remained matched.
+chunks, while the configured training procedure remained matched.
 
 \subsection{Concepts and Exclusion Sets}
 
@@ -25,9 +25,9 @@ don't necessarily generalize to every concept.
 For each concept, we used Claude in a dedicated session to propose
 Wikidata entity IDs (QIDs), then reviewed their coverage in LMEnt's
 corpus \citep{gottesman2025lment}. A single ID missed text linked to
-related entities, while an overly broad set risked excluding text about
+related entities, while an overly broad set risked masking loss on text about
 adjacent topics. We therefore selected a bounded set of QIDs for each
-concept. We excluded a training chunk if LMEnt linked at least one
+concept. We masked the loss on a training chunk if LMEnt linked at least one
 mention in it to a selected QID. 
 Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 
@@ -43,7 +43,7 @@ Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
     AI & 31 & 19,818 \\
     \bottomrule
   \end{tabular}
-  \caption{Entity sets used to exclude concept-associated training chunks.}
+  \caption{Entity sets used to mask loss on concept-associated training chunks.}
   \label{tab:exclusion-sets}
 \end{table}
 
@@ -51,7 +51,8 @@ Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 
 We applied EMBER, RMU, and an SNMF-based erasure independently to copies of
 the completed control model for each topic. EMBER edited selected input
-embeddings, RMU updated selected MLP parameters, and the SNMF-based method
+embeddings, our RMU implementation updated MLP down-projection weights in
+selected layers, and the SNMF-based method
 removed concept-associated directions through MLP weight edits. Each topic
 received the same method-specific procedure and checkpoint-selection rule.
 
@@ -86,7 +87,10 @@ H_{\mathrm{selection}}(M)
 \end{align}
 We selected the candidate with the largest $H_{\mathrm{selection}}$ within
 each method--topic pair, using a fixed deterministic order to break exact
-ties. This adapts EMBER's efficacy--specificity harmonic score to base
-models and to our target, neighboring, and SciQ groups. After freezing the
+ties. This retains EMBER's chance-corrected accuracy normalization and nested
+harmonic aggregation, but adapts its validation score to our base-model
+setting: neighboring questions replace similar-domain questions, SciQ
+replaces MMLU, and we omit the AlpacaEval coherence component
+\citep{suslik2026ember}. After freezing the
 nine selected checkpoints, we compared them with both the full model and
 their concept-excluded twins.
