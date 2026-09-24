@@ -8,8 +8,10 @@ EMBER, RMU, and an SNMF-based erasure method with both the full model and its
 twin. Evaluation covers target, neighboring-topic, and SciQ questions using
 likelihood-ranked accuracy, correct-answer negative log-likelihood, and
 teacher-forced full-vocabulary KL divergence. No method dominates across all
-criteria. RMU most closely matches the twins' mean target-answer NLL, while
-SNMF yields the lowest target KL. EMBER produces the strongest
+criteria. RMU most closely matches the twins' signed mean target-answer NLL,
+but question-level absolute differences reveal cancellation for Baseball and
+AI. SNMF yields the lowest target KL and the most consistent question-level
+proximity to the twins. EMBER produces the strongest
 target-specific NLL changes and the highest combined efficacy--preservation
 score for Baseball and AI; RMU achieves the highest score for Rome.
 Strong target suppression with preserved neighboring and SciQ accuracy does

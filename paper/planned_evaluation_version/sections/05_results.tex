@@ -179,11 +179,45 @@ held-out target questions for which the erased model is strictly closer to the
 twin than the full model. Both statistics use the same 50 paired target-test
 questions, with paired bootstrap confidence intervals.
 
-\plan{Insert the compact nine-row $R_{\mathrm{abs}}$ and
-$P_{\mathrm{closer}}$ table with 95\% paired-bootstrap confidence intervals.
-Then state whether the question-level results preserve the method rankings and
-whether they support the conclusion that a high $H_{\mathrm{test}}$ does not
-necessarily imply proximity to the concept-excluded twin.}
+\begin{table*}[t]
+  \centering
+  \scriptsize
+  \begin{tabular}{llcc}
+    \toprule
+    Concept & Method & $R_{\mathrm{abs}}$ [95\% CI] $\downarrow$
+      & $P_{\mathrm{closer}}$ [95\% CI] $\uparrow$ \\
+    \midrule
+    Ancient Rome & EMBER & 1.613 [1.151, 2.244] & 0.40 [0.26, 0.54] \\
+                 & RMU   & 0.660 [0.513, 0.827] & 0.64 [0.50, 0.76] \\
+                 & SNMF  & 0.940 [0.891, 0.986] & 0.64 [0.50, 0.76] \\
+    Baseball     & EMBER & 2.128 [1.542, 2.978] & 0.26 [0.14, 0.38] \\
+                 & RMU   & 1.227 [0.877, 1.680] & 0.46 [0.32, 0.60] \\
+                 & SNMF  & 0.967 [0.888, 1.060] & 0.66 [0.54, 0.78] \\
+    AI           & EMBER & 2.112 [1.402, 3.167] & 0.38 [0.24, 0.52] \\
+                 & RMU   & 1.006 [0.754, 1.344] & 0.54 [0.40, 0.68] \\
+                 & SNMF  & 0.927 [0.876, 0.976] & 0.64 [0.50, 0.76] \\
+    \bottomrule
+  \end{tabular}
+  \caption{Question-level target NLL proximity to the concept-excluded twin.
+  $R_{\mathrm{abs}}$ compares each method's mean absolute paired difference
+  from the twin with the full model's; values below one indicate improvement.
+  $P_{\mathrm{closer}}$ is the fraction of questions on which the method is
+  closer than the full model. Intervals are paired-bootstrap percentile 95\%
+  CIs over 50 questions (10,000 resamples, seed 0).}
+  \label{tab:question-level-similarity}
+\end{table*}
+
+The question-level results qualify the signed-mean ranking. RMU was clearly
+closer than the full model for Rome ($R_{\mathrm{abs}}=0.660$), but its
+intervals included one for Baseball and AI. In particular, RMU's AI signed
+mean difference from the twin was only $-0.013$, whereas its absolute-distance
+ratio was 1.006; positive and negative item-level differences had canceled.
+SNMF had $R_{\mathrm{abs}}<1$ for all three concepts and was closer than the
+full model on 64--66\% of target questions, although the Baseball ratio's
+interval included one. EMBER was farther from the twin on average for every
+concept, including ratios above two for Baseball and AI. Thus, the
+question-level analysis reinforces that high $H_{\mathrm{test}}$ does not
+necessarily imply proximity to the twin.
 
 \subsection{Selectivity and Variation Across Concepts}
 
@@ -200,8 +234,9 @@ Appendix~\ref{app:diagnostics}.
 
 Taken together, no method dominates under every interpretation of erasure.
 EMBER produced the strongest target-specific change, RMU most closely matched
-the twin's mean correct-answer NLL, and SNMF produced the lowest KL to the
-twin. The change in rankings across Rome, Baseball, and AI also shows that a
+the twin's signed mean correct-answer NLL, and SNMF produced the lowest KL and
+the most consistent question-level proximity to the twin. The change in
+rankings across Rome, Baseball, and AI also shows that a
 conclusion from one concept would not describe all three cases. Differences
 in corpus coverage and overlap with neighboring topics are plausible
 contributors, but the present measurements do not isolate their causal

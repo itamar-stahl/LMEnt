@@ -2,9 +2,12 @@
 \label{sec:conclusion}
 
 We evaluated whether post-training concept erasure reproduces the behavior of
-matched models trained without loss on concept-associated chunks. The answer depends on
-which property is measured. RMU was closest to the twins in mean target-answer
-NLL for all three concepts, while SNMF had the lowest target KL. EMBER produced
+matched models trained without loss on concept-associated chunks. The answer
+depends on which property is measured. RMU was closest to the twins in signed
+mean target-answer NLL for all three concepts, but the question-level analysis
+showed that cancellation explained the apparent Baseball and AI matches. SNMF
+had the lowest target KL and was closer than the full model on 64--66\% of
+target questions, while still producing little target erasure. EMBER produced
 the strongest target-specific NLL increase and the highest combined
 efficacy--preservation score for Baseball and AI; RMU obtained the highest
 score for Rome. These differences also show that method rankings vary across
@@ -13,9 +16,10 @@ concepts and evaluation criteria.
 Most notably, successful target suppression with preserved neighboring and
 SciQ accuracy did not imply similarity to the concept-excluded twin. EMBER
 had the highest $H_{\mathrm{test}}$ for Baseball and AI while remaining the
-most distant erasure method from their twins in both target NLL and KL. SNMF
-showed the complementary disagreement: it was closest under KL but produced
-little target erasure. Efficacy--preservation and similarity to a
+most distant erasure method from their twins under KL and both signed-mean and
+question-level NLL comparisons. SNMF showed the complementary disagreement:
+it was consistently closest to the twin but produced little target erasure.
+Efficacy--preservation and similarity to a
 concept-excluded twin therefore capture distinct properties and should be
 reported separately. This conclusion is limited to the tested models, three
 concepts, fixed-answer evaluations, and one training seed. A useful next step
