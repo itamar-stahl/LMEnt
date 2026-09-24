@@ -1,0 +1,11 @@
+host n-301
+NVIDIA GeForce RTX 3090, 24576 MiB
+joblist: 7 scorings from /home/morg/NLP_2526b/galbarak2/runs/ensembles/joblist_score_sel_5.tsv
+[1/7] FATAL rmuember_rome_L5hi_a10: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_rome_L5hi_a10/model unreadable from n-301
+[2/7] FATAL snmfv2_rome_ratio_in: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv2_rome_ratio_in/model unreadable from n-301
+[3/7] FATAL snmfv1_rome_judge_both: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv1_rome_judge_both/model unreadable from n-301
+[4/7] FATAL rmuember_baseball_L6mid_a100: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_baseball_L6mid_a100/model unreadable from n-301
+[5/7] FATAL snmfv1_baseball_ratio_in: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv1_baseball_ratio_in/model unreadable from n-301
+[6/7] FATAL rmuember_ai_L5hi_a100: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_ai_L5hi_a100/model unreadable from n-301
+[7/7] FATAL snmfv2_ai_ratio_out: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv2_ai_ratio_out/model unreadable from n-301
+=== scored 0, skipped 0, failed 7, of 7

@@ -1,0 +1,5 @@
+host n-503
+NVIDIA RTX A5000, 24564 MiB
+joblist: 8 scorings from /home/morg/NLP_2526b/galbarak2/runs/ensembles/joblist_score_sel_2.tsv
+[1/8] === FULL_lment-1b-control-2e-b131k / ai  22:35:04
+slurmstepd: error: *** JOB 926436 ON n-503 CANCELLED AT 2026-09-24T22:35:26 ***

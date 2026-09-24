@@ -1,0 +1,12 @@
+host n-804
+NVIDIA L40S, 46068 MiB
+joblist: 8 scorings from /home/morg/NLP_2526b/galbarak2/runs/ensembles/joblist_score_sel_3.tsv
+[1/8] FATAL rmuember_rome_L5mid_a10: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_rome_L5mid_a10/model unreadable from n-804
+[2/8] FATAL rmuember_rome_L6hi_a10: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_rome_L6hi_a10/model unreadable from n-804
+[3/8] FATAL snmfv1_rome_ratio_out: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv1_rome_ratio_out/model unreadable from n-804
+[4/8] FATAL rmuember_baseball_L5hi_a100: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_baseball_L5hi_a100/model unreadable from n-804
+[5/8] FATAL snmfv2_baseball_ratio_out: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv2_baseball_ratio_out/model unreadable from n-804
+[6/8] FATAL rmuember_ai_L5mid_a100: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_ai_L5mid_a100/model unreadable from n-804
+[7/8] FATAL rmuember_ai_L6hi_a100: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/rmuember_ai_L6hi_a100/model unreadable from n-804
+[8/8] FATAL snmfv1_ai_ratio_both: /home/morg/NLP_2526b/galbarak2/runs/ensembles/candidates/snmfv1_ai_ratio_both/model unreadable from n-804
+=== scored 0, skipped 0, failed 8, of 8

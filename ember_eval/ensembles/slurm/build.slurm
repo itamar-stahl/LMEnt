@@ -52,6 +52,28 @@ if [ "${SWEEP:-0}" = 1 ]; then
   echo "sweep: reclaimed $reclaimed orphaned claim(s)"
 fi
 
+# Self-heal: a worker will not start without the prep its cells need, so it runs
+# any missing prep itself rather than failing the whole grid. Normally dead code
+# -- prep.slurm is idempotent and skips when its outputs exist. It matters when a
+# prep job dies: the dependency is afterany, so the workers still start, and the
+# first one here rebuilds what is missing instead of 43 cells failing one by one.
+# One worker per concept via the same atomic claim; the others wait for the fit.
+while IFS=$'\t' read -r kind label topic concept base p1 p2 p3; do
+  [ -z "${topic:-}" ] && continue
+  echo "$topic|$concept|$base"
+done < "$JOBLIST" | sort -u | while IFS='|' read -r slug concept base; do
+  [ -f "$ENS/probes/$slug/probe.json" ] && [ -f "$ENS/fits/v2_$slug/selected.json" ] && continue
+  if mkdir "$ENS/claims/_prep_$slug" 2>/dev/null; then
+    echo "self-heal: prep missing for $slug, running it here"
+    SLUG="$slug" CONCEPT="$concept" BASE="$base" bash "$ROOT/ember_eval/ensembles/slurm/prep.slurm"
+    echo "self-heal: prep $slug exit $?"
+  else
+    echo "self-heal: another worker is preparing $slug, waiting up to 40 min"
+    i=0
+    while [ $i -lt 80 ] && [ ! -f "$ENS/fits/v2_$slug/selected.json" ]; do sleep 30; i=$((i+1)); done
+  fi
+done
+
 echo "worker $SLURM_JOB_ID on $(hostname) at $(date +%F_%H:%M:%S)"
 nvidia-smi --query-gpu=name --format=csv,noheader | head -1 || true
 built=0; skipped=0; failed=0
