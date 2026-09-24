@@ -74,6 +74,43 @@ for w in json.load(open('$ENS/results_ensembles/selected_checkpoints.json'))['wi
     echo '## Question-level distance to the twin'; echo; echo '```'
     column -s, -t "$ENS/tables/question_level/summary.csv" 2>/dev/null | cut -c1-140; echo '```'; echo
   fi
+  echo '## RMU sanity gates'
+  echo
+  echo 'A cell that fails `rotation_is_substantial` did not rotate the forget'
+  echo 'representations enough for its QA number to mean anything. Per'
+  echo 'ENSEMBLE_GRID.md these are reported, not excluded -- the grid was frozen'
+  echo 'before any of them was built. If a WINNER appears here, its result is not'
+  echo 'evidence and must be labelled as such in the paper.'
+  echo
+  echo '```'
+  "$PY" - "$ENS" <<'GATEPY'
+import json, sys
+from pathlib import Path
+ENS = Path(sys.argv[1])
+win = {}
+f = ENS / "results_ensembles/selected_checkpoints.json"
+if f.exists():
+    win = {w["model_label"]: (w["topic"], w["method"]) for w in json.load(open(f))["winners"]}
+rows, nfail = [], 0
+for s in sorted(ENS.glob("candidates/*/sanity.json")):
+    d = json.loads(s.read_text())
+    lbl = s.parent.name
+    failed = d.get("failed") or []
+    nfail += bool(failed)
+    mark = "  <-- SELECTED WINNER" if lbl in win else ""
+    rows.append(f"{lbl:34s} cos {d.get('cos_forget_start',0):.3f}->"
+                f"{d.get('cos_forget_end',0):.3f}  "
+                f"{'PASS' if not failed else 'FAIL ' + ','.join(failed)}{mark}")
+print("\n".join(rows) if rows else "no RMU cells built")
+print(f"\n{nfail} of {len(rows)} RMU cells failed a gate.")
+bad_win = [l for l in win if (ENS / 'candidates' / l / 'sanity.json').exists()
+           and (json.loads((ENS / 'candidates' / l / 'sanity.json').read_text()).get('failed'))]
+if bad_win:
+    print("\nWARNING: these SELECTED winners failed a sanity gate; their numbers "
+          "are not evidence:\n  " + "\n  ".join(bad_win))
+GATEPY
+  echo '```'
+  echo
   bad=$(sacct -j "$CHAIN" --format=JobID,JobName%18,State -X -n 2>/dev/null \
         | grep -viE "COMPLETED|RUNNING|PENDING" | head -20)
   if [ -n "$bad" ]; then
