@@ -1,4 +1,19 @@
-\plan{Target 150--190 words. State the erasure question; matched full/twin/
-EMBER/RMU/SNMF design; three concepts and three evaluation groups; answer
-NLL and full-vocabulary KL; the most important result and qualification once known.
-Write last. No numbers until all five models use the same held-out protocol.}
+Post-training concept erasure aims to suppress knowledge of a target concept
+while preserving model behavior elsewhere. Standard evaluations compare
+erased and original models, but do not show whether erasure reproduces
+training without the concept-associated data. We
+evaluate this distinction using matched concept-excluded twins for Ancient
+Rome, Baseball, and artificial intelligence. For each concept, we compare
+EMBER, RMU, and an SNMF-based erasure method with both the full model and its
+twin. Evaluation covers target, neighboring-topic, and SciQ questions using
+likelihood-ranked accuracy, correct-answer negative log-likelihood, and
+teacher-forced full-vocabulary KL divergence. No method dominates across all
+criteria. RMU most closely matches the twins' mean target-answer NLL, while
+SNMF yields the lowest target KL. EMBER produces the strongest
+target-specific NLL changes and the highest combined efficacy--preservation
+score for Baseball and AI; RMU achieves the highest score for Rome.
+strong target suppression with preserved neighboring and SciQ accuracy does
+not imply similarity to the concept-excluded twin: the highest-scoring method
+is closest in mean target NLL for only one concept and never has the lowest
+target KL. These results show that efficacy--preservation and similarity to a
+matched exclusion reference capture distinct properties of concept erasure.

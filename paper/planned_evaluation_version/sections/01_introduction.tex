@@ -31,9 +31,14 @@ next-token distributions agree along that answer. Together, these
 measurements ask whether an erasure approaches the twin on the
 target concept and how it affects predictions on other topics.
 
-\textbf{[RESULT: State the main finding about how closely the three
-erasure methods approached their concept-excluded twins.]}
-\textbf{[RESULT: Compare EMBER's results across Ancient Rome, Baseball,
-and AI, identifying the most important difference between concepts.]}
-\textbf{[RESULT: State the main qualification concerning neighboring
-or SciQ questions, or a disagreement between NLL and KL.]}
+Our results show that no method is uniformly best. RMU most closely matches
+the twins' mean target-answer NLL, whereas SNMF produces the lowest target KL
+for all three concepts. EMBER causes the strongest target-specific NLL changes
+and obtains the highest combined efficacy--preservation score for Baseball and
+AI, while RMU obtains the highest score for Rome. However, EMBER's strong
+target suppression often carries it beyond the twin rather than toward it.
+More generally, the method with the highest efficacy--preservation score is
+closest in mean target NLL for only one concept and never has the lowest
+target KL. Effective target suppression with preserved neighboring and SciQ
+accuracy therefore does not, in these experiments, imply that an erased model
+reproduces the behavior of a model trained without the concept.

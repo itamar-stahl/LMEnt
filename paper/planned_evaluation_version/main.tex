@@ -11,9 +11,8 @@
 \usepackage{amssymb}
 \usepackage{xcolor}
 
-% Remove these planning notes and empty exhibit boxes as the manuscript fills.
+% Remove the planning-note command after completing the AI disclosure and appendix.
 \newcommand{\plan}[1]{\par\noindent{\color{blue}\small\textit{Plan: #1}}\par}
-\newcommand{\emptyfigure}[1]{\fbox{\parbox[c][0.7in][c]{0.88\columnwidth}{\centering\small #1}}}
 
 \title{Can Concept Erasure Reproduce Concept Exclusion?\\
 A Matched Evaluation of EMBER, RMU, and SNMF}
@@ -38,12 +37,12 @@ A Matched Evaluation of EMBER, RMU, and SNMF}
 \input{sections/03_experimental_design}
 \input{sections/04_evaluation_protocol}
 \input{sections/05_results}
-\input{sections/06_discussion}
 \input{sections/07_limitations}
 \input{sections/08_conclusion}
 \input{sections/09_ai_disclosure}
 
 \bibliography{references}
+\clearpage
 \appendix
 \input{appendices/appendix}
 \end{document}
