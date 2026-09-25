@@ -133,6 +133,8 @@ def check_selected_checkpoints(path: Path, v: Validation) -> None:
         for method in METHODS:
             want = c["methods"][method]
             got = declared.get((c["slug"], method))
+            if got is None and method not in ("EMBER", "RMU", "SNMF"):
+                continue          # an added condition is frozen in its own file
             v.record(c["name"], f"selected checkpoint {method}", got == want,
                      f"expected {want}, selection file says {got}")
 
@@ -341,6 +343,13 @@ def main() -> None:
                                           "default <results-root>/../scored")
     ap.add_argument("--selected-checkpoints",
                     default=str(HERE.parent / "acc_selection/results_sciq/selected_checkpoints.json"))
+    ap.add_argument("--extra-methods", metavar="JSON",
+                    help="add conditions beyond the paper's three, as "
+                         "{topic name: {method: expected checkpoint label}}. The "
+                         "checkpoint identity check applies to these exactly as it "
+                         "does to the defaults -- the label is still asserted against "
+                         "what results.json names. Used for the RMU+EMBER / SNMF+EMBER "
+                         "ensembles, whose winners are frozen in a separate file.")
     ap.add_argument("--out-dir", default=str(HERE / "question_level_similarity"))
     ap.add_argument("--out-csv", help="default <out-dir>/summary.csv")
     ap.add_argument("--out-tex", help="default <out-dir>/table.tex")
@@ -354,6 +363,18 @@ def main() -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     out_csv = Path(a.out_csv) if a.out_csv else out_dir / "summary.csv"
     out_tex = Path(a.out_tex) if a.out_tex else out_dir / "table.tex"
+
+    global METHODS
+    if a.extra_methods:
+        extra = json.loads(Path(a.extra_methods).read_text())
+        added: List[str] = []
+        for concept in CONCEPTS:
+            for method, label in extra.get(concept["name"], {}).items():
+                concept["methods"][method] = label
+                if method not in added:
+                    added.append(method)
+        METHODS = METHODS + tuple(m for m in added if m not in METHODS)
+        print(f"extra conditions: {', '.join(added)}\n")
 
     v = Validation()
     check_selected_checkpoints(Path(a.selected_checkpoints), v)
@@ -369,8 +390,13 @@ def main() -> None:
         summary += sm
         inputs.append(str(results_root / concept["slug"] / "results.json"))
 
-    v.record("output", "450 per-question rows", len(per_question) == 450, f"{len(per_question)}")
-    v.record("output", "9 summary rows", len(summary) == 9, f"{len(summary)}")
+    # derived, not hardcoded: --extra-methods legitimately changes both counts
+    exp_pq = len(CONCEPTS) * len(METHODS) * 50
+    exp_sm = len(CONCEPTS) * len(METHODS)
+    v.record("output", f"{exp_pq} per-question rows "
+                       f"({len(CONCEPTS)} concepts x {len(METHODS)} methods x 50)",
+             len(per_question) == exp_pq, f"{len(per_question)}")
+    v.record("output", f"{exp_sm} summary rows", len(summary) == exp_sm, f"{len(summary)}")
 
     print("Validation\n" + v.report())
     if v.failed:
