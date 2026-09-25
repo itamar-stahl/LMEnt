@@ -51,6 +51,15 @@ ens = json.load(open(ENS / "results_ensembles/selected_checkpoints.json"))["winn
 cells = {}
 for w in std + ens:
     cells.setdefault(w["topic"], {})[w["method"]] = w["model_label"]
+# The gate-restricted RMU+EMBER condition is frozen in RESTRICTED_CONDITION.md
+# rather than in selected_checkpoints.json, because it applies one extra
+# constraint declared in advance. Merged here when present; absent, nothing
+# changes.
+extra_f = ENS / "restricted_cells.json"
+if extra_f.exists():
+    for t, m in json.load(open(extra_f)).items():
+        cells.setdefault(t, {}).update(m)
+    print("merged gate-restricted cells")
 json.dump(cells, open(ENS / "cells.json", "w"), indent=1)
 print("cells:", json.dumps(cells, indent=1))
 PYEOF
