@@ -1,11 +1,11 @@
 {
  "analysis": "question-level distance to the concept-excluded twin, mean absolute paired answer-NLL difference",
- "git_commit": "61275e04fc5f459c4e0c9788553e9b2d411719ad",
- "git_tree_dirty_at_run_time": true,
+ "git_commit": "541f36ba284006a2aff7148177890ceb3f24252b",
+ "git_tree_dirty_at_run_time": false,
  "git_commit_note": "HEAD when the analysis ran, i.e. the commit before the one that carries these artifacts",
- "generated_utc": "2026-09-25T08:10:14Z",
+ "generated_utc": "2026-09-25T09:04:27Z",
  "script": "/home/dcor/galbarak2/lment-qlsim/ember_eval/nll_kl/question_level_similarity.py",
- "command": "python ember_eval/nll_kl/question_level_similarity.py --results-root /home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final --scored-root /home/morg/NLP_2526b/galbarak2/runs/ensembles/merged_nllkl --extra-methods /home/morg/NLP_2526b/galbarak2/runs/ensembles/extra_methods.json --out-dir /home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level --bootstrap-repetitions 10000 --seed 0",
+ "command": "python /home/dcor/galbarak2/lment-qlsim/ember_eval/nll_kl/question_level_similarity.py --results-root /home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final --scored-root /home/morg/NLP_2526b/galbarak2/runs/ensembles/merged_nllkl --extra-methods /home/morg/NLP_2526b/galbarak2/runs/ensembles/extra_methods.json --out-dir /home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level --bootstrap-repetitions 10000 --seed 0",
  "model_inference_rerun": false,
  "model_inference_note": "no checkpoint was loaded; per-question NLLs were read from the existing report.py output, which score_model.py produced on 2026-09-20/21",
  "concepts": [
@@ -29,7 +29,8 @@
    "SNMF": "snmf_rome_ratio_out",
    "RMU+EMBER": "rmuember_rome_L5mid_a100",
    "SNMF+EMBER": "snmfv2_rome_ratio_in",
-   "SNMF+EMBER-V1": "snmfv1_rome_judge_both"
+   "SNMF+EMBER-V1": "snmfv1_rome_judge_both",
+   "RMU+EMBER-GATED": "rmuember_rome_L6hi_a10"
   },
   "Baseball": {
    "full": "lment-1b-control-2e-b131k",
@@ -39,7 +40,8 @@
    "SNMF": "snmf_baseball_ratio_both",
    "RMU+EMBER": "rmuember_baseball_L5mid_a100",
    "SNMF+EMBER": "snmfv2_baseball_ratio_both",
-   "SNMF+EMBER-V1": "snmfv1_baseball_ratio_out"
+   "SNMF+EMBER-V1": "snmfv1_baseball_ratio_out",
+   "RMU+EMBER-GATED": "rmuember_baseball_L6hi_a10"
   },
   "Artificial intelligence": {
    "full": "lment-1b-control-2e-b131k",
@@ -49,7 +51,8 @@
    "SNMF": "snmf_ai_ratio_in",
    "RMU+EMBER": "rmuember_ai_L5mid_a10",
    "SNMF+EMBER": "snmfv2_ai_ratio_in",
-   "SNMF+EMBER-V1": "snmfv1_ai_ratio_out"
+   "SNMF+EMBER-V1": "snmfv1_ai_ratio_out",
+   "RMU+EMBER-GATED": "rmuember_ai_L6hi_a10"
   }
  },
  "metrics": {
@@ -80,9 +83,9 @@
  },
  "input_sha256": {
   "/home/dcor/galbarak2/lment-qlsim/ember_eval/acc_selection/results_sciq/selected_checkpoints.json": "0aa1e9cd48fbb9a40615394bc293e5be3297b18f27047040e189ef269771887f",
-  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/rome/results.json": "fe801748a6f5bd240002d98d58588110289488919847febb2af78f08bb83e3ed",
-  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/baseball/results.json": "d69d99d1b4dc80f9a36cf746b16a7f707ffe722c6490ff3e929723b13ff27ae3",
-  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/ai/results.json": "d5d7f754fccd2b8d7367dcf4cb12de17c8f468a1e732c0563fdf38424b92627e"
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/rome/results.json": "fd72734d0e79c8341cbcd3fd47e1dbf18ffb3b21cdd0cee79041e92874483064",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/baseball/results.json": "ee450411a691b29f8c5d380ca6ecdab1cc816a075d73bec898c1f250e4684069",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/ai/results.json": "f25c3c72994f86b439a9c033c4415048f87ea925e817ed6e654a8b89fc92d9e2"
  },
  "outputs": [
   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level/per_question.csv",
@@ -91,7 +94,7 @@
   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level/run_manifest.json"
  ],
  "validation": {
-  "n_checks": 194,
+  "n_checks": 218,
   "n_failed": 0,
   "checks": [
    {
@@ -198,6 +201,12 @@
    },
    {
     "scope": "Ancient Rome",
+    "check": "results.json names the expected RMU+EMBER-GATED checkpoint",
+    "result": "PASS",
+    "detail": "rmuember_rome_L6hi_a10"
+   },
+   {
+    "scope": "Ancient Rome",
     "check": "EMBER NLL identical in its vs-Twin and vs-Full rows",
     "result": "PASS",
     "detail": "50 items compared"
@@ -301,6 +310,24 @@
    {
     "scope": "Ancient Rome",
     "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER-GATED NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and RMU+EMBER-GATED-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and RMU+EMBER-GATED-vs-Full",
     "result": "PASS",
     "detail": "exact match required"
    },
@@ -420,6 +447,18 @@
    },
    {
     "scope": "Ancient Rome",
+    "check": "RMU+EMBER-GATED: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER-GATED: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
     "check": "full: NLL == mean over answer tokens",
     "result": "PASS",
     "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
@@ -511,6 +550,18 @@
    {
     "scope": "Ancient Rome",
     "check": "SNMF+EMBER-V1: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER-GATED: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER-GATED: value used matches the scored record",
     "result": "PASS",
     "detail": "max deviation 0.00e+00"
    },
@@ -564,6 +615,12 @@
    },
    {
     "scope": "Baseball",
+    "check": "results.json names the expected RMU+EMBER-GATED checkpoint",
+    "result": "PASS",
+    "detail": "rmuember_baseball_L6hi_a10"
+   },
+   {
+    "scope": "Baseball",
     "check": "EMBER NLL identical in its vs-Twin and vs-Full rows",
     "result": "PASS",
     "detail": "50 items compared"
@@ -667,6 +724,24 @@
    {
     "scope": "Baseball",
     "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER-GATED NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and RMU+EMBER-GATED-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and RMU+EMBER-GATED-vs-Full",
     "result": "PASS",
     "detail": "exact match required"
    },
@@ -786,6 +861,18 @@
    },
    {
     "scope": "Baseball",
+    "check": "RMU+EMBER-GATED: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER-GATED: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
     "check": "full: NLL == mean over answer tokens",
     "result": "PASS",
     "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
@@ -877,6 +964,18 @@
    {
     "scope": "Baseball",
     "check": "SNMF+EMBER-V1: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER-GATED: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER-GATED: value used matches the scored record",
     "result": "PASS",
     "detail": "max deviation 0.00e+00"
    },
@@ -930,6 +1029,12 @@
    },
    {
     "scope": "Artificial intelligence",
+    "check": "results.json names the expected RMU+EMBER-GATED checkpoint",
+    "result": "PASS",
+    "detail": "rmuember_ai_L6hi_a10"
+   },
+   {
+    "scope": "Artificial intelligence",
     "check": "EMBER NLL identical in its vs-Twin and vs-Full rows",
     "result": "PASS",
     "detail": "50 items compared"
@@ -1033,6 +1138,24 @@
    {
     "scope": "Artificial intelligence",
     "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER-GATED NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and RMU+EMBER-GATED-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and RMU+EMBER-GATED-vs-Full",
     "result": "PASS",
     "detail": "exact match required"
    },
@@ -1152,6 +1275,18 @@
    },
    {
     "scope": "Artificial intelligence",
+    "check": "RMU+EMBER-GATED: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER-GATED: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
     "check": "full: NLL == mean over answer tokens",
     "result": "PASS",
     "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
@@ -1247,16 +1382,28 @@
     "detail": "max deviation 0.00e+00"
    },
    {
-    "scope": "output",
-    "check": "900 per-question rows (3 concepts x 6 methods x 50)",
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER-GATED: NLL == mean over answer tokens",
     "result": "PASS",
-    "detail": "900"
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER-GATED: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
    },
    {
     "scope": "output",
-    "check": "18 summary rows",
+    "check": "1050 per-question rows (3 concepts x 7 methods x 50)",
     "result": "PASS",
-    "detail": "18"
+    "detail": "1050"
+   },
+   {
+    "scope": "output",
+    "check": "21 summary rows",
+    "result": "PASS",
+    "detail": "21"
    }
   ]
  }
