@@ -390,8 +390,13 @@ def main() -> None:
         summary += sm
         inputs.append(str(results_root / concept["slug"] / "results.json"))
 
-    v.record("output", "450 per-question rows", len(per_question) == 450, f"{len(per_question)}")
-    v.record("output", "9 summary rows", len(summary) == 9, f"{len(summary)}")
+    # derived, not hardcoded: --extra-methods legitimately changes both counts
+    exp_pq = len(CONCEPTS) * len(METHODS) * 50
+    exp_sm = len(CONCEPTS) * len(METHODS)
+    v.record("output", f"{exp_pq} per-question rows "
+                       f"({len(CONCEPTS)} concepts x {len(METHODS)} methods x 50)",
+             len(per_question) == exp_pq, f"{len(per_question)}")
+    v.record("output", f"{exp_sm} summary rows", len(summary) == exp_sm, f"{len(summary)}")
 
     print("Validation\n" + v.report())
     if v.failed:

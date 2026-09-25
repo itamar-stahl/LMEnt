@@ -1,0 +1,1263 @@
+{
+ "analysis": "question-level distance to the concept-excluded twin, mean absolute paired answer-NLL difference",
+ "git_commit": "61275e04fc5f459c4e0c9788553e9b2d411719ad",
+ "git_tree_dirty_at_run_time": true,
+ "git_commit_note": "HEAD when the analysis ran, i.e. the commit before the one that carries these artifacts",
+ "generated_utc": "2026-09-25T08:10:14Z",
+ "script": "/home/dcor/galbarak2/lment-qlsim/ember_eval/nll_kl/question_level_similarity.py",
+ "command": "python ember_eval/nll_kl/question_level_similarity.py --results-root /home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final --scored-root /home/morg/NLP_2526b/galbarak2/runs/ensembles/merged_nllkl --extra-methods /home/morg/NLP_2526b/galbarak2/runs/ensembles/extra_methods.json --out-dir /home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level --bootstrap-repetitions 10000 --seed 0",
+ "model_inference_rerun": false,
+ "model_inference_note": "no checkpoint was loaded; per-question NLLs were read from the existing report.py output, which score_model.py produced on 2026-09-20/21",
+ "concepts": [
+  "Ancient Rome",
+  "Baseball",
+  "Artificial intelligence"
+ ],
+ "split": "target_test",
+ "split_note": "held-out test half only; selection, neighbour, unrelated and sciq items are dropped at load",
+ "questions_per_concept": {
+  "Ancient Rome": 50,
+  "Baseball": 50,
+  "Artificial intelligence": 50
+ },
+ "checkpoints": {
+  "Ancient Rome": {
+   "full": "lment-1b-control-2e-b131k",
+   "twin": "lment-1b-norome-2e-b131k",
+   "EMBER": "ember_rome_d200",
+   "RMU": "rmu_rome_L6hi_a10",
+   "SNMF": "snmf_rome_ratio_out",
+   "RMU+EMBER": "rmuember_rome_L5mid_a100",
+   "SNMF+EMBER": "snmfv2_rome_ratio_in",
+   "SNMF+EMBER-V1": "snmfv1_rome_judge_both"
+  },
+  "Baseball": {
+   "full": "lment-1b-control-2e-b131k",
+   "twin": "lment-1b-nobaseball-2e-b131k",
+   "EMBER": "ember_baseball_d10",
+   "RMU": "rmu_baseball_L6hi_a10",
+   "SNMF": "snmf_baseball_ratio_both",
+   "RMU+EMBER": "rmuember_baseball_L5mid_a100",
+   "SNMF+EMBER": "snmfv2_baseball_ratio_both",
+   "SNMF+EMBER-V1": "snmfv1_baseball_ratio_out"
+  },
+  "Artificial intelligence": {
+   "full": "lment-1b-control-2e-b131k",
+   "twin": "lment-1b-noai-2e-b131k",
+   "EMBER": "ember_ai_d500",
+   "RMU": "rmu_ai_L6hi_a10",
+   "SNMF": "snmf_ai_ratio_in",
+   "RMU+EMBER": "rmuember_ai_L5mid_a10",
+   "SNMF+EMBER": "snmfv2_ai_ratio_in",
+   "SNMF+EMBER-V1": "snmfv1_ai_ratio_out"
+  }
+ },
+ "metrics": {
+  "NLL": "teacher-forced mean over the correct continuation's answer tokens, nats",
+  "D_abs(M,T)": "(1/N) sum_i |NLL_M(i) - NLL_T(i)|",
+  "D_abs(F,T)": "(1/N) sum_i |NLL_F(i) - NLL_T(i)|",
+  "R_abs(M,T)": "D_abs(M,T) / D_abs(F,T); <1 closer to the twin than the full model",
+  "P_closer(M,T)": "(1/N) sum_i 1[|NLL_M(i)-NLL_T(i)| < |NLL_F(i)-NLL_T(i)|]",
+  "P_tied(M,T)": "(1/N) sum_i 1[|NLL_M(i)-NLL_T(i)| == |NLL_F(i)-NLL_T(i)|]; ties are never counted as closer"
+ },
+ "bootstrap": {
+  "repetitions": 10000,
+  "seed": 0,
+  "unit": "question",
+  "paired": true,
+  "scheme": "resample question indices with replacement; the same indices index the method and full-model distances in every draw",
+  "interval": "percentile, 2.5th and 97.5th"
+ },
+ "input_paths": {
+  "results_root": "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final",
+  "scored_root": "/home/morg/NLP_2526b/galbarak2/runs/ensembles/merged_nllkl",
+  "selected_checkpoints": "/home/dcor/galbarak2/lment-qlsim/ember_eval/acc_selection/results_sciq/selected_checkpoints.json",
+  "results_json": [
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/rome/results.json",
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/baseball/results.json",
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/ai/results.json"
+  ]
+ },
+ "input_sha256": {
+  "/home/dcor/galbarak2/lment-qlsim/ember_eval/acc_selection/results_sciq/selected_checkpoints.json": "0aa1e9cd48fbb9a40615394bc293e5be3297b18f27047040e189ef269771887f",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/rome/results.json": "fe801748a6f5bd240002d98d58588110289488919847febb2af78f08bb83e3ed",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/baseball/results.json": "d69d99d1b4dc80f9a36cf746b16a7f707ffe722c6490ff3e929723b13ff27ae3",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/results_final/ai/results.json": "d5d7f754fccd2b8d7367dcf4cb12de17c8f468a1e732c0563fdf38424b92627e"
+ },
+ "outputs": [
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level/per_question.csv",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level/summary.csv",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level/table.tex",
+  "/home/morg/NLP_2526b/galbarak2/runs/ensembles/tables/question_level/run_manifest.json"
+ ],
+ "validation": {
+  "n_checks": 194,
+  "n_failed": 0,
+  "checks": [
+   {
+    "scope": "Ancient Rome",
+    "check": "selected checkpoint EMBER",
+    "result": "PASS",
+    "detail": "expected ember_rome_d200, selection file says ember_rome_d200"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "selected checkpoint RMU",
+    "result": "PASS",
+    "detail": "expected rmu_rome_L6hi_a10, selection file says rmu_rome_L6hi_a10"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "selected checkpoint SNMF",
+    "result": "PASS",
+    "detail": "expected snmf_rome_ratio_out, selection file says snmf_rome_ratio_out"
+   },
+   {
+    "scope": "Baseball",
+    "check": "selected checkpoint EMBER",
+    "result": "PASS",
+    "detail": "expected ember_baseball_d10, selection file says ember_baseball_d10"
+   },
+   {
+    "scope": "Baseball",
+    "check": "selected checkpoint RMU",
+    "result": "PASS",
+    "detail": "expected rmu_baseball_L6hi_a10, selection file says rmu_baseball_L6hi_a10"
+   },
+   {
+    "scope": "Baseball",
+    "check": "selected checkpoint SNMF",
+    "result": "PASS",
+    "detail": "expected snmf_baseball_ratio_both, selection file says snmf_baseball_ratio_both"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "selected checkpoint EMBER",
+    "result": "PASS",
+    "detail": "expected ember_ai_d500, selection file says ember_ai_d500"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "selected checkpoint RMU",
+    "result": "PASS",
+    "detail": "expected rmu_ai_L6hi_a10, selection file says rmu_ai_L6hi_a10"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "selected checkpoint SNMF",
+    "result": "PASS",
+    "detail": "expected snmf_ai_ratio_in, selection file says snmf_ai_ratio_in"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected full model",
+    "result": "PASS",
+    "detail": "lment-1b-control-2e-b131k"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected twin",
+    "result": "PASS",
+    "detail": "lment-1b-norome-2e-b131k"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected EMBER checkpoint",
+    "result": "PASS",
+    "detail": "ember_rome_d200"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected RMU checkpoint",
+    "result": "PASS",
+    "detail": "rmu_rome_L6hi_a10"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected SNMF checkpoint",
+    "result": "PASS",
+    "detail": "snmf_rome_ratio_out"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected RMU+EMBER checkpoint",
+    "result": "PASS",
+    "detail": "rmuember_rome_L5mid_a100"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected SNMF+EMBER checkpoint",
+    "result": "PASS",
+    "detail": "snmfv2_rome_ratio_in"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "results.json names the expected SNMF+EMBER-V1 checkpoint",
+    "result": "PASS",
+    "detail": "snmfv1_rome_judge_both"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and RMU-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and RMU-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and SNMF-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and RMU+EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and RMU+EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF+EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER-V1 NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "held-out split only",
+    "result": "PASS",
+    "detail": "set == 'target_test' and phase == 'test' for every item read"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "exactly 50 target_test items",
+    "result": "PASS",
+    "detail": "n = 50"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "no duplicate item ids",
+    "result": "PASS",
+    "detail": "50 rows, 50 distinct"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER-V1: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER-V1: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "full: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "twin: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "RMU+EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER-V1: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-7 tokens"
+   },
+   {
+    "scope": "Ancient Rome",
+    "check": "SNMF+EMBER-V1: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected full model",
+    "result": "PASS",
+    "detail": "lment-1b-control-2e-b131k"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected twin",
+    "result": "PASS",
+    "detail": "lment-1b-nobaseball-2e-b131k"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected EMBER checkpoint",
+    "result": "PASS",
+    "detail": "ember_baseball_d10"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected RMU checkpoint",
+    "result": "PASS",
+    "detail": "rmu_baseball_L6hi_a10"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected SNMF checkpoint",
+    "result": "PASS",
+    "detail": "snmf_baseball_ratio_both"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected RMU+EMBER checkpoint",
+    "result": "PASS",
+    "detail": "rmuember_baseball_L5mid_a100"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected SNMF+EMBER checkpoint",
+    "result": "PASS",
+    "detail": "snmfv2_baseball_ratio_both"
+   },
+   {
+    "scope": "Baseball",
+    "check": "results.json names the expected SNMF+EMBER-V1 checkpoint",
+    "result": "PASS",
+    "detail": "snmfv1_baseball_ratio_out"
+   },
+   {
+    "scope": "Baseball",
+    "check": "EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and RMU-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and RMU-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and SNMF-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and RMU+EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and RMU+EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF+EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER-V1 NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Baseball",
+    "check": "held-out split only",
+    "result": "PASS",
+    "detail": "set == 'target_test' and phase == 'test' for every item read"
+   },
+   {
+    "scope": "Baseball",
+    "check": "exactly 50 target_test items",
+    "result": "PASS",
+    "detail": "n = 50"
+   },
+   {
+    "scope": "Baseball",
+    "check": "no duplicate item ids",
+    "result": "PASS",
+    "detail": "50 rows, 50 distinct"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER-V1: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER-V1: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "full: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "twin: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "RMU+EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER-V1: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-16 tokens"
+   },
+   {
+    "scope": "Baseball",
+    "check": "SNMF+EMBER-V1: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected full model",
+    "result": "PASS",
+    "detail": "lment-1b-control-2e-b131k"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected twin",
+    "result": "PASS",
+    "detail": "lment-1b-noai-2e-b131k"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected EMBER checkpoint",
+    "result": "PASS",
+    "detail": "ember_ai_d500"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected RMU checkpoint",
+    "result": "PASS",
+    "detail": "rmu_ai_L6hi_a10"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected SNMF checkpoint",
+    "result": "PASS",
+    "detail": "snmf_ai_ratio_in"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected RMU+EMBER checkpoint",
+    "result": "PASS",
+    "detail": "rmuember_ai_L5mid_a10"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected SNMF+EMBER checkpoint",
+    "result": "PASS",
+    "detail": "snmfv2_ai_ratio_in"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "results.json names the expected SNMF+EMBER-V1 checkpoint",
+    "result": "PASS",
+    "detail": "snmfv1_ai_ratio_out"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and RMU-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and RMU-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and SNMF-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and RMU+EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and RMU+EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF+EMBER-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER-V1 NLL identical in its vs-Twin and vs-Full rows",
+    "result": "PASS",
+    "detail": "50 items compared"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Twin",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full NLL identical in Twin-vs-Full and SNMF+EMBER-V1-vs-Full",
+    "result": "PASS",
+    "detail": "exact match required"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "held-out split only",
+    "result": "PASS",
+    "detail": "set == 'target_test' and phase == 'test' for every item read"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "exactly 50 target_test items",
+    "result": "PASS",
+    "detail": "n = 50"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "no duplicate item ids",
+    "result": "PASS",
+    "detail": "50 rows, 50 distinct"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER-V1: same 50 ids as the twin",
+    "result": "PASS",
+    "detail": "50 ids, 0 symmetric difference"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER-V1: all values finite and present",
+    "result": "PASS",
+    "detail": "no NaN, no inf, no missing"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "full: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "twin: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "RMU+EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER-V1: NLL == mean over answer tokens",
+    "result": "PASS",
+    "detail": "max |nll - mean(token_nlls)| = 0.00e+00, answer lengths 1-10 tokens"
+   },
+   {
+    "scope": "Artificial intelligence",
+    "check": "SNMF+EMBER-V1: value used matches the scored record",
+    "result": "PASS",
+    "detail": "max deviation 0.00e+00"
+   },
+   {
+    "scope": "output",
+    "check": "900 per-question rows (3 concepts x 6 methods x 50)",
+    "result": "PASS",
+    "detail": "900"
+   },
+   {
+    "scope": "output",
+    "check": "18 summary rows",
+    "result": "PASS",
+    "detail": "18"
+   }
+  ]
+ }
+}
