@@ -20,6 +20,8 @@ answer-to-label binding. OLMES similarly recommends completion-based
 evaluation for smaller base models, and OLMo~2 uses the OLMES evaluation
 framework \citep{gu2025olmes,walsh2025olmo2}.
 
+% Before submission, rerun selection and test evaluation after the planned
+% SciQ stem conversion; the current saved SciQ results use the earlier wording.
 We therefore used Claude in a dedicated session to rewrite all target,
 neighboring, and SciQ questions as declarative sentence stems while retaining
 the original correct answer and three distractors. For example, ``Which river is
@@ -45,14 +47,14 @@ the post-hoc selectivity contrast support interpretation and are reported
 primarily in the appendix.
 
 \paragraph{Interpretation criterion.}
-We do not combine the three primary metrics into a single score because they
-measure distinct properties. We interpret evidence of reproducing concept
-exclusion as requiring both meaningful erasure under $H_{\mathrm{test}}$ and
-improved proximity to the twin under $R_{\mathrm{abs}}$ and
-$R_{\mathrm{KL}}$. Ratios below one indicate movement toward the twin relative
-to the full model, while values approaching zero indicate stronger agreement.
-A high $H_{\mathrm{test}}$ without improved twin proximity demonstrates
-effective suppression, but not reproduction of the concept-exclusion outcome.
+We do not combine the three primary metrics because they measure distinct
+properties. $H_{\mathrm{test}}$ measures the efficacy--preservation tradeoff,
+whereas $R_{\mathrm{abs}}$ and $R_{\mathrm{KL}}$ measure resemblance to the
+twin. Ratios below one indicate improvement over the full model, and values
+approaching zero indicate stronger agreement. Evidence for reproducing
+concept exclusion is stronger when target suppression with preservation
+coincides with improvement under both ratios; we impose no binary threshold
+on $H_{\mathrm{test}}$.
 
 \subsection{Likelihood-Ranked Accuracy and Efficacy--Preservation}
 

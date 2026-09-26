@@ -18,9 +18,10 @@ Appendix~\ref{app:full-results}.
 Table~\ref{tab:target} summarizes the three primary metrics. The leading erasure
 method under $H_{\mathrm{test}}$ differed by concept: RMU for Rome (0.486),
 EMBER for Baseball (0.639), and RMU+EMBER for AI (0.829), only 0.013 above
-SNMF+EMBER. The rankings are not stable method orderings: each accuracy changes
-by 0.02 per answer, and EMBER led RMU on Rome's selection split (0.682 versus
-0.219) before RMU led on the test split (0.486 versus 0.208).
+SNMF+EMBER. These results should not be treated as stable method rankings:
+each accuracy changes by 0.02 per answer, and EMBER led RMU on Rome's
+selection split (0.682 versus 0.219) before RMU led on the test split (0.486
+versus 0.208).
 
 \begin{table}[t]
   \centering
@@ -67,52 +68,35 @@ All three selected RMU+EMBER checkpoints failed RMU's predeclared activity
 check: their final cosine alignment with the control direction ranged from
 0.076 to 0.285, below the 0.30 threshold. Because EMBER already supplied
 target efficacy, the selection score favored weak RMU updates. These rows
-describe the outcome of the frozen selection procedure, but they do not
-provide evidence of a substantial additional RMU contribution.
+describe the selected ensembles, but do not provide evidence of a substantial
+additional RMU contribution.
 
 \subsection{Twin Similarity}
 
-The two primary twin-similarity metrics favored small edits. For
-$R_{\mathrm{abs}}$, RMU was best for Rome (0.660), while SNMF was best for
-Baseball (0.967) and AI (0.927). Only RMU on Rome and SNMF on Rome and AI had
-95\% confidence intervals entirely below one. SNMF also had the lowest
-$R_{\mathrm{KL}}$ for every concept (0.891--0.992), although values near one
-show that it only modestly reduced the full model's divergence from the twin.
-EMBER and both ensembles exceeded one on both primary ratios for every
-concept, indicating that their stronger suppression generally moved past the
-exclusion reference.
-
-\subsection{Relationship Between Efficacy and Twin Similarity}
-
-The highest-$H_{\mathrm{test}}$ method also had the lowest
-$R_{\mathrm{abs}}$ only for Rome and never had the lowest $R_{\mathrm{KL}}$.
-For Baseball, winning EMBER had $R_{\mathrm{abs}}=2.128$ and
-$R_{\mathrm{KL}}=2.082$; for AI, winning RMU+EMBER reached 2.196 and 3.420.
-This disagreement is expected:
-$H_{\mathrm{test}}$ rewards suppression and preservation relative to the full
-model, whereas the ratios measure proximity to the twin. Strong suppression
-can move past the twin, while a near-identity edit can appear close without
-erasing much.
+The two primary twin-similarity metrics favored RMU or SNMF rather than the
+EMBER-based conditions. For $R_{\mathrm{abs}}$, RMU was best for Rome (0.660),
+while SNMF was best for Baseball (0.967) and AI (0.927). Only RMU on Rome and
+SNMF on Rome and AI had 95\% confidence intervals entirely below one. SNMF
+also had the lowest $R_{\mathrm{KL}}$ for every concept (0.891--0.992), although
+values near one indicate only a modest reduction in divergence from the twin.
+EMBER and both ensembles exceeded one on both ratios for every concept.
 
 \subsection{Cross-Concept Interpretation}
 
-The three concepts illustrate different relationships between erasure and
-concept exclusion. For Rome, RMU achieved the clearest alignment between the
-two objectives: it led on $H_{\mathrm{test}}$ and reduced absolute
-question-level distance from the twin to $R_{\mathrm{abs}}=0.660$, with a
-confidence interval entirely below one. For Baseball, EMBER achieved the
-highest efficacy--preservation score, but both of its twin-similarity ratios
-exceeded two. SNMF was closest to the Baseball twin under both similarity
-metrics, although its $R_{\mathrm{abs}}$ confidence interval included one and
-its target suppression was limited. For AI, the EMBER ensembles achieved the
-highest $H_{\mathrm{test}}$ values but were substantially farther from the
-twin than the full model, whereas SNMF remained close to the full model and
-produced only a small improvement in twin similarity.
+The highest-$H_{\mathrm{test}}$ method also had the lowest
+$R_{\mathrm{abs}}$ only for Rome and never had the lowest $R_{\mathrm{KL}}$.
+Rome therefore provided the clearest alignment between efficacy and
+question-level twin similarity. For Baseball, EMBER led on
+$H_{\mathrm{test}}$, but both similarity ratios exceeded two; SNMF had the
+lowest ratios, although its $R_{\mathrm{abs}}$ confidence interval included
+one and its target suppression was limited. For AI, the EMBER ensembles had
+the highest $H_{\mathrm{test}}$ values but were farther from the twin than the
+full model under both ratios.
 
 Across concepts, the methods occupied different parts of the
 efficacy--similarity tradeoff. RMU sometimes moved toward the twin while
 producing moderate suppression, but this improvement was clear at the
-question level only for Rome. SNMF generally obtained the lowest
+question level only for Rome. SNMF often obtained the lowest
 twin-similarity ratios by making a comparatively small change to the full
 model, rather than by reproducing the full behavioral effect of concept
 exclusion. EMBER and its ensembles produced stronger target suppression, but

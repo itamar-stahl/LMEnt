@@ -12,11 +12,10 @@ questions. First, does an intervention reduce target knowledge while
 preserving other capabilities? Second, does the resulting model resemble one
 trained without the target learning signal?
 
-Most evaluations compare an edited model with its original version, measuring
+Common evaluations compare an edited model with its original version, measuring
 target suppression and capability preservation but not similarity to a model
 trained without the target data \citep{yao2024machineunlearning,li2024wmdp}.
-These studies motivate matched
-training interventions as references for evaluating post-training erasure.
+A matched training intervention is therefore needed to evaluate the latter.
 
 \subsection{Concept Exclusion with LMEnt}
 
@@ -88,6 +87,6 @@ Our evaluation separates these objectives. We measure erasure efficacy and
 preservation relative to the full model, while independently measuring
 similarity to a concept-excluded twin. The latter comparison uses
 correct-answer negative log-likelihood and teacher-forced full-vocabulary KL
-divergence on the same sentence completions. This design tests whether methods
-that successfully suppress target behavior also reproduce the behavioral
-effects of concept exclusion during training.
+divergence on the same sentence completions. This design tests whether target
+suppression coincides with the behavioral effects of concept exclusion during
+training.

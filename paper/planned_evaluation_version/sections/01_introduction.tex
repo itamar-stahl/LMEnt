@@ -7,8 +7,8 @@ influence while preserving behavior elsewhere
 model measure suppression and preservation, but do not show whether an edited
 model resembles one trained without the target learning signal. We ask whether
 post-training erasure can reproduce the behavior of a matched model trained
-without loss on concept-associated chunks while preserving knowledge on neighboring
-concepts and general-science behavior.
+without loss on concept-associated chunks while preserving behavior on
+neighboring concepts and general science.
 
 Using LMEnt's entity-annotated corpus, we construct matched references for
 Ancient Rome, Baseball, and artificial intelligence
@@ -27,9 +27,9 @@ normalized teacher-forced full-vocabulary KL from the twin. Signed mean NLL
 proximity and the frequency of question-level improvement provide
 complementary diagnostics.
 
-No method is uniformly best. RMU has the lowest absolute NLL distance for
+No method leads across all criteria. RMU has the lowest absolute NLL distance for
 Rome; SNMF has the lowest distance for Baseball and AI and the lowest
-normalized KL throughout, but produces little target erasure. EMBER has the
+normalized KL throughout, but produces little target suppression. EMBER has the
 largest target-specific NLL changes among standalone methods and the highest
 efficacy--preservation score for Baseball; RMU leads for Rome. The selected
 RMU+EMBER condition leads for AI, although its RMU component fails the
@@ -38,9 +38,8 @@ once and never has the lowest normalized KL. Target suppression with preserved
 neighboring and SciQ accuracy therefore does not imply similarity to a matched
 concept-excluded twin in these experiments.
 
-Our contributions are threefold: we construct matched concept-excluded
-references for evaluating post-training erasure; compare five erasure
-conditions using separate efficacy, question-level similarity, and
-distributional-similarity criteria; and show that strong target suppression
-does not generally imply behavioral similarity to training without the
-target-associated data.
+This study provides matched concept-excluded references and compares five
+erasure conditions using separate measures of efficacy--preservation,
+question-level similarity, and distributional similarity. In these
+experiments, strong target suppression does not reliably predict similarity
+to a model trained without loss on the target-associated data.

@@ -15,12 +15,11 @@ chunks, while the configured training procedure remained matched.
 
 \subsection{Concepts and Exclusion Sets}
 
-We selected Ancient Rome, Baseball, and artificial intelligence (AI) by
-hand before training the erasure models. Preliminary accuracy of the full
-model on target selection questions helped us avoid concepts with little
-measurable knowledge. We also sought concepts of manageable breadth and
-variation across domains because of that our findings
-may not generalize to every concept.
+We selected Ancient Rome, Baseball, and artificial intelligence (AI)
+purposively. Preliminary accuracy of the full model on target selection
+questions helped us avoid concepts with little measurable knowledge; we also
+sought manageable breadth and variation across domains. Results on these
+three concepts may not generalize to other concepts.
 
 For each concept, we used Claude in a dedicated session to propose
 Wikidata entity IDs (QIDs), then reviewed their coverage in LMEnt's
@@ -28,7 +27,7 @@ corpus \citep{gottesman2025lment}. A single ID missed text linked to
 related entities, while an overly broad set risked masking loss on text about
 adjacent topics. We therefore selected a bounded set of QIDs for each
 concept. We masked the loss on a training chunk if LMEnt linked at least one
-mention in it to a selected QID. 
+mention in it to a selected QID.
 Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 
 \begin{table}[b]
@@ -77,13 +76,13 @@ neighboring questions, and a shared general-capability set drawn from
 SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
 
-We initially considered a different selection method based on NLL score, but for EMBER it increased
-monotonically with edit strength and selected the edge of the search grid.
-We therefore selected the candidate with the largest accuracy-based
+We selected the candidate with the largest accuracy-based
 $H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
-deterministic order to break exact ties. The score adapts EMBER's validation
+deterministic order to break exact ties. We did not use an NLL-based criterion
+because, for EMBER, it increased monotonically with edit strength and selected
+the edge of the grid. The chosen score adapts EMBER's validation
 rule to our base-model setting: neighboring questions replace similar-domain
 questions, SciQ replaces MMLU, and we omit AlpacaEval coherence
 \citep{suslik2026ember}. This decision and all selections used only selection
-questions. After freezing the 15 winners, we compared them with the full model
+questions. We then compared the 15 selected checkpoints with the full model
 and their concept-excluded twins.

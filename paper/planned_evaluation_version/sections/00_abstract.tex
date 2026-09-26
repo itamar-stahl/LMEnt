@@ -1,15 +1,15 @@
 Post-training concept erasure aims to suppress target knowledge while
 preserving other behavior, but comparison with the original model does not
 show whether erasure resembles training without the concept. We evaluate five
-conditions based on EMBER, RMU, and SNMF for Ancient Rome, Baseball, and
+erasure conditions based on EMBER, RMU, and SNMF for Ancient Rome, Baseball, and
 artificial intelligence against both a full model and matched concept-excluded
 twins. Our primary metrics measure efficacy--preservation, absolute
 question-level NLL proximity to the twin, and full-distribution KL proximity.
-We find no uniformly best method. RMU is closest under absolute NLL proximity
+No method performs best across these criteria. RMU is closest under absolute NLL proximity
 for Rome, while SNMF is closest for Baseball and AI and has the lowest
-normalized KL for all three concepts, but weakly suppresses target knowledge.
+normalized KL for all three concepts, but produces little target suppression.
 EMBER produces the largest target-specific NLL changes among standalone
 methods. Efficacy--preservation winners vary across concepts and usually
 remain far from their twins. Thus, effective target suppression with preserved
 neighboring and general-science performance does not necessarily reproduce
-concept-excluded training.
+the outcome of concept exclusion.

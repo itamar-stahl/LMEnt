@@ -2,14 +2,15 @@
 \label{sec:conclusion}
 
 Post-training concept erasure did not consistently reproduce the behavior of
-matched concept-excluded models. Under the three primary metrics, RMU had the
-lowest absolute NLL distance for Rome, while SNMF had the lowest distance for
-Baseball and AI and the lowest normalized KL throughout, with only modest
-target suppression. EMBER produced the largest target-specific NLL changes
-among standalone methods and the highest efficacy--preservation score for
-Baseball; RMU led for Rome. The selected RMU+EMBER condition led for AI, but
-its RMU component failed the activity check. Neither ensemble moved closer to
-the twin under absolute target NLL or normalized KL distance.
+matched concept-excluded models. No method led across the three primary
+criteria. RMU had the lowest absolute NLL distance for Rome; SNMF had the
+lowest distance for Baseball and AI and the lowest normalized KL throughout,
+but produced only modest target suppression. EMBER had the largest
+target-specific NLL changes among standalone methods and the highest
+efficacy--preservation score for Baseball, while RMU led for Rome. The selected
+RMU+EMBER condition led for AI, but its RMU component failed the activity
+check. Neither ensemble moved closer to the twin under absolute target NLL or
+normalized KL distance.
 
 A high efficacy--preservation score therefore did not imply similarity to the
 concept-excluded twin. These criteria measure different properties and should
