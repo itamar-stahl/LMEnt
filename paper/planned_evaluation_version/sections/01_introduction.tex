@@ -7,8 +7,8 @@ influence while preserving behavior elsewhere
 model measure suppression and preservation, but do not show whether an edited
 model resembles one trained without the target learning signal. We ask whether
 post-training erasure can reproduce the behavior of a matched model trained
-without loss on concept-associated chunks while preserving neighboring and
-general-science behavior.
+without loss on concept-associated chunks while preserving knowledge on neighboring
+concepts and general-science behavior.
 
 Using LMEnt's entity-annotated corpus, we construct matched references for
 Ancient Rome, Baseball, and artificial intelligence
@@ -27,7 +27,8 @@ Correct-answer NLL measures support for the supplied answer, while
 teacher-forced full-vocabulary KL compares next-token distributions along it.
 
 No method is uniformly best. RMU most closely matches the twins' signed mean
-target NLL, but question-level differences support this match only for Rome.
+target NLL. Under mean absolute per-question NLL distance, however, RMU is
+clearly closer than the full model only for Rome.
 SNMF changes the full model least and has the lowest target KL, but produces
 little target erasure. EMBER has the largest target-specific NLL changes among
 standalone methods and the highest efficacy--preservation score for Baseball;

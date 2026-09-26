@@ -113,9 +113,9 @@ $H_{\mathrm{test}}$. Based on the absolute target-group mean
 $\Delta\mathrm{NLL}_{M-T}$, RMU was closest to the twin for every concept:
 its differences were $-0.303$ for Rome, 0.247 for Baseball, and $-0.013$ for
 AI. In particular, RMU nearly matched the twin's mean correct-answer NLL on AI.
-These are signed group means, however, and their standard deviations are
-large; a value near zero can conceal positive and negative question-level
-differences.
+These signed group means average positive and negative per-question
+differences before taking an absolute value, so opposing differences can
+cancel.
 
 SNMF had the lowest target KL for every concept, with values of 0.851 for Rome,
 0.680 for Baseball, and 0.588 for AI. It also changed the full model least: its
@@ -167,8 +167,8 @@ ratio near or below one throughout. This disagreement follows from the
 definitions: $H_{\mathrm{test}}$ uses the full model but not the twin, whereas
 both ratios use the twin as their reference.
 
-To check whether the signed mean NLL difference hides cancellation, we also
-measured question-level proximity to the twin. For concept $c$, let
+To avoid this cancellation, we also measured mean absolute per-question NLL
+distance from the twin. For concept $c$, let
 \begin{equation}
 \begin{aligned}
 D_{\mathrm{abs}}(M,T;c)
@@ -184,9 +184,9 @@ held-out target questions for which the erased model is strictly closer to the
 twin than the full model. Both statistics use the same 50 paired target-test
 questions, with paired bootstrap confidence intervals.
 
-The question-level results qualify the signed-mean ranking. RMU was clearly
-closer than the full model for Rome ($R_{\mathrm{abs}}=0.660$), but its
-intervals included one for Baseball and AI. For Baseball, RMU's signed mean
+The mean absolute per-question results qualify the signed-mean ranking. RMU
+was clearly closer than the full model for Rome ($R_{\mathrm{abs}}=0.660$),
+but its intervals included one for Baseball and AI. For Baseball, RMU's signed mean
 difference was 0.247 even though its mean absolute question-level difference
 was 1.003. For AI, the corresponding values were $-0.013$ and 0.953. Thus,
 positive and negative item-level differences canceled for both concepts,

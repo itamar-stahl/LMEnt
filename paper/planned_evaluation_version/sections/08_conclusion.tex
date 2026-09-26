@@ -3,7 +3,8 @@
 
 Post-training concept erasure did not consistently reproduce the behavior of
 matched concept-excluded models. RMU was closest in signed mean target NLL,
-but question-level differences showed cancellation for Baseball and AI. SNMF
+but under mean absolute per-question NLL distance it was clearly closer than
+the full model only for Rome. SNMF
 changed the full model least and had the lowest target KL, with only modest
 target suppression. EMBER produced the largest target-specific NLL changes
 among standalone methods and the highest efficacy--preservation score for
