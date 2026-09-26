@@ -4,23 +4,23 @@
 \subsection{Models and Matched Training}
 
 We trained OLMo-2 1B models on LMEnt's entity-annotated Wikipedia corpus
-\citep{walsh2025olmo2,gottesman2025lment}. The shared control model received
+\citep{walsh2025olmo2,gottesman2025lment}. The shared full model received
 loss on the full corpus. For each target concept, we trained a
 concept-excluded twin from the same initialization, using the same batch
 order, optimizer, learning-rate schedule, and two-epoch duration. Exclusion
 was applied after batch construction: labels in selected chunks were masked
 so that those chunks contributed no training loss. Each twin therefore
-differed from the shared control in the learning signal from its selected
+differed from the full model in the learning signal from its selected
 chunks, while the configured training procedure remained matched.
 
 \subsection{Concepts and Exclusion Sets}
 
 We selected Ancient Rome, Baseball, and artificial intelligence (AI) by
 hand before training the erasure models. Preliminary accuracy of the full
-model on target selection questions helped us avoid topics with little
-measurable knowledge. We also sought topics of manageable breadth and
+model on target selection questions helped us avoid concepts with little
+measurable knowledge. We also sought concepts of manageable breadth and
 variation across domains. Because this was a purposive choice, our findings
-don't necessarily generalize to every concept.
+may not generalize to every concept.
 
 For each concept, we used Claude in a dedicated session to propose
 Wikidata entity IDs (QIDs), then reviewed their coverage in LMEnt's
@@ -50,40 +50,41 @@ Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 \subsection{Post-Training Erasure and Checkpoint Selection}
 
 We applied EMBER, RMU, and an SNMF-based erasure independently to copies of
-the completed control model for each topic. We also evaluated RMU+EMBER and
+the completed full model for each concept. We also evaluated RMU+EMBER and
 SNMF+EMBER: for each ensemble, we fixed the selected EMBER checkpoint and
 then applied the MLP method to that edited model, following EMBER's staged
 ensemble design \citep{suslik2026ember}. For SNMF+EMBER, the SNMF features
 were re-derived from the EMBER-edited model. EMBER edited selected input
 embeddings, our RMU implementation updated MLP down-projection weights in
 selected layers, and the SNMF-based method
-removed concept-associated directions through MLP weight edits. Each topic
-received the same method-specific procedure and checkpoint-selection rule.
+removed concept-associated directions through MLP weight edits. We used the
+same method definitions and checkpoint-selection rule for every concept.
 
 EMBER's factorization produced candidate semantic features from target and
 neutral sentences. We used \texttt{google/gemma-4-12B-it} as a semantic judge
+\citep{gemmateam2026gemma4}
 to inspect each candidate's activating tokens and contexts, retaining features
 that it classified as representing the target concept with confidence of at
 least 0.85. This judgment determined which embedding directions EMBER edited;
 Appendix~\ref{app:ember-feature-selection} records how the selections were
 reproduced in the final runs.
 
-We evaluated 97 reported candidate checkpoints: 30 for EMBER, 24 for RMU,
+We evaluated 97 candidate checkpoints: 30 for EMBER, 24 for RMU,
 10 for SNMF, 24 for RMU+EMBER, and 9 for SNMF+EMBER. We selected one
-checkpoint for each method and topic using
+checkpoint for each method and concept using
 likelihood-ranked accuracy on the selection splits described in
 Section~\ref{sec:evaluation}. Selection used target questions,
-neighboring-topic questions, and a shared general-capability set drawn from
+neighboring questions, and a shared general-capability set drawn from
 SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
 
 We initially considered a selection-only NLL score that rewarded increased
-target-answer NLL while penalizing absolute NLL changes on neighboring and
-unrelated questions. On the selection split, this score increased monotonically
-with EMBER edit strength and selected the edge of the search grid, providing no
-meaningful interior optimum. We therefore rejected it and adopted the
-accuracy-based rule below. This decision was based on the selection groups;
-held-out results were not used to rank candidates or choose the final rule.
+target-answer NLL while penalizing changes on neighboring and SciQ questions.
+For EMBER, this score increased monotonically with edit strength and selected
+the edge of the search grid, so it provided no meaningful interior optimum.
+We therefore used the accuracy-based rule below. This decision used only the
+selection groups; held-out results were not used to rank candidates or choose
+the rule.
 
 For group $g$, we normalized candidate $M$'s accuracy against the full model
 $F$ and the four-choice chance level:
@@ -107,7 +108,7 @@ H_{\mathrm{selection}}(M)
       \phi_{\mathrm{eff}}(M),\phi_{\mathrm{pres}}(M)\right).
 \end{align}
 We selected the candidate with the largest $H_{\mathrm{selection}}$ within
-each method--topic pair, using a fixed deterministic order to break exact
+each method--concept pair, using a fixed deterministic order to break exact
 ties. This retains EMBER's chance-corrected accuracy normalization and nested
 harmonic aggregation, but adapts its validation score to our base-model
 setting: neighboring questions replace similar-domain questions, SciQ

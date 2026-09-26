@@ -1,10 +1,18 @@
 \section*{AI Disclosure and Reflection}
-\plan{Complete the remaining disclosure with the actual AI tools used for
-coding, writing, and analysis, together with a concise reflection on how their
-outputs were verified.}
+We used Claude Opus and Codex Sol throughout the project. They helped rewrite
+the target and neighboring multiple-choice questions as sentence-completion
+stems while preserving their answer options, write and refactor substantial
+parts of the code, provide LaTeX syntax assistance, and improve the paper's
+grammar, clarity, and organization. We also used them to brainstorm and refine
+evaluation and analysis ideas. The team proposed ideas independently, decided
+which ideas were worth pursuing, and made all final methodological and
+interpretive decisions. We reviewed AI suggestions, inspected and tested
+generated code, and verified the reported results against the saved evaluation
+artifacts. This assistance accelerated implementation and revision, but we
+treated its outputs as drafts requiring manual verification.
 
-Separately, \texttt{google/gemma-4-12B-it} was a component of the experimental
-pipeline: EMBER used it as a semantic judge to classify candidate factors from
-their activating tokens and contexts. Its judgments determined which factors
-were eligible for the embedding edit; it did not evaluate the resulting
-models or determine the reported test results.
+\texttt{google/gemma-4-12B-it} was part of the experimental pipeline rather
+than a writing assistant. EMBER used it as a semantic judge to identify
+candidate factors associated with each target concept. Its judgments affected
+which factors were eligible for editing, but it did not evaluate the resulting
+models or calculate the reported results.

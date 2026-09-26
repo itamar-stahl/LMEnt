@@ -5,8 +5,10 @@
 
 All experiments used OLMo-2 1B models trained for two epochs on LMEnt. The
 full model and three concept-excluded twins used the same initialization,
-batch order, optimizer, and learning-rate schedule; only the loss mask over
-the concept-associated chunks differed. Table~\ref{tab:model-identifiers}
+batch order, optimizer, and learning-rate schedule; the intended intervention
+was the loss mask over concept-associated chunks. Accelerator histories were
+not identical for every pair, as discussed in Section~\ref{sec:limitations}.
+Table~\ref{tab:model-identifiers}
 records the exact model identifiers. The corresponding entity lists are
 stored in \path{Untaught/blacklists/ancient_rome_core.json},
 \path{Untaught/blacklists/baseball_core_teams.json}, and
@@ -59,7 +61,7 @@ trained or modified during selection.
   \label{tab:selection-grid-size}
 \end{table}
 
-Selection used 50 target questions, 50 neighboring-topic questions, and the
+Selection used 50 target questions, 50 neighboring questions, and the
 same 50 SciQ questions for every concept. For each question, we scored all
 four options with the character-normalized likelihood ranking defined in
 Section~\ref{sec:evaluation}. We then calculated the normalized retention,
@@ -149,10 +151,11 @@ twins were used to revise the selected configurations.
 The selection scorer used deterministic teacher-forced log probabilities in
 FP32; no sampling or generation was involved. The frozen selection artifacts
 record the scorer as \path{ember_eval/acc_selection/score_mc.py} and the
-selection run revision as \texttt{92a39d3}. The final accuracy, NLL, and KL
-tables can be regenerated from the frozen manifests with
-\path{ember_eval/acc_selection/finalize_tables.py} and the scripts under
-\path{ember_eval/nll_kl/}.
+selection run revision as \texttt{92a39d3}. Standalone accuracy tables can be
+regenerated with \path{ember_eval/acc_selection/finalize_tables.py}.
+Standalone NLL and KL results are under
+\path{ember_eval/nll_kl/tables_accwinners/}; ensemble results and their
+manifests are under \path{ember_eval/ensembles/results/}.
 
 \section{Evaluation Data Details}
 \label{app:data}
@@ -294,10 +297,11 @@ included in these tables.
   \caption{Complete held-out results for Ancient Rome. Each question group
   contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
   options; NLL and KL are evaluated along the correct continuation. Bold
-  marks the best erasure condition in each column and question group. For
-  target $\Delta\mathrm{NLL}_{M-F}$, higher is better; for preservation-group
-  differences and all twin differences, closest to zero is better; lower KL
-  is better.}
+  identifies the strongest target suppression or preservation, the smallest
+  absolute twin difference, and the lowest KL among erasure conditions. A
+  larger target $\Delta\mathrm{NLL}_{M-F}$ indicates a greater reduction in
+  correct-answer support; for preservation-group differences and all twin
+  differences, values closer to zero indicate greater similarity.}
   \label{tab:appendix-rome-results}
 \end{table}
 
@@ -369,8 +373,8 @@ included in these tables.
   \caption{Complete held-out results for Baseball. Each question group
   contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
   options; NLL and KL are evaluated along the correct continuation. Bold
-  marks the best erasure condition in each column and question group, using
-  the directions defined in Table~\ref{tab:appendix-rome-results}.}
+  follows the comparison directions defined in
+  Table~\ref{tab:appendix-rome-results}.}
   \label{tab:appendix-baseball-results}
 \end{table}
 
@@ -442,8 +446,8 @@ included in these tables.
   \caption{Complete held-out results for Artificial Intelligence. Each question group
   contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
   options; NLL and KL are evaluated along the correct continuation. Bold
-  marks the best erasure condition in each column and question group, using
-  the directions defined in Table~\ref{tab:appendix-rome-results}.}
+  follows the comparison directions defined in
+  Table~\ref{tab:appendix-rome-results}.}
   \label{tab:appendix-ai-results}
 \end{table}
 
@@ -451,6 +455,77 @@ included in these tables.
 
 \section{Additional Diagnostic Analysis}
 \label{app:diagnostics}
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{llrrr}
+    \toprule
+    Concept & Method & $H_{\mathrm{test}}\uparrow$ & $R_{\mathrm{NLL}}\downarrow$ & $R_{\mathrm{KL}}\downarrow$ \\
+    \midrule
+    Rome & EMBER & 0.208 & 1.365 & 2.264 \\
+         & RMU   & \textbf{0.486} & \textbf{0.298} & 1.197 \\
+         & SNMF  & 0.000 & 0.893 & \textbf{0.891} \\
+         & RMU+E & 0.000 & 1.088 & 1.982 \\
+         & SNMF+E & 0.000 & 1.327 & 2.181 \\
+    \midrule
+    Baseball & EMBER & \textbf{0.639} & 2.435 & 2.082 \\
+             & RMU   & 0.239 & \textbf{0.655} & 1.570 \\
+             & SNMF  & 0.129 & 0.910 & \textbf{0.962} \\
+             & RMU+E & 0.465 & 2.131 & 2.015 \\
+             & SNMF+E & 0.563 & 2.448 & 2.108 \\
+    \midrule
+    AI & EMBER & 0.753 & 2.731 & 3.312 \\
+       & RMU   & 0.483 & \textbf{0.022} & 1.627 \\
+       & SNMF  & 0.129 & 0.864 & \textbf{0.992} \\
+       & RMU+E & \textbf{0.829} & 2.807 & 3.420 \\
+       & SNMF+E & 0.816 & 2.750 & 3.354 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Comparison of the efficacy--preservation score with normalized
+  target discrepancy from the twin. Ratios below one indicate greater
+  similarity to the twin than the full model under that measurement. E
+  abbreviates EMBER in ensemble names. Bold marks the highest score or lowest
+  discrepancy in each concept and column.}
+  \label{tab:metric-agreement}
+\end{table}
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{llcc}
+    \toprule
+    Concept & Method & $R_{\mathrm{abs}}$ [95\% CI] $\downarrow$
+      & $P_{\mathrm{closer}}$ [95\% CI] $\uparrow$ \\
+    \midrule
+    Ancient Rome & EMBER & 1.613 [1.151, 2.244] & 0.40 [0.26, 0.54] \\
+                 & RMU   & \textbf{0.660 [0.513, 0.827]} & \textbf{0.64 [0.50, 0.76]} \\
+                 & SNMF  & 0.940 [0.891, 0.986] & \textbf{0.64 [0.50, 0.76]} \\
+                 & RMU+E & 1.384 [1.015, 1.873] & 0.44 [0.30, 0.58] \\
+                 & SNMF+E & 1.558 [1.128, 2.143] & 0.42 [0.28, 0.56] \\
+    \midrule
+    Baseball     & EMBER & 2.128 [1.542, 2.978] & 0.26 [0.14, 0.38] \\
+                 & RMU   & 1.227 [0.877, 1.680] & 0.46 [0.32, 0.60] \\
+                 & SNMF  & \textbf{0.967 [0.888, 1.060]} & \textbf{0.66 [0.54, 0.78]} \\
+                 & RMU+E & 2.079 [1.510, 2.903] & 0.34 [0.22, 0.48] \\
+                 & SNMF+E & 2.241 [1.658, 3.101] & 0.28 [0.16, 0.40] \\
+    \midrule
+    AI           & EMBER & 2.112 [1.402, 3.167] & 0.38 [0.24, 0.52] \\
+                 & RMU   & 1.006 [0.754, 1.344] & 0.54 [0.40, 0.68] \\
+                 & SNMF  & \textbf{0.927 [0.876, 0.976]} & \textbf{0.64 [0.50, 0.76]} \\
+                 & RMU+E & 2.196 [1.484, 3.251] & 0.34 [0.22, 0.48] \\
+                 & SNMF+E & 2.152 [1.420, 3.239] & 0.40 [0.26, 0.54] \\
+    \bottomrule
+  \end{tabular}
+  \caption{Question-level target NLL proximity to the concept-excluded twin.
+  $R_{\mathrm{abs}}$ compares each method's mean absolute paired difference
+  from the twin with the full model's; values below one indicate improvement.
+  $P_{\mathrm{closer}}$ is the fraction of questions on which the method is
+  closer than the full model. Intervals are paired-bootstrap percentile 95\%
+  CIs over 50 questions (10,000 resamples, seed 0). Bold marks the best
+  erasure condition in each concept and column.}
+  \label{tab:question-level-similarity}
+\end{table}
 
 We used a post-hoc NLL contrast to summarize whether a method changed target
 answers more than the two preservation groups. For method $M$ and concept
@@ -466,7 +541,7 @@ S_{\mathrm{NLL}}(M,c)
 A positive value indicates that support for correct target answers decreased
 more than support for correct answers in the preservation groups. We also
 report the two component contrasts so that the average does not conceal a
-large change on either control group. Because the three test sets are
+large change on either preservation group. Because the three test sets are
 disjoint, we estimated the standard error from their across-question sample
 standard deviations,
 \begin{equation}

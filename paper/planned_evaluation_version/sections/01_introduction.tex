@@ -1,54 +1,38 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Post-training unlearning aims to suppress targeted knowledge or the influence
-of selected training data while preserving the model's behavior elsewhere
-\citep{yao2024machineunlearning,li2024wmdp}. Evaluations often compare an
-edited model with the original trained model, asking whether target performance
-falls while other capabilities remain intact. However, this comparison does
-not show whether the edited model resembles a matched model trained with direct
-learning signal from the target concept excluded.
-We therefore ask whether post-training erasure can reproduce the behavior of
-a matched model trained without loss on concept-associated chunks while preserving
-behavior on neighboring and unrelated questions.
+Post-training unlearning aims to suppress targeted knowledge or training-data
+influence while preserving behavior elsewhere
+\citep{yao2024machineunlearning,li2024wmdp}. Comparisons with the original
+model measure suppression and preservation, but do not show whether an edited
+model resembles one trained without the target learning signal. We ask whether
+post-training erasure can reproduce the behavior of a matched model trained
+without loss on concept-associated chunks while preserving neighboring and
+general-science behavior.
 
-We use LMEnt's entity-annotated corpus to construct a matched
-reference for each of three concepts: Ancient Rome, Baseball, and
-artificial intelligence \citep{gottesman2025lment}. Alongside a
-model trained on the full corpus, we train a concept-excluded twin
-with the same initialization and training procedure, masking the
-loss on chunks linked to the target concept. We then apply EMBER,
-RMU, and an SNMF-based MLP erasure to copies of the full model and evaluate
-RMU+EMBER and SNMF+EMBER ensembles
-\citep{suslik2026ember,li2024wmdp,shafran2026snmf}. This design
-lets us compare each edit with both the model it changed and the
-matched exclusion reference.
+Using LMEnt's entity-annotated corpus, we construct matched references for
+Ancient Rome, Baseball, and artificial intelligence
+\citep{gottesman2025lment}. Alongside a full-corpus model, we train one
+concept-excluded twin per concept with the same initialization and training
+procedure, masking loss on linked chunks. We apply EMBER, RMU, and an
+SNMF-based MLP erasure to copies of the full model and also evaluate RMU+EMBER
+and SNMF+EMBER ensembles
+\citep{suslik2026ember,li2024wmdp,shafran2026snmf}. Each edit is compared with
+both the full model and its matched twin.
 
-We evaluate the models on target and neighboring-topic questions together
-with a shared general-science set from SciQ. We select erasure checkpoints
-with a harmonic score that balances likelihood-ranked target accuracy against
-neighboring and SciQ preservation. Correct-answer negative log-likelihood
-measures changes in support for the supplied answer, while
-teacher-forced full-vocabulary KL measures how closely the models'
-next-token distributions agree along that answer. Together, these
-measurements ask whether an erasure approaches the twin on the
-target concept and how it affects predictions on other topics. Our agreed
-scope covers behavioral and distributional comparisons of the frozen
-checkpoints; robustness to relearning or other recovery attacks is left for
-future work.
+We evaluate target and neighboring questions with a shared SciQ
+general-science set. A harmonic score selects checkpoints by balancing
+likelihood-ranked target accuracy against neighboring and SciQ preservation.
+Correct-answer NLL measures support for the supplied answer, while
+teacher-forced full-vocabulary KL compares next-token distributions along it.
 
-Our results show that no method is uniformly best. RMU most closely matches
-the twins' signed mean target-answer NLL, but absolute question-level
-differences show that this apparent match is reliable only for Rome. SNMF
-changes the full model least and produces the lowest target KL, although its
-improvement over the full model is small and it produces little target erasure.
-EMBER causes the strongest target-specific NLL changes
-among the standalone methods and obtains the highest combined
-efficacy--preservation score for Baseball. RMU obtains the highest score for
-Rome and RMU+EMBER for AI. However, the strong target suppression of EMBER
-and both ensembles often carries them beyond the twin rather than toward it.
-More generally, the method with the highest efficacy--preservation score is
-closest in mean target NLL for only one concept and never has the lowest
-target KL. Effective target suppression with preserved neighboring and SciQ
-accuracy therefore does not, in these experiments, imply that an erased model
-reproduces the behavior of its matched concept-excluded twin.
+No method is uniformly best. RMU most closely matches the twins' signed mean
+target NLL, but question-level differences support this match only for Rome.
+SNMF changes the full model least and has the lowest target KL, but produces
+little target erasure. EMBER has the largest target-specific NLL changes among
+standalone methods and the highest efficacy--preservation score for Baseball;
+RMU leads for Rome. The selected RMU+EMBER condition leads for AI, although
+its RMU component fails the activity check. Across concepts, the highest-scoring
+method is closest in mean target NLL only once and never has the lowest target
+KL. Target suppression with preserved neighboring and SciQ accuracy therefore
+does not imply similarity to a matched concept-excluded twin in these experiments.

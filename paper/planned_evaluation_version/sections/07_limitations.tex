@@ -1,58 +1,40 @@
 \section{Limitations}
 \label{sec:limitations}
 
-Limited computational resources restricted the study to one model
-family and size, one training corpus, and one seed per condition.
-We also evaluated three concepts chosen purposively, partly using
-the full model's performance on selection questions. The observed
-patterns may therefore vary across training runs, concepts, model
-sizes, or corpora.
+Limited compute restricted the study to one model family and size, one corpus,
+one seed per condition, and three purposively chosen concepts. The full
+model's accuracy on selection questions informed concept choice, although the
+test questions and erasure results did not. These design choices limit
+generalization across runs, models, corpora, and concepts.
 
-Robustness to relearning and other knowledge-recovery attacks was outside the
-agreed scope of this study and was not evaluated. Our conclusions therefore
-describe the frozen checkpoints. A useful extension would expose each erased
-model and its matched twin to the same target-concept text and compare the rate
-at which their target behavior returns.
+The training configurations were matched, but accelerator histories were not
+identical for every pair. The Rome full model and twin both used an H200; the
+Baseball and AI twins completed part of training on other accelerators.
+Separate diagnostics found small cross-GPU drift and no changed evaluated
+answers, but cannot rule out a hardware contribution to numerical differences.
 
-The configured training procedure was matched, but accelerator hardware was
-not identical throughout every pair: the Rome control and twin both used an
-H200, whereas the Baseball and AI twins completed part of training on other
-accelerator types. Project checks found no resulting evaluation changes, but
-this hardware asymmetry weakens claims that the loss mask was the only
-possible source of numerical differences in those two pairs.
+The concept-excluded twins are approximate references. The selected QIDs may
+miss indirect descriptions and may also include text about adjacent topics.
+The loss mask therefore does not remove every possible source of target
+knowledge and may affect related knowledge.
 
-The concept-excluded twins are approximate references. Our selected
-QIDs may miss passages about a concept that use other entities or
-indirect descriptions. Conversely, a QID set may mask loss on some text
-about adjacent topics. The twins therefore do not establish that the mask
-eliminated every source of learning signal about the target concept.
+The evaluation uses one supplied correct continuation and three distractors
+per question. It does not measure generated answers, and likelihood-ranked
+accuracy depends on the supplied alternatives. Teacher-forced KL covers the
+full next-token distribution along the correct continuation, but does not
+follow predictions after an alternative token. SciQ measures one aspect of
+general preservation. Each group contains only 50 questions, so accuracy
+changes in steps of 0.02 and the reported uncertainty does not include
+variation across training seeds.
 
-Our evaluation measures support for one supplied correct continuation
-per question. It does not measure which answer a model would generate,
-and other valid wordings may receive different probabilities.
-Likelihood-ranked accuracy is also sensitive to the supplied distractors
-and changes in discrete steps because each split contains only 50 questions.
-For Rome and Baseball, no SNMF candidate reduced target selection accuracy;
-their harmonic scores were therefore zero, and the reported configuration
-was fixed by the declared tie-breaking rule rather than a measured efficacy
-difference.
-The rule-selected RMU+EMBER checkpoints also expose a limitation of the
-selection objective. All three failed the predeclared RMU activity check:
-their final cosine alignment with RMU's control direction remained below
-0.30. Since EMBER had already supplied target efficacy, the harmonic score
-favored RMU configurations that changed the EMBER model only weakly. Their
-results therefore characterize the declared ensemble-selection procedure,
-but do not isolate the effect of a substantial RMU intervention.
-Full-vocabulary KL captures alternative next-token probabilities
-along the correct continuation, but does not follow the model after
-an alternative token is chosen. These measures support conclusions
-about the tested continuations rather than general claims about all
-model behavior.
+Checkpoint selection also has two specific limitations. No Rome or Baseball
+SNMF candidate reduced target selection accuracy, so tie-breaking rather than
+measured efficacy selected those checkpoints. All selected RMU+EMBER
+checkpoints failed the RMU activity check, indicating that the score favored
+weak RMU updates after EMBER had already reduced target accuracy. Finally,
+selection optimized likelihood-ranked accuracy rather than distance from the
+twin, so selected checkpoints need not minimize NLL or KL.
 
-Finally, checkpoint selection used likelihood-ranked accuracy and a harmonic
-efficacy--preservation score, so the selected checkpoints need not minimize
-NLL or KL distance from the twin. SciQ provides one general-science
-preservation measure, not a comprehensive capability evaluation. Each test
-group contained 50 questions; the reported means and standard deviations describe
-variation on those questions and do not establish that two models
-behave equivalently on unseen questions.
+We did not test relearning or other knowledge-recovery attacks. Our conclusions
+describe the frozen checkpoints; comparing how quickly erased models and
+twins recover target behavior is a useful extension.

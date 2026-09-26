@@ -3,8 +3,8 @@
 
 \subsection{Question Groups and Answer Formats}
 
-For each concept, we evaluated target questions, neighboring-topic
-questions, and a topic-independent general-capability group from SciQ
+For each concept, we evaluated target questions, neighboring
+questions, and a shared general-science group from SciQ
 \citep{welbl2017sciq}. The target group measures change on the concept to
 be erased, the neighboring group measures preservation at close topical
 proximity, and SciQ measures preservation on general science questions.
@@ -14,14 +14,12 @@ and neighboring questions followed EMBER's existing splits
 split with a fixed seed and divided them equally between selection and test;
 the same SciQ items were used for all three concepts.
 
-In preliminary experiments across multiple concepts and questions, even the
-full model often failed to generate a gradeable option or answer label. These
-1B pretrained base models lack instruction tuning, so generated-answer
-multiple choice tests instruction following and answer-to-label binding
-alongside concept knowledge. OLMES likewise finds that smaller base models can
-remain near chance under a multiple-choice formulation while completion gives
-a useful knowledge signal; OLMo~2 adopts this framework
-\citep{gu2025olmes,walsh2025olmo2}.
+In preliminary experiments across several concepts, even the full model did
+not reliably generate a gradeable option or answer label. Because these 1B
+base models lack instruction tuning, generated-answer multiple choice also
+tests instruction following and answer-to-label binding. OLMES similarly
+recommends a completion formulation for smaller base models, and OLMo~2 uses
+the OLMES evaluation framework \citep{gu2025olmes,walsh2025olmo2}.
 
 We therefore used Claude in a dedicated session to rewrite the target and
 neighboring questions as declarative sentence stems while retaining all four
@@ -29,7 +27,7 @@ candidates. For example, ``Which river is associated with the founding of
 Rome?'' became ``The river associated with the founding of Rome is'', with
 ``The Tiber River'' as the correct continuation. Ranking candidates by
 continuation likelihood better matches the models' next-token objective.
-However, the alternatives are not presented together, so this metric does not
+The alternatives are not presented together, so this metric does not
 test conventional multiple-choice behavior or explicit comparison; candidate
 prior probability, fluency, and grammatical fit can also affect scores. Character
 normalization reduces length bias but not all such effects. SciQ items retained

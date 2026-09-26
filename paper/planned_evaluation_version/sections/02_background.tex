@@ -20,8 +20,8 @@ comparison \citep{yao2024machineunlearning}. Controlled pretraining studies
 have instead compared models whose corpora differ through targeted data
 insertion or filtering \citep{wei2025hubble,obrien2025deepignorance}; the
 latter also shows that pretraining-time filtering can differ from
-post-training safeguards in resistance to subsequent recovery. Our setting
-makes a matched comparison feasible at the 1B-parameter scale. We use LMEnt's
+post-training safeguards in resistance to subsequent recovery. At the
+1B-parameter scale, we can train matched models for this comparison. We use LMEnt's
 entity index to define concept-level loss exclusion while holding the
 initialization, data order, and training configuration fixed, and compare the
 resulting twin with post-training erasure in both answer behavior and
@@ -56,8 +56,8 @@ with a matched model trained without loss on concept-associated data. It
 evaluated EMBER alongside RMU and an MLP weight-erasure adaptation of
 SNMF-derived features, and combined EMBER with each MLP method by fixing the
 embedding edit before tuning the MLP-stage configuration
-\citep{li2024wmdp,shafran2026snmf}. RMU's original
-evaluation similarly measured suppression on WMDP alongside retention on
-MMLU and MT-Bench relative to the original model \citep{li2024wmdp}. Our
-study adds a matched concept-excluded twin and compares edits with it using
+\citep{li2024wmdp,shafran2026snmf}. RMU's original evaluation measured
+suppression on WMDP alongside retention on MMLU and MT-Bench relative to the
+original model \citep{li2024wmdp}. Our evaluation instead uses a matched
+concept-excluded twin and compares edits with it using
 correct-answer NLL and full-vocabulary KL on the same sentence completions.
