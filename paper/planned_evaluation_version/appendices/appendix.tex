@@ -192,11 +192,11 @@ FP32; no sampling or generation was involved.
 
 Table~\ref{tab:evaluation-data} summarizes the frozen evaluation groups. The
 target and neighboring sets use EMBER's original validation/test division. We
-rewrote their contexts as declarative sentence stems while retaining the
-original correct answer and three distractors. SciQ questions retained their
-original question text and four options. We drew the shared SciQ set from its
-validation split with seed \texttt{20260923}; the first 50 retained items form
-the selection set and the next 50 form the test set.
+rewrote every target, neighboring, and SciQ context as a declarative sentence
+stem while retaining the original correct answer and three distractors. We
+drew the shared SciQ set from its validation split with seed
+\texttt{20260923}; the first 50 retained items form the selection set and the
+next 50 form the test set.
 
 \begin{center}
   \centering
@@ -207,7 +207,7 @@ the selection set and the next 50 form the test set.
     \midrule
     Target & EMBER, declarative stem & 50 & 50 \\
     Neighboring & EMBER, declarative stem & 50 & 50 \\
-    SciQ & Validation, original question & 50 & 50 \\
+    SciQ & Validation, declarative stem & 50 & 50 \\
     \bottomrule
   \end{tabular}
   \captionof{table}{Evaluation-set construction for each concept. The same SciQ items
@@ -483,6 +483,11 @@ included in these tables.
 \section{Additional Diagnostic Analysis}
 \label{app:diagnostics}
 
+The main text treats $H_{\mathrm{test}}$, $R_{\mathrm{abs}}$, and
+$R_{\mathrm{KL}}$ as primary. This appendix reports the complementary
+$R_{\mathrm{NLL}}$ and $P_{\mathrm{closer}}$ diagnostics, their relationship
+to the primary metrics, and the post-hoc NLL selectivity contrast.
+
 \begin{table}[h]
   \centering
   \small
@@ -509,11 +514,11 @@ included in these tables.
        & SNMF+E & 0.816 & 2.750 & 3.354 \\
     \bottomrule
   \end{tabular}
-  \caption{Comparison of the efficacy--preservation score with normalized
-  target discrepancy from the twin. Ratios below one indicate greater
-  similarity to the twin than the full model under that measurement. E
-  abbreviates EMBER in ensemble names. Bold marks the highest score or lowest
-  discrepancy in each concept and column.}
+  \caption{Signed-mean NLL diagnostic alongside the primary
+  $H_{\mathrm{test}}$ and $R_{\mathrm{KL}}$ metrics. $R_{\mathrm{NLL}}<1$
+  indicates greater signed-mean similarity to the twin than the full model,
+  but opposing question-level differences can cancel. E abbreviates EMBER;
+  bold marks the best erasure condition in each concept and column.}
   \label{tab:metric-agreement}
 \end{table}
 
@@ -553,6 +558,16 @@ included in these tables.
   erasure condition in each concept and column.}
   \label{tab:question-level-similarity}
 \end{table}
+
+$R_{\mathrm{NLL}}$ favored RMU for all three concepts, including a value of
+0.022 for AI. The absolute-distance analysis qualifies this result: RMU's
+$R_{\mathrm{abs}}$ confidence intervals included one for Baseball and AI, so
+its close signed means there resulted partly from cancellation across
+questions. $P_{\mathrm{closer}}$ favored SNMF for Baseball and AI and tied RMU
+and SNMF for Rome. SNMF was closer than the full model on 64--66\% of target
+questions, but the raw results in Appendix~\ref{app:full-results} show that it
+also produced little target suppression. EMBER and both ensembles produced
+larger raw target NLL increases but generally overshot the twin.
 
 We used a post-hoc NLL contrast to summarize whether a method changed target
 answers more than the two preservation groups. For method $M$ and concept

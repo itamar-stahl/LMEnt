@@ -3,14 +3,13 @@ preserving other behavior, but comparison with the original model does not
 show whether erasure resembles training without the concept. We evaluate five
 conditions based on EMBER, RMU, and SNMF for Ancient Rome, Baseball, and
 artificial intelligence against both a full model and matched concept-excluded
-twins. Using likelihood-ranked accuracy, correct-answer NLL, and
-teacher-forced full-vocabulary KL on target, neighboring, and SciQ questions,
-we find no uniformly best method. RMU is closest to the twins in signed mean
-target NLL, but mean absolute per-question NLL distance shows it is clearly
-closer than the full model only for Rome. SNMF changes the full model least and has the
-lowest target KL, but weakly suppresses target knowledge. EMBER produces the
-largest target-specific NLL changes among standalone methods.
-Efficacy--preservation winners vary across concepts and usually remain far
-from their twins. Thus, effective target suppression with preserved
+twins. Our primary metrics measure efficacy--preservation, absolute
+question-level NLL proximity to the twin, and full-distribution KL proximity.
+We find no uniformly best method. RMU is closest under absolute NLL proximity
+for Rome, while SNMF is closest for Baseball and AI and has the lowest
+normalized KL for all three concepts, but weakly suppresses target knowledge.
+EMBER produces the largest target-specific NLL changes among standalone
+methods. Efficacy--preservation winners vary across concepts and usually
+remain far from their twins. Thus, effective target suppression with preserved
 neighboring and general-science performance does not necessarily reproduce
 concept-excluded training.

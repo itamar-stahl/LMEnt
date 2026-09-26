@@ -19,7 +19,7 @@ We selected Ancient Rome, Baseball, and artificial intelligence (AI) by
 hand before training the erasure models. Preliminary accuracy of the full
 model on target selection questions helped us avoid concepts with little
 measurable knowledge. We also sought concepts of manageable breadth and
-variation across domains. Because this was a purposive choice, our findings
+variation across domains because of that our findings
 may not generalize to every concept.
 
 For each concept, we used Claude in a dedicated session to propose
@@ -77,7 +77,7 @@ neighboring questions, and a shared general-capability set drawn from
 SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
 
-We initially considered a selection-only NLL score, but for EMBER it increased
+We initially considered a different selection method based on NLL score, but for EMBER it increased
 monotonically with edit strength and selected the edge of the search grid.
 We therefore selected the candidate with the largest accuracy-based
 $H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed

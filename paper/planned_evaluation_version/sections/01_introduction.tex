@@ -21,19 +21,26 @@ and SNMF+EMBER ensembles
 both the full model and its matched twin.
 
 We evaluate target and neighboring questions with a shared SciQ
-general-science set. A harmonic score selects checkpoints by balancing
-likelihood-ranked target accuracy against neighboring and SciQ preservation.
-Correct-answer NLL measures support for the supplied answer, while
-teacher-forced full-vocabulary KL compares next-token distributions along it.
+general-science set. Our primary metrics are a harmonic efficacy--preservation
+score, normalized absolute question-level NLL distance from the twin, and
+normalized teacher-forced full-vocabulary KL from the twin. Signed mean NLL
+proximity and the frequency of question-level improvement provide
+complementary diagnostics.
 
-No method is uniformly best. RMU most closely matches the twins' signed mean
-target NLL. Under mean absolute per-question NLL distance, however, RMU is
-clearly closer than the full model only for Rome.
-SNMF changes the full model least and has the lowest target KL, but produces
-little target erasure. EMBER has the largest target-specific NLL changes among
-standalone methods and the highest efficacy--preservation score for Baseball;
-RMU leads for Rome. The selected RMU+EMBER condition leads for AI, although
-its RMU component fails the activity check. Across concepts, the highest-scoring
-method is closest in mean target NLL only once and never has the lowest target
-KL. Target suppression with preserved neighboring and SciQ accuracy therefore
-does not imply similarity to a matched concept-excluded twin in these experiments.
+No method is uniformly best. RMU has the lowest absolute NLL distance for
+Rome; SNMF has the lowest distance for Baseball and AI and the lowest
+normalized KL throughout, but produces little target erasure. EMBER has the
+largest target-specific NLL changes among standalone methods and the highest
+efficacy--preservation score for Baseball; RMU leads for Rome. The selected
+RMU+EMBER condition leads for AI, although its RMU component fails the
+activity check. The highest-scoring method is closest under absolute NLL only
+once and never has the lowest normalized KL. Target suppression with preserved
+neighboring and SciQ accuracy therefore does not imply similarity to a matched
+concept-excluded twin in these experiments.
+
+Our contributions are threefold: we construct matched concept-excluded
+references for evaluating post-training erasure; compare five erasure
+conditions using separate efficacy, question-level similarity, and
+distributional-similarity criteria; and show that strong target suppression
+does not generally imply behavioral similarity to training without the
+target-associated data.
