@@ -34,22 +34,24 @@ condition, as discussed in Section~\ref{sec:limitations}.
 \subsection{Candidate Grid and Selection Procedure}
 
 We selected checkpoints separately for each combination of concept and
-erasure method. The candidate grid contained 64 previously trained models,
+erasure method. The reported candidate grid contained 97 previously trained models,
 distributed as shown in Table~\ref{tab:selection-grid-size}. No candidate was
 trained or modified during selection.
 
 \begin{table}[h]
   \centering
   \small
-  \begin{tabular}{lrrr}
+  \begin{tabular}{lrrrr}
     \toprule
-    Concept & EMBER & RMU & SNMF \\
+    Method & Rome & Baseball & AI & Total \\
     \midrule
-    Ancient Rome & 12 & 8 & 4 \\
-    Baseball & 9 & 8 & 3 \\
-    AI & 9 & 8 & 3 \\
+    EMBER & 12 & 9 & 9 & 30 \\
+    RMU & 8 & 8 & 8 & 24 \\
+    SNMF & 4 & 3 & 3 & 10 \\
+    RMU+EMBER & 8 & 8 & 8 & 24 \\
+    SNMF+EMBER & 3 & 3 & 3 & 9 \\
     \midrule
-    Total & 30 & 24 & 10 \\
+    Total & 35 & 31 & 31 & 97 \\
     \bottomrule
   \end{tabular}
   \caption{Number of candidate checkpoints evaluated for each method and
@@ -74,11 +76,17 @@ for SNMF. The tie-breaking rule was fixed without consulting the twins or any
 test result. Table~\ref{tab:selected-checkpoints} records the resulting
 configurations.
 
+For each ensemble, the independently selected EMBER winner was fixed first,
+after which the RMU or SNMF grid was applied to that edited checkpoint. SNMF
+features were re-derived from the EMBER-edited model. Ensemble selection used
+the same score and tie-breaking order as the corresponding standalone method.
+
 \subsection{Selected Checkpoints}
 
 \begin{center}
   \centering
   \scriptsize
+  \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lll}
     \toprule
     Concept & Method & Checkpoint identifier \\
@@ -86,25 +94,34 @@ configurations.
     Rome & EMBER & \texttt{ember\_rome\_d200} \\
          & RMU   & \texttt{rmu\_rome\_L6hi\_a10} \\
          & SNMF  & \texttt{snmf\_rome\_ratio\_out}$^{\dagger}$ \\
+         & RMU+EMBER & \texttt{rmuember\_rome\_L5mid\_a100}$^{\ddagger}$ \\
+         & SNMF+EMBER & \texttt{snmfv2\_rome\_ratio\_in} \\
     Baseball & EMBER & \texttt{ember\_baseball\_d10} \\
              & RMU   & \texttt{rmu\_baseball\_L6hi\_a10} \\
              & SNMF  & \texttt{snmf\_baseball\_ratio\_both}$^{\dagger}$ \\
+             & RMU+EMBER & \texttt{rmuember\_baseball\_L5mid\_a100}$^{\ddagger}$ \\
+             & SNMF+EMBER & \texttt{snmfv2\_baseball\_ratio\_both} \\
     AI & EMBER & \texttt{ember\_ai\_d500} \\
        & RMU   & \texttt{rmu\_ai\_L6hi\_a10} \\
        & SNMF  & \texttt{snmf\_ai\_ratio\_in} \\
+       & RMU+EMBER & \texttt{rmuember\_ai\_L5mid\_a10}$^{\ddagger}$ \\
+       & SNMF+EMBER & \texttt{snmfv2\_ai\_ratio\_in} \\
     \bottomrule
-  \end{tabular}
+  \end{tabular}%
+  }
   \captionof{table}{Checkpoint identifiers selected using $H_{\mathrm{selection}}$.
-  Every RMU winner edits the high band at layer 6 with $\alpha=10$; the SNMF
-  suffix records the selection rule and edited side.
+  The suffixes record the RMU layer, band, and retain weight or the SNMF
+  selection rule and edited side.
   $^{\dagger}$All SNMF candidates for this concept had zero efficacy and hence
   $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
-  the fixed tie-breaking order rather than a measured efficacy difference.}
+  the fixed tie-breaking order rather than a measured efficacy difference.
+  $^{\ddagger}$The selected RMU+EMBER checkpoint failed the RMU activity
+  check; see Section~\ref{sec:limitations}.}
   \label{tab:selected-checkpoints}
 \end{center}
 
 The concept-excluded twins and the held-out target, neighboring, and SciQ
-questions were not loaded or inspected during selection. After the nine
+questions were not loaded or inspected during selection. After the 15
 configurations were frozen, we evaluated them on the test splits and computed
 $H_{\mathrm{test}}$ with the same formula. We also computed
 $H_{\mathrm{test}}$ for the twin, using the full model as the normalization
@@ -177,7 +194,7 @@ implement the equations in Sections~\ref{sec:experimental-design} and
 This appendix reports the complete held-out results separately for each
 concept. In each table, Panel~A gives likelihood-ranked option accuracy on the
 target, neighboring, and shared SciQ test sets. The harmonic score is reported
-for the twin and the three erasure methods. It is always normalized against the
+for the twin and five erasure conditions. It is always normalized against the
 full model; the twin's value therefore provides the reference outcome of
 concept exclusion. The full model has zero target efficacy and hence
 $H_{\mathrm{test}}=0$ by construction. Panel~B reports the mean and standard deviation
@@ -209,6 +226,8 @@ included in these tables.
     EMBER & 0.40 & 0.56 & 0.52 & 0.208 \\
     RMU   & 0.36 & 0.50 & 0.52 & 0.486 \\
     SNMF  & 0.48 & 0.62 & 0.52 & 0.000 \\
+    RMU+EMBER & 0.42 & 0.58 & 0.52 & 0.000 \\
+    SNMF+EMBER & 0.46 & 0.60 & 0.52 & 0.000 \\
     \bottomrule
   \end{tabular}
 
@@ -234,6 +253,12 @@ included in these tables.
     SNMF  & Target      & $+0.108 \pm 0.191$ & $-0.907 \pm 0.994$ & $0.851 \pm 0.639$ \\
           & Neighboring & $+0.021 \pm 0.171$ & $-0.150 \pm 0.630$ & $0.251 \pm 0.163$ \\
           & SciQ        & $-0.066 \pm 0.128$ & $-0.112 \pm 1.098$ & $0.437 \pm 0.235$ \\
+    RMU+EMBER & Target      & $+2.120 \pm 1.745$ & $+1.105 \pm 1.678$ & $1.893 \pm 1.283$ \\
+          & Neighboring & $+0.840 \pm 1.430$ & $+0.669 \pm 1.378$ & $0.598 \pm 0.820$ \\
+          & SciQ        & $-0.001 \pm 0.083$ & $-0.047 \pm 1.061$ & $0.445 \pm 0.246$ \\
+    SNMF+EMBER & Target      & $+2.364 \pm 1.922$ & $+1.348 \pm 1.858$ & $2.083 \pm 1.408$ \\
+          & Neighboring & $+0.919 \pm 1.594$ & $+0.747 \pm 1.544$ & $0.701 \pm 1.095$ \\
+          & SciQ        & $+0.038 \pm 0.133$ & $-0.008 \pm 1.100$ & $0.447 \pm 0.250$ \\
     \bottomrule
   \end{tabular}
 
@@ -272,6 +297,8 @@ included in these tables.
     EMBER & 0.40 & 0.42 & 0.52 & 0.639 \\
     RMU   & 0.50 & 0.40 & 0.52 & 0.239 \\
     SNMF  & 0.52 & 0.44 & 0.52 & 0.129 \\
+    RMU+EMBER & 0.44 & 0.36 & 0.50 & 0.465 \\
+    SNMF+EMBER & 0.42 & 0.40 & 0.52 & 0.563 \\
     \bottomrule
   \end{tabular}
 
@@ -297,6 +324,12 @@ included in these tables.
     SNMF  & Target      & $+0.033 \pm 0.278$ & $-0.343 \pm 1.031$ & $0.680 \pm 0.466$ \\
           & Neighboring & $-0.094 \pm 0.339$ & $-0.186 \pm 0.912$ & $0.566 \pm 0.318$ \\
           & SciQ        & $-0.016 \pm 0.226$ & $+0.077 \pm 1.113$ & $0.456 \pm 0.203$ \\
+    RMU+EMBER & Target      & $+1.179 \pm 1.967$ & $+0.803 \pm 2.180$ & $1.425 \pm 1.169$ \\
+          & Neighboring & $+0.087 \pm 0.745$ & $-0.005 \pm 0.876$ & $0.785 \pm 0.712$ \\
+          & SciQ        & $+0.020 \pm 0.334$ & $+0.114 \pm 1.150$ & $0.498 \pm 0.218$ \\
+    SNMF+EMBER & Target      & $+1.299 \pm 1.960$ & $+0.922 \pm 2.246$ & $1.490 \pm 1.237$ \\
+          & Neighboring & $+0.070 \pm 0.762$ & $-0.023 \pm 0.871$ & $0.783 \pm 0.781$ \\
+          & SciQ        & $-0.044 \pm 0.169$ & $+0.050 \pm 1.107$ & $0.455 \pm 0.225$ \\
     \bottomrule
   \end{tabular}
 
@@ -335,6 +368,8 @@ included in these tables.
     EMBER & 0.36 & 0.48 & 0.52 & 0.753 \\
     RMU   & 0.44 & 0.44 & 0.48 & 0.483 \\
     SNMF  & 0.52 & 0.50 & 0.52 & 0.129 \\
+    RMU+EMBER & 0.32 & 0.46 & 0.52 & 0.829 \\
+    SNMF+EMBER & 0.34 & 0.54 & 0.52 & 0.816 \\
     \bottomrule
   \end{tabular}
 
@@ -360,6 +395,12 @@ included in these tables.
     SNMF  & Target      & $+0.081 \pm 0.182$ & $-0.514 \pm 1.132$ & $0.588 \pm 0.370$ \\
           & Neighboring & $-0.031 \pm 0.321$ & $+0.109 \pm 0.812$ & $0.365 \pm 0.187$ \\
           & SciQ        & $-0.049 \pm 0.359$ & $-0.194 \pm 1.044$ & $0.420 \pm 0.188$ \\
+    RMU+EMBER & Target      & $+2.267 \pm 2.620$ & $+1.671 \pm 2.453$ & $2.029 \pm 2.068$ \\
+          & Neighboring & $+0.139 \pm 0.996$ & $+0.278 \pm 1.366$ & $0.469 \pm 0.367$ \\
+          & SciQ        & $-0.256 \pm 0.703$ & $-0.401 \pm 1.247$ & $0.478 \pm 0.224$ \\
+    SNMF+EMBER & Target      & $+2.233 \pm 2.733$ & $+1.637 \pm 2.575$ & $1.989 \pm 2.104$ \\
+          & Neighboring & $+0.123 \pm 0.955$ & $+0.263 \pm 1.336$ & $0.470 \pm 0.372$ \\
+          & SciQ        & $+0.051 \pm 0.418$ & $-0.094 \pm 1.155$ & $0.466 \pm 0.211$ \\
     \bottomrule
   \end{tabular}
 
@@ -423,12 +464,18 @@ not capture variation across training seeds.
     Ancient Rome & EMBER & 1.468 & 2.395 & 1.932 $[1.343,\ 2.520]$ \\
                  & RMU   & $-0.306$ & 0.117 & $-0.094$ $[-0.442,\ 0.253]$ \\
                  & SNMF  & 0.087 & 0.174 & 0.131 $[0.070,\ 0.191]$ \\
+                 & RMU+EMBER & 1.280 & 2.121 & 1.701 $[1.178,\ 2.224]$ \\
+                 & SNMF+EMBER & 1.445 & 2.326 & 1.886 $[1.308,\ 2.463]$ \\
     Baseball     & EMBER & 1.194 & 1.289 & 1.242 $[0.700,\ 1.783]$ \\
                  & RMU   & 0.108 & 0.195 & 0.151 $[-0.239,\ 0.542]$ \\
                  & SNMF  & 0.127 & 0.049 & 0.088 $[-0.008,\ 0.184]$ \\
+                 & RMU+EMBER & 1.092 & 1.159 & 1.126 $[0.569,\ 1.682]$ \\
+                 & SNMF+EMBER & 1.229 & 1.343 & 1.286 $[0.732,\ 1.840]$ \\
     AI           & EMBER & 2.063 & 2.184 & 2.124 $[1.375,\ 2.872]$ \\
                  & RMU   & $-0.177$ & 0.199 & 0.011 $[-0.351,\ 0.373]$ \\
                  & SNMF  & 0.112 & 0.130 & 0.121 $[0.037,\ 0.205]$ \\
+                 & RMU+EMBER & 2.128 & 2.523 & 2.325 $[1.580,\ 3.071]$ \\
+                 & SNMF+EMBER & 2.109 & 2.182 & 2.145 $[1.374,\ 2.917]$ \\
     \bottomrule
   \end{tabular}
   \caption{Post-hoc target-specificity analysis on held-out questions. All

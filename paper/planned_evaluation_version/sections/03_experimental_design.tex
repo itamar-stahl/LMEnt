@@ -50,14 +50,19 @@ Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 \subsection{Post-Training Erasure and Checkpoint Selection}
 
 We applied EMBER, RMU, and an SNMF-based erasure independently to copies of
-the completed control model for each topic. EMBER edited selected input
+the completed control model for each topic. We also evaluated RMU+EMBER and
+SNMF+EMBER: for each ensemble, we fixed the selected EMBER checkpoint and
+then applied the MLP method to that edited model, following EMBER's staged
+ensemble design \citep{suslik2026ember}. For SNMF+EMBER, the SNMF features
+were re-derived from the EMBER-edited model. EMBER edited selected input
 embeddings, our RMU implementation updated MLP down-projection weights in
 selected layers, and the SNMF-based method
 removed concept-associated directions through MLP weight edits. Each topic
 received the same method-specific procedure and checkpoint-selection rule.
 
-We evaluated 64 existing candidate checkpoints: 30 for EMBER, 24 for RMU,
-and 10 for SNMF. We selected one checkpoint for each method and topic using
+We evaluated 97 reported candidate checkpoints: 30 for EMBER, 24 for RMU,
+10 for SNMF, 24 for RMU+EMBER, and 9 for SNMF+EMBER. We selected one
+checkpoint for each method and topic using
 likelihood-ranked accuracy on the selection splits described in
 Section~\ref{sec:evaluation}. Selection used target questions,
 neighboring-topic questions, and a shared general-capability set drawn from
@@ -92,5 +97,5 @@ harmonic aggregation, but adapts its validation score to our base-model
 setting: neighboring questions replace similar-domain questions, SciQ
 replaces MMLU, and we omit the AlpacaEval coherence component
 \citep{suslik2026ember}. After freezing the
-nine selected checkpoints, we compared them with both the full model and
+15 selected checkpoints, we compared them with both the full model and
 their concept-excluded twins.

@@ -18,7 +18,8 @@ artificial intelligence \citep{gottesman2025lment}. Alongside a
 model trained on the full corpus, we train a concept-excluded twin
 with the same initialization and training procedure, masking the
 loss on chunks linked to the target concept. We then apply EMBER,
-RMU, and an SNMF-based MLP erasure to copies of the full model
+RMU, and an SNMF-based MLP erasure to copies of the full model and evaluate
+RMU+EMBER and SNMF+EMBER ensembles
 \citep{suslik2026ember,li2024wmdp,shafran2026snmf}. This design
 lets us compare each edit with both the model it changed and the
 matched exclusion reference.
@@ -38,9 +39,10 @@ the twins' signed mean target-answer NLL, but absolute question-level
 differences show that this apparent match is reliable only for Rome. SNMF
 produces the lowest target KL and the most consistent question-level proximity
 to the twin, while EMBER causes the strongest target-specific NLL changes
-and obtains the highest combined efficacy--preservation score for Baseball and
-AI, while RMU obtains the highest score for Rome. However, EMBER's strong
-target suppression often carries it beyond the twin rather than toward it.
+among the standalone methods and obtains the highest combined
+efficacy--preservation score for Baseball. RMU obtains the highest score for
+Rome and RMU+EMBER for AI. However, the strong target suppression of EMBER
+and both ensembles often carries them beyond the twin rather than toward it.
 More generally, the method with the highest efficacy--preservation score is
 closest in mean target NLL for only one concept and never has the lowest
 target KL. Effective target suppression with preserved neighboring and SciQ

@@ -30,6 +30,13 @@ For Rome and Baseball, no SNMF candidate reduced target selection accuracy;
 their harmonic scores were therefore zero, and the reported configuration
 was fixed by the declared tie-breaking rule rather than a measured efficacy
 difference.
+The rule-selected RMU+EMBER checkpoints also expose a limitation of the
+selection objective. All three failed the predeclared RMU activity check:
+their final cosine alignment with RMU's control direction remained below
+0.30. Since EMBER had already supplied target efficacy, the harmonic score
+favored RMU configurations that changed the EMBER model only weakly. Their
+results therefore characterize the declared ensemble-selection procedure,
+but do not isolate the effect of a substantial RMU intervention.
 Full-vocabulary KL captures alternative next-token probabilities
 along the correct continuation, but does not follow the model after
 an alternative token is chosen. These measures support conclusions

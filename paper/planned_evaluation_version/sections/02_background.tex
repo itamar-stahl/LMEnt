@@ -45,7 +45,9 @@ both multiple-choice and open-ended questions. Its normalized scores used the
 original pre-erasure model as the reference; the study did not compare edits
 with a matched model trained without loss on concept-associated data. It
 evaluated EMBER alongside RMU and an MLP weight-erasure adaptation of
-SNMF-derived features \citep{li2024wmdp,shafran2026snmf}. RMU's original
+SNMF-derived features, and combined EMBER with each MLP method by fixing the
+embedding edit before tuning the MLP-stage configuration
+\citep{li2024wmdp,shafran2026snmf}. RMU's original
 evaluation similarly measured suppression on WMDP alongside retention on
 MMLU and MT-Bench relative to the original model \citep{li2024wmdp}. Our
 study adds a matched concept-excluded twin and compares edits with it using
