@@ -200,12 +200,24 @@ differences, $P_{\mathrm{closer}}$ records how frequently the edit improves
 proximity, irrespective of the size of that improvement; we therefore use it
 as a complementary diagnostic.
 
-For $R_{\mathrm{abs}}$ and $P_{\mathrm{closer}}$, we formed paired-bootstrap
-percentile 95\% confidence intervals using 10,000 resamples of the 50 held-out
-target questions with replacement and seed 0. The same sampled question
-indices were used for the edited, full, and twin models in every resample.
-These intervals quantify variation across the fixed test questions, not
-variation across training seeds.
+Because each target set contains only 50 questions, the observed
+$R_{\mathrm{abs}}$ and $P_{\mathrm{closer}}$ values may depend on which
+questions were included. We assessed this question-sampling uncertainty with
+paired-bootstrap percentile 95\% confidence intervals. In each of 10,000
+resamples (seed 0), we sampled 50 question indices with replacement and used
+the same indices for the edited, full, and twin models. We then recomputed each
+statistic, including both the numerator and denominator of
+$R_{\mathrm{abs}}$. This pairing preserves the within-question comparisons on
+which the metrics depend. The 2.5th and 97.5th percentiles of the resampled
+estimates formed the interval endpoints.
+
+For $R_{\mathrm{abs}}$, an interval entirely below one indicates that movement
+toward the twin persisted across the bootstrap resamples; an interval that
+includes one does not clearly separate the edit from the full-model reference
+under this procedure. We calculated these intervals specifically to qualify
+question-level twin-proximity claims. They quantify sensitivity to the fixed
+set of test questions, not variation across training seeds or checkpoints, and
+are not a comprehensive uncertainty analysis for the other metrics.
 
 \subsection{Teacher-Forced Full-Vocabulary KL}
 
