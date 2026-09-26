@@ -8,30 +8,8 @@ full model and three concept-excluded twins used the same initialization,
 batch order, optimizer, and learning-rate schedule; the intended intervention
 was the loss mask over concept-associated chunks. Accelerator histories were
 not identical for every pair, as discussed in Section~\ref{sec:limitations}.
-Table~\ref{tab:model-identifiers}
-records the exact model identifiers. The corresponding entity lists are
-stored in \path{Untaught/blacklists/ancient_rome_core.json},
-\path{Untaught/blacklists/baseball_core_teams.json}, and
-\path{Untaught/blacklists/ai_core.json}. The study used one training seed per
-condition, as discussed in Section~\ref{sec:limitations}.
-
-\begin{center}
-  \centering
-  \scriptsize
-  \begin{tabular}{ll}
-    \toprule
-    Role & Model identifier \\
-    \midrule
-    Full & \texttt{lment-1b-control-2e-b131k} \\
-    Rome twin & \texttt{lment-1b-norome-2e-b131k} \\
-    Baseball twin & \texttt{lment-1b-nobaseball-2e-b131k} \\
-    AI twin & \texttt{lment-1b-noai-2e-b131k} \\
-    \bottomrule
-  \end{tabular}
-  \captionof{table}{Exact identifiers of the full model and matched concept-excluded
-  twins.}
-  \label{tab:model-identifiers}
-\end{center}
+The study used one training seed per condition, as discussed in
+Section~\ref{sec:limitations}.
 
 \subsection{Candidate Grid and Selection Procedure}
 
@@ -106,31 +84,30 @@ the final grid differed.
   \resizebox{\columnwidth}{!}{%
   \begin{tabular}{lll}
     \toprule
-    Concept & Method & Checkpoint identifier \\
+    Concept & Method & Selected configuration \\
     \midrule
-    Rome & EMBER & \texttt{ember\_rome\_d200} \\
-         & RMU   & \texttt{rmu\_rome\_L6hi\_a10} \\
-         & SNMF  & \texttt{snmf\_rome\_ratio\_out}$^{\dagger}$ \\
-         & RMU+EMBER & \texttt{rmuember\_rome\_L5mid\_a100}$^{\ddagger}$ \\
-         & SNMF+EMBER & \texttt{snmfv2\_rome\_ratio\_in} \\
+    Rome & EMBER & $\delta=200$ \\
+         & RMU   & layer 6, high steering, $\alpha=10$ \\
+         & SNMF  & ratio selection, output side$^{\dagger}$ \\
+         & RMU+EMBER & layer 5, mid steering, $\alpha=100$$^{\ddagger}$ \\
+         & SNMF+EMBER & ratio selection, input side \\
     \midrule
-    Baseball & EMBER & \texttt{ember\_baseball\_d10} \\
-             & RMU   & \texttt{rmu\_baseball\_L6hi\_a10} \\
-             & SNMF  & \texttt{snmf\_baseball\_ratio\_both}$^{\dagger}$ \\
-             & RMU+EMBER & \texttt{rmuember\_baseball\_L5mid\_a100}$^{\ddagger}$ \\
-             & SNMF+EMBER & \texttt{snmfv2\_baseball\_ratio\_both} \\
+    Baseball & EMBER & $\delta=10$ \\
+             & RMU   & layer 6, high steering, $\alpha=10$ \\
+             & SNMF  & ratio selection, both sides$^{\dagger}$ \\
+             & RMU+EMBER & layer 5, mid steering, $\alpha=100$$^{\ddagger}$ \\
+             & SNMF+EMBER & ratio selection, both sides \\
     \midrule
-    AI & EMBER & \texttt{ember\_ai\_d500} \\
-       & RMU   & \texttt{rmu\_ai\_L6hi\_a10} \\
-       & SNMF  & \texttt{snmf\_ai\_ratio\_in} \\
-       & RMU+EMBER & \texttt{rmuember\_ai\_L5mid\_a10}$^{\ddagger}$ \\
-       & SNMF+EMBER & \texttt{snmfv2\_ai\_ratio\_in} \\
+    AI & EMBER & $\delta=500$ \\
+       & RMU   & layer 6, high steering, $\alpha=10$ \\
+       & SNMF  & ratio selection, input side \\
+       & RMU+EMBER & layer 5, mid steering, $\alpha=10$$^{\ddagger}$ \\
+       & SNMF+EMBER & ratio selection, input side \\
     \bottomrule
   \end{tabular}%
   }
-  \captionof{table}{Checkpoint identifiers selected using $H_{\mathrm{selection}}$.
-  The suffixes record the RMU layer, band, and retain weight or the SNMF
-  selection rule and edited side.
+  \captionof{table}{Configurations selected using $H_{\mathrm{selection}}$.
+  Here, $\delta$ is EMBER's edit strength and $\alpha$ is RMU's retain weight.
   $^{\dagger}$All SNMF candidates for this concept had zero efficacy and hence
   $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
   the fixed tie-breaking order rather than a measured efficacy difference.
@@ -139,23 +116,15 @@ the final grid differed.
   \label{tab:selected-checkpoints}
 \end{center}
 
-The concept-excluded twins and the held-out target, neighboring, and SciQ
-questions were not loaded or inspected during selection. After the 15
-configurations were frozen, we evaluated them on the test splits and computed
-$H_{\mathrm{test}}$ with the same formula. We also computed
+The selection score and candidate ranking used only the selection questions
+and did not use the concept-excluded twins. Held-out measurements and twin
+comparisons did not affect the selected configurations. We computed
+$H_{\mathrm{test}}$ on the test splits with the same formula and also computed
 $H_{\mathrm{test}}$ for the twin, using the full model as the normalization
 baseline, to provide a concept-exclusion reference for the erasure models.
-Neither $H_{\mathrm{test}}$ nor the subsequent NLL and KL comparisons with the
-twins were used to revise the selected configurations.
 
 The selection scorer used deterministic teacher-forced log probabilities in
-FP32; no sampling or generation was involved. The frozen selection artifacts
-record the scorer as \path{ember_eval/acc_selection/score_mc.py} and the
-selection run revision as \texttt{92a39d3}. Standalone accuracy tables can be
-regenerated with \path{ember_eval/acc_selection/finalize_tables.py}.
-Standalone NLL and KL results are under
-\path{ember_eval/nll_kl/tables_accwinners/}; ensemble results and their
-manifests are under \path{ember_eval/ensembles/results/}.
+FP32; no sampling or generation was involved.
 
 \section{Evaluation Data Details}
 \label{app:data}
@@ -186,15 +155,12 @@ the selection set and the next 50 form the test set.
   \label{tab:evaluation-data}
 \end{center}
 
-The construction scripts assert that selection and test sets share neither
-question IDs nor identical question--answer pairs. Each model for a concept
+We verified that selection and test sets share neither question IDs nor
+identical question--answer pairs. Each model for a concept
 was scored with the same frozen strings and option order. For example,
 ``Which river is associated with the founding of Rome?'' was presented as
 ``The river associated with the founding of Rome is'', and the four candidate
-answers included the correct continuation ``The Tiber River''. The frozen
-manifests are \path{ember_eval/acc_selection/questions_with_options.csv},
-\path{ember_eval/acc_selection/questions_with_options_TEST.csv}, and
-\path{ember_eval/acc_selection/sciq_unrelated.csv}.
+answers included the correct continuation ``The Tiber River''.
 
 For likelihood-ranked accuracy, each option was appended to its context and
 scored over option tokens only. For correct-answer NLL and KL, the completion
@@ -234,7 +200,7 @@ included in these tables.
 
 \begin{table}[h]
   \centering
-  \small
+  \scriptsize
   \begin{tabular}{lcccc}
     \toprule
     \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
@@ -310,7 +276,7 @@ included in these tables.
 
 \begin{table}[h]
   \centering
-  \small
+  \scriptsize
   \begin{tabular}{lcccc}
     \toprule
     \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
@@ -383,7 +349,7 @@ included in these tables.
 
 \begin{table}[h]
   \centering
-  \small
+  \scriptsize
   \begin{tabular}{lcccc}
     \toprule
     \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\

@@ -41,7 +41,6 @@ appendices.
   `ember_eval/nll_kl/question_level_similarity/` and the combined ensemble
   export
 
-The AI disclosure still requires the exact model or product names used for
-writing, coding, and question or QID preparation. The manuscript records the
-known experimental use of `google/gemma-4-12B-it`; unknown tool versions should
-not be inferred.
+The AI disclosure records the use of Claude Opus and Codex Sol for question
+rewriting, coding, idea refinement, LaTeX assistance, and editing, as well as
+the experimental use of `google/gemma-4-12B-it` as EMBER's semantic judge.
