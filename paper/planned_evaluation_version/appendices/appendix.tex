@@ -507,9 +507,10 @@ S_{\mathrm{NLL}}(M,c)
 A positive value indicates that support for correct target answers decreased
 more than support for correct answers in the preservation groups. We also
 report the two component contrasts so that the average does not conceal a
-large change on either preservation group. Because the three test sets are
-disjoint, we estimated the standard error from their across-question sample
-standard deviations,
+large change on either preservation group. To use one uncertainty procedure
+for all five erasure conditions, we applied a normal approximation to every
+row. Because the three test sets are disjoint, we estimated the standard error
+from their across-question sample standard deviations,
 \begin{equation}
 \operatorname{SE}(S_{\mathrm{NLL}})
 =\sqrt{\frac{s_T^2+\tfrac{1}{4}s_N^2+\tfrac{1}{4}s_S^2}{50}},
@@ -551,6 +552,7 @@ not capture variation across training seeds.
   nats per answer token. Higher values indicate that the loss increase was
   more concentrated on target questions. The statistic does not measure
   proximity to the concept-excluded twin and was not used for checkpoint
-  selection. Bold marks the largest value in each concept and column.}
+  selection. All intervals use the normal approximation defined above.
+  Bold marks the largest value in each concept and column.}
   \label{tab:nll-selectivity}
 \end{table}
