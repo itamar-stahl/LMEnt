@@ -59,22 +59,24 @@ whether the resulting model reproduces the twin.
     Concept & Model & $H_{\mathrm{test}}\uparrow$ & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
     \midrule
     Rome & Twin & 0.871 & +1.016 & 0.000 & 0.000 \\
-    & EMBER & 0.208 & +2.402 & +1.387 & 2.162 \\
-    & RMU & 0.486 & +0.713 & -0.303 & 1.143 \\
-    & SNMF & 0.000 & +0.108 & -0.907 & 0.851 \\
+    & EMBER & 0.208 & \textbf{+2.402} & +1.387 & 2.162 \\
+    & RMU & \textbf{0.486} & +0.713 & \textbf{-0.303} & 1.143 \\
+    & SNMF & 0.000 & +0.108 & -0.907 & \textbf{0.851} \\
     & RMU+E & 0.000 & +2.120 & +1.105 & 1.893 \\
     & SNMF+E & 0.000 & +2.364 & +1.348 & 2.083 \\
+    \midrule
     Baseball & Twin & 0.231 & +0.377 & 0.000 & 0.000 \\
-    & EMBER & 0.639 & +1.294 & +0.918 & 1.472 \\
-    & RMU & 0.239 & +0.624 & +0.247 & 1.110 \\
-    & SNMF & 0.129 & +0.033 & -0.343 & 0.680 \\
+    & EMBER & \textbf{0.639} & +1.294 & +0.918 & 1.472 \\
+    & RMU & 0.239 & +0.624 & \textbf{+0.247} & 1.110 \\
+    & SNMF & 0.129 & +0.033 & -0.343 & \textbf{0.680} \\
     & RMU+E & 0.465 & +1.179 & +0.803 & 1.425 \\
-    & SNMF+E & 0.563 & +1.299 & +0.922 & 1.490 \\
+    & SNMF+E & 0.563 & \textbf{+1.299} & +0.922 & 1.490 \\
+    \midrule
     AI & Twin & 0.343 & +0.595 & 0.000 & 0.000 \\
     & EMBER & 0.753 & +2.220 & +1.625 & 1.964 \\
-    & RMU & 0.483 & +0.582 & -0.013 & 0.965 \\
-    & SNMF & 0.129 & +0.081 & -0.514 & 0.588 \\
-    & RMU+E & 0.829 & +2.267 & +1.671 & 2.029 \\
+    & RMU & 0.483 & +0.582 & \textbf{-0.013} & 0.965 \\
+    & SNMF & 0.129 & +0.081 & -0.514 & \textbf{0.588} \\
+    & RMU+E & \textbf{0.829} & \textbf{+2.267} & +1.671 & 2.029 \\
     & SNMF+E & 0.816 & +2.233 & +1.637 & 1.989 \\
     \bottomrule
   \end{tabular}
@@ -82,7 +84,10 @@ whether the resulting model reproduces the twin.
   target efficacy with neighboring and SciQ preservation. NLL values are
   signed evaluated-minus-reference differences. $M$, $F$, and $T$ denote the
   evaluated, full, and twin models. KL uses the twin as its reference
-  distribution. E abbreviates EMBER in ensemble names. Full results, including
+  distribution. E abbreviates EMBER in ensemble names. Bold marks the best
+  erasure condition per concept and column: highest $H_{\mathrm{test}}$ and
+  target NLL increase, smallest absolute twin NLL difference, and lowest KL.
+  Full results, including
   control groups and standard deviations, appear in
   Appendix~\ref{app:full-results}.}
   \label{tab:target}
@@ -156,19 +161,21 @@ can therefore still conceal opposing question-level changes.
     Concept & Method & $H_{\mathrm{test}}\uparrow$ & $R_{\mathrm{NLL}}\downarrow$ & $R_{\mathrm{KL}}\downarrow$ \\
     \midrule
     Rome & EMBER & 0.208 & 1.365 & 2.264 \\
-         & RMU   & 0.486 & 0.298 & 1.197 \\
-         & SNMF  & 0.000 & 0.893 & 0.891 \\
+         & RMU   & \textbf{0.486} & \textbf{0.298} & 1.197 \\
+         & SNMF  & 0.000 & 0.893 & \textbf{0.891} \\
          & RMU+E & 0.000 & 1.088 & 1.982 \\
          & SNMF+E & 0.000 & 1.327 & 2.181 \\
-    Baseball & EMBER & 0.639 & 2.435 & 2.082 \\
-             & RMU   & 0.239 & 0.655 & 1.570 \\
-             & SNMF  & 0.129 & 0.910 & 0.962 \\
+    \midrule
+    Baseball & EMBER & \textbf{0.639} & 2.435 & 2.082 \\
+             & RMU   & 0.239 & \textbf{0.655} & 1.570 \\
+             & SNMF  & 0.129 & 0.910 & \textbf{0.962} \\
              & RMU+E & 0.465 & 2.131 & 2.015 \\
              & SNMF+E & 0.563 & 2.448 & 2.108 \\
+    \midrule
     AI & EMBER & 0.753 & 2.731 & 3.312 \\
-       & RMU   & 0.483 & 0.022 & 1.627 \\
-       & SNMF  & 0.129 & 0.864 & 0.992 \\
-       & RMU+E & 0.829 & 2.807 & 3.420 \\
+       & RMU   & 0.483 & \textbf{0.022} & 1.627 \\
+       & SNMF  & 0.129 & 0.864 & \textbf{0.992} \\
+       & RMU+E & \textbf{0.829} & 2.807 & 3.420 \\
        & SNMF+E & 0.816 & 2.750 & 3.354 \\
     \bottomrule
   \end{tabular}
@@ -176,7 +183,8 @@ can therefore still conceal opposing question-level changes.
   target discrepancy from the twin. Ratios below one indicate greater
   similarity to the twin than the full model under that measurement. The
   metrics have different directions: higher $H_{\mathrm{test}}$ is better,
-  whereas lower discrepancy is better. E abbreviates EMBER in ensemble names.}
+  whereas lower discrepancy is better. E abbreviates EMBER in ensemble names.
+  Bold marks the best erasure condition in each concept and column.}
   \label{tab:metric-agreement}
 \end{table*}
 
@@ -219,18 +227,20 @@ questions, with paired bootstrap confidence intervals.
       & $P_{\mathrm{closer}}$ [95\% CI] $\uparrow$ \\
     \midrule
     Ancient Rome & EMBER & 1.613 [1.151, 2.244] & 0.40 [0.26, 0.54] \\
-                 & RMU   & 0.660 [0.513, 0.827] & 0.64 [0.50, 0.76] \\
-                 & SNMF  & 0.940 [0.891, 0.986] & 0.64 [0.50, 0.76] \\
+                 & RMU   & \textbf{0.660 [0.513, 0.827]} & \textbf{0.64 [0.50, 0.76]} \\
+                 & SNMF  & 0.940 [0.891, 0.986] & \textbf{0.64 [0.50, 0.76]} \\
                  & RMU+E & 1.384 [1.015, 1.873] & 0.44 [0.30, 0.58] \\
                  & SNMF+E & 1.558 [1.128, 2.143] & 0.42 [0.28, 0.56] \\
+    \midrule
     Baseball     & EMBER & 2.128 [1.542, 2.978] & 0.26 [0.14, 0.38] \\
                  & RMU   & 1.227 [0.877, 1.680] & 0.46 [0.32, 0.60] \\
-                 & SNMF  & 0.967 [0.888, 1.060] & 0.66 [0.54, 0.78] \\
+                 & SNMF  & \textbf{0.967 [0.888, 1.060]} & \textbf{0.66 [0.54, 0.78]} \\
                  & RMU+E & 2.079 [1.510, 2.903] & 0.34 [0.22, 0.48] \\
                  & SNMF+E & 2.241 [1.658, 3.101] & 0.28 [0.16, 0.40] \\
+    \midrule
     AI           & EMBER & 2.112 [1.402, 3.167] & 0.38 [0.24, 0.52] \\
                  & RMU   & 1.006 [0.754, 1.344] & 0.54 [0.40, 0.68] \\
-                 & SNMF  & 0.927 [0.876, 0.976] & 0.64 [0.50, 0.76] \\
+                 & SNMF  & \textbf{0.927 [0.876, 0.976]} & \textbf{0.64 [0.50, 0.76]} \\
                  & RMU+E & 2.196 [1.484, 3.251] & 0.34 [0.22, 0.48] \\
                  & SNMF+E & 2.152 [1.420, 3.239] & 0.40 [0.26, 0.54] \\
     \bottomrule
@@ -240,7 +250,8 @@ questions, with paired bootstrap confidence intervals.
   from the twin with the full model's; values below one indicate improvement.
   $P_{\mathrm{closer}}$ is the fraction of questions on which the method is
   closer than the full model. Intervals are paired-bootstrap percentile 95\%
-  CIs over 50 questions (10,000 resamples, seed 0).}
+  CIs over 50 questions (10,000 resamples, seed 0). Bold marks the best
+  erasure condition in each concept and column.}
   \label{tab:question-level-similarity}
 \end{table*}
 
