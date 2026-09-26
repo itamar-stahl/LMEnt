@@ -1,13 +1,13 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Post-training concept erasure aims to remove a model's learned
-association with a target concept while preserving its behavior
-elsewhere \citep{li2024wmdp,suslik2026ember}. Evaluations often compare an edited model with the
-original trained model: they ask whether target performance falls
-and whether other capabilities remain intact. This comparison does
-not show whether the edited model resembles one that learned from
-the same corpus without loss on the selected concept-associated chunks.
+Post-training unlearning aims to suppress targeted knowledge or the influence
+of selected training data while preserving the model's behavior elsewhere
+\citep{yao2024machineunlearning,li2024wmdp}. Evaluations often compare an
+edited model with the original trained model, asking whether target performance
+falls while other capabilities remain intact. However, this comparison does
+not show whether the edited model resembles a matched model trained with direct
+learning signal from the target concept excluded.
 We therefore ask whether post-training erasure can reproduce the behavior of
 a matched model trained without loss on concept-associated chunks while preserving
 behavior on neighboring and unrelated questions.
