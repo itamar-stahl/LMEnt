@@ -75,7 +75,8 @@ as
 \phi_{\mathrm{pres}}(M)
 &=
 \operatorname{HM}\left(
-\widetilde{\operatorname{Acc}}_{\mathrm{neighbor}}(M),
+\widetilde{\operatorname{Acc}}_{\mathrm{neighbor}}(M),\right.\notag\\[-0.25ex]
+&\hspace{5.1em}\left.
 \widetilde{\operatorname{Acc}}_{\mathrm{SciQ}}(M)
 \right),\\
 H(M)
@@ -163,19 +164,14 @@ R_{\mathrm{abs}}(M,T;c)
 Values below one indicate that the edited model is closer to the twin than the
 full model after taking the absolute difference separately on each question.
 
-We additionally measured the proportion of questions on which the edited
-model was strictly closer to the twin:
+Let $d_M(i)=|\ell_M(i)-\ell_T(i)|$. We additionally measured the proportion
+of questions on which the edited model was strictly closer to the twin:
 \begin{equation}
 P_{\mathrm{closer}}(M,T;c)
 =
 \frac{1}{N}
 \sum_{i=1}^{N}
-\mathbb{I}
-\left[
-|\ell_M(i)-\ell_T(i)|
-<
-|\ell_F(i)-\ell_T(i)|
-\right].
+\mathbb{I}\!\left[d_M(i)<d_F(i)\right].
 \end{equation}
 Whereas $R_{\mathrm{abs}}$ accounts for the magnitude of question-level
 differences, $P_{\mathrm{closer}}$ records how frequently the edit improves
@@ -235,16 +231,8 @@ token changes little. However, it remains teacher-forced along the correct
 continuation and therefore does not measure predictions after an incorrect
 token is chosen.
 
-\subsection{Reporting Scope}
-
-We report means and sample standard deviations across the 50 held-out
-questions in each target, neighboring, and SciQ group. For NLL, these summarize
-paired question-level differences; for KL, they summarize question-level
-divergence. The normalized similarity ratios are reported on target questions.
-The question-level NLL proximity statistics additionally receive the
-paired-bootstrap intervals described above.
-
-The efficacy--preservation score and twin-similarity metrics answer different
-questions and are therefore reported separately. A post-hoc contrast measuring
-whether NLL changes were concentrated on target rather than preservation
-questions is defined and reported in Appendix~\ref{app:diagnostics}.
+We report means and sample standard deviations over the 50 held-out questions
+in each group; normalized twin-similarity ratios use target questions only.
+Because efficacy--preservation and twin similarity use different references,
+we report them separately. Appendix~\ref{app:diagnostics} defines a post-hoc
+contrast for whether NLL changes concentrate on target questions.

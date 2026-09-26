@@ -77,40 +77,13 @@ neighboring questions, and a shared general-capability set drawn from
 SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
 
-We initially considered a selection-only NLL score that rewarded increased
-target-answer NLL while penalizing changes on neighboring and SciQ questions.
-For EMBER, this score increased monotonically with edit strength and selected
-the edge of the search grid, so it provided no meaningful interior optimum.
-We therefore used the accuracy-based rule below. This decision used only the
-selection questions not the test questions.
-
-For group $g$, we normalized candidate $M$'s accuracy against the full model
-$F$ and the four-choice chance level:
-\begin{equation}
-\widetilde{\operatorname{Acc}}_g(M)
-=\operatorname{clip}_{[0,1]}\!\left(
-\frac{\operatorname{Acc}_g(M)-0.25}
-{\operatorname{Acc}_g(F)-0.25}\right).
-\end{equation}
-We then defined erasure efficacy, preservation, and the selection score as
-\begin{align}
-\phi_{\mathrm{eff}}(M)
-  &=1-\widetilde{\operatorname{Acc}}_{\mathrm{target}}(M),\\
-\phi_{\mathrm{pres}}(M)
-  &=\operatorname{HM}\!\left(
-      \widetilde{\operatorname{Acc}}_{\mathrm{neighbor}}(M),\right.\notag\\[-0.25ex]
-  &\hspace{4.6em}\left.
-      \widetilde{\operatorname{Acc}}_{\mathrm{SciQ}}(M)\right),\\
-H_{\mathrm{selection}}(M)
-  &=\operatorname{HM}\!\left(
-      \phi_{\mathrm{eff}}(M),\phi_{\mathrm{pres}}(M)\right).
-\end{align}
-We selected the candidate with the largest $H_{\mathrm{selection}}$ within
-each method--concept pair, using a fixed deterministic order to break exact
-ties. This retains EMBER's chance-corrected accuracy normalization and nested
-harmonic aggregation, but adapts its validation score to our base-model
-setting: neighboring questions replace similar-domain questions, SciQ
-replaces MMLU, and we omit the AlpacaEval coherence component
-\citep{suslik2026ember}. After freezing the
-15 selected checkpoints, we compared them with both the full model and
-their concept-excluded twins.
+We initially considered a selection-only NLL score, but for EMBER it increased
+monotonically with edit strength and selected the edge of the search grid.
+We therefore selected the candidate with the largest accuracy-based
+$H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
+deterministic order to break exact ties. The score adapts EMBER's validation
+rule to our base-model setting: neighboring questions replace similar-domain
+questions, SciQ replaces MMLU, and we omit AlpacaEval coherence
+\citep{suslik2026ember}. This decision and all selections used only selection
+questions. After freezing the 15 winners, we compared them with the full model
+and their concept-excluded twins.
