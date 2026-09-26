@@ -1,4 +1,10 @@
 \section*{AI Disclosure and Reflection}
-\plan{About 0.2 page. Fill with the actual AI tools and models the team used,
-their roles in coding, editing, or analysis, and a concise reflection on
-verification. The course guidelines require specific names; do not guess.}
+\plan{Complete the remaining disclosure with the actual AI tools used for
+coding, writing, and analysis, together with a concise reflection on how their
+outputs were verified.}
+
+Separately, \texttt{google/gemma-4-12B-it} was a component of the experimental
+pipeline: EMBER used it as a semantic judge to classify candidate factors from
+their activating tokens and contexts. Its judgments determined which factors
+were eligible for the embedding edit; it did not evaluate the resulting
+models or determine the reported test results.

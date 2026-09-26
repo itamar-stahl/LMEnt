@@ -6,8 +6,8 @@ matched models trained without loss on concept-associated chunks. The answer
 depends on which property is measured. RMU was closest to the twins in signed
 mean target-answer NLL for all three concepts, but the question-level analysis
 showed that cancellation explained the apparent Baseball and AI matches. SNMF
-had the lowest target KL and was closer than the full model on 64--66\% of
-target questions, while still producing little target erasure. EMBER produced
+changed the full model least and had the lowest target KL, but improved only
+slightly over the full model and produced little target erasure. EMBER produced
 the strongest target-specific NLL increase among the standalone methods and
 the highest combined efficacy--preservation score for Baseball; RMU obtained
 the highest score for Rome and RMU+EMBER for AI. Neither RMU+EMBER nor
@@ -23,10 +23,13 @@ most distant erasure method from their twins under KL and both signed-mean and
 question-level NLL comparisons. On AI, RMU+EMBER achieved the highest
 $H_{\mathrm{test}}$ yet remained more than twice as far from the twin as the
 full model under question-level NLL distance. SNMF showed the complementary disagreement:
-it was consistently closest to the twin but produced little target erasure.
+its near-identity edits produced the lowest target KL and question-level
+distance ratios below one, but only modest improvements over the full model
+and little target erasure.
 Efficacy--preservation and similarity to a
 concept-excluded twin therefore capture distinct properties and should be
 reported separately. This conclusion is limited to the tested models, three
 concepts, fixed-answer evaluations, and one training seed. A useful next step
-is to repeat the comparison across additional concepts and seeds to determine
-how consistently the observed disagreement holds.
+is to repeat the comparison across additional concepts and seeds and to test
+whether erased models and concept-excluded twins differ in robustness to
+relearning.

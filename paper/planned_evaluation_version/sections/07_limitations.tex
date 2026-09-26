@@ -8,6 +8,12 @@ the full model's performance on selection questions. The observed
 patterns may therefore vary across training runs, concepts, model
 sizes, or corpora.
 
+Robustness to relearning and other knowledge-recovery attacks was outside the
+agreed scope of this study and was not evaluated. Our conclusions therefore
+describe the frozen checkpoints. A useful extension would expose each erased
+model and its matched twin to the same target-concept text and compare the rate
+at which their target behavior returns.
+
 The configured training procedure was matched, but accelerator hardware was
 not identical throughout every pair: the Rome control and twin both used an
 H200, whereas the Baseball and AI twins completed part of training on other

@@ -32,13 +32,17 @@ measures changes in support for the supplied answer, while
 teacher-forced full-vocabulary KL measures how closely the models'
 next-token distributions agree along that answer. Together, these
 measurements ask whether an erasure approaches the twin on the
-target concept and how it affects predictions on other topics.
+target concept and how it affects predictions on other topics. Our agreed
+scope covers behavioral and distributional comparisons of the frozen
+checkpoints; robustness to relearning or other recovery attacks is left for
+future work.
 
 Our results show that no method is uniformly best. RMU most closely matches
 the twins' signed mean target-answer NLL, but absolute question-level
 differences show that this apparent match is reliable only for Rome. SNMF
-produces the lowest target KL and the most consistent question-level proximity
-to the twin, while EMBER causes the strongest target-specific NLL changes
+changes the full model least and produces the lowest target KL, although its
+improvement over the full model is small and it produces little target erasure.
+EMBER causes the strongest target-specific NLL changes
 among the standalone methods and obtains the highest combined
 efficacy--preservation score for Baseball. RMU obtains the highest score for
 Rome and RMU+EMBER for AI. However, the strong target suppression of EMBER

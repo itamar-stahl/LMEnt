@@ -60,6 +60,14 @@ selected layers, and the SNMF-based method
 removed concept-associated directions through MLP weight edits. Each topic
 received the same method-specific procedure and checkpoint-selection rule.
 
+EMBER's factorization produced candidate semantic features from target and
+neutral sentences. We used \texttt{google/gemma-4-12B-it} as a semantic judge
+to inspect each candidate's activating tokens and contexts, retaining features
+that it classified as representing the target concept with confidence of at
+least 0.85. This judgment determined which embedding directions EMBER edited;
+Appendix~\ref{app:ember-feature-selection} records how the selections were
+reproduced in the final runs.
+
 We evaluated 97 reported candidate checkpoints: 30 for EMBER, 24 for RMU,
 10 for SNMF, 24 for RMU+EMBER, and 9 for SNMF+EMBER. We selected one
 checkpoint for each method and topic using
@@ -68,6 +76,14 @@ Section~\ref{sec:evaluation}. Selection used target questions,
 neighboring-topic questions, and a shared general-capability set drawn from
 SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
+
+We initially considered a selection-only NLL score that rewarded increased
+target-answer NLL while penalizing absolute NLL changes on neighboring and
+unrelated questions. On the selection split, this score increased monotonically
+with EMBER edit strength and selected the edge of the search grid, providing no
+meaningful interior optimum. We therefore rejected it and adopted the
+accuracy-based rule below. This decision was based on the selection groups;
+held-out results were not used to rank candidates or choose the final rule.
 
 For group $g$, we normalized candidate $M$'s accuracy against the full model
 $F$ and the four-choice chance level:

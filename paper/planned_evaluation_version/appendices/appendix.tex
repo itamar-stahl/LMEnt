@@ -81,6 +81,21 @@ after which the RMU or SNMF grid was applied to that edited checkpoint. SNMF
 features were re-derived from the EMBER-edited model. Ensemble selection used
 the same score and tie-breaking order as the corresponding standalone method.
 
+\subsection{EMBER Semantic Feature Selection}
+\label{app:ember-feature-selection}
+
+EMBER used \texttt{google/gemma-4-12B-it} to judge whether candidate factors
+represented the target concept, with a minimum confidence of 0.85. For Rome
+and Baseball, the feature selected by the judge was also the unique factor
+with the highest target-to-neutral ratio. The final edit grids therefore used
+a numeric threshold that isolated exactly that previously judged feature,
+avoiding repeated judge calls without changing the selected set. For AI,
+some factors rejected by the judge had higher ratios than accepted factors,
+so no single threshold could reproduce the semantic decision. The AI runs
+therefore invoked the judge directly. The semantic selection criterion was
+the same across concepts; only the mechanism used to reproduce its output in
+the final grid differed.
+
 \subsection{Selected Checkpoints}
 
 \begin{center}

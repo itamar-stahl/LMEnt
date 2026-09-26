@@ -51,6 +51,15 @@ because neither reduced target accuracy below the full model. The result also il
 $H_{\mathrm{test}}$ rewards selective target degradation; it does not measure
 whether the resulting model reproduces the twin.
 
+These rankings should be read as held-out outcomes rather than stable method
+orderings. Each 50-question accuracy changes by 0.02 when one answer changes.
+For Rome, EMBER led RMU on the selection split
+($H_{\mathrm{selection}}=0.682$ versus 0.219), whereas RMU led EMBER on the
+test split (0.486 versus 0.208). On AI, RMU+EMBER exceeded SNMF+EMBER by only
+0.013. We retain the reported winners and comparisons, while avoiding a claim
+that these close or split-dependent rankings generalize beyond the evaluated
+questions.
+
 \begin{table*}[t]
   \centering
   \small
@@ -113,13 +122,13 @@ These are signed group means, however, and their standard deviations are
 large; a value near zero can conceal positive and negative question-level
 differences.
 
-SNMF was closest to the twin under target KL for every concept, with values of
-0.851 for Rome, 0.680 for Baseball, and 0.588 for AI. Its correct-answer NLL,
-however, remained much closer to the full model: the target differences from
-the full model were only 0.108, 0.033, and 0.081. Low KL in these cases does
-not demonstrate successful erasure by itself. The twin and full distributions
-are already relatively close at many answer positions, and KL summarizes the
-entire next-token distribution rather than the rank of a complete answer.
+SNMF had the lowest target KL for every concept, with values of 0.851 for Rome,
+0.680 for Baseball, and 0.588 for AI. It also changed the full model least: its
+target NLL increases from the full model were only 0.108, 0.033, and 0.081.
+Relative to the full model's target KL, SNMF reduced divergence from the twin
+by only 11\%, 4\%, and 1\%, respectively. Its low KL therefore reflects a
+near-identity edit that preserves the full model's predictions, rather than
+strong evidence of successful erasure.
 
 EMBER showed the opposite pattern among the standalone methods. It had the
 largest target NLL increase from the full model for all concepts---2.402 for
@@ -201,8 +210,8 @@ in these experiments. This disagreement is also expected from the definitions:
 $H_{\mathrm{test}}$ compares accuracy with the full model and never uses the
 twin, whereas the two ratios explicitly evaluate the twin as their reference.
 
-As a robustness check against cancellation in the signed mean NLL difference,
-we also measure question-level proximity to the twin. For concept $c$, let
+To check whether the signed mean NLL difference hides cancellation, we also
+measure question-level proximity to the twin. For concept $c$, let
 \begin{equation}
 \begin{aligned}
 D_{\mathrm{abs}}(M,T;c)
@@ -287,8 +296,9 @@ Appendix~\ref{app:diagnostics}.
 Taken together, no method dominates under every interpretation of erasure.
 EMBER and its ensembles produced the strongest target-specific changes, RMU
 most closely matched
-the twin's signed mean correct-answer NLL, and SNMF produced the lowest KL and
-the most consistent question-level proximity to the twin. The change in
+the twin's signed mean correct-answer NLL, and SNMF changed the full model least
+and produced the lowest target KL, with only a small improvement over the full
+model. The change in
 rankings across Rome, Baseball, and AI also shows that a
 conclusion from one concept would not describe all three cases. Differences
 in corpus coverage and overlap with neighboring topics are plausible

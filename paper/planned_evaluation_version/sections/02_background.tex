@@ -12,11 +12,20 @@ a \emph{concept-excluded twin}. This twin provides a reference for the effect
 of excluding a defined portion of the corpus from the training objective. It may still learn
 related facts from chunks outside that portion.
 
-Controlled pretraining studies have also compared models whose corpora differ
-through targeted data insertion or filtering
-\citep{wei2025hubble,obrien2025deepignorance}. Our construction instead uses
-LMEnt's entity index to define a concept-level loss intervention while holding
-the initialization, data order, and training configuration fixed.
+Machine unlearning is commonly framed as approximating a model retrained
+without the data to be forgotten, so evaluations can compare an unlearned
+model with that retrained reference \citep{wichert2024rethinking}. At
+pretraining scale, however, the cost of retraining often prevents such a
+comparison \citep{yao2024machineunlearning}. Controlled pretraining studies
+have instead compared models whose corpora differ through targeted data
+insertion or filtering \citep{wei2025hubble,obrien2025deepignorance}; the
+latter also shows that pretraining-time filtering can differ from
+post-training safeguards in resistance to subsequent recovery. Our setting
+makes a matched comparison feasible at the 1B-parameter scale. We use LMEnt's
+entity index to define concept-level loss exclusion while holding the
+initialization, data order, and training configuration fixed, and compare the
+resulting twin with post-training erasure in both answer behavior and
+next-token distributions.
 
 \subsection{Post-Training Concept Erasure}
 
