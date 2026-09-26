@@ -1,0 +1,311 @@
+{
+ "generated_utc": "2026-09-25T15:56:31Z",
+ "git_commit": "52eae7bb0ff97f017301217cf72f05af096807f5",
+ "command": "python ember_eval/ensembles/export_nll_kl.py --ens /home/morg/NLP_2526b/galbarak2/runs/ensembles --out ember_eval/ensembles/results",
+ "checkpoints": {
+  "full": "lment-1b-control-2e-b131k",
+  "twins": {
+   "Ancient Rome": "lment-1b-norome-2e-b131k",
+   "Baseball": "lment-1b-nobaseball-2e-b131k",
+   "Artificial intelligence": "lment-1b-noai-2e-b131k"
+  },
+  "methods": {
+   "RMU+EMBER": {
+    "Ancient Rome": "rmuember_rome_L5mid_a100",
+    "Baseball": "rmuember_baseball_L5mid_a100",
+    "Artificial intelligence": "rmuember_ai_L5mid_a10"
+   },
+   "SNMF+EMBER": {
+    "Ancient Rome": "snmfv2_rome_ratio_in",
+    "Baseball": "snmfv2_baseball_ratio_both",
+    "Artificial intelligence": "snmfv2_ai_ratio_in"
+   }
+  }
+ },
+ "groups": {
+  "target_test": 50,
+  "neighbour_test": 50,
+  "unrelated_test": 50
+ },
+ "unrelated_group": "SciQ (sets/sciq.json); the older other-concept pool is NOT used",
+ "metrics": {
+  "NLL": "teacher-forced mean over the correct continuation's answer tokens",
+  "KL": "mean over answer positions of KL(Twin || Model), full vocabulary",
+  "KL_orientation": "twin is always the left/reference distribution",
+  "R_NLL": "|mean(delta_nll_method_twin)| / |mean(delta_nll_full_twin)| on target_test",
+  "R_KL": "mean(kl_twin_to_method) / mean(kl_twin_to_full) on target_test",
+  "S_NLL": "mean(d_method_full|target) - 0.5*mean(|neighbour) - 0.5*mean(|unrelated)"
+ },
+ "bootstrap": {
+  "repetitions": 10000,
+  "seed": 0,
+  "scheme": "resample each group's 50 questions independently with replacement",
+  "interval": "percentile 2.5 / 97.5"
+ },
+ "inputs": {
+  "scored_roots": [
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/scored_nllkl",
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/merged_nllkl",
+   "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/scored"
+  ],
+  "sciq_manifest": "/home/dcor/galbarak2/lment-qlsim/ember_eval/acc_selection/sciq_unrelated.csv",
+  "acc_manifest": "/home/dcor/galbarak2/lment-qlsim/ember_eval/acc_selection/questions_with_options_TEST.csv"
+ },
+ "outputs": [
+  "ember_eval/ensembles/results/nll_kl_per_question.csv",
+  "ember_eval/ensembles/results/nll_kl_summary.csv",
+  "ember_eval/ensembles/results/nll_selectivity.csv",
+  "ember_eval/ensembles/results/target_ratios.csv"
+ ],
+ "validation": {
+  "n_checks": 49,
+  "n_failed": 0,
+  "checks": [
+   {
+    "check": "Ancient Rome/RMU+EMBER/target_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Ancient Rome/RMU+EMBER/target_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Ancient Rome/RMU+EMBER/neighbour_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Ancient Rome/RMU+EMBER/neighbour_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Ancient Rome/RMU+EMBER/unrelated_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Ancient Rome/RMU+EMBER/unrelated_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Ancient Rome/RMU+EMBER: unrelated group is the SciQ set",
+    "result": "PASS",
+    "detail": "50/50 shared with the SciQ manifest"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER/target_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER/target_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER/neighbour_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER/neighbour_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER/unrelated_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER/unrelated_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Ancient Rome/SNMF+EMBER: unrelated group is the SciQ set",
+    "result": "PASS",
+    "detail": "50/50 shared with the SciQ manifest"
+   },
+   {
+    "check": "Baseball/RMU+EMBER/target_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Baseball/RMU+EMBER/target_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Baseball/RMU+EMBER/neighbour_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Baseball/RMU+EMBER/neighbour_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Baseball/RMU+EMBER/unrelated_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Baseball/RMU+EMBER/unrelated_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Baseball/RMU+EMBER: unrelated group is the SciQ set",
+    "result": "PASS",
+    "detail": "50/50 shared with the SciQ manifest"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER/target_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER/target_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER/neighbour_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER/neighbour_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER/unrelated_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER/unrelated_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Baseball/SNMF+EMBER: unrelated group is the SciQ set",
+    "result": "PASS",
+    "detail": "50/50 shared with the SciQ manifest"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER/target_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER/target_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER/neighbour_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER/neighbour_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER/unrelated_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER/unrelated_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Artificial intelligence/RMU+EMBER: unrelated group is the SciQ set",
+    "result": "PASS",
+    "detail": "50/50 shared with the SciQ manifest"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER/target_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER/target_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER/neighbour_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER/neighbour_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER/unrelated_test: 50 questions",
+    "result": "PASS",
+    "detail": "n=50"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER/unrelated_test: ids match across method/full/twin",
+    "result": "PASS",
+    "detail": "method 50, full 50, twin 50"
+   },
+   {
+    "check": "Artificial intelligence/SNMF+EMBER: unrelated group is the SciQ set",
+    "result": "PASS",
+    "detail": "50/50 shared with the SciQ manifest"
+   },
+   {
+    "check": "900 per-question rows",
+    "result": "PASS",
+    "detail": "900"
+   },
+   {
+    "check": "no duplicate (concept, method, group, question_id)",
+    "result": "PASS",
+    "detail": "900 rows, 900 distinct"
+   },
+   {
+    "check": "all NLL/KL values finite",
+    "result": "PASS",
+    "detail": "0 non-finite"
+   },
+   {
+    "check": "only test rows",
+    "result": "PASS",
+    "detail": "every group ends _test"
+   },
+   {
+    "check": "18 summary rows (3 concepts x 2 methods x 3 groups)",
+    "result": "PASS",
+    "detail": "18"
+   },
+   {
+    "check": "6 ratio rows",
+    "result": "PASS",
+    "detail": "6"
+   },
+   {
+    "check": "6 selectivity rows",
+    "result": "PASS",
+    "detail": "6"
+   }
+  ]
+ }
+}
