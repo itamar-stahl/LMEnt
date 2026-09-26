@@ -51,14 +51,13 @@ Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 
 We applied EMBER, RMU, and an SNMF-based erasure independently to copies of
 the completed full model for each concept. We also evaluated RMU+EMBER and
-SNMF+EMBER: for each ensemble, we fixed the selected EMBER checkpoint and
-then applied the MLP method to that edited model, following EMBER's staged
-ensemble design \citep{suslik2026ember}. For SNMF+EMBER, the SNMF features
-were re-derived from the EMBER-edited model. EMBER edited selected input
-embeddings, our RMU implementation updated MLP down-projection weights in
-selected layers, and the SNMF-based method
-removed concept-associated directions through MLP weight edits. We used the
-same method definitions and checkpoint-selection rule for every concept.
+SNMF+EMBER. For each ensemble, we fixed the selected EMBER checkpoint and
+then applied the MLP method to the edited model, following EMBER's staged
+ensemble design \citep{suslik2026ember}. EMBER modified selected input
+embeddings, whereas RMU and SNMF edited MLP weights. For both ensembles, we
+reran the MLP method's model-dependent setup on the EMBER-edited model. We
+used the same method definitions and checkpoint-selection rule for every
+concept.
 
 EMBER's factorization produced candidate semantic features from target and
 neutral sentences. We used \texttt{google/gemma-4-12B-it} as a semantic judge
@@ -83,8 +82,7 @@ target-answer NLL while penalizing changes on neighboring and SciQ questions.
 For EMBER, this score increased monotonically with edit strength and selected
 the edge of the search grid, so it provided no meaningful interior optimum.
 We therefore used the accuracy-based rule below. This decision used only the
-selection groups; held-out results were not used to rank candidates or choose
-the rule.
+selection questions not the test questions.
 
 For group $g$, we normalized candidate $M$'s accuracy against the full model
 $F$ and the four-choice chance level:

@@ -3,67 +3,74 @@
 
 \subsection{Effect of Concept Exclusion}
 
-We first compare each concept-excluded twin with the full model. This
-establishes how model behavior changes when the relevant training chunks are
-excluded from the loss and provides the reference that post-training erasure is intended to
-approximate. The largest target effect occurred for Ancient Rome: relative to
-the full model, the twin's target accuracy fell from 0.42 to 0.26, its
-correct-answer NLL increased by 1.016 nats per token, and
-$\mathrm{KL}(T\,\|\,F)$ was 0.955. The corresponding target effects were
-smaller for Baseball, where accuracy changed from 0.54 to 0.50 and NLL
-increased by 0.377, and for AI, where accuracy changed from 0.54 to 0.48 and
-NLL increased by 0.595. The measured effect of concept exclusion therefore
-varied substantially across the three concepts.
+We first compared each concept-excluded twin with the full model to establish
+the behavioral effect of excluding the selected training chunks. The largest
+target effect occurred for Ancient Rome: target accuracy fell from 0.42 to
+0.26, correct-answer NLL increased by 1.016 nats per token, and
+$\operatorname{KL}(T\,\|\,F)$ was 0.955. The corresponding effects were
+smaller for Baseball, where accuracy fell from 0.54 to 0.50 and NLL increased
+by 0.377, and for AI, where accuracy fell from 0.54 to 0.48 and NLL increased
+by 0.595. Thus, the measured effect of concept exclusion varied substantially
+across concepts.
 
 The twins also differed from the full model outside the target questions. On
 neighboring questions, the twin--full NLL differences were 0.171 for Rome,
-0.093 for Baseball, and $-0.139$ for AI. On SciQ they were 0.046, $-0.093$,
-and 0.145, respectively. Full-vocabulary KL remained nonzero on both preservation
-groups, even when option accuracy was unchanged. Matched training without loss on
-the selected chunks thus affected more than the measured target answers. These
-off-target changes are part of the twin outcome that an erasure model may match;
-they also make preservation relative to the full model a separate concern.
-Complete twin--full results appear in Appendix~\ref{app:full-results}.
+0.093 for Baseball, and $-0.139$ for AI. On SciQ, they were 0.046,
+$-0.093$, and 0.145, respectively. Full-vocabulary KL was nonzero on both
+preservation groups, including cases in which option accuracy did not change.
+Concept exclusion therefore affected more than the measured target answers.
+These off-target changes are part of the twin outcome, but they are distinct
+from preservation relative to the full model.
+
+The twins' efficacy--preservation scores also differed across concepts:
+$H_{\mathrm{test}}$ was 0.871 for Rome, 0.231 for Baseball, and 0.343 for AI.
+The lower Baseball and AI scores primarily reflect the twins' modest reductions
+in target accuracy. This illustrates that the twin is a reference for the
+outcome of concept exclusion, not necessarily an optimizer of the
+efficacy--preservation score. Complete twin--full results appear in
+Appendix~\ref{app:full-results}.
 
 \subsection{Erasure Efficacy and Preservation}
 
-The likelihood-ranked accuracy and $H_{\mathrm{test}}$ results show different
-method rankings across concepts. For Rome, RMU obtained the highest score
-among the erasure methods ($0.486$), followed by EMBER ($0.208$), while SNMF
-received zero because its target accuracy, 0.48, was higher than the full
-model's 0.42. RMU reduced target accuracy to 0.36, between the full model and
-the twin, but also reduced neighboring accuracy from 0.64 to 0.50. This loss
-of neighboring performance limited its combined score.
+Table~\ref{tab:target} summarizes held-out target results for the five erasure
+conditions and their concept-excluded references. Method rankings under
+$H_{\mathrm{test}}$ differed across concepts. For Rome, RMU obtained the
+highest score among the erasure methods ($0.486$), followed by EMBER
+($0.208$). RMU reduced target accuracy from 0.42 to 0.36, placing it between
+the full model and the twin, but also reduced neighboring accuracy from 0.64
+to 0.50. This loss of neighboring performance limited its combined score.
+SNMF received a score of zero because its target accuracy, 0.48, exceeded the
+full model's 0.42.
 
-EMBER obtained the highest $H_{\mathrm{test}}$ for Baseball ($0.639$), while
-RMU+EMBER obtained the highest score for AI ($0.829$), narrowly ahead of
-SNMF+EMBER ($0.816$). EMBER's target accuracy fell from 0.54 to 0.40 for
-Baseball and to 0.36 for AI, exceeding the corresponding twin reductions to
-0.50 and 0.48. EMBER changed accuracy little on the preservation groups:
-neighboring accuracy changed from 0.44 to 0.42 for Baseball and from 0.50 to
-0.48 for AI, while SciQ accuracy remained 0.52 for both. RMU produced smaller
-target reductions on these concepts, and SNMF remained within two percentage
-points of the full model's target accuracy. Under the combined efficacy and
-preservation criterion, EMBER therefore performed best on Baseball,
-RMU+EMBER on AI, and RMU on Rome. Both ensembles received zero for Rome
-because neither reduced target accuracy below the full model. The result also illustrates that
-$H_{\mathrm{test}}$ rewards selective target degradation; it does not measure
-whether the resulting model reproduces the twin.
+EMBER obtained the highest $H_{\mathrm{test}}$ for Baseball ($0.639$).
+Its target accuracy fell from 0.54 to 0.40, while neighboring accuracy changed
+from 0.44 to 0.42 and SciQ accuracy remained 0.52. RMU produced a smaller
+target reduction, to 0.50, and SNMF remained close to the full model at 0.52.
 
-These are held-out outcomes rather than stable method orderings. Each
-50-question accuracy changes by 0.02 when one answer changes.
-For Rome, EMBER led RMU on the selection split
+For AI, RMU+EMBER obtained the highest score ($0.829$), narrowly exceeding
+SNMF+EMBER ($0.816$). Standalone EMBER reduced target accuracy from 0.54 to
+0.36 while changing neighboring accuracy from 0.50 to 0.48 and leaving SciQ
+accuracy at 0.52. RMU+EMBER reduced target accuracy further to 0.32, while
+SNMF+EMBER reached 0.34. Both ensembles received zero for Rome because neither
+reduced target accuracy below the full model.
+
+These are held-out outcomes rather than stable method orderings. Each accuracy
+estimate is based on 50 questions and therefore changes by 0.02 when one answer
+changes. For Rome, EMBER led RMU on the selection split
 ($H_{\mathrm{selection}}=0.682$ versus 0.219), whereas RMU led EMBER on the
-test split (0.486 versus 0.208). On AI, RMU+EMBER exceeded SNMF+EMBER by only
-0.013. These close or split-dependent rankings may not generalize beyond the
-evaluated questions.
+test split (0.486 versus 0.208). On AI, the two ensemble scores differed by
+only 0.013. These close and split-dependent rankings should therefore not be
+interpreted as general method orderings.
 
 \begin{table*}[t]
   \centering
   \small
   \begin{tabular}{llcccc}
     \toprule
-    Concept & Model & $H_{\mathrm{test}}\uparrow$ & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    Concept & Model & $H_{\mathrm{test}}\uparrow$
+      & $\Delta\mathrm{NLL}_{M-F}$
+      & $\Delta\mathrm{NLL}_{M-T}$
+      & $\mathrm{KL}(T\,\|\,M)$ \\
     \midrule
     Rome & Twin & 0.871 & +1.016 & 0.000 & 0.000 \\
     & EMBER & 0.208 & \textbf{+2.402} & +1.387 & 2.162 \\
@@ -90,131 +97,128 @@ evaluated questions.
   \caption{Held-out target-question summary. $H_{\mathrm{test}}$ combines
   target efficacy with neighboring and SciQ preservation. NLL values are
   signed evaluated-minus-reference differences. $M$, $F$, and $T$ denote the
-  evaluated, full, and twin models. KL uses the twin as its reference
-  distribution. E abbreviates EMBER in ensemble names. Bold marks the highest
-  $H_{\mathrm{test}}$, largest target NLL increase, smallest absolute twin NLL
-  difference, and lowest KL among the erasure conditions for each concept.
-  Full results, including
-  preservation groups and standard deviations, appear in
+  evaluated, full, and concept-excluded twin models. KL uses the twin as its
+  reference distribution. E abbreviates EMBER in ensemble names. Bold marks
+  the highest $H_{\mathrm{test}}$, largest target NLL increase from the full
+  model, smallest absolute signed mean NLL difference from the twin, and
+  lowest KL among erasure conditions for each concept. Complete results,
+  including preservation groups and standard deviations, appear in
   Appendix~\ref{app:full-results}.}
   \label{tab:target}
 \end{table*}
 
 All three selected RMU+EMBER checkpoints failed RMU's predeclared activity
-check: final cosine alignment with the control direction ranged from 0.076 to
-0.285, below the 0.30 threshold. Because EMBER already supplied target
-efficacy, the score favored weak RMU updates. These rows describe the frozen
-selection procedure, but do not isolate a substantial RMU contribution.
+check: their final cosine alignment with the control direction ranged from
+0.076 to 0.285, below the 0.30 threshold. Because EMBER already supplied
+target efficacy, the selection score favored weak RMU updates. These rows
+describe the outcome of the frozen selection procedure, but they do not
+provide evidence of a substantial additional RMU contribution.
 
-\subsection{Similarity to the Concept-Excluded Twin}
+\subsection{Signed Mean NLL and Distributional Similarity}
 
-The NLL and KL comparisons give a different view from
-$H_{\mathrm{test}}$. Based on the absolute target-group mean
-$\Delta\mathrm{NLL}_{M-T}$, RMU was closest to the twin for every concept:
-its differences were $-0.303$ for Rome, 0.247 for Baseball, and $-0.013$ for
-AI. In particular, RMU nearly matched the twin's mean correct-answer NLL on AI.
-These signed group means average positive and negative per-question
-differences before taking an absolute value, so opposing differences can
-cancel.
+The twin-similarity metrics produced different rankings from
+$H_{\mathrm{test}}$. RMU had the smallest absolute signed mean target NLL
+difference from the twin for every concept. Its
+$\Delta\mathrm{NLL}_{M-T}$ values were $-0.303$ for Rome, 0.247 for
+Baseball, and $-0.013$ for AI. In particular, RMU nearly matched the twin's
+mean target NLL for AI.
 
-SNMF had the lowest target KL for every concept, with values of 0.851 for Rome,
-0.680 for Baseball, and 0.588 for AI. It also changed the full model least: its
-target NLL increases from the full model were only 0.108, 0.033, and 0.081.
-Relative to the full model's target KL, SNMF reduced divergence from the twin
-by only 11\%, 4\%, and 1\%, respectively. Its low KL therefore reflects a
-near-identity edit that preserves the full model's predictions, rather than
-strong evidence of successful erasure.
+After normalization by the full--twin discrepancy, RMU's
+$R_{\mathrm{NLL}}$ values were 0.298 for Rome, 0.655 for Baseball, and 0.022
+for AI. These results indicate close agreement in the group mean, but they do
+not establish agreement on individual questions because positive and negative
+item-level differences can cancel.
 
-EMBER showed the opposite pattern among the standalone methods. It had the
-largest target NLL increase from the full model for all concepts---2.402 for
-Rome, 1.294 for Baseball, and 2.220 for AI---but it also lay beyond the twin
-in the same direction. Its
-target NLL differences from the twin were 1.387, 0.918, and 1.625, and its
-target KL was the highest among the standalone methods. The ensemble variants
-behaved similarly: their target NLL increases ranged from 1.179 to 2.364, and
-every signed difference from the twin was positive. Their KL values also
-exceeded the twin--full baselines for every concept. EMBER and its ensembles
-therefore produced large reductions in support for target answers, but did not
-most closely reproduce the behavior learned through concept exclusion.
+SNMF had the lowest target KL among the erasure conditions for every concept:
+0.851 for Rome, 0.680 for Baseball, and 0.588 for AI. However, it also changed
+the full model least. Its target NLL increases from the full model were only
+0.108, 0.033, and 0.081, respectively. Correspondingly, its
+$R_{\mathrm{KL}}$ values were 0.891, 0.962, and 0.992. SNMF therefore reduced
+the full model's divergence from the twin only modestly. Its low KL primarily
+reflects a near-identity edit rather than strong target suppression.
 
-\subsection{Does the Efficacy--Preservation Score Imply Twin Similarity?}
+EMBER showed the opposite pattern among the standalone methods. It produced
+the largest target NLL increase from the full model for Rome, Baseball, and AI:
+2.402, 1.294, and 2.220 nats per token. In every case, however, it moved beyond
+the twin in the same direction, yielding twin-relative differences of 1.387,
+0.918, and 1.625. Its target KL was also higher than that of the other
+standalone methods.
 
-We directly compared the efficacy--preservation ranking with similarity to the
-twin. Because the raw twin differences vary across concepts, we normalized
-each method's target discrepancy by the corresponding full--twin discrepancy:
-\begin{equation}
-\begin{aligned}
-R_{\mathrm{NLL}}(M,c)
-&=\frac{\left|\overline{\Delta\mathrm{NLL}}^{\mathrm{target}}_{M-T}\right|}
-{\left|\overline{\Delta\mathrm{NLL}}^{\mathrm{target}}_{F-T}\right|}, \\
-R_{\mathrm{KL}}(M,c)
-&=\frac{\mathrm{KL}^{\mathrm{target}}(T\,\|\,M)}
-{\mathrm{KL}^{\mathrm{target}}(T\,\|\,F)}.
-\end{aligned}
-\end{equation}
-A value of zero denotes agreement with the twin under the corresponding group
-mean, while one means that the erased model is no closer than the full model;
-lower values are better. The NLL ratio uses the absolute signed group mean and
-can therefore still conceal opposing question-level changes. Complete ratios
-appear in Table~\ref{tab:metric-agreement} in the appendix.
+The ensemble variants behaved similarly to EMBER. Their target NLL increases
+ranged from 1.179 to 2.364, and every signed difference from the twin was
+positive. Their KL values also exceeded the corresponding twin--full
+baselines for every concept. Thus, EMBER and its ensembles strongly reduced
+support for the target answers, but did not most closely reproduce the
+distributions of the concept-excluded twins.
 
-The rankings do not agree. The highest-$H_{\mathrm{test}}$ method was closest
-in mean target NLL only for Rome and never had the lowest target KL. The
-Baseball winner, EMBER, had ratios of 2.435 and 2.082; the AI winner,
-RMU+EMBER, had ratios of 2.807 and 3.420. Both ensembles exceeded one on both
-ratios for every concept, whereas SNMF had low $H_{\mathrm{test}}$ but a KL
-ratio near or below one throughout. This disagreement follows from the
-definitions: $H_{\mathrm{test}}$ uses the full model but not the twin, whereas
-both ratios use the twin as their reference.
+\subsection{Question-Level NLL Proximity}
 
-To avoid this cancellation, we also measured mean absolute per-question NLL
-distance from the twin. For concept $c$, let
-\begin{equation}
-\begin{aligned}
-D_{\mathrm{abs}}(M,T;c)
-&=\frac{1}{N}\sum_{i=1}^{N}|\ell_M(i)-\ell_T(i)|,\\
-R_{\mathrm{abs}}(M,T;c)
-&=\frac{D_{\mathrm{abs}}(M,T;c)}{D_{\mathrm{abs}}(F,T;c)}.
-\end{aligned}
-\end{equation}
-Values of $R_{\mathrm{abs}}$ below one indicate that the erased model is closer
-to the twin than the full model after taking the absolute difference on each
-question. We additionally report $P_{\mathrm{closer}}$, the proportion of
-held-out target questions for which the erased model is strictly closer to the
-twin than the full model. Both statistics use the same 50 paired target-test
-questions, with paired bootstrap confidence intervals.
+The mean absolute per-question analysis qualified the signed-mean NLL
+comparison. RMU was clearly closer to the twin than the full model for Rome,
+with $R_{\mathrm{abs}}=0.660$ and a 95\% confidence interval of
+$[0.513,0.827]$. For Baseball and AI, however, its intervals included one:
+$R_{\mathrm{abs}}=1.227$ $[0.877,1.680]$ and
+$R_{\mathrm{abs}}=1.006$ $[0.754,1.344]$, respectively.
 
-The mean absolute per-question results qualify the signed-mean ranking. RMU
-was clearly closer than the full model for Rome ($R_{\mathrm{abs}}=0.660$),
-but its intervals included one for Baseball and AI. For Baseball, RMU's signed mean
-difference was 0.247 even though its mean absolute question-level difference
-was 1.003. For AI, the corresponding values were $-0.013$ and 0.953. Thus,
-positive and negative item-level differences canceled for both concepts,
-especially AI.
+The difference from the signed-mean results was substantial. For Baseball,
+RMU's signed mean difference from the twin was only 0.247, but its mean
+absolute question-level distance was 1.003. For AI, the corresponding values
+were $-0.013$ and 0.953. RMU therefore matched the twin's average target NLL
+closely because positive and negative question-level differences canceled,
+especially for AI.
+
 SNMF had $R_{\mathrm{abs}}<1$ for all three concepts and was closer than the
-full model on 64--66\% of target questions, although the Baseball ratio's
-interval included one. EMBER was farther from the twin on average for every
-concept, including ratios above two for Baseball and AI. Both ensembles were
-also farther from the twin for every concept: all six $R_{\mathrm{abs}}$
-intervals excluded one, and they were closer than the full model on only
-28--44\% of questions. Thus, high $H_{\mathrm{test}}$ does not necessarily
-imply question-level proximity to the twin. Full estimates and confidence
-intervals appear in Table~\ref{tab:question-level-similarity} in the appendix.
+full model on 64--66\% of target questions. Its confidence intervals excluded
+one for Rome and AI but included one for Baseball. This provides evidence of
+small question-level improvements for Rome and AI, although these improvements
+occurred alongside little target suppression.
+
+EMBER was farther from the twin on average for every concept, with
+$R_{\mathrm{abs}}$ values of 1.613 for Rome, 2.128 for Baseball, and 2.112
+for AI. Both ensembles were also farther from the twin for every concept; all
+six ensemble intervals excluded one, and the ensembles were closer than the
+full model on only 28--44\% of questions. Complete estimates and confidence
+intervals appear in Table~\ref{tab:question-level-similarity}.
+
+\subsection{Relationship Between Efficacy and Twin Similarity}
+
+The method with the highest $H_{\mathrm{test}}$ was closest to the twin in
+signed mean target NLL only for Rome and never had the lowest target KL. For
+Baseball, the highest-scoring method was EMBER, with
+$R_{\mathrm{NLL}}=2.435$ and $R_{\mathrm{KL}}=2.082$. For AI, the
+highest-scoring method was RMU+EMBER, with corresponding ratios of 2.807 and
+3.420. Both ensembles exceeded one on both ratios for every concept.
+
+The disagreement reflects the metrics' different references.
+$H_{\mathrm{test}}$ rewards target degradation and preservation relative to
+the full model, whereas the NLL and KL ratios measure proximity to the twin.
+A method can therefore obtain a high efficacy--preservation score by strongly
+suppressing target answers while moving past, rather than toward, the twin.
+Conversely, a small edit can remain close to both the full model and the twin
+without producing substantial erasure. Complete normalized comparisons appear
+in Table~\ref{tab:metric-agreement}.
 
 \subsection{Selectivity and Variation Across Concepts}
 
-To summarize whether changes were concentrated on the target, we computed the
-post-hoc contrast between target NLL change from the full model and the average
-change on neighboring and SciQ questions. EMBER's contrasts were 1.932 nats
-per token for Rome, 1.242 for Baseball, and 2.124 for AI. The corresponding
-values were 1.701, 1.126, and 2.325 for RMU+EMBER, and 1.886, 1.286, and 2.145
-for SNMF+EMBER. All ensemble intervals excluded zero. RMU's contrasts were
-$-0.094$, 0.151, and 0.011, while SNMF's were 0.131, 0.088, and 0.121.
-EMBER and the ensembles therefore made large target-specific changes even
-though they remained distant from the twins. The exact
-definition, component contrasts, and uncertainty estimates are reported in
-Appendix~\ref{app:diagnostics}.
+The post-hoc NLL contrast measured whether changes were concentrated on target
+questions rather than the neighboring and SciQ groups. EMBER's contrasts were
+1.932 nats per token for Rome, 1.242 for Baseball, and 2.124 for AI. The
+corresponding values were 1.701, 1.126, and 2.325 for RMU+EMBER, and 1.886,
+1.286, and 2.145 for SNMF+EMBER. All ensemble confidence intervals excluded
+zero.
 
-No method leads under every criterion, and rankings change across concepts.
+RMU's contrasts were $-0.094$, 0.151, and 0.011, while SNMF's were 0.131,
+0.088, and 0.121. EMBER and its ensembles therefore produced much larger
+target-specific NLL changes than RMU or SNMF, even though they remained farther
+from the twins. The contrast definition, component comparisons, and uncertainty
+estimates appear in Appendix~\ref{app:diagnostics}.
+
+No method led under every criterion, and rankings varied across concepts. RMU
+most closely matched the twins' signed mean target NLL but did not consistently
+improve question-level proximity and also changed preservation groups. SNMF
+made small edits that modestly improved some proximity measures but produced
+little target suppression. EMBER and its ensembles produced the largest and
+most target-specific NLL changes but generally moved beyond the twins.
 Differences in corpus coverage and overlap with neighboring topics may
-contribute, but these measurements do not isolate their effects.
+contribute to this variation, although the present measurements do not isolate
+their effects.

@@ -3,112 +3,248 @@
 
 \subsection{Question Groups and Answer Formats}
 
-For each concept, we evaluated target questions, neighboring
-questions, and a shared general-science group from SciQ
-\citep{welbl2017sciq}. The target group measures change on the concept to
-be erased, the neighboring group measures preservation at close topical
-proximity, and SciQ measures preservation on general science questions.
-Each group contained 50 selection and 50 held-out test questions. The target
-and neighboring questions followed EMBER's existing splits
-\citep{suslik2026ember}. We sampled 100 distinct items from SciQ's validation
-split with a fixed seed and divided them equally between selection and test;
-the same SciQ items were used for all three concepts.
+For each concept, we evaluated target questions, neighboring questions, and a
+shared general-science group drawn from SciQ \citep{welbl2017sciq}. The target
+group measures change in knowledge of the concept to be erased, while the
+neighboring and SciQ groups measure preservation at close topical proximity
+and on general science, respectively. Each group contained 50 selection
+questions and 50 held-out test questions. The target and neighboring questions
+followed EMBER's existing splits \citep{suslik2026ember}. We sampled 100
+distinct items from SciQ's validation split with a fixed seed and divided them
+equally between selection and test; the same SciQ items were used for all three
+concepts.
 
-In preliminary experiments across several concepts, even the full model did
-not reliably generate a gradeable option or answer label. Because these 1B
-base models lack instruction tuning, generated-answer multiple choice also
-tests instruction following and answer-to-label binding. OLMES similarly
-recommends a completion formulation for smaller base models, and OLMo~2 uses
-the OLMES evaluation framework \citep{gu2025olmes,walsh2025olmo2}.
+In preliminary experiments, the 1B base models did not reliably generate a
+gradeable answer option or label. Generated-answer multiple choice would
+therefore conflate factual knowledge with instruction following and
+answer-to-label binding. OLMES similarly recommends completion-based
+evaluation for smaller base models, and OLMo~2 uses the OLMES evaluation
+framework \citep{gu2025olmes,walsh2025olmo2}.
 
 We therefore used Claude in a dedicated session to rewrite the target and
-neighboring questions as declarative sentence stems while retaining all four
-candidates. For example, ``Which river is associated with the founding of
-Rome?'' became ``The river associated with the founding of Rome is'', with
-``The Tiber River'' as the correct continuation. Ranking candidates by
-continuation likelihood better matches the models' next-token objective.
-The alternatives are not presented together, so this metric does not
-test conventional multiple-choice behavior or explicit comparison; candidate
-prior probability, fluency, and grammatical fit can also affect scores. Character
-normalization reduces length bias but not all such effects. SciQ items retained
-their original question text and four answer options.
+neighboring questions as declarative sentence stems while retaining the
+original correct answer and three distractors. For example, ``Which river is
+associated with the founding of Rome?'' became ``The river associated with the
+founding of Rome is'', with ``The Tiber River'' as the correct continuation.
+SciQ items retained their original interrogative wording. In every group,
+however, answer options were scored as continuations of the supplied context;
+the model did not generate an answer or select an answer label.
 
-\subsection{Likelihood-Ranked Accuracy and Harmonic Score}
+This formulation better matches the models' next-token objective, but it is
+not equivalent to conventional multiple-choice evaluation. The alternatives
+are scored separately rather than presented together, so option likelihoods
+may be affected by prior probability, fluency, grammatical fit, and answer
+length.
 
-For checkpoint selection and held-out accuracy, we scored each of the four
-answer options as a continuation of its context. For option $o$, we summed
-the log-probabilities of its tokens and divided by its character length:
+\subsection{Likelihood-Ranked Accuracy and Efficacy--Preservation}
+
+For each question, we scored all four answer options as continuations of the
+context. For option $o$, we summed the log-probabilities of its tokens and
+divided by its character length:
 \begin{equation}
 s_M(o\mid x)
-=\frac{1}{|o|_{\mathrm{char}}}
-  \sum_{t=1}^{n_o}\log p_M(o_t\mid x,o_{<t}).
+=
+\frac{1}{|o|_{\mathrm{char}}}
+\sum_{t=1}^{n_o}
+\log p_M(o_t\mid x,o_{<t}).
 \end{equation}
-The model's answer was the option with the largest $s_M(o\mid x)$, and
-accuracy was the fraction of questions on which this option was correct.
-Character normalization reduces the preference of unnormalized sequence
-probability for short answers. The model did not generate an option or an
-answer letter.
+The scored continuation included one leading space, which was also included
+in the character count. The model's answer was the option with the largest
+$s_M(o\mid x)$, and accuracy was the proportion of questions answered
+correctly. Character normalization reduces the preference of unnormalized
+sequence probability for shorter answers, although it does not remove every
+option-level bias.
 
-We used the normalized accuracies and harmonic score defined in
-Section~\ref{sec:experimental-design} to select checkpoints on the selection
-splits. After fixing the checkpoints, we applied the same calculation to the
-held-out splits and report $H_{\mathrm{test}}$. Test accuracy and
-$H_{\mathrm{test}}$ were not used to revise the selected checkpoints.
+For group $g$, we normalized model $M$'s accuracy against the full model $F$
+and the four-choice chance level:
+\begin{equation}
+\widetilde{\operatorname{Acc}}_g(M)
+=
+\operatorname{clip}_{[0,1]}
+\left(
+\frac{\operatorname{Acc}_g(M)-0.25}
+{\operatorname{Acc}_g(F)-0.25}
+\right).
+\end{equation}
+We then defined target efficacy, preservation, and their harmonic aggregation
+as
+\begin{align}
+\phi_{\mathrm{eff}}(M)
+&=
+1-\widetilde{\operatorname{Acc}}_{\mathrm{target}}(M),\\
+\phi_{\mathrm{pres}}(M)
+&=
+\operatorname{HM}\left(
+\widetilde{\operatorname{Acc}}_{\mathrm{neighbor}}(M),
+\widetilde{\operatorname{Acc}}_{\mathrm{SciQ}}(M)
+\right),\\
+H(M)
+&=
+\operatorname{HM}\left(
+\phi_{\mathrm{eff}}(M),
+\phi_{\mathrm{pres}}(M)
+\right),
+\end{align}
+where $\operatorname{HM}$ denotes the harmonic mean. We used
+$H_{\mathrm{selection}}$ to select checkpoints on the selection splits and
+applied the same calculation to the held-out splits to obtain
+$H_{\mathrm{test}}$. Test results were not used to revise the selected
+checkpoints.
 
-The accuracy score depends on the three supplied distractors. For the
-comparison with the concept-excluded twin, we therefore additionally used
-the following NLL and KL measurements, which score the fixed correct
-continuation without treating the particular distractors as the space of
-all possible errors.
+These metrics evaluate target suppression and preservation relative to the
+full model. They do not measure whether an edited model resembles its
+concept-excluded twin. Moreover, likelihood-ranked accuracy depends on the
+three supplied distractors: changing them can change which option ranks first
+even if the likelihood of the correct answer remains unchanged.
 
-\subsection{Answer NLL Difference}
+\subsection{Correct-Answer NLL and NLL Proximity to the Twin}
 
-For question $i$, let $x_i$ be the sentence stem and
-$y_{i,1},\ldots,y_{i,n_i}$ the tokens of its correct continuation.
-We measured model $M$'s mean negative log-likelihood (NLL) over
-those answer tokens:
+To evaluate support for the correct answer independently of the supplied
+distractors, we measured its teacher-forced negative log-likelihood (NLL). For
+question $i$, let $x_i$ denote the context and
+$y_{i,1},\ldots,y_{i,n_i}$ the tokens of the correct continuation. Model $M$'s
+mean answer NLL was
 \begin{equation}
 \ell_M(i)
-= -\frac{1}{n_i}\sum_{t=1}^{n_i}
+=
+-\frac{1}{n_i}
+\sum_{t=1}^{n_i}
 \log p_M(y_{i,t}\mid x_i,y_{i,<t}).
 \end{equation}
-Each token was scored given the stem and the preceding correct-answer
+Each answer token was scored given the context and the preceding correct-answer
 tokens; the model did not generate a response.
 
-To compare $M$ with reference model $R$, either the full model or the
-concept-excluded twin, we computed the paired difference
-$\Delta_{M,R}(i)=\ell_M(i)-\ell_R(i)$. A positive difference means
-that $M$ assigned less probability to the correct answer than $R$.
+For reference model $R$, either the full model $F$ or the concept-excluded twin
+$T$, we defined the paired difference
+\begin{equation}
+\Delta_{M,R}(i)=\ell_M(i)-\ell_R(i).
+\end{equation}
+A positive value means that $M$ assigned less probability to the correct
+answer than $R$. We report the mean of these paired differences across the
+questions in each group.
+
+To compare signed group-mean proximity across concepts, we normalized the
+edited model's target discrepancy from the twin by the corresponding
+full--twin discrepancy:
+\begin{equation}
+R_{\mathrm{NLL}}(M,c)
+=
+\frac{
+\left|
+\overline{\Delta\mathrm{NLL}}^{\mathrm{target}}_{M-T}
+\right|
+}{
+\left|
+\overline{\Delta\mathrm{NLL}}^{\mathrm{target}}_{F-T}
+\right|
+}.
+\end{equation}
+A value of zero indicates agreement with the twin in mean target NLL, while a
+value of one indicates the same signed-mean discrepancy as the full model.
+Values above one indicate a larger discrepancy.
+
+Because $R_{\mathrm{NLL}}$ takes the absolute value only after averaging,
+positive and negative question-level differences can cancel. We therefore
+also measured mean absolute per-question distance:
+\begin{equation}
+D_{\mathrm{abs}}(M,T;c)
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\left|\ell_M(i)-\ell_T(i)\right|,
+\end{equation}
+and normalized it by the corresponding full-model distance:
+\begin{equation}
+R_{\mathrm{abs}}(M,T;c)
+=
+\frac{D_{\mathrm{abs}}(M,T;c)}
+{D_{\mathrm{abs}}(F,T;c)}.
+\end{equation}
+Values below one indicate that the edited model is closer to the twin than the
+full model after taking the absolute difference separately on each question.
+
+We additionally measured the proportion of questions on which the edited
+model was strictly closer to the twin:
+\begin{equation}
+P_{\mathrm{closer}}(M,T;c)
+=
+\frac{1}{N}
+\sum_{i=1}^{N}
+\mathbb{I}
+\left[
+|\ell_M(i)-\ell_T(i)|
+<
+|\ell_F(i)-\ell_T(i)|
+\right].
+\end{equation}
+Whereas $R_{\mathrm{abs}}$ accounts for the magnitude of question-level
+differences, $P_{\mathrm{closer}}$ records how frequently the edit improves
+proximity, irrespective of the size of that improvement.
+
+For $R_{\mathrm{abs}}$ and $P_{\mathrm{closer}}$, we formed paired-bootstrap
+percentile 95\% confidence intervals using 10,000 resamples of the 50 held-out
+target questions with replacement and seed 0. The same sampled question
+indices were used for the edited, full, and twin models in every resample.
+These intervals quantify variation across the fixed test questions, not
+variation across training seeds.
 
 \subsection{Teacher-Forced Full-Vocabulary KL}
 
-Answer NLL measures support for the supplied answer. To measure
-broader changes in prediction, we also compared the models' full
-next-token distributions at each answer position. Let $p_{M,t}$
-denote model $M$'s distribution over the vocabulary given the stem
-and the preceding correct-answer tokens. For concept-excluded twin
-$T$ and comparison model $M$, we computed
+Correct-answer NLL measures support for one supplied answer. To measure broader
+changes in prediction, we also compared the models' complete next-token
+distributions at each answer position. Let $p_{M,t}$ denote model $M$'s
+distribution over the vocabulary given the context and the preceding
+correct-answer tokens. For twin $T$ and comparison model $M$, we computed
 \begin{equation}
 \operatorname{KL}_{T\to M}(i)
-= \frac{1}{n_i}\sum_{t=1}^{n_i}
-D_{\mathrm{KL}}(p_{T,t}\,\|\,p_{M,t}).
+=
+\frac{1}{n_i}
+\sum_{t=1}^{n_i}
+D_{\mathrm{KL}}
+\left(
+p_{T,t}\,\|\,p_{M,t}
+\right).
 \end{equation}
 
-We kept the twin on the left when comparing it with both the full
-model and each erased model. This choice matters because KL is
-asymmetric: reversing its arguments can change the values and even
-the ordering of models. Using the twin as the common reference asks
-how closely each model reproduces the twin's predictions, with
-deviations weighted by the twin's probability distribution. Lower
-KL indicates greater similarity at the evaluated positions.
+We kept the twin on the left when comparing it with both the full and edited
+models. This choice matters because KL is asymmetric: reversing its arguments
+can change both its value and the ordering of models. Using the twin as the
+common reference asks how closely each model reproduces the twin's predictions,
+with deviations weighted by the twin's probability distribution. Lower KL
+therefore indicates greater distributional similarity at the evaluated
+positions.
 
-The full vocabulary includes incorrect next tokens, so KL can detect
-changes among alternatives even when the correct token's probability
-changes little. Because the models are evaluated along the correct
-continuation, KL does not measure their predictions after an
-incorrect token is chosen.
+To compare KL proximity across concepts, we normalized each edited model's
+target KL by the corresponding twin--full KL:
+\begin{equation}
+R_{\mathrm{KL}}(M,c)
+=
+\frac{
+\operatorname{KL}^{\mathrm{target}}(T\,\|\,M)
+}{
+\operatorname{KL}^{\mathrm{target}}(T\,\|\,F)
+}.
+\end{equation}
+A value of zero denotes distributional agreement with the twin, one indicates
+the same divergence as the full model, and values above one indicate greater
+divergence.
 
-We report the mean and standard deviation across the 50 held-out
-test questions in each target, neighboring, and SciQ group.
-For NLL, these summarize paired question-level differences; for KL,
-they summarize question-level divergence.
+Unlike correct-answer NLL, full-vocabulary KL can detect changes among
+alternative next-token predictions even when the probability of the correct
+token changes little. However, it remains teacher-forced along the correct
+continuation and therefore does not measure predictions after an incorrect
+token is chosen.
+
+\subsection{Reporting Scope}
+
+We report means and sample standard deviations across the 50 held-out
+questions in each target, neighboring, and SciQ group. For NLL, these summarize
+paired question-level differences; for KL, they summarize question-level
+divergence. The normalized similarity ratios are reported on target questions.
+The question-level NLL proximity statistics additionally receive the
+paired-bootstrap intervals described above.
+
+The efficacy--preservation score and twin-similarity metrics answer different
+questions and are therefore reported separately. A post-hoc contrast measuring
+whether NLL changes were concentrated on target rather than preservation
+questions is defined and reported in Appendix~\ref{app:diagnostics}.

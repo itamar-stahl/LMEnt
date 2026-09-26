@@ -1,63 +1,93 @@
 \section{Background and Related Work}
 \label{sec:related-work}
 
-\subsection{LMEnt and Concept Exclusion}
+\subsection{Concept Erasure and Its Reference}
 
-LMEnt provides a Wikipedia-based pretraining corpus annotated with entity
-mentions, an index for retrieving chunks associated with those entities, and
-language models trained on the corpus \citep{gottesman2025lment}. The entity
-index lets us identify training chunks linked to a target concept. By masking
-the loss on those chunks during an otherwise matched training run, we obtain
-a \emph{concept-excluded twin}. This twin provides a reference for the effect
-of excluding a defined portion of the corpus from the training objective. It may still learn
-related facts from chunks outside that portion.
+Post-training concept erasure aims to suppress a model's knowledge of a target
+concept while preserving behavior unrelated to that concept. More broadly,
+machine unlearning is commonly framed as approximating the model that would
+have resulted had the data to be forgotten not contributed to training
+\citep{wichert2024rethinking}. This framing suggests two distinct evaluation
+questions. First, does an intervention reduce target knowledge while
+preserving other capabilities? Second, does the resulting model resemble one
+trained without the target learning signal?
 
-Machine unlearning is commonly framed as approximating a model retrained
-without the data to be forgotten, so evaluations can compare an unlearned
-model with that retrained reference \citep{wichert2024rethinking}. At
-pretraining scale, however, the cost of retraining often prevents such a
-comparison \citep{yao2024machineunlearning}. Controlled pretraining studies
-have instead compared models whose corpora differ through targeted data
-insertion or filtering \citep{wei2025hubble,obrien2025deepignorance}; the
-latter also shows that pretraining-time filtering can differ from
-post-training safeguards in resistance to subsequent recovery. At the
-1B-parameter scale, we can train matched models for this comparison. We use LMEnt's
-entity index to define concept-level loss exclusion while holding the
-initialization, data order, and training configuration fixed, and compare the
-resulting twin with post-training erasure in both answer behavior and
-next-token distributions.
+Most evaluations compare an edited model with its original version, measuring
+target suppression and capability preservation but not similarity to a model
+trained without the target data \citep{yao2024machineunlearning,li2024wmdp}.
+These studies motivate matched
+training interventions as references for evaluating post-training erasure.
 
-\subsection{Post-Training Concept Erasure}
+\subsection{Concept Exclusion with LMEnt}
 
-EMBER edits token embeddings rather than internal transformer layers
-\citep{suslik2026ember}. It applies sparse matrix factorization to embeddings
-of tokens collected from target and neutral sentences, selects factors
-associated with the target concept, and subtracts their scaled contributions
-from the embeddings of tokens that express those factors. This changes a
-selected set of input representations without updating the rest of the model.
+LMEnt provides a Wikipedia-based pretraining corpus with entity annotations,
+an index for retrieving chunks associated with particular entities, and
+language models trained on the corpus \citep{gottesman2025lment}. Its entity
+index makes it possible to define a concept-level training intervention:
+chunks linked to a selected set of entities can be prevented from contributing
+to the training loss.
 
-We also consider two approaches that act on multilayer perceptron (MLP)
-components. Representation Misdirection for Unlearning (RMU) fine-tunes
-selected transformer weights so that forget-set representations approach a
-random direction, while a retain objective keeps other representations close
-to those of the original model \citep{li2024wmdp}. Semi-nonnegative matrix
-factorization (SNMF) identifies interpretable features in MLP activations
-from groups of co-activated neurons \citep{shafran2026snmf}. In its erasure
-adaptation, concept-associated features are mapped to directions that can
-be removed through MLP weight edits \citep{suslik2026ember}.
+We refer to a model trained under such an intervention as a
+\emph{concept-excluded twin}. A twin is trained under otherwise matched
+conditions but receives no loss on the selected concept-associated chunks. It
+therefore provides a reference for the behavioral effect of excluding a
+defined portion of the training signal. This reference is more informative
+than the original model alone when asking whether post-training erasure
+reproduces the outcome of concept exclusion.
 
-The EMBER study evaluated efficacy with target-concept questions, specificity
-with similar-domain questions and MMLU, coherence with AlpacaEval, and
-robustness by measuring knowledge recovery after relearning
-\citep{suslik2026ember}. Target and similar-domain knowledge were tested with
-both multiple-choice and open-ended questions. Its normalized scores used the
-original pre-erasure model as the reference; the study did not compare edits
-with a matched model trained without loss on concept-associated data. It
-evaluated EMBER alongside RMU and an MLP weight-erasure adaptation of
-SNMF-derived features, and combined EMBER with each MLP method by fixing the
-embedding edit before tuning the MLP-stage configuration
-\citep{li2024wmdp,shafran2026snmf}. RMU's original evaluation measured
-suppression on WMDP alongside retention on MMLU and MT-Bench relative to the
-original model \citep{li2024wmdp}. Our evaluation instead uses a matched
-concept-excluded twin and compares edits with it using
-correct-answer NLL and full-vocabulary KL on the same sentence completions.
+Concept exclusion does not guarantee that a model contains no target
+knowledge. The entity-based exclusion set may miss indirect or unlinked
+references while also covering text about neighboring topics. Consequently,
+a twin may retain target knowledge and differ from the full model outside the
+target concept. It therefore represents the effect of the specified
+loss-exclusion procedure, not a perfectly concept-free model.
+
+\subsection{Post-Training Concept-Erasure Methods}
+
+We study three post-training methods that intervene at different locations in
+the model. EMBER edits input-token embeddings rather than internal transformer
+layers \citep{suslik2026ember}. It applies sparse matrix factorization to
+embeddings obtained from target and neutral sentences, identifies factors
+associated with the target concept, and subtracts scaled contributions of
+those factors from selected token embeddings. The remaining model parameters
+are left unchanged.
+
+Representation Misdirection for Unlearning (RMU) modifies internal model
+representations \citep{li2024wmdp}. It fine-tunes selected transformer weights
+so that representations of forget-set inputs approach a random control
+direction, while a retain objective encourages representations on non-target
+inputs to remain close to those of the original model. RMU therefore combines
+a target-directed intervention with an explicit preservation objective.
+
+Semi-nonnegative matrix factorization (SNMF) identifies interpretable features
+from groups of co-activated MLP neurons \citep{shafran2026snmf}. In the
+erasure adaptation evaluated by EMBER, concept-associated features are mapped
+to directions that can be removed through edits to MLP weights
+\citep{suslik2026ember}. Because EMBER acts on token embeddings whereas RMU
+and the SNMF-based method act on internal weights, EMBER can also be combined
+with either MLP-level method in a staged intervention.
+
+\subsection{Evaluation of Concept Erasure}
+
+The EMBER study evaluated target-concept efficacy, specificity on related
+domains, preservation on general benchmarks, output coherence, and robustness
+to subsequent relearning \citep{suslik2026ember}. It assessed both
+multiple-choice and open-ended target knowledge and compared EMBER with RMU,
+SNMF-based MLP erasure, and staged combinations of these methods. Its
+normalized evaluation used the original pre-erasure model as the primary
+reference.
+
+RMU was originally evaluated by measuring suppression on the WMDP benchmark
+alongside capability retention on MMLU and MT-Bench
+\citep{li2024wmdp}. These evaluations establish whether an intervention
+suppresses selected behavior while retaining broader capabilities. They do
+not, however, establish whether the edited model resembles a matched model
+trained without the relevant learning signal.
+
+Our evaluation separates these objectives. We measure erasure efficacy and
+preservation relative to the full model, while independently measuring
+similarity to a concept-excluded twin. The latter comparison uses
+correct-answer negative log-likelihood and teacher-forced full-vocabulary KL
+divergence on the same sentence completions. This design tests whether methods
+that successfully suppress target behavior also reproduce the behavioral
+effects of concept exclusion during training.
