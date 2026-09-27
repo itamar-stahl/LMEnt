@@ -27,23 +27,23 @@ coverage in LMEnt's corpus \citep{gottesman2025lment}. A single ID missed text
 linked to related entities, while an overly broad set risked masking loss on
 text about adjacent topics. We therefore selected a bounded set of QIDs for
 each concept. We masked the loss on a training chunk if LMEnt linked at
-least one
-mention in it to a selected QID.
-Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
+least one mention in it to a selected QID. Table~\ref{tab:exclusion-sets}
+reports the resulting ID counts, unique excluded chunks, and corpus shares.
 
 \begin{table}[b]
   \centering
   \small
-  \begin{tabular}{lrr}
+  \begin{tabular}{lrrr}
     \toprule
-    Concept & Entity IDs & Excluded chunks \\
+    Concept & QIDs & Chunks & Share \\
     \midrule
-    Ancient Rome & 56 & 65,844 \\
-    Baseball & 43 & 80,466 \\
-    AI & 31 & 19,818 \\
+    Ancient Rome & 56 & 65,844 & 0.628\% \\
+    Baseball     & 43 & 80,466 & 0.767\% \\
+    AI           & 31 & 19,818 & 0.189\% \\
     \bottomrule
   \end{tabular}
-  \caption{Entity sets used to mask loss on concept-associated training chunks.}
+  \caption{Concept-exclusion sets. Corpus share is relative to the full
+  10,491,928-chunk LMEnt corpus.}
   \label{tab:exclusion-sets}
 \end{table}
 
@@ -79,7 +79,7 @@ were withheld from this procedure.
 
 We selected the candidate with the largest accuracy-based
 $H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
-deterministic order to break exact ties. We did not use an NLL-based criterion
+deterministic order to break exact ties. Initially we tried to use an NLL-based criterion we designed ourself but we forfeited the idea 
 because, for EMBER, it increased monotonically with edit strength and selected
 the edge of the grid. The chosen score adapts EMBER's validation
 rule to our base-model setting: neighboring questions replace similar-domain

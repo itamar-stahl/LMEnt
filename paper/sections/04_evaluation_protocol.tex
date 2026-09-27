@@ -42,19 +42,34 @@ $R_{\mathrm{abs}}$ measures question-level NLL proximity to the
 concept-excluded twin; and $R_{\mathrm{KL}}$ measures full-vocabulary
 distributional proximity to that twin. We use $R_{\mathrm{NLL}}$ and
 $P_{\mathrm{closer}}$ as complementary diagnostics of signed-mean agreement
-and the frequency of question-level improvement. Raw accuracy, NLL, KL, and
-the post-hoc selectivity contrast support interpretation and are reported
-primarily in the appendix.
+and the frequency of question-level improvement. Raw accuracy, NLL, and KL are reported primarily in the appendix, together
+with an exploratory diagnostic that tests whether NLL increased more on target
+questions than on neighboring and SciQ questions.
 
 \paragraph{Interpretation criterion.}
 We do not combine the three primary metrics because they measure distinct
 properties. $H_{\mathrm{test}}$ measures the efficacy--preservation tradeoff,
 whereas $R_{\mathrm{abs}}$ and $R_{\mathrm{KL}}$ measure resemblance to the
-twin. Ratios below one indicate improvement over the full model, and values
-approaching zero indicate stronger agreement. Evidence for reproducing
-concept exclusion is stronger when target suppression with preservation
-coincides with improvement under both ratios; we impose no binary threshold
-on $H_{\mathrm{test}}$.
+twin relative to the full model. For either ratio, one means that the edited
+model is as distant from the twin as the full model, values below one indicate
+greater resemblance to the twin, and values above one indicate that it is
+farther from the twin. Zero indicates agreement with the twin on the evaluated
+quantity.
+
+Because each target set contains only 50 questions, these estimates may depend
+on which questions were included. For $R_{\mathrm{abs}}$ and
+$P_{\mathrm{closer}}$, we assessed this question-sampling uncertainty with
+paired-bootstrap percentile 95\% confidence intervals. In each of 10,000
+resamples (seed 0), we sampled 50 question indices with replacement, used the
+same indices for the edited, full, and twin models, and recomputed the complete
+statistic, including both the numerator and denominator of
+$R_{\mathrm{abs}}$. The 2.5th and 97.5th percentiles formed the interval
+endpoints. This pairing preserves the within-question comparisons. An
+$R_{\mathrm{abs}}$ interval entirely below one indicates that movement toward
+the twin persisted across resamples; an interval containing one does not
+clearly separate the edit from the full-model reference. These intervals
+measure sensitivity to the fixed test questions, not variation across training
+seeds or checkpoints.
 
 \subsection{Likelihood-Ranked Accuracy and Efficacy--Preservation}
 
@@ -71,9 +86,9 @@ s_M(o\mid x)
 The scored continuation included one leading space, which was also included
 in the character count. The model's answer was the option with the largest
 $s_M(o\mid x)$, and accuracy was the proportion of questions answered
-correctly. Character normalization reduces the preference of unnormalized
-sequence probability for shorter answers, although it does not remove every
-option-level bias \citep{gu2025olmes}.
+correctly. Character normalization reduces the preference for shorter answers, but
+answer rankings can still reflect differences in the options' prior
+likelihoods \citep{gu2025olmes}.
 
 For group $g$, we normalized model $M$'s accuracy against the full model $F$
 and the four-choice chance level:
@@ -106,11 +121,9 @@ H(M)
 \phi_{\mathrm{pres}}(M)
 \right),
 \end{align}
-where $\operatorname{HM}$ denotes the harmonic mean. We used
-$H_{\mathrm{selection}}$ to select checkpoints on the selection splits and
-applied the same calculation to the held-out splits to obtain
-$H_{\mathrm{test}}$. Test results were not used to revise the selected
-checkpoints.
+where $\operatorname{HM}$ denotes the harmonic mean.
+$H_{\mathrm{selection}}$ was calculated on the selection split questions to select checkpoints and
+$H_{\mathrm{test}}$ was calculated on the test questions for performance evaluation.
 
 These metrics evaluate target suppression and preservation relative to the
 full model. They do not measure whether an edited model resembles its
@@ -160,9 +173,8 @@ R_{\mathrm{NLL}}(M,c)
 \right|
 }.
 \end{equation}
-A value of zero indicates agreement with the twin in mean target NLL, while a
-value of one indicates the same signed-mean discrepancy as the full model.
-Values above one indicate a larger discrepancy. Because the absolute value is
+
+Because the absolute value is
 taken only after averaging, opposing question-level differences can cancel;
 we therefore treat this ratio as diagnostic.
 
@@ -182,8 +194,6 @@ R_{\mathrm{abs}}(M,T;c)
 \frac{D_{\mathrm{abs}}(M,T;c)}
 {D_{\mathrm{abs}}(F,T;c)}.
 \end{equation}
-Values below one indicate that the edited model is closer to the twin than the
-full model after taking the absolute difference separately on each question.
 We use $R_{\mathrm{abs}}$ as the primary NLL-based twin-similarity metric.
 
 Let $d_M(i)=|\ell_M(i)-\ell_T(i)|$. We additionally measured the proportion
@@ -199,25 +209,6 @@ Whereas $R_{\mathrm{abs}}$ accounts for the magnitude of question-level
 differences, $P_{\mathrm{closer}}$ records how frequently the edit improves
 proximity, irrespective of the size of that improvement; we therefore use it
 as a complementary diagnostic.
-
-Because each target set contains only 50 questions, the observed
-$R_{\mathrm{abs}}$ and $P_{\mathrm{closer}}$ values may depend on which
-questions were included. We assessed this question-sampling uncertainty with
-paired-bootstrap percentile 95\% confidence intervals. In each of 10,000
-resamples (seed 0), we sampled 50 question indices with replacement and used
-the same indices for the edited, full, and twin models. We then recomputed each
-statistic, including both the numerator and denominator of
-$R_{\mathrm{abs}}$. This pairing preserves the within-question comparisons on
-which the metrics depend. The 2.5th and 97.5th percentiles of the resampled
-estimates formed the interval endpoints.
-
-For $R_{\mathrm{abs}}$, an interval entirely below one indicates that movement
-toward the twin persisted across the bootstrap resamples; an interval that
-includes one does not clearly separate the edit from the full-model reference
-under this procedure. We calculated these intervals specifically to qualify
-question-level twin-proximity claims. They quantify sensitivity to the fixed
-set of test questions, not variation across training seeds or checkpoints, and
-are not a comprehensive uncertainty analysis for the other metrics.
 
 \subsection{Teacher-Forced Full-Vocabulary KL}
 
@@ -253,10 +244,6 @@ R_{\mathrm{KL}}(M,c)
 \operatorname{KL}^{\mathrm{target}}(T\,\|\,F)
 }.
 \end{equation}
-A value of zero denotes distributional agreement with the twin, one indicates
-the same divergence as the full model, and values above one indicate greater
-divergence. We use $R_{\mathrm{KL}}$ as the primary distributional
-twin-similarity metric.
 
 Unlike correct-answer NLL, full-vocabulary KL can detect changes among
 alternative next-token predictions even when the probability of the correct
