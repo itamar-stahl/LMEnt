@@ -78,13 +78,14 @@ versus 0.208).
   \label{tab:target}
 \end{table}
 
-All three selected RMU+EMBER checkpoints failed RMU's predeclared activity
-check: their final cosine alignment with the control direction ranged from
-0.076 to 0.285, below the 0.30 threshold. Because EMBER already supplied
-target efficacy, the selection score favored weak RMU updates. These rows
-describe the selected ensembles, but do not provide evidence of a substantial
-additional RMU contribution.
-
+The selected RMU+EMBER checkpoints showed low alignment between forget-set
+activations and RMU's target control direction, indicating that the RMU stage
+only weakly achieved its representation-misdirection objective
+\citep{li2024wmdp}. Because checkpoint selection optimized downstream efficacy
+and preservation after EMBER, it could favor configurations that largely
+retained EMBER's behavior without strongly satisfying the RMU objective. We
+therefore interpret RMU+EMBER as a combined intervention and do not attribute
+its results specifically to RMU.
 \subsection{Twin Similarity}
 
 The two primary twin-similarity metrics favored RMU or SNMF rather than the

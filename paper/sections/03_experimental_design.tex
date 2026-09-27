@@ -81,9 +81,11 @@ We selected the candidate with the largest accuracy-based
 $H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
 deterministic order to break exact ties. Initially we tried to use an NLL-based criterion we designed ourself but we forfeited the idea 
 because, for EMBER, it increased monotonically with edit strength and selected
-the edge of the grid. The chosen score adapts EMBER's validation
-rule to our base-model setting: neighboring questions replace similar-domain
-questions, SciQ replaces MMLU, and we omit AlpacaEval coherence
-\citep{suslik2026ember}. This decision and all selections used only selection
-questions. We then compared the 15 selected checkpoints with the full model
-and their concept-excluded twins.
+the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
+\citep{suslik2026ember}: neighboring-topic questions measure specificity, and
+SciQ replaces MMLU as the general-preservation benchmark. We omitted
+AlpacaEval coherence because our model was not trained to follow instructions;
+low scores could therefore reflect this baseline limitation rather than
+erasure-induced degradation. All checkpoint choices used only the selection
+split. We then evaluated the 15 selected checkpoints against the full model
+and the corresponding concept-excluded twins on the held-out test split.

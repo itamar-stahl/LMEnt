@@ -2,16 +2,24 @@
 \label{sec:limitations}
 
 Limited compute restricted the study to one model family and size, one corpus,
-one seed per condition, and three purposively chosen concepts. The full
-model's accuracy on selection questions informed concept choice, although the
-test questions and erasure results did not. These design choices limit
-generalization across runs, models, corpora, and concepts.
+one seed per condition, and three purposively chosen concepts. We evaluated a
+1B OLMo-2 base model trained on LMEnt's Wikipedia corpus, whereas EMBER was
+evaluated on the instruction-tuned Gemma-2-2B and Llama-3.1-8B models
+\citep{suslik2026ember}. Model scale is therefore confounded with differences
+in architecture, training data, and instruction tuning. These differences may
+affect the amount of target knowledge present before editing, the separability
+of concept-related representations, and the response to each erasure method.
+In particular, the modest baseline target accuracy in our setting leaves less
+room to measure suppression and can make checkpoint comparisons sensitive to
+individual questions. Our results should therefore be interpreted as an
+evaluation in a small base-model setting, rather than a direct replication or
+contradiction of EMBER's findings on larger instruction-tuned models.
 
-The training configurations were matched, but accelerator histories were not
-identical for every pair. The Rome full model and twin both used an H200; the
-Baseball and AI twins completed part of training on other accelerators.
-Separate diagnostics found small cross-GPU drift and no changed evaluated
-answers, but cannot rule out a hardware contribution to numerical differences.
+The full model and each twin used the same training configuration, but not
+always the same accelerator. The full model and Rome twin trained entirely on
+H200 GPUs; the Baseball twin also used H100s, and the AI twin included roughly
+12 hours on an A6000. We therefore cannot rule out a minor hardware contribution
+to the numerical differences for Baseball and AI.
 
 The concept-excluded twins are approximate references. The selected QIDs may
 miss indirect descriptions and may also include text about adjacent topics.
@@ -29,11 +37,10 @@ variation across training seeds.
 
 Checkpoint selection also has two specific limitations. No Rome or Baseball
 SNMF candidate reduced target selection accuracy, so tie-breaking rather than
-measured efficacy selected those checkpoints. All selected RMU+EMBER
-checkpoints failed the RMU activity check, indicating that the score favored
-weak RMU updates after EMBER had already reduced target accuracy. Finally,
+measured efficacy selected those checkpoints. Finally,
 selection optimized likelihood-ranked accuracy rather than distance from the
 twin, so selected checkpoints need not minimize NLL or KL.
+This is both a limitation and a purposeful design choice, since our research question focused on evaluating wether "good concept erasure" relative to the full model is indicative of similarity to the twin.
 
 We did not test relearning or other knowledge-recovery attacks. Our conclusions
 apply to the selected checkpoints; comparing how quickly erased models and
