@@ -25,9 +25,10 @@
 \subsection{Candidate Grid and Selection Procedure}
 
 We selected checkpoints separately for each combination of concept and
-erasure method. The candidate grid contained 97 precomputed checkpoints,
-distributed as shown in Table~\ref{tab:selection-grid-size}. No candidate was
-trained or modified during selection.
+erasure method. Table~\ref{tab:hyperparameter-grid} defines the hyperparameter
+values, and Table~\ref{tab:selection-grid-size} gives the resulting distribution
+of 97 precomputed checkpoints. No candidate was trained or modified during
+selection.
 
 \begin{table}[h]
   \centering
@@ -122,8 +123,8 @@ the final grid differed.
   $^{\dagger}$ All SNMF candidates for this concept had zero efficacy and hence
   $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
   the fixed tie-breaking order rather than a measured efficacy difference.
-  $^{\ddagger}$ The selected RMU+EMBER checkpoint showed low alignment with
-  RMU's target control direction; see Section~\ref{sec:results}.}
+  $^{\ddagger}$ The selected RMU+EMBER checkpoint remained weakly aligned with
+  RMU's control direction; see Section~\ref{sec:results}.}
   \label{tab:selected-checkpoints}
 \end{center}
 
