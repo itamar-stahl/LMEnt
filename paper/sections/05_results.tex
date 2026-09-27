@@ -78,14 +78,12 @@ versus 0.208).
   \label{tab:target}
 \end{table}
 
-The selected RMU+EMBER checkpoints showed low alignment between forget-set
-activations and RMU's target control direction, indicating that the RMU stage
-only weakly achieved its representation-misdirection objective
-\citep{li2024wmdp}. Because checkpoint selection optimized downstream efficacy
-and preservation after EMBER, it could favor configurations that largely
-retained EMBER's behavior without strongly satisfying the RMU objective. We
-therefore interpret RMU+EMBER as a combined intervention and do not attribute
-its results specifically to RMU.
+The selected RMU+EMBER checkpoints showed low alignment with RMU's target
+control direction, suggesting that the RMU stage had little additional effect
+\citep{li2024wmdp}. Because selection optimized efficacy and preservation
+after EMBER, we treat RMU+EMBER as a combined intervention rather than
+attributing its results specifically to RMU.
+
 \subsection{Twin Similarity}
 
 The two primary twin-similarity metrics favored RMU or SNMF rather than the
@@ -211,9 +209,7 @@ intervals entirely above one.
   line at one marks the full model's normalized distance from the twin, and
   the shaded region indicates improvement over that reference. Vertical bars
   in both panels are paired-bootstrap percentile 95\% confidence intervals
-  over the 50 target questions; they do not represent variation across training
-  seeds. Higher $H_{\mathrm{test}}$ does not consistently correspond to lower
-  $R_{\mathrm{abs}}$ or $R_{\mathrm{KL}}$. E abbreviates EMBER.}
+  over the 50 target questions.}
   \label{fig:efficacy-similarity}
 \end{figure*}
 

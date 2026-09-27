@@ -56,20 +56,16 @@ greater resemblance to the twin, and values above one indicate that it is
 farther from the twin. Zero indicates agreement with the twin on the evaluated
 quantity.
 
-Because each target set contains only 50 questions, these estimates may depend
-on which questions were included. For $R_{\mathrm{abs}}$,
-$R_{\mathrm{KL}}$, and $P_{\mathrm{closer}}$, we assessed this
-question-sampling uncertainty with paired-bootstrap percentile 95\% confidence
-intervals. In each of 10,000 resamples (seed 0), we sampled 50 question indices
-with replacement, used the same indices for the edited, full, and twin models,
-and recomputed each statistic. For both ratios, this included recomputing the
-numerator and denominator from the same sampled questions. The 2.5th and
-97.5th percentiles formed the interval endpoints. This pairing preserves the
-within-question comparisons. For either ratio, an interval entirely below one
-indicates that movement toward the twin persisted across resamples; an
-interval containing one does not clearly separate the edit from the full-model
-reference. These intervals measure sensitivity to the fixed test questions,
-not variation across training seeds or checkpoints.
+Because each target set contains only 50 questions, we estimated
+question-sampling uncertainty for $R_{\mathrm{abs}}$, $R_{\mathrm{KL}}$, and
+$P_{\mathrm{closer}}$ using paired-bootstrap percentile 95\% confidence
+intervals. For each of 10,000 resamples (seed 0), we sampled 50 question
+indices with replacement, applied them jointly to the edited, full, and twin
+models, and recomputed each statistic, including both numerator and denominator
+of each ratio. The 2.5th and 97.5th percentiles formed the interval endpoints.
+For either ratio, an interval entirely below one indicates consistent movement
+toward the twin across resamples. These intervals capture sensitivity to the
+test questions, not variation across training seeds or checkpoints.
 
 \subsection{Likelihood-Ranked Accuracy and Efficacy--Preservation}
 
@@ -251,7 +247,5 @@ token changes little. However, it remains teacher-forced along the correct
 continuation and therefore does not measure predictions after an incorrect
 token is chosen.
 
-The main results report the three primary metrics and selected complementary
-diagnostics. Appendices~\ref{app:full-results} and~\ref{app:diagnostics}
-provide the complete raw results, confidence intervals, and post-hoc
-target-specificity analysis.
+Complete raw results, confidence intervals, and post-hoc analyses appear in
+Appendices~\ref{app:full-results} and~\ref{app:diagnostics}.
