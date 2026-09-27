@@ -22,11 +22,12 @@ sought manageable breadth and variation across domains. Results on these
 three concepts may not generalize to other concepts.
 
 For each concept, we used Claude in a dedicated session to propose
-Wikidata entity IDs (QIDs), then reviewed their coverage in LMEnt's
-corpus \citep{gottesman2025lment}. A single ID missed text linked to
-related entities, while an overly broad set risked masking loss on text about
-adjacent topics. We therefore selected a bounded set of QIDs for each
-concept. We masked the loss on a training chunk if LMEnt linked at least one
+Wikidata entity IDs (QIDs) \citep{vrandecic2014wikidata}, then reviewed their
+coverage in LMEnt's corpus \citep{gottesman2025lment}. A single ID missed text
+linked to related entities, while an overly broad set risked masking loss on
+text about adjacent topics. We therefore selected a bounded set of QIDs for
+each concept. We masked the loss on a training chunk if LMEnt linked at
+least one
 mention in it to a selected QID.
 Table~\ref{tab:exclusion-sets} reports the resulting ID and unique chunk counts.
 

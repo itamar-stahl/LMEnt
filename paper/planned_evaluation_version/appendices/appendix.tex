@@ -5,7 +5,8 @@
 
 All pretrained models used the 18-layer OLMo-2 1B architecture ($d_{\mathrm{model}}=
 2048$, 16 attention heads) and the 3.6B-token LMEnt Wikipedia corpus. We
-trained for two epochs (54,832 optimizer steps) with AdamW, peak learning rate
+trained for two epochs (54,832 optimizer steps) with AdamW
+\citep{loshchilov2019decoupled}, peak learning rate
 $4\times10^{-4}$, 2,000 warmup steps, cosine decay to $4\times10^{-5}$,
 weight decay 0.05, and maximum gradient norm 1.0. The global batch contained
 131,072 tokens; the per-rank microbatch contained 16,384. Variable sequence
