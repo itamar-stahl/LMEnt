@@ -37,10 +37,11 @@ variation across training seeds.
 
 Checkpoint selection also has two specific limitations. No Rome or Baseball
 SNMF candidate reduced target selection accuracy, so tie-breaking rather than
-measured efficacy selected those checkpoints. Finally,
-selection optimized likelihood-ranked accuracy rather than distance from the
-twin, so selected checkpoints need not minimize NLL or KL.
-This is both a limitation and a purposeful design choice, since our research question focused on evaluating wether "good concept erasure" relative to the full model is indicative of similarity to the twin.
+measured efficacy selected those checkpoints. Finally, selection optimized likelihood-ranked accuracy rather than distance
+from the twin, so the selected checkpoints need not minimize NLL or KL. This
+was also a deliberate design choice: our research question asks whether edits
+selected for target suppression and preservation relative to the full model
+also resemble the concept-excluded twin.
 
 We did not test relearning or other knowledge-recovery attacks. Our conclusions
 apply to the selected checkpoints; comparing how quickly erased models and

@@ -79,9 +79,9 @@ were withheld from this procedure.
 
 We selected the candidate with the largest accuracy-based
 $H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
-deterministic order to break exact ties. Initially we tried to use an NLL-based criterion we designed ourself but we forfeited the idea 
+deterministic order to break exact ties. We initially considered an NLL-based selection criterion, but rejected it
 because, for EMBER, it increased monotonically with edit strength and selected
-the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
+a checkpoint at the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
 \citep{suslik2026ember}: neighboring-topic questions measure specificity, and
 SciQ replaces MMLU as the general-preservation benchmark. We omitted
 AlpacaEval coherence because our model was not trained to follow instructions;
