@@ -1,0 +1,55 @@
+\section{Reproducibility}
+\label{app:reproducibility}
+
+\subsection{Model and Training Configuration}
+
+All pretrained models used the 18-layer OLMo-2 1B architecture ($d_{\mathrm{model}}=
+2048$, 16 attention heads) and the 3.6B-token LMEnt Wikipedia corpus. We
+trained for two epochs (54,832 optimizer steps) with AdamW
+\citep{loshchilov2019decoupled}, peak learning rate
+$4\times10^{-4}$, 2,000 warmup steps, cosine decay to $4\times10^{-5}$,
+weight decay 0.05, and maximum gradient norm 1.0. The global batch contained
+131,072 tokens; the per-rank microbatch contained 16,384. Variable sequence
+lengths ranged from 64 to 2,048 tokens under the \texttt{grow\_p2} curriculum
+with eight cycles. Initialization and data-order seeds were 12,536 and 0.
+
+The full model and three twins shared this recipe, initialization, and batch
+order; only the loss mask over concept-associated chunks differed. The exact
+QID lists are \path{Untaught/blacklists/ancient_rome_core.json},
+\path{Untaught/blacklists/baseball_core_teams.json}, and
+\path{Untaught/blacklists/ai_core.json}. Accelerator histories were not
+identical for every pair, and the study used one training seed per condition,
+as discussed in Section~\ref{sec:limitations}.
+
+\subsection{Erasure Data and Fixed Settings}
+
+All three erasure methods used the same banks of 300 target sentences per
+concept and 300 neutral sentences in
+\path{Ember-on-LMEnt/data/concept_sentences.json} and
+\path{Ember-on-LMEnt/data/neutral_sentences.json}. EMBER factorized rank 100
+features for at most 20,000 iterations in FP32, using seed 44 and sparsity
+coefficient 0.02. The Gemma judge used revision
+{\scriptsize\ttfamily 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7}, its 20 most activating
+examples, and confidence threshold 0.85.
+
+RMU used learning rate $10^{-4}$, batch size 1, 150 updates, seed 42, and
+maximum sequence length 512. A layer-$k$ candidate updated down-projections in
+layers $k-2$ through $k$. Its mid steering magnitude was the model's measured
+mean residual norm and its high magnitude was ten times that value; these
+norms were remeasured after EMBER for RMU+EMBER. SNMF factorized layers 4--6
+at rank 100 with ratio threshold 2.0, at most 20,000 iterations, batch size 8,
+maximum sequence length 256, seed 42, and FP32. Its edits removed the selected
+component exactly ($\delta=1$) from the MLP input weights, output weights, or
+both. For SNMF+EMBER, the factorization was rerun on the selected EMBER model.
+
+
+
+\subsection{Artifact Availability}
+
+Code, frozen question files, QID lists, training and erasure configurations,
+candidate manifests, selected-checkpoint records, and evaluation outputs
+accompany the submission in the project repository
+(\url{https://github.com/itamar-stahl/LMEnt}). Large model weights are not
+stored in Git; the repository's model cards identify the full, twin, and
+selected edited checkpoints and record their conversion and verification
+details.

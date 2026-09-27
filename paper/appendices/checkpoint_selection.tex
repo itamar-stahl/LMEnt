@@ -1,0 +1,138 @@
+\section{Checkpoint Selection}
+\label{app:checkpoint-selection}
+
+\begin{table}[h]
+  \centering
+  \scriptsize
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{ll}
+    \toprule
+    Method & Candidate values per concept \\
+    \midrule
+    EMBER (Rome) & $\delta\in\{1,2,5,10,20,50,100,200,500,1000,2000,5000\}$ \\
+    EMBER (Baseball, AI) & $\delta\in\{1,2,5,10,20,50,100,200,500\}$ \\
+    RMU, RMU+EMBER & layer $\in\{5,6\}$; steering $\in\{\text{mid},\text{high}\}$; $\alpha\in\{10,100\}$ \\
+    SNMF & side $\in\{\text{input},\text{output},\text{both}\}$; Rome also judged-both \\
+    SNMF+EMBER & ratio selection; side $\in\{\text{input},\text{output},\text{both}\}$ \\
+    \bottomrule
+  \end{tabular}%
+  }
+  \caption{Complete candidate grid. Cartesian products are taken within each
+  row. EMBER's $\delta$ is edit strength; RMU's $\alpha$ weights retention.}
+  \label{tab:hyperparameter-grid}
+\end{table}
+
+\subsection{Candidate Grid and Selection Procedure}
+
+We selected checkpoints separately for each combination of concept and
+erasure method. The candidate grid contained 97 precomputed checkpoints,
+distributed as shown in Table~\ref{tab:selection-grid-size}. No candidate was
+trained or modified during selection.
+
+\begin{table}[h]
+  \centering
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    Method & Rome & Baseball & AI & Total \\
+    \midrule
+    EMBER & 12 & 9 & 9 & 30 \\
+    RMU & 8 & 8 & 8 & 24 \\
+    SNMF & 4 & 3 & 3 & 10 \\
+    RMU+EMBER & 8 & 8 & 8 & 24 \\
+    SNMF+EMBER & 3 & 3 & 3 & 9 \\
+    \midrule
+    Total & 35 & 31 & 31 & 97 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Number of candidate checkpoints evaluated for each method and
+  concept.}
+  \label{tab:selection-grid-size}
+\end{table}
+
+Selection used 50 target questions, 50 neighboring questions, and the
+same 50 SciQ questions for every concept. For each question, we scored all
+four options with the character-normalized likelihood ranking defined in
+Section~\ref{sec:evaluation}. We then calculated the normalized accuracies,
+efficacy, preservation, and $H_{\mathrm{selection}}$ values defined in
+Section~\ref{sec:evaluation}. The full model exceeded the four-choice
+chance level in every selection group. Because the score is a nested harmonic
+mean, a low target-efficacy or preservation component limits the final value.
+
+We ranked candidates first by $H_{\mathrm{selection}}$, then by preservation,
+and then by efficacy. Remaining exact ties were resolved by a fixed
+method-specific order: smaller edit intensity for EMBER; smaller layer, band,
+and $\alpha$ tuple for RMU; and a declared selection-mode and edited-side order
+for SNMF. The tie-breaking rule was fixed without consulting the twins or any
+test result. Table~\ref{tab:selected-checkpoints} records the resulting
+configurations.
+
+For each ensemble, the independently selected EMBER winner was fixed first,
+after which the RMU or SNMF grid was applied to that edited checkpoint. SNMF
+features were re-derived from the EMBER-edited model. Ensemble selection used
+the same score and tie-breaking order as the corresponding standalone method.
+
+\subsection{EMBER Semantic Feature Selection}
+\label{app:ember-feature-selection}
+
+EMBER used \texttt{google/gemma-4-12B-it} to judge whether candidate factors
+represented the target concept, with a minimum confidence of 0.85. For Rome
+and Baseball, the feature selected by the judge was also the unique factor
+with the highest target-to-neutral ratio. The final edit grids therefore used
+a numeric threshold that isolated exactly that previously judged feature,
+avoiding repeated judge calls without changing the selected set. For AI,
+some factors rejected by the judge had higher ratios than accepted factors,
+so no single threshold could reproduce the semantic decision. The AI runs
+therefore invoked the judge directly. The semantic selection criterion was
+the same across concepts; only the mechanism used to reproduce its output in
+the final grid differed.
+
+\subsection{Selected Checkpoints}
+
+\begin{center}
+  \centering
+  \scriptsize
+  \resizebox{\columnwidth}{!}{%
+  \begin{tabular}{lll}
+    \toprule
+    Concept & Method & Selected configuration \\
+    \midrule
+    Rome & EMBER & $\delta=200$ \\
+         & RMU   & layer 6, high steering, $\alpha=10$ \\
+         & SNMF  & ratio selection, output side$^{\dagger}$ \\
+         & RMU+EMBER & layer 5, mid steering, $\alpha=100$$^{\ddagger}$ \\
+         & SNMF+EMBER & ratio selection, input side \\
+    \midrule
+    Baseball & EMBER & $\delta=10$ \\
+             & RMU   & layer 6, high steering, $\alpha=10$ \\
+             & SNMF  & ratio selection, both sides$^{\dagger}$ \\
+             & RMU+EMBER & layer 5, mid steering, $\alpha=100$$^{\ddagger}$ \\
+             & SNMF+EMBER & ratio selection, both sides \\
+    \midrule
+    AI & EMBER & $\delta=500$ \\
+       & RMU   & layer 6, high steering, $\alpha=10$ \\
+       & SNMF  & ratio selection, input side \\
+       & RMU+EMBER & layer 5, mid steering, $\alpha=10$$^{\ddagger}$ \\
+       & SNMF+EMBER & ratio selection, input side \\
+    \bottomrule
+  \end{tabular}%
+  }
+  \captionof{table}{Configurations selected using $H_{\mathrm{selection}}$.
+  Here, $\delta$ is EMBER's edit strength and $\alpha$ is RMU's retain weight.
+  $^{\dagger}$ All SNMF candidates for this concept had zero efficacy and hence
+  $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
+  the fixed tie-breaking order rather than a measured efficacy difference.
+  $^{\ddagger}$ The selected RMU+EMBER checkpoint showed low alignment with
+  RMU's target control direction; see Section~\ref{sec:results}.}
+  \label{tab:selected-checkpoints}
+\end{center}
+
+The selection score and candidate ranking used only the selection questions
+and did not use the concept-excluded twins. Held-out measurements and twin
+comparisons did not affect the selected configurations. We computed
+$H_{\mathrm{test}}$ on the test splits with the same formula and also computed
+$H_{\mathrm{test}}$ for the twin, using the full model as the normalization
+baseline, to provide a concept-exclusion reference for the erasure models.
+
+The selection scorer used deterministic teacher-forced log probabilities in
+FP32; no sampling or generation was involved.
