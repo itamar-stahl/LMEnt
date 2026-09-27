@@ -82,10 +82,11 @@ $H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
 deterministic order to break exact ties. We initially considered an NLL-based selection criterion, but rejected it
 because, for EMBER, it increased monotonically with edit strength and selected
 a checkpoint at the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
-\citep{suslik2026ember}: neighboring-topic questions measure specificity, and
-SciQ replaces MMLU as the general-preservation benchmark. We omitted
-AlpacaEval coherence because our model was not trained to follow instructions;
-low scores could therefore reflect this baseline limitation rather than
-erasure-induced degradation. All checkpoint choices used only the selection
-split. We then evaluated the 15 selected checkpoints against the full model
-and the corresponding concept-excluded twins on the held-out test split.
+\citep{suslik2026ember}. Neighboring-topic questions measure specificity,
+while SciQ replaces MMLU as a shared general-preservation benchmark on which
+the full model performed reliably above chance. We omitted AlpacaEval
+coherence because our model was not trained to follow instructions, so low
+scores could reflect this baseline limitation rather than erasure-induced
+degradation. All checkpoint choices used only the selection split. We then
+evaluated the 15 selected checkpoints against the full model and corresponding
+concept-excluded twins on the held-out test split.
