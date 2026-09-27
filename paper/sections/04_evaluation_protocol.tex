@@ -57,19 +57,19 @@ farther from the twin. Zero indicates agreement with the twin on the evaluated
 quantity.
 
 Because each target set contains only 50 questions, these estimates may depend
-on which questions were included. For $R_{\mathrm{abs}}$ and
-$P_{\mathrm{closer}}$, we assessed this question-sampling uncertainty with
-paired-bootstrap percentile 95\% confidence intervals. In each of 10,000
-resamples (seed 0), we sampled 50 question indices with replacement, used the
-same indices for the edited, full, and twin models, and recomputed the complete
-statistic, including both the numerator and denominator of
-$R_{\mathrm{abs}}$. The 2.5th and 97.5th percentiles formed the interval
-endpoints. This pairing preserves the within-question comparisons. An
-$R_{\mathrm{abs}}$ interval entirely below one indicates that movement toward
-the twin persisted across resamples; an interval containing one does not
-clearly separate the edit from the full-model reference. These intervals
-measure sensitivity to the fixed test questions, not variation across training
-seeds or checkpoints.
+on which questions were included. For $R_{\mathrm{abs}}$,
+$R_{\mathrm{KL}}$, and $P_{\mathrm{closer}}$, we assessed this
+question-sampling uncertainty with paired-bootstrap percentile 95\% confidence
+intervals. In each of 10,000 resamples (seed 0), we sampled 50 question indices
+with replacement, used the same indices for the edited, full, and twin models,
+and recomputed each statistic. For both ratios, this included recomputing the
+numerator and denominator from the same sampled questions. The 2.5th and
+97.5th percentiles formed the interval endpoints. This pairing preserves the
+within-question comparisons. For either ratio, an interval entirely below one
+indicates that movement toward the twin persisted across resamples; an
+interval containing one does not clearly separate the edit from the full-model
+reference. These intervals measure sensitivity to the fixed test questions,
+not variation across training seeds or checkpoints.
 
 \subsection{Likelihood-Ranked Accuracy and Efficacy--Preservation}
 

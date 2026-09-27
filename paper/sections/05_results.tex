@@ -47,21 +47,21 @@ versus 0.208).
     \midrule
     Rome & Twin & 0.871 & 0.000 & 0.000 \\
     & EMBER & 0.208 & 1.613 & 2.264 \\
-    & RMU & \textbf{0.486} & \textbf{0.660} & 1.197 \\
+    & RMU & \textbf{0.486} & \textbf{0.660} & 1.196 \\
     & SNMF & 0.000 & 0.940 & \textbf{0.891} \\
     & RMU+E & 0.000 & 1.384 & 1.982 \\
     & SNMF+E & 0.000 & 1.558 & 2.181 \\
     \midrule
     Baseball & Twin & 0.231 & 0.000 & 0.000 \\
     & EMBER & \textbf{0.639} & 2.128 & 2.082 \\
-    & RMU & 0.239 & 1.227 & 1.570 \\
+    & RMU & 0.239 & 1.227 & 1.569 \\
     & SNMF & 0.129 & \textbf{0.967} & \textbf{0.962} \\
     & RMU+E & 0.465 & 2.079 & 2.015 \\
     & SNMF+E & 0.563 & 2.241 & 2.108 \\
     \midrule
     AI & Twin & 0.343 & 0.000 & 0.000 \\
-    & EMBER & 0.753 & 2.112 & 3.312 \\
-    & RMU & 0.483 & 1.006 & 1.627 \\
+    & EMBER & 0.753 & 2.112 & 3.310 \\
+    & RMU & 0.483 & 1.006 & 1.628 \\
     & SNMF & 0.129 & \textbf{0.927} & \textbf{0.992} \\
     & RMU+E & \textbf{0.829} & 2.196 & 3.420 \\
     & SNMF+E & 0.816 & 2.152 & 3.354 \\
@@ -72,9 +72,9 @@ versus 0.208).
   $R_{\mathrm{KL}}$ measure target-question proximity to the concept-excluded
   twin relative to the full model; values below one indicate improvement.
   Twin ratios are zero by definition. E abbreviates EMBER. Bold marks the best
-  erasure condition in each concept and column. $R_{\mathrm{abs}}$ confidence
-  intervals are shown in Figure~\ref{fig:efficacy-similarity}; complete
-  diagnostics appear in Appendix~\ref{app:diagnostics}.}
+  erasure condition in each concept and column. Confidence intervals for both
+  ratios are shown in Figure~\ref{fig:efficacy-similarity}; complete intervals
+  and diagnostics appear in Appendix~\ref{app:diagnostics}.}
   \label{tab:target}
 \end{table}
 
@@ -91,10 +91,13 @@ its results specifically to RMU.
 The two primary twin-similarity metrics favored RMU or SNMF rather than the
 EMBER-based conditions. For $R_{\mathrm{abs}}$, RMU was best for Rome (0.660),
 while SNMF was best for Baseball (0.967) and AI (0.927). Only RMU on Rome and
-SNMF on Rome and AI had 95\% confidence intervals entirely below one. SNMF
-also had the lowest $R_{\mathrm{KL}}$ for every concept (0.891--0.992), although
-values near one indicate only a modest reduction in divergence from the twin.
-EMBER and both ensembles exceeded one on both ratios for every concept.
+SNMF on Rome and AI had $R_{\mathrm{abs}}$ intervals entirely below one. SNMF
+also had the lowest $R_{\mathrm{KL}}$ for every concept (0.891--0.992), but
+only its Rome interval, $[0.838,0.940]$, lay entirely below one. The Baseball
+$[0.923,1.003]$ and AI $[0.954,1.030]$ intervals included one, providing no
+clear separation from the full-model reference under this procedure. EMBER
+and both ensembles exceeded one on both ratios for every concept, with
+intervals entirely above one.
 
 \begin{figure*}[t]
   \centering
@@ -160,7 +163,7 @@ EMBER and both ensembles exceeded one on both ratios for every concept.
       width=0.47\textwidth,
       height=4.8cm,
       xmin=-0.04, xmax=0.88,
-      ymin=0, ymax=3.65,
+      ymin=0, ymax=4.85,
       xlabel={Efficacy--preservation $H_{\mathrm{test}}$},
       ylabel={$R_{\mathrm{KL}}$ (lower is closer)},
       grid=both,
@@ -175,21 +178,21 @@ EMBER and both ensembles exceeded one on both ratios for every concept.
       \fill[gray!12] (axis cs:-0.04,0) rectangle (axis cs:0.88,1);
       \addplot[dashed, black!60, line width=0.6pt, forget plot]
         coordinates {(-0.04,1) (0.88,1)};
-      \resultpoint{0.208}{2.264}{romeblue}{*}
-      \resultpoint{0.486}{1.197}{romeblue}{square*}
-      \resultpoint{0.000}{0.891}{romeblue}{triangle*}
-      \resultpoint{0.000}{1.982}{romeblue}{diamond*}
-      \resultpoint{0.000}{2.181}{romeblue}{pentagon*}
-      \resultpoint{0.639}{2.082}{baseballorange}{*}
-      \resultpoint{0.239}{1.570}{baseballorange}{square*}
-      \resultpoint{0.129}{0.962}{baseballorange}{triangle*}
-      \resultpoint{0.465}{2.015}{baseballorange}{diamond*}
-      \resultpoint{0.563}{2.108}{baseballorange}{pentagon*}
-      \resultpoint{0.753}{3.312}{aigreen}{*}
-      \resultpoint{0.483}{1.627}{aigreen}{square*}
-      \resultpoint{0.129}{0.992}{aigreen}{triangle*}
-      \resultpoint{0.829}{3.420}{aigreen}{diamond*}
-      \resultpoint{0.816}{3.354}{aigreen}{pentagon*}
+      \resultpointci{0.208}{2.264}{0.517}{0.706}{romeblue}{*}
+      \resultpointci{0.486}{1.196}{0.159}{0.216}{romeblue}{square*}
+      \resultpointci{0.000}{0.891}{0.053}{0.049}{romeblue}{triangle*}
+      \resultpointci{0.000}{1.982}{0.422}{0.567}{romeblue}{diamond*}
+      \resultpointci{0.000}{2.181}{0.495}{0.670}{romeblue}{pentagon*}
+      \resultpointci{0.639}{2.082}{0.504}{0.688}{baseballorange}{*}
+      \resultpointci{0.239}{1.569}{0.226}{0.254}{baseballorange}{square*}
+      \resultpointci{0.129}{0.962}{0.039}{0.041}{baseballorange}{triangle*}
+      \resultpointci{0.465}{2.015}{0.478}{0.639}{baseballorange}{diamond*}
+      \resultpointci{0.563}{2.108}{0.498}{0.676}{baseballorange}{pentagon*}
+      \resultpointci{0.753}{3.310}{0.926}{1.248}{aigreen}{*}
+      \resultpointci{0.483}{1.628}{0.194}{0.239}{aigreen}{square*}
+      \resultpointci{0.129}{0.992}{0.038}{0.038}{aigreen}{triangle*}
+      \resultpointci{0.829}{3.420}{0.928}{1.224}{aigreen}{diamond*}
+      \resultpointci{0.816}{3.354}{0.941}{1.255}{aigreen}{pentagon*}
       \addlegendimage{only marks, mark=*, mark options={fill=black}, black}
       \addlegendentry{EMBER}
       \addlegendimage{only marks, mark=square*, mark options={fill=black}, black}
@@ -207,7 +210,7 @@ EMBER and both ensembles exceeded one on both ratios for every concept.
   identifies the concept and marker shape identifies the method. The dashed
   line at one marks the full model's normalized distance from the twin, and
   the shaded region indicates improvement over that reference. Vertical bars
-  in the left panel are paired-bootstrap percentile 95\% confidence intervals
+  in both panels are paired-bootstrap percentile 95\% confidence intervals
   over the 50 target questions; they do not represent variation across training
   seeds. Higher $H_{\mathrm{test}}$ does not consistently correspond to lower
   $R_{\mathrm{abs}}$ or $R_{\mathrm{KL}}$. E abbreviates EMBER.}
