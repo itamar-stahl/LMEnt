@@ -39,8 +39,8 @@ length.
 We designate three primary metrics. $H_{\mathrm{test}}$ measures target
 suppression jointly with neighboring and SciQ preservation;
 $R_{\mathrm{abs}}$ measures question-level NLL proximity to the
-concept-excluded twin; and $R_{\mathrm{KL}}$ measures full-distribution
-proximity to that twin. We use $R_{\mathrm{NLL}}$ and
+concept-excluded twin; and $R_{\mathrm{KL}}$ measures full-vocabulary
+distributional proximity to that twin. We use $R_{\mathrm{NLL}}$ and
 $P_{\mathrm{closer}}$ as complementary diagnostics of signed-mean agreement
 and the frequency of question-level improvement. Raw accuracy, NLL, KL, and
 the post-hoc selectivity contrast support interpretation and are reported
@@ -162,12 +162,12 @@ R_{\mathrm{NLL}}(M,c)
 \end{equation}
 A value of zero indicates agreement with the twin in mean target NLL, while a
 value of one indicates the same signed-mean discrepancy as the full model.
-Values above one indicate a larger discrepancy. We treat this signed-mean
-ratio as diagnostic because opposing question-level differences can cancel.
+Values above one indicate a larger discrepancy. Because the absolute value is
+taken only after averaging, opposing question-level differences can cancel;
+we therefore treat this ratio as diagnostic.
 
-Because $R_{\mathrm{NLL}}$ takes the absolute value only after averaging,
-positive and negative question-level differences can cancel. We therefore
-also measured mean absolute per-question distance:
+To avoid this cancellation, we also measured mean absolute per-question
+distance:
 \begin{equation}
 D_{\mathrm{abs}}(M,T;c)
 =
@@ -237,13 +237,10 @@ p_{T,t}\,\|\,p_{M,t}
 \right).
 \end{equation}
 
-We kept the twin on the left when comparing it with both the full and edited
-models. This choice matters because KL is asymmetric: reversing its arguments
-can change both its value and the ordering of models. Using the twin as the
-common reference asks how closely each model reproduces the twin's predictions,
-with deviations weighted by the twin's probability distribution. Lower KL
-therefore indicates greater distributional similarity at the evaluated
-positions.
+Because KL is asymmetric, we kept the twin on the left in every comparison.
+This asks how closely each model reproduces the twin's predictions, weighting
+deviations by the twin's probability distribution. Lower KL indicates greater
+distributional similarity at the evaluated positions.
 
 To compare KL proximity across concepts, we normalized each edited model's
 target KL by the corresponding twin--full KL:
@@ -267,9 +264,7 @@ token changes little. However, it remains teacher-forced along the correct
 continuation and therefore does not measure predictions after an incorrect
 token is chosen.
 
-The main results report $H_{\mathrm{test}}$, $R_{\mathrm{abs}}$, and
-$R_{\mathrm{KL}}$. Appendix~\ref{app:full-results} reports raw accuracies and
-the means and sample standard deviations of NLL and KL over each 50-question
-group. Appendix~\ref{app:diagnostics} reports $R_{\mathrm{NLL}}$,
-$P_{\mathrm{closer}}$, confidence intervals, and a post-hoc contrast for
-whether NLL changes concentrate on target questions.
+The main results report the three primary metrics and selected complementary
+diagnostics. Appendices~\ref{app:full-results} and~\ref{app:diagnostics}
+provide the complete raw results, confidence intervals, and post-hoc
+target-specificity analysis.

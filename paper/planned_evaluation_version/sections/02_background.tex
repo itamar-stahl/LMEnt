@@ -30,9 +30,7 @@ We refer to a model trained under such an intervention as a
 \emph{concept-excluded twin}. A twin is trained under otherwise matched
 conditions but receives no loss on the selected concept-associated chunks. It
 therefore provides a reference for the behavioral effect of excluding a
-defined portion of the training signal. This reference is more informative
-than the original model alone when asking whether post-training erasure
-reproduces the outcome of concept exclusion.
+defined portion of the training signal.
 
 Concept exclusion does not guarantee that a model contains no target
 knowledge. The entity-based exclusion set may miss indirect or unlinked
@@ -40,6 +38,16 @@ references while also covering text about neighboring topics. Consequently,
 a twin may retain target knowledge and differ from the full model outside the
 target concept. It therefore represents the effect of the specified
 loss-exclusion procedure, not a perfectly concept-free model.
+
+Related controlled-pretraining studies alter the training corpus to isolate
+knowledge acquisition. Hubble provides standard and perturbed models trained
+with controlled text insertions for studying memorization
+\citep{wei2025hubble}. Deep Ignorance instead filters dual-use content before
+pretraining to study capability prevention and resistance to subsequent
+fine-tuning \citep{obrien2025deepignorance}. Our design holds initialization,
+batch order, and the configured training procedure fixed while masking loss on
+entity-linked chunks, then uses the resulting twin as a direct reference for
+post-training erasure.
 
 \subsection{Post-Training Concept-Erasure Methods}
 
@@ -68,25 +76,11 @@ with either MLP-level method in a staged intervention.
 
 \subsection{Evaluation of Concept Erasure}
 
-The EMBER study evaluated target-concept efficacy, specificity on related
-domains, preservation on general benchmarks, output coherence, and robustness
-to subsequent relearning \citep{suslik2026ember}. It assessed both
-multiple-choice and open-ended target knowledge and compared EMBER with RMU,
-SNMF-based MLP erasure, and staged combinations of these methods. Its
-normalized evaluation used the original pre-erasure model as the primary
-reference.
-
-RMU was originally evaluated by measuring suppression on the WMDP benchmark
-alongside capability retention on MMLU and MT-Bench
-\citep{li2024wmdp}. These evaluations establish whether an intervention
-suppresses selected behavior while retaining broader capabilities. They do
-not, however, establish whether the edited model resembles a matched model
-trained without the relevant learning signal.
-
-Our evaluation separates these objectives. We measure erasure efficacy and
-preservation relative to the full model, while independently measuring
-similarity to a concept-excluded twin. The latter comparison uses
-correct-answer negative log-likelihood and teacher-forced full-vocabulary KL
-divergence on the same sentence completions. This design tests whether target
-suppression coincides with the behavioral effects of concept exclusion during
-training.
+EMBER was evaluated on target efficacy, related-domain specificity, general
+benchmark preservation, output coherence, and relearning robustness; its
+comparisons used the pre-erasure model as the primary reference
+\citep{suslik2026ember}. RMU was similarly evaluated through suppression on
+WMDP and retention on MMLU and MT-Bench \citep{li2024wmdp}. These evaluations
+measure suppression and preservation. We additionally compare each edit with
+a concept-excluded twin, using correct-answer negative log-likelihood and
+teacher-forced full-vocabulary KL divergence on the same sentence completions.

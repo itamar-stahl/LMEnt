@@ -27,19 +27,11 @@ normalized teacher-forced full-vocabulary KL from the twin. Signed mean NLL
 proximity and the frequency of question-level improvement provide
 complementary diagnostics.
 
-No method leads across all criteria. RMU has the lowest absolute NLL distance for
-Rome; SNMF has the lowest distance for Baseball and AI and the lowest
-normalized KL throughout, but produces little target suppression. EMBER has the
-largest target-specific NLL changes among standalone methods and the highest
-efficacy--preservation score for Baseball; RMU leads for Rome. The selected
-RMU+EMBER condition leads for AI, although its RMU component fails the
-activity check. The highest-scoring method is closest under absolute NLL only
-once and never has the lowest normalized KL. Target suppression with preserved
-neighboring and SciQ accuracy therefore does not imply similarity to a matched
-concept-excluded twin in these experiments.
-
-This study provides matched concept-excluded references and compares five
-erasure conditions using separate measures of efficacy--preservation,
-question-level similarity, and distributional similarity. In these
-experiments, strong target suppression does not reliably predict similarity
-to a model trained without loss on the target-associated data.
+The highest-scoring efficacy--preservation method is also closest under
+absolute NLL only for Rome and never has the lowest normalized KL. SNMF often
+has the most favorable similarity ratios but little target suppression,
+whereas EMBER-based edits with larger target NLL changes usually move beyond
+the twin. These results
+show why matched concept-excluded references and separate measures of
+suppression, preservation, and twin similarity are needed: success on the
+first two does not reliably predict the third.

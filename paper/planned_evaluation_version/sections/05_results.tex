@@ -1,26 +1,16 @@
 \section{Results and Analysis}
 \label{sec:results}
 
-\subsection{Effect of Concept Exclusion}
+\subsection{Effect and Strength of Concept Exclusion}
 
 Concept exclusion had its largest target effect for Rome: accuracy fell from
 0.42 to 0.26 and correct-answer NLL increased by 1.016 nats per token. The
 effects were smaller for Baseball (0.54 to 0.50; +0.377 NLL) and AI (0.54 to
-0.48; +0.595 NLL). The twins also differed from the full model on neighboring
-and SciQ questions. Accordingly, their $H_{\mathrm{test}}$ scores varied from
-0.871 for Rome to 0.231 for Baseball and 0.343 for AI. The twin is therefore a
-reference for concept exclusion, not necessarily an optimizer of
-efficacy--preservation; complete comparisons appear in
-Appendix~\ref{app:full-results}.
-
-\subsection{Reference Strength and Ratio Interpretation}
-
-The full--twin separation determines how informative twin similarity can be.
-Rome had the largest target change under concept exclusion, both in signed
-correct-answer NLL ($+1.016$) and full-vocabulary KL ($0.955$). The
-corresponding changes were smaller for Baseball ($+0.377$ NLL; $0.707$ KL) and
-AI ($+0.595$ NLL; $0.593$ KL). The Rome twin therefore provides the clearest
-behavioral contrast with the full model under these measures.
+0.48; +0.595 NLL). Rome also had the largest full--twin mean absolute NLL
+distance and target KL: $D_{\mathrm{abs}}(F,T)=1.127$ and
+$\mathrm{KL}(T\,\|\,F)=0.955$, compared with 0.817 and 0.707 for Baseball and
+0.947 and 0.593 for AI. The Rome twin therefore provides the clearest target
+contrast with the full model across these measures.
 
 The similarity ratios are relative to metric-specific full--twin gaps. When
 that gap is small, a ratio near one can result from an edit remaining close to
@@ -29,6 +19,12 @@ full--twin differences, target suppression, and normalized proximity must
 therefore be interpreted together. This qualification is particularly
 important for SNMF on Baseball and AI, where favorable similarity rankings
 coincide with limited target suppression.
+
+The twins also differed from the full model on neighboring and SciQ questions,
+and their $H_{\mathrm{test}}$ scores were 0.871 for Rome, 0.231 for Baseball,
+and 0.343 for AI. A twin is therefore a reference for the specified exclusion
+intervention, not an optimizer of efficacy--preservation. Complete comparisons
+appear in Appendix~\ref{app:full-results}.
 
 \subsection{Erasure Efficacy and Preservation}
 
@@ -76,8 +72,9 @@ versus 0.208).
   $R_{\mathrm{KL}}$ measure target-question proximity to the concept-excluded
   twin relative to the full model; values below one indicate improvement.
   Twin ratios are zero by definition. E abbreviates EMBER. Bold marks the best
-  erasure condition in each concept and column. Confidence intervals and
-  complementary diagnostics appear in Appendix~\ref{app:diagnostics}.}
+  erasure condition in each concept and column. $R_{\mathrm{abs}}$ confidence
+  intervals are shown in Figure~\ref{fig:efficacy-similarity}; complete
+  diagnostics appear in Appendix~\ref{app:diagnostics}.}
   \label{tab:target}
 \end{table}
 
@@ -219,13 +216,14 @@ EMBER and both ensembles exceeded one on both ratios for every concept.
 \subsection{Diagnostic Agreement and Cancellation}
 
 The complementary diagnostics reveal differences that the primary ratios
-alone do not. For AI, RMU had $R_{\mathrm{NLL}}=0.022$, suggesting near-perfect
-agreement with the twin in mean target NLL, but
+alone do not. For AI, RMU had $R_{\mathrm{NLL}}=0.022$, indicating a near-zero
+signed-mean discrepancy from the twin, but
 $R_{\mathrm{abs}}=1.006$. Its positive and negative question-level
 differences therefore largely canceled. For Baseball, SNMF was closer to the
 twin on 66\% of questions, yet its $R_{\mathrm{abs}}=0.967$ confidence interval
 included one. Its frequent question-level improvements therefore did not yield
-a clear reduction in aggregate distance. Rome RMU gave the most consistent evidence:
+a clear reduction in aggregate distance. Rome RMU gave the most consistent
+evidence:
 $R_{\mathrm{abs}}=0.660$ with an interval entirely below one, and it was closer
 on 64\% of questions.
 
