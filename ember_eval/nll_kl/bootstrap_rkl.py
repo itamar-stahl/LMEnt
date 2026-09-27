@@ -1,282 +1,237 @@
-#!/usr/bin/env python3
-"""Paired-bootstrap confidence intervals for target-question R_KL.
+#!/usr/bin/env python
+"""Bootstrap confidence intervals for the target-test KL ratio.
 
-R_KL is a ratio of two means,
+    R_KL = mean_i KL(twin || edited; i) / mean_i KL(twin || full; i)
 
-    mean_i KL(T || M; i) / mean_i KL(T || F; i),
+A ratio of two means, not a mean of ratios: the denominator is a property of
+the concept, not of the question, so resampling has to move both means
+together. Every resample draws 50 question indices with replacement and
+recomputes BOTH the numerator and the denominator from the same draw, which is
+what keeps the interval honest -- a question whose KL(twin || full) is large
+inflates numerator and denominator at once, and independent resampling would
+throw that cancellation away and widen the interval for no reason.
 
-where T, M, and F are the twin, edited, and full models.  A bootstrap draw
-therefore resamples question indices once and recomputes *both* means from the
-same indices.  Bootstrapping the numerator and denominator separately would
-discard their question-level pairing.
+Two sources, one per condition kind, because the two rounds of scoring wrote
+different artifacts:
 
-The standalone input is the output of ``nll_kl/report.py`` for the checkpoints
-selected by accuracy.  The ensemble input is the long-form per-question CSV
-written by ``ensembles/export_nll_kl.py``.  No model is loaded and no GPU is
-needed.
+    standalone (EMBER, RMU, SNMF)   <standalone-root>/<topic>/results.json
+                                    kl_rows: "Full" is the denominator,
+                                    the method rows are the numerators.
+    ensembles  (RMU+EMBER, SNMF+EMBER)
+                                    the per-question CSV, whose
+                                    kl_twin_to_full is the same denominator
+                                    (asserted here, not assumed).
 
-Example (on the machine containing the current report outputs):
+Both are keyed on the question id, so numerator and denominator are paired per
+question before anything is resampled.
 
     python ember_eval/nll_kl/bootstrap_rkl.py \
-      --standalone-root /path/to/results_accwinners \
-      --ensemble-csv ember_eval/ensembles/results/nll_kl_per_question.csv \
-      --out ember_eval/nll_kl/rkl_bootstrap.csv \
-      --latex-out ember_eval/nll_kl/rkl_bootstrap_rows.tex
+        --standalone-root ember_eval/nll_kl/results_accwinners \
+        --ensemble-csv ember_eval/ensembles/results/nll_kl_per_question.csv \
+        --out ember_eval/nll_kl/rkl_bootstrap.csv \
+        --latex-out ember_eval/nll_kl/rkl_bootstrap_rows.tex
+
+Exits non-zero unless all 15 (concept, condition) cells are present, so a
+half-scored run cannot quietly produce a table with holes in it. --allow-partial
+lifts that, and is for inspecting a run in progress, never for the paper.
 """
 from __future__ import annotations
 
 import argparse
 import csv
 import json
-from dataclasses import dataclass
+import sys
+from collections import defaultdict
 from pathlib import Path
-from typing import Dict, Iterable, List, Mapping, Sequence, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 
+GROUP = "target_test"
+N_BOOT = 10000
+SEED = 0
+PCTL = (2.5, 97.5)
 
-HERE = Path(__file__).resolve().parent
-DEFAULT_SELECTION = HERE.parent / "acc_selection/results_sciq/selected_checkpoints.json"
-DEFAULT_ENSEMBLES = HERE.parent / "ensembles/results/nll_kl_per_question.csv"
+TOPICS = [("rome", "Ancient Rome"), ("baseball", "Baseball"), ("ai", "Artificial intelligence")]
+STANDALONE = ("EMBER", "RMU", "SNMF")
+ENSEMBLE = ("RMU+EMBER", "SNMF+EMBER")
+CONDITIONS = STANDALONE + ENSEMBLE
 
-CONCEPTS = {
-    "rome": "Ancient Rome",
-    "baseball": "Baseball",
-    "ai": "Artificial intelligence",
-}
-METHOD_ORDER = ("EMBER", "RMU", "SNMF", "RMU+EMBER", "SNMF+EMBER")
-TARGET_SET = "target_test"
-
-
-@dataclass(frozen=True)
-class Condition:
-    concept: str
-    method: str
-    checkpoint: str
-    question_ids: Tuple[str, ...]
-    kl_method: np.ndarray
-    kl_full: np.ndarray
+# The denominators come from two independently written artifacts; they are the
+# same 50 numbers and must agree to more than the CSV's 10 printed decimals.
+DENOM_TOL = 1e-8
 
 
-def target_kl(items: Iterable[Mapping[str, object]]) -> Dict[str, float]:
-    """Return per-question KL values for held-out target questions."""
-    out: Dict[str, float] = {}
-    for item in items:
-        if item.get("set") != TARGET_SET or item.get("phase") != "test":
-            continue
-        question_id = str(item["id"])
-        if question_id in out:
-            raise ValueError(f"duplicate target question id: {question_id}")
-        if "kl" not in item:
-            raise ValueError(f"target question {question_id} has no KL value")
-        out[question_id] = float(item["kl"])
-    return out
+def read_standalone(path: Path) -> Tuple[str, Dict[str, Dict[str, float]], Dict[str, str]]:
+    """-> concept, {condition: {qid: KL(twin||model)}} plus 'Full', and checkpoints."""
+    res = json.loads(path.read_text())
+    out: Dict[str, Dict[str, float]] = {}
+    for row in res["kl_rows"]:
+        items = {i["id"]: i["kl"] for i in row["items"]
+                 if i["set"] == GROUP and "kl" in i}
+        if items:
+            out[row["label"]] = items
+    ckpt = dict(res.get("erased", {}))
+    ckpt["Full"] = res["full"]
+    ckpt["Twin"] = res["twin"]
+    return res["topic"], out, ckpt
 
 
-def selected_checkpoints(path: Path) -> Dict[Tuple[str, str], str]:
-    data = json.loads(path.read_text(encoding="utf-8"))
-    return {
-        (str(row["topic"]), str(row["method"])): str(row["model_label"])
-        for row in data["winners"]
-    }
-
-
-def load_standalone(root: Path, selection_path: Path) -> List[Condition]:
-    """Load current EMBER/RMU/SNMF per-question KL from report.py outputs."""
-    selected = selected_checkpoints(selection_path)
-    conditions: List[Condition] = []
-    for slug, concept in CONCEPTS.items():
-        path = root / slug / "results.json"
-        if not path.exists():
-            raise FileNotFoundError(f"missing standalone report: {path}")
-        report = json.loads(path.read_text(encoding="utf-8"))
-        rows = {str(row["label"]): row for row in report["kl_rows"]}
-        if "Full" not in rows:
-            raise ValueError(f"{path}: kl_rows has no Full row")
-        full = target_kl(rows["Full"]["items"])
-
-        for method in METHOD_ORDER[:3]:
-            if method not in rows:
-                raise ValueError(f"{path}: kl_rows has no {method} row")
-            row = rows[method]
-            expected = selected[(slug, method)]
-            actual = str(row["evaluated"])
-            if actual != expected:
-                raise ValueError(
-                    f"{path}: {method} uses {actual}, but the selection manifest "
-                    f"specifies {expected}"
-                )
-            method_kl = target_kl(row["items"])
-            ids = tuple(sorted(full))
-            if tuple(sorted(method_kl)) != ids:
-                raise ValueError(f"{path}: {method} and Full target ids do not match")
-            conditions.append(
-                Condition(
-                    concept=concept,
-                    method=method,
-                    checkpoint=actual,
-                    question_ids=ids,
-                    kl_method=np.asarray([method_kl[i] for i in ids], dtype=np.float64),
-                    kl_full=np.asarray([full[i] for i in ids], dtype=np.float64),
-                )
-            )
-    return conditions
-
-
-def load_ensembles(path: Path) -> List[Condition]:
-    """Load current ensemble per-question KL from the published long-form CSV."""
-    grouped: Dict[Tuple[str, str, str], List[Mapping[str, str]]] = {}
-    with path.open(encoding="utf-8", newline="") as handle:
-        for row in csv.DictReader(handle):
-            if row["group"] != TARGET_SET:
+def read_ensembles(path: Path) -> Tuple[Dict[Tuple[str, str], Dict[str, float]],
+                                        Dict[Tuple[str, str], Dict[str, float]],
+                                        Dict[Tuple[str, str], str]]:
+    num: Dict[Tuple[str, str], Dict[str, float]] = defaultdict(dict)
+    den: Dict[Tuple[str, str], Dict[str, float]] = defaultdict(dict)
+    ckpt: Dict[Tuple[str, str], str] = {}
+    with open(path, newline="", encoding="utf-8") as fh:
+        for r in csv.DictReader(fh):
+            if r["group"] != GROUP:
                 continue
-            key = (row["concept"], row["method"], row["checkpoint"])
-            grouped.setdefault(key, []).append(row)
-
-    conditions: List[Condition] = []
-    for (concept, method, checkpoint), rows in grouped.items():
-        by_id = {row["question_id"]: row for row in rows}
-        if len(by_id) != len(rows):
-            raise ValueError(f"{concept}/{method}: duplicate target question ids")
-        ids = tuple(sorted(by_id))
-        conditions.append(
-            Condition(
-                concept=concept,
-                method=method,
-                checkpoint=checkpoint,
-                question_ids=ids,
-                kl_method=np.asarray(
-                    [float(by_id[i]["kl_twin_to_method"]) for i in ids], dtype=np.float64
-                ),
-                kl_full=np.asarray(
-                    [float(by_id[i]["kl_twin_to_full"]) for i in ids], dtype=np.float64
-                ),
-            )
-        )
-    return conditions
+            key = (r["concept"], r["method"])
+            num[key][r["question_id"]] = float(r["kl_twin_to_method"])
+            den[key][r["question_id"]] = float(r["kl_twin_to_full"])
+            ckpt[key] = r["checkpoint"]
+    return num, den, ckpt
 
 
-def validate(conditions: Sequence[Condition]) -> None:
-    keys = [(row.concept, row.method) for row in conditions]
-    if len(keys) != len(set(keys)):
-        raise ValueError("duplicate concept/method condition across inputs")
-    for row in conditions:
-        n = len(row.question_ids)
-        if n != 50:
-            raise ValueError(f"{row.concept}/{row.method}: expected 50 questions, found {n}")
-        if row.kl_method.shape != (n,) or row.kl_full.shape != (n,):
-            raise ValueError(f"{row.concept}/{row.method}: malformed KL arrays")
-        if not np.all(np.isfinite(row.kl_method)) or not np.all(np.isfinite(row.kl_full)):
-            raise ValueError(f"{row.concept}/{row.method}: non-finite KL value")
-        if np.any(row.kl_method < -1e-8) or np.any(row.kl_full < -1e-8):
-            raise ValueError(f"{row.concept}/{row.method}: negative KL value")
-        if float(row.kl_full.mean()) <= 0:
-            raise ValueError(f"{row.concept}/{row.method}: non-positive full-model denominator")
-
-    # The full-model series is shared by all methods within a concept.  The
-    # ensemble CSV stores ten decimals, so allow only its final-rounding error.
-    for concept in {row.concept for row in conditions}:
-        same = [row for row in conditions if row.concept == concept]
-        baseline = same[0]
-        for row in same[1:]:
-            if row.question_ids != baseline.question_ids or not np.allclose(
-                row.kl_full, baseline.kl_full, rtol=0.0, atol=5e-10
-            ):
-                raise ValueError(
-                    f"{concept}: full-model per-question KL differs across methods"
-                )
+def bootstrap(numer: np.ndarray, denom: np.ndarray) -> Tuple[float, float, float, float]:
+    """Point estimate and percentile interval for mean(numer)/mean(denom)."""
+    n = numer.size
+    rng = np.random.default_rng(SEED)
+    idx = rng.integers(0, n, size=(N_BOOT, n))       # 50 indices, with replacement
+    # the SAME idx indexes both, so each resample is a resample of QUESTIONS
+    ratios = numer[idx].mean(axis=1) / denom[idx].mean(axis=1)
+    lo, hi = np.percentile(ratios, PCTL)
+    return (float(numer.mean() / denom.mean()), float(lo), float(hi),
+            float(ratios.std(ddof=1)))
 
 
-def bootstrap(row: Condition, repetitions: int, seed: int) -> Tuple[float, float, float]:
-    point = float(row.kl_method.mean() / row.kl_full.mean())
-    rng = np.random.default_rng(seed)
-    indices = rng.integers(0, len(row.question_ids), size=(repetitions, len(row.question_ids)))
-    numerator = row.kl_method[indices].mean(axis=1)
-    denominator = row.kl_full[indices].mean(axis=1)
-    if np.any(denominator <= 0):
-        raise ValueError(f"{row.concept}/{row.method}: bootstrap produced zero denominator")
-    ratios = numerator / denominator
-    low, high = np.percentile(ratios, [2.5, 97.5])
-    return point, float(low), float(high)
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--standalone-root", required=True,
+                    help="dir holding <topic>/results.json from report.py")
+    ap.add_argument("--ensemble-csv", required=True)
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--latex-out")
+    ap.add_argument("--allow-partial", action="store_true",
+                    help="emit fewer than 15 rows instead of failing")
+    a = ap.parse_args()
 
+    root = Path(a.standalone_root)
+    ens_num, ens_den, ens_ckpt = read_ensembles(Path(a.ensemble_csv))
 
-def sort_key(row: Condition) -> Tuple[int, int]:
-    concept_order = list(CONCEPTS.values())
-    return concept_order.index(row.concept), METHOD_ORDER.index(row.method)
+    recs: List[dict] = []
+    problems: List[str] = []
+    for slug, _expected_name in TOPICS:
+        p = root / slug / "results.json"
+        if not p.exists():
+            problems.append(f"{slug}: {p} missing")
+            continue
+        concept, kl, ckpt = read_standalone(p)
+        if "Full" not in kl:
+            problems.append(f"{concept}: no Full row with {GROUP} KL")
+            continue
+        full = kl["Full"]
+        ids = sorted(full)
+        if len(ids) != 50:
+            problems.append(f"{concept}/Full: {len(ids)} questions, expected 50")
 
+        for cond in CONDITIONS:
+            if cond in STANDALONE:
+                if cond not in kl:
+                    problems.append(f"{concept}/{cond}: absent from results.json")
+                    continue
+                num_map, den_map = kl[cond], full
+                checkpoint = ckpt.get(cond, "")
+            else:
+                key = (concept, cond)
+                if key not in ens_num:
+                    problems.append(f"{concept}/{cond}: absent from the ensemble CSV")
+                    continue
+                num_map, den_map = ens_num[key], ens_den[key]
+                checkpoint = ens_ckpt[key]
+                # the ensemble CSV carries its own copy of the denominator;
+                # it must be the same 50 numbers as the standalone Full row
+                shared = set(den_map) & set(full)
+                drift = max((abs(den_map[q] - full[q]) for q in shared), default=0.0)
+                if set(den_map) != set(full):
+                    problems.append(f"{concept}/{cond}: denominator ids differ from Full")
+                elif drift > DENOM_TOL:
+                    problems.append(f"{concept}/{cond}: denominator differs from the "
+                                    f"standalone Full row by {drift:.3g}")
 
-def write_outputs(
-    rows: Sequence[Tuple[Condition, float, float, float]], out: Path, latex_out: Path | None
-) -> None:
+            common = sorted(set(num_map) & set(den_map))
+            if set(num_map) != set(den_map):
+                problems.append(f"{concept}/{cond}: numerator and denominator "
+                                f"question ids differ ({len(num_map)} vs {len(den_map)})")
+            if len(common) != 50:
+                problems.append(f"{concept}/{cond}: {len(common)} paired questions, expected 50")
+                continue
+            numer = np.array([num_map[q] for q in common], dtype=np.float64)
+            denom = np.array([den_map[q] for q in common], dtype=np.float64)
+            if not (np.isfinite(numer).all() and np.isfinite(denom).all()):
+                problems.append(f"{concept}/{cond}: non-finite KL")
+                continue
+            if (numer < -1e-9).any() or (denom < -1e-9).any():
+                problems.append(f"{concept}/{cond}: negative KL")
+                continue
+            point, lo, hi, se = bootstrap(numer, denom)
+            recs.append({
+                "concept": concept, "method": cond, "checkpoint": checkpoint,
+                "group": GROUP, "n": len(common),
+                "mean_kl_edited": f"{numer.mean():.10f}",
+                "mean_kl_full": f"{denom.mean():.10f}",
+                "R_KL": f"{point:.10f}",
+                "ci_lo": f"{lo:.10f}", "ci_hi": f"{hi:.10f}",
+                "boot_se": f"{se:.10f}",
+                "n_boot": N_BOOT, "seed": SEED,
+                "ci_pct_lo": PCTL[0], "ci_pct_hi": PCTL[1],
+            })
+
+    if problems:
+        print("PROBLEMS:", file=sys.stderr)
+        for p in problems:
+            print("  " + p, file=sys.stderr)
+    expected = len(TOPICS) * len(CONDITIONS)
+    if len(recs) != expected or problems:
+        msg = f"{len(recs)} rows, expected {expected}"
+        if not a.allow_partial:
+            print(f"REFUSING to write: {msg}", file=sys.stderr)
+            return 1
+        print(f"WARNING (--allow-partial): {msg}", file=sys.stderr)
+
+    out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.writer(handle, lineterminator="\n")
-        writer.writerow(("concept", "method", "checkpoint", "n", "R_KL", "ci95_low", "ci95_high"))
-        for condition, point, low, high in rows:
-            writer.writerow(
-                (condition.concept, condition.method, condition.checkpoint,
-                 len(condition.question_ids), f"{point:.10f}", f"{low:.10f}", f"{high:.10f}")
-            )
+    with open(out, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=list(recs[0]), lineterminator="\n")
+        w.writeheader()
+        w.writerows(recs)
 
-    if latex_out is not None:
-        latex_out.parent.mkdir(parents=True, exist_ok=True)
-        lines = []
-        for condition, point, low, high in rows:
-            method = condition.method.replace("+", r"\,+\,")
-            lines.append(
-                f"{condition.concept} & {method} "
-                f"& {point:.3f} [{low:.3f}, {high:.3f}] \\\\"
-            )
-        latex_out.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    hdr = f"{'concept':24s} {'method':12s} {'R_KL':>8s}  95% CI"
+    print(hdr)
+    print("-" * len(hdr))
+    for r in recs:
+        print(f"{r['concept']:24s} {r['method']:12s} {float(r['R_KL']):8.3f}  "
+              f"[{float(r['ci_lo']):.3f}, {float(r['ci_hi']):.3f}]")
+    print(f"\nwrote {out} ({len(recs)} rows)")
 
-
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--standalone-root", type=Path)
-    parser.add_argument("--ensemble-csv", type=Path, default=DEFAULT_ENSEMBLES)
-    parser.add_argument("--selected-checkpoints", type=Path, default=DEFAULT_SELECTION)
-    parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--latex-out", type=Path)
-    parser.add_argument("--repetitions", type=int, default=10_000)
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument(
-        "--allow-partial",
-        action="store_true",
-        help="permit fewer than all 15 paper conditions (for input diagnostics only)",
-    )
-    args = parser.parse_args()
-    if args.repetitions <= 0:
-        parser.error("--repetitions must be positive")
-
-    conditions: List[Condition] = []
-    if args.standalone_root is not None:
-        conditions.extend(load_standalone(args.standalone_root, args.selected_checkpoints))
-    if args.ensemble_csv is not None:
-        if not args.ensemble_csv.exists():
-            raise FileNotFoundError(f"missing ensemble CSV: {args.ensemble_csv}")
-        conditions.extend(load_ensembles(args.ensemble_csv))
-    validate(conditions)
-
-    expected = {(concept, method) for concept in CONCEPTS.values() for method in METHOD_ORDER}
-    actual = {(row.concept, row.method) for row in conditions}
-    missing = sorted(expected - actual)
-    if missing and not args.allow_partial:
-        formatted = ", ".join(f"{concept}/{method}" for concept, method in missing)
-        raise ValueError(
-            "inputs do not cover all 15 paper conditions; missing: " + formatted
-        )
-
-    results = [
-        (row, *bootstrap(row, args.repetitions, args.seed))
-        for row in sorted(conditions, key=sort_key)
-    ]
-    write_outputs(results, args.out, args.latex_out)
-    print(f"Wrote {len(results)} R_KL intervals to {args.out}")
-    if args.latex_out is not None:
-        print(f"Wrote LaTeX rows to {args.latex_out}")
-    if missing:
-        print(f"Partial diagnostic run: {len(missing)} paper conditions were absent")
+    if a.latex_out:
+        lines = [
+            "% R_KL = mean_i KL(twin||edited;i) / mean_i KL(twin||full;i), target_test, n=50.",
+            f"% {N_BOOT} bootstrap resamples of the question indices, seed {SEED}, "
+            f"{PCTL[0]}--{PCTL[1]} percentile interval.",
+            "% Generated by ember_eval/nll_kl/bootstrap_rkl.py -- do not hand-edit.",
+        ]
+        for r in recs:
+            lines.append(f"{r['concept']} & {r['method']} & "
+                         f"{float(r['R_KL']):.2f} & "
+                         f"[{float(r['ci_lo']):.2f}, {float(r['ci_hi']):.2f}] \\\\")
+        tex = Path(a.latex_out)
+        tex.parent.mkdir(parents=True, exist_ok=True)
+        tex.write_text("\n".join(lines) + "\n")
+        print("wrote", tex)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

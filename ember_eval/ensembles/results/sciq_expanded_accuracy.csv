@@ -1,0 +1,8 @@
+model,n,n_correct,accuracy
+FULL_lment-1b-control-2e-b131k,550,259,0.470909
+rmuember_ai_L5mid_a10,550,263,0.478182
+rmuember_baseball_L5mid_a100,550,258,0.469091
+rmuember_rome_L5mid_a100,550,257,0.467273
+snmfv2_ai_ratio_in,550,264,0.480000
+snmfv2_baseball_ratio_both,550,259,0.470909
+snmfv2_rome_ratio_in,550,259,0.470909

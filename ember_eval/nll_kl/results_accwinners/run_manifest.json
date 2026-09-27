@@ -1,0 +1,358 @@
+{
+ "what": "Current per-question NLL, KL and accuracy for the accuracy-selected checkpoints, and bootstrap intervals for the target-test KL ratio R_KL.",
+ "generated_utc": "2026-09-27T15:14:51Z",
+ "git": {
+  "repo": "git@github.com:itamar-stahl/LMEnt.git",
+  "branch": "eval/rkl-bootstrap",
+  "commit_at_generation": "4f7ae4115100b984f9398e1a319cd497138cabf1",
+  "worktree": "/home/dcor/galbarak2/lment-rkl",
+  "note": "commit_at_generation is HEAD when these files were produced; the files themselves are committed in its child."
+ },
+ "checkpoints": {
+  "Ancient Rome": {
+   "topic_slug": "rome",
+   "full": {
+    "label": "lment-1b-control-2e-b131k",
+    "path": "/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k"
+   },
+   "twin": {
+    "label": "lment-1b-norome-2e-b131k",
+    "path": "/home/dcor/galbarak2/hf-models/lment-1b-norome-2e-b131k"
+   },
+   "EMBER": {
+    "label": "ember_rome_d200",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/ember_rome/d200/model",
+    "hyperparameters": "delta=200",
+    "H_selection": "0.6815203145"
+   },
+   "RMU": {
+    "label": "rmu_rome_L6hi_a10",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/rmu_rome_L6hi_a10_913349/model",
+    "hyperparameters": "layer=6,band=hi,alpha=10",
+    "H_selection": "0.2192954818"
+   },
+   "SNMF": {
+    "label": "snmf_rome_ratio_out",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/snmf_rome_ratio_out/model",
+    "hyperparameters": "select=ratio,side=out",
+    "H_selection": "0.0000000000"
+   },
+   "RMU+EMBER": {
+    "label": "rmuember_rome_L5mid_a100"
+   },
+   "SNMF+EMBER": {
+    "label": "snmfv2_rome_ratio_in"
+   }
+  },
+  "Baseball": {
+   "topic_slug": "baseball",
+   "full": {
+    "label": "lment-1b-control-2e-b131k",
+    "path": "/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k"
+   },
+   "twin": {
+    "label": "lment-1b-nobaseball-2e-b131k",
+    "path": "/home/dcor/galbarak2/hf-models/lment-1b-nobaseball-2e-b131k"
+   },
+   "EMBER": {
+    "label": "ember_baseball_d10",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/ember_baseball/d10/model",
+    "hyperparameters": "delta=10",
+    "H_selection": "0.7594936709"
+   },
+   "RMU": {
+    "label": "rmu_baseball_L6hi_a10",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/rmu_baseball_L6hi_a10_913336/model",
+    "hyperparameters": "layer=6,band=hi,alpha=10",
+    "H_selection": "0.3730103435"
+   },
+   "SNMF": {
+    "label": "snmf_baseball_ratio_both",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/snmf_baseball_ratio_both/model",
+    "hyperparameters": "select=ratio,side=both",
+    "H_selection": "0.0000000000"
+   },
+   "RMU+EMBER": {
+    "label": "rmuember_baseball_L5mid_a100"
+   },
+   "SNMF+EMBER": {
+    "label": "snmfv2_baseball_ratio_both"
+   }
+  },
+  "Artificial intelligence": {
+   "topic_slug": "ai",
+   "full": {
+    "label": "lment-1b-control-2e-b131k",
+    "path": "/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k"
+   },
+   "twin": {
+    "label": "lment-1b-noai-2e-b131k",
+    "path": "/home/dcor/galbarak2/hf-models/lment-1b-noai-2e-b131k"
+   },
+   "EMBER": {
+    "label": "ember_ai_d500",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/ember_ai/d500/model",
+    "hyperparameters": "delta=500",
+    "H_selection": "0.7369826435"
+   },
+   "RMU": {
+    "label": "rmu_ai_L6hi_a10",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/rmu_ai_L6hi_a10_913344/model",
+    "hyperparameters": "layer=6,band=hi,alpha=10",
+    "H_selection": "0.5311413215"
+   },
+   "SNMF": {
+    "label": "snmf_ai_ratio_in",
+    "path": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/candidates/snmf_ai_ratio_in/model",
+    "hyperparameters": "select=ratio,side=in",
+    "H_selection": "0.4800000000"
+   },
+   "RMU+EMBER": {
+    "label": "rmuember_ai_L5mid_a10"
+   },
+   "SNMF+EMBER": {
+    "label": "snmfv2_ai_ratio_in"
+   }
+  }
+ },
+ "selection_rule": {
+  "source": "ember_eval/acc_selection/results_sciq/selected_checkpoints.json",
+  "rule": "H = HM(1 - Acc~_target, HM(Acc~_neighbour, Acc~_unrelated)), Acc~ = clip01((Acc - 0.25)/(Acc_full - 0.25)); selection sets only; twin never loaded",
+  "supersedes": "the answer-NLL selection whose outputs are ember_eval/nll_kl/paper_tables/ and ember_eval/nll_kl/export_20260922/ -- neither is used here"
+ },
+ "inputs": {
+  "nll_kl_scored_tree": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/scored/<model>/<topic>/{records.json,dists.npy,dists_index.json}",
+  "nll_kl_sets": "ember_eval/nll_kl/sets/{rome,baseball,ai}.json",
+  "accuracy_scored_trees": [
+   "/home/morg/NLP_2526b/galbarak2/runs/acc_selection/scored/<label>/<topic>/per_question.csv  (selection, concept groups)",
+   "/home/morg/NLP_2526b/galbarak2/runs/acc_selection/scored_merged/<label>/<topic>/per_question.csv  (selection, SciQ unrelated)",
+   "/home/morg/NLP_2526b/galbarak2/runs/acc_selection/scored_sciq/<label>/sciq/per_question.csv  (SciQ selection and test)",
+   "/home/morg/NLP_2526b/galbarak2/runs/acc_selection/scored_test/<label>/<topic>/per_question.csv  (test, concept groups)",
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/scored_selection/<label>/<topic>/per_question.csv  (selection, ensembles)",
+   "/home/morg/NLP_2526b/galbarak2/runs/ensembles/merged_test/<label>/<topic>/per_question.csv  (test, all conditions)"
+  ],
+  "ensemble_per_question_kl": "ember_eval/ensembles/results/nll_kl_per_question.csv",
+  "sciq_manifest": "ember_eval/acc_selection/sciq_unrelated.csv",
+  "cross_checked_against": [
+   "ember_eval/nll_kl/tables_accwinners/<topic>/table.md",
+   "ember_eval/ensembles/results/target_ratios.csv",
+   "ember_eval/acc_selection/final/H_test.csv",
+   "ember_eval/acc_selection/test_phase/test_accuracy_rollup.csv",
+   "ember_eval/ensembles/results/panel_A_accuracy_sciq.csv"
+  ]
+ },
+ "outputs": {
+  "ember_eval/nll_kl/results_accwinners/rome/results.json": {
+   "sha256": "63ece7070957bd01d4c0b53b560da52fa151b0a3e1ac3f13af9cff1d66faead9",
+   "bytes": 1458970
+  },
+  "ember_eval/nll_kl/results_accwinners/baseball/results.json": {
+   "sha256": "1cf8b69f25316b09184c04a895e4d4491bca986a76d7546cce3c781bd689f576",
+   "bytes": 1458805
+  },
+  "ember_eval/nll_kl/results_accwinners/ai/results.json": {
+   "sha256": "e2de24d402bbc05d4a8ef09faa5244dc7ab48da30d7e0bbc09162a175f952817",
+   "bytes": 1458971
+  },
+  "ember_eval/nll_kl/rkl_bootstrap.csv": {
+   "sha256": "8a9f0200a28afbe1bcf52319cb49d194d2b24ffebafcf06fd064975cfe96aabe",
+   "bytes": 2417
+  },
+  "ember_eval/nll_kl/rkl_bootstrap_rows.tex": {
+   "sha256": "9e79c59786660a09355cb9fde930935cee1653c4d429de747f65242a0f1b48c8",
+   "bytes": 987
+  },
+  "ember_eval/acc_selection/final/current_test_per_question.csv": {
+   "sha256": "c1bb87f8232e34560f9b1e216961e70a730794086159c2bb4dc5d833674c7a62",
+   "bytes": 1169733
+  },
+  "ember_eval/acc_selection/final/current_test_accuracy.csv": {
+   "sha256": "900f8a37c351fd15f1d77cafaa8adb62b321d0cda658fa6cfae02a232710dfa4",
+   "bytes": 12718
+  }
+ },
+ "commands": [
+  "# 1. NLL/KL tables and per-item results, one call per concept",
+  "python ember_eval/nll_kl/report.py --topic rome --scored /home/morg/NLP_2526b/galbarak2/runs/nll_kl/scored --full lment-1b-control-2e-b131k --twin lment-1b-norome-2e-b131k --erased EMBER=ember_rome_d200 RMU=rmu_rome_L6hi_a10 SNMF=snmf_rome_ratio_out EMBER-released=lment-1b-rome-erased-b131k --out ember_eval/nll_kl/results_accwinners/rome",
+  "python ember_eval/nll_kl/report.py --topic baseball --scored /home/morg/NLP_2526b/galbarak2/runs/nll_kl/scored --full lment-1b-control-2e-b131k --twin lment-1b-nobaseball-2e-b131k --erased EMBER=ember_baseball_d10 RMU=rmu_baseball_L6hi_a10 SNMF=snmf_baseball_ratio_both EMBER-released=lment-1b-baseball-erased-b131k --out ember_eval/nll_kl/results_accwinners/baseball",
+  "python ember_eval/nll_kl/report.py --topic ai --scored /home/morg/NLP_2526b/galbarak2/runs/nll_kl/scored --full lment-1b-control-2e-b131k --twin lment-1b-noai-2e-b131k --erased EMBER=ember_ai_d500 RMU=rmu_ai_L6hi_a10 SNMF=snmf_ai_ratio_in EMBER-released=lment-1b-ai-erased-b131k --out ember_eval/nll_kl/results_accwinners/ai",
+  "# 2. per-question accuracy, long form",
+  "python ember_eval/acc_selection/export_current_test.py --out-per-question ember_eval/acc_selection/final/current_test_per_question.csv --out-accuracy ember_eval/acc_selection/final/current_test_accuracy.csv",
+  "# 3. R_KL bootstrap",
+  "python ember_eval/nll_kl/bootstrap_rkl.py --standalone-root ember_eval/nll_kl/results_accwinners --ensemble-csv ember_eval/ensembles/results/nll_kl_per_question.csv --out ember_eval/nll_kl/rkl_bootstrap.csv --latex-out ember_eval/nll_kl/rkl_bootstrap_rows.tex",
+  "# 4. validation, then this manifest",
+  "python ember_eval/nll_kl/validate_accwinners.py --out <validation.json>",
+  "python ember_eval/nll_kl/make_run_manifest.py --validation <validation.json> --out ember_eval/nll_kl/results_accwinners/run_manifest.json"
+ ],
+ "question_groups": {
+  "nll_kl": {
+   "per_concept": {
+    "Ancient Rome": {
+     "unrelated_selection": 50,
+     "target_test": 50,
+     "target_selection": 50,
+     "neighbour_test": 50,
+     "unrelated_test": 50,
+     "neighbour_selection": 50
+    },
+    "Baseball": {
+     "unrelated_selection": 50,
+     "neighbour_selection": 50,
+     "target_selection": 50,
+     "target_test": 50,
+     "neighbour_test": 50,
+     "unrelated_test": 50
+    },
+    "Artificial intelligence": {
+     "unrelated_test": 50,
+     "unrelated_selection": 50,
+     "target_test": 50,
+     "neighbour_selection": 50,
+     "target_selection": 50,
+     "neighbour_test": 50
+    }
+   },
+   "kl_available_on": [
+    "target_test",
+    "neighbour_test",
+    "unrelated_test"
+   ],
+   "note": "score_model.py saves full distributions for test-phase items only, so the selection groups carry NLL but no KL."
+  },
+  "accuracy": {
+   "rows": 7350,
+   "per_concept": {
+    "Ancient Rome": {
+     "neighbour_selection": 300,
+     "neighbour_test": 350,
+     "sciq_unrelated_selection": 350,
+     "sciq_unrelated_test": 350,
+     "target_selection": 300,
+     "target_test": 350,
+     "unrelated_selection": 200,
+     "unrelated_test": 250
+    },
+    "Baseball": {
+     "neighbour_selection": 300,
+     "neighbour_test": 350,
+     "sciq_unrelated_selection": 350,
+     "sciq_unrelated_test": 350,
+     "target_selection": 300,
+     "target_test": 350,
+     "unrelated_selection": 200,
+     "unrelated_test": 250
+    },
+    "Artificial intelligence": {
+     "neighbour_selection": 300,
+     "neighbour_test": 350,
+     "sciq_unrelated_selection": 350,
+     "sciq_unrelated_test": 350,
+     "target_selection": 300,
+     "target_test": 350,
+     "unrelated_selection": 200,
+     "unrelated_test": 250
+    }
+   },
+   "group_names": {
+    "target_*, neighbour_*": "the concept's own and its neighbouring questions",
+    "unrelated_*": "the other-concept pool the protocol originally specified",
+    "sciq_unrelated_*": "the 50 SciQ questions that replaced it as the general-capability probe; renamed here because the scored trees call both groups 'unrelated_*' and the two are different questions"
+   },
+   "gaps": [
+    "Twin has no selection-phase concept-group rows: the accuracy selection rule never loaded the twin, by design.",
+    "RMU+EMBER and SNMF+EMBER have no other-concept-pool unrelated rows: the ensembles were only ever scored with SciQ as the unrelated group."
+   ]
+  }
+ },
+ "definitions": {
+  "nll": "Teacher-forced, one forward pass over stem + correct-answer completion. nll(item) = mean over the k completion tokens of -log p(token | prefix), in nats per token; the first completion token is predicted from the stem's last position. Right padding with a causal mask, so a batch scores exactly as one sequence at a time. delta = nll_eval - nll_ref, always evaluated minus reference.",
+  "kl": "Teacher-forced, full-vocabulary. kl(item) = mean over the same k completion positions of sum_v p_twin(v) * (log p_twin(v) - log p_model(v)).",
+  "kl_direction": "KL(twin || model): the twin is ALWAYS the first argument, so deviations are weighted by the twin's own distribution. The reverse is a different number -- on Rome's target set KL(twin || full) is 0.955 where KL(full || twin) is 0.761.",
+  "accuracy": "Four options per question, each scored as a continuation of the declarative stem and ranked by per-character log-probability (the character denominator includes the leading space). Never summed log-probability, which is length-biased. Chance is 0.25 in every group. Conditions on the declarative stem, not causal_mc.py's 'Question: ...\\nAnswer:', so these accuracies are not comparable with previously reported causal_mc numbers.",
+  "R_KL": "mean_i KL(twin || edited; i) / mean_i KL(twin || full; i) over the 50 target_test questions -- a ratio of two means, not a mean of ratios."
+ },
+ "bootstrap": {
+  "statistic": "R_KL on the target_test group",
+  "repetitions": 10000,
+  "seed": 0,
+  "rng": "numpy.random.default_rng(0)",
+  "sampling_unit": "question index (50 per concept), drawn with replacement",
+  "pairing_rule": "the same drawn indices index the edited and the full-model KL values, and both the numerator and the denominator are recomputed in every resample",
+  "interval": "2.5th and 97.5th percentiles of the 10000 resampled ratios",
+  "denominator_sources": "standalone conditions take KL(twin || full) from the 'Full' kl_row of the concept's results.json; ensembles take it from kl_twin_to_full in the ensemble CSV. The two are asserted equal to within 1e-8 before use."
+ },
+ "validation": [
+  {
+   "check": 1,
+   "name": "every condition uses the latest accuracy-selected checkpoint",
+   "result": "PASS",
+   "detail": "9/9 labels and checkpoint paths match results_sciq/selected_checkpoints.json"
+  },
+  {
+   "check": 2,
+   "name": "no result comes from an older checkpoint-selection run",
+   "result": "PASS",
+   "detail": "6 of 9 cells differ from the superseded NLL-rule winners; the 3 unchanged cells (rome/RMU, ai/EMBER, ai/SNMF) are cells where both rules chose the same checkpoint"
+  },
+  {
+   "check": 3,
+   "name": "every evaluated group contains exactly 50 unique questions",
+   "result": "PASS",
+   "detail": "12600 NLL/KL items in 6 groups x 50 per row, and 147 accuracy cells x 50"
+  },
+  {
+   "check": 4,
+   "name": "all compared models use identical question IDs and answer continuations",
+   "result": "PASS",
+   "detail": "12 model pairs checked token-for-token across 3 topics; accuracy ids identical across methods within every (concept, group)"
+  },
+  {
+   "check": 5,
+   "name": "NLL equals the mean over correct-answer token NLLs",
+   "result": "PASS",
+   "detail": "recomputed from token_nlls for all 4500 records; max |mean(token_nlls) - nll| = 0"
+  },
+  {
+   "check": 6,
+   "name": "KL is full-vocabulary KL(twin || model), twin on the left",
+   "result": "PASS",
+   "detail": "recomputed sum_v p_twin(v)(log p_twin - log p_model) over the full vocabulary for 75 spot-checked items; max |recomputed - stored| = 0. The reversed direction differs by up to 1.57 nats, so the direction is not a no-op. kl_convention field: 'KL(twin || evaluated) for every kl_row'"
+  },
+  {
+   "check": 7,
+   "name": "all NLL, KL, option-score and ratio values are finite",
+   "result": "PASS",
+   "detail": "2250 KL values, 8100 NLL items, 36750 option scores and 75 ratio/interval values"
+  },
+  {
+   "check": 8,
+   "name": "KL values are nonnegative up to floating-point error",
+   "result": "PASS",
+   "detail": "2250 KL values, none below -1e-9; minimum is 0.0263"
+  },
+  {
+   "check": 9,
+   "name": "computed point estimates reproduce the current paper tables",
+   "result": "PASS",
+   "detail": "every KL and NLL-difference mean in the three results.json appears at the displayed precision in tables_accwinners/<topic>/table.md"
+  },
+  {
+   "check": 10,
+   "name": "the six ensemble ratios agree with ensembles/results/target_ratios.csv",
+   "result": "PASS",
+   "detail": "6/6 R_KL agree; max |difference| = 0"
+  },
+  {
+   "check": 11,
+   "name": "accuracy aggregates agree with the current accuracy and H_test inputs",
+   "result": "PASS",
+   "detail": "147 aggregates recomputed from the 7350 per-question rows; 108 values cross-checked against final/H_test.csv, 63 against ensembles panel_A_accuracy_sciq.csv and 60 against test_accuracy_rollup.csv"
+  },
+  {
+   "check": 12,
+   "name": "the final R_KL output contains all 15 expected method-concept rows",
+   "result": "PASS",
+   "detail": "15 rows, 3 concepts x 5 conditions, none missing"
+  }
+ ]
+}
