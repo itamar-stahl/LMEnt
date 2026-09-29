@@ -134,3 +134,14 @@ python -m unittest discover -s Ember-on-LMEnt/tests -p 'test_*.py'
 The `Untaught` suite includes structural checks — that every path named in the
 docs exists, and that no reference to a moved or renamed file survives — so it
 is the fastest way to confirm the tree is internally consistent.
+
+Expected results on a machine without the full environment, measured
+2026-09-29: Untaught 3/3 suites (28/28 refactoring, 23 units, 1 integration);
+`mlp_erasure` 87/89; `Ember-on-LMEnt` 83/84. The failures are environmental, not
+code defects — two `mlp_erasure` tests need `accelerate` installed, and
+`Ember-on-LMEnt`'s `test_tiny_olmo2_loads_and_runs_on_cuda` needs a GPU whose
+architecture the installed torch was built for (it fails with `no kernel image
+is available` on the Pascal-era cards in the login node).
+
+These suites check structure and unit behaviour. They do not execute the
+pipeline: no training, erasure or scoring run is exercised by them.
