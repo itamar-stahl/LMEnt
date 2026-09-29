@@ -1,0 +1,13 @@
+set,format,n,correct,accuracy,ci95_lo,ci95_hi,denominator,above_chance_at_95
+current_rome,stem,50,14,0.28,0.1747,0.4167,0.03,NO
+current_rome,qa,50,18,0.36,0.2414,0.4986,0.11,NO
+current_baseball,stem,50,17,0.34,0.2244,0.4785,0.09,NO
+current_baseball,qa,50,14,0.28,0.1747,0.4167,0.03,NO
+current_ai,stem,50,23,0.46,0.3297,0.596,0.21,yes
+current_ai,qa,50,19,0.38,0.2586,0.5185,0.13,yes
+ww2,stem,50,29,0.58,0.4423,0.7063,0.33,yes
+ww2,qa,50,24,0.48,0.348,0.6149,0.23,yes
+sciq,stem,50,30,0.6,0.4618,0.7239,0.35,yes
+sciq,qa,50,23,0.46,0.3297,0.596,0.21,yes
+arc_easy,stem,50,15,0.3,0.191,0.4375,0.05,NO
+arc_easy,qa,50,15,0.3,0.191,0.4375,0.05,NO

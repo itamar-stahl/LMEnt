@@ -6,8 +6,9 @@ cannot explain a difference between the two concepts.
 
 **Headline, in one line:** the ablation is the strongest this project has
 measured (+0.4933 nats/token, 2.1x Rome's), and the erasure **undershoots it on
-text while overshooting it on questions** — the opposite of Rome on the first
-count, and the two instruments disagree about the sign of the residual.
+text while producing a clear question-level effect**. The excluded-model
+question contrast is not distinguishable from between-twin variation, so a
+question-level overshoot ratio is not established (see the correction below).
 
 ## The three models
 
@@ -143,8 +144,10 @@ verified: exactly 72 embedding rows differ from the control and they are exactly
 
 # 3. Does the erasure reach never-having-learned?
 
-**The two instruments disagree about the sign of the residual.** Both are
-measured on the same three models.
+The two instruments initially appear to disagree about the sign of the
+residual. The later cross-concept control shows that the question-side
+excluded-model denominator is not established, so only the text residual
+supports a directional comparison to never-training.
 
 ## On text: it UNDERSHOOTS
 
@@ -165,7 +168,7 @@ ablated twin +0.0014 at **p = 0.072, not significant** — on general text the
 erased model and the never-trained twin are indistinguishable. Rome's erasure
 moved the control set +0.0332 at p = 0.0000.
 
-## On questions: it OVERSHOOTS
+## On questions: the erasure effect is clear, but the exclusion target is not
 
 `pmi_per_char` on gold, paired per question.
 
@@ -178,12 +181,15 @@ moved the control set +0.0332 at p = 0.0000.
 | | erased - control | +0.0261 (p=0.42) | +0.0025 (p=0.96) |
 | | residual | -0.2133 (p=0.0066) | -0.2258 (p=0.0013) |
 
-On questions the erasure removes 3-4x what the ablation did, significant on both
-splits.
+On questions the erasure has a clear negative effect on both splits. The raw
+excluded-minus-control contrast is much smaller, but it is not distinguishable
+from the between-twin floor; dividing by it to report a multiplier or calling
+the difference a verified overshoot is therefore not defensible.
 
 Note the Simdom row: the **ablated twin is significantly *better* than the
-control on other sports** (+0.2395, +0.2283). Nothing in the design predicts
-that, and it is not explained here.
+control on other sports** (+0.2395, +0.2283). The later direct control reproduced
+most of this shift with the no-Rome twin, showing that it is a
+between-run/question-set offset rather than a Baseball specificity benefit.
 
 ## Reconciling the two
 
@@ -198,7 +204,7 @@ measure tokens or text.
 
 | | value |
 |---|---|
-| `rel_edit_size` | 0.0250 — the erasure moved 2.5% as far as the ablation |
+| `rel_edit_size` | 0.0250 — the erasure update norm is 2.5% of the base-model parameter norm |
 | `cosine` | **0.0010** |
 | `progress_along_target` | 2.64e-05 |
 | `residual` | 1.0003 |
