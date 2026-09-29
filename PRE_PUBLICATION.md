@@ -149,6 +149,29 @@ Make a per-branch publish / delete / keep-private decision and record it here
 before visibility changes. A branch left behind also silently contradicts the
 reorganisation, because the old layout stays live and reachable on it.
 
+### `latex_paper`: content merged, branch still open
+
+`origin/latex_paper` was merged into this branch rather than left to diverge.
+That settles the content, not the branch:
+
+- **Settled.** The paper now lives at `paper/` inside the reorganised tree, and
+  every path its reproducibility appendix cites by name resolves here -- the
+  three blacklist QID lists under `Untaught/blacklists/` and the two sentence
+  banks under `Ember-on-LMEnt/data/`. The `paper ACL Template` directory is
+  gone: it was an unmodified copy of `acl-org/acl-style-files`, and `paper/`
+  vendors byte-identical copies of the only two files a build needs.
+- **Kept on purpose.** `NLP_course_2025b___project_guidelines.pdf` stays at the
+  root. It is course material with no build or code role, so if the audience
+  for publication is not the course, it is still a candidate for removal --
+  but that is now a deliberate keep, not an oversight. Note it cannot be
+  removed from *history* by a delete commit; it would have to ride along with
+  the rewrite in section 1.
+- **Still open.** `origin/latex_paper` itself is unchanged and still advertises
+  the pre-reorganisation layout. Merging into this branch did not move it. It
+  needs the same publish / delete / keep-private decision as every other
+  branch, and if it stays live it should be merged back from here or retired,
+  or the old layout remains reachable exactly as this section warns.
+
 ## 5. Open engineering items, not blockers
 
 Recorded here so they are not lost. None of these gate publication.

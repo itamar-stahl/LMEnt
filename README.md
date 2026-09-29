@@ -1,6 +1,11 @@
 # LMEnt: A Suite for Analyzing Knowledge in Language Models from Pretraining Data to Representations
 This repository contains the official code for the paper: "LMEnt: A Suite for Analyzing Knowledge in Language Models from Pretraining Data to Representations" (2025).
 
+It also holds this project's own study, built on that suite: "Can Concept
+Erasure Reproduce Concept Exclusion? A Matched Evaluation of EMBER, RMU, and
+SNMF". Its LaTeX source is in [`paper/`](paper/), and the code behind it is
+`Untaught/`, `Ember-on-LMEnt/`, `mlp_erasure/` and `ember_eval/` below.
+
 ---
 
 ## Setup
@@ -47,6 +52,7 @@ Supporting files at the root:
 
 | Path | What it is |
 |---|---|
+| [`paper/`](paper/) | LaTeX source of the concept-erasure paper: `main.tex`, `sections/`, `appendices/`, `references.bib`. Build with `latexmk -pdf main.tex` from that directory. |
 | `setup.sh` | Prepares a downloaded `LMEnt-Dataset` for use. Run it once, after the download. |
 | `environment.yml`, `environment.windows.yml` | Conda environments for Linux and Windows. |
 | `third_party/` | Vendored forks of dolma, OLMo-core, olmes, ReFinED and maverick-coref. See [THIRD_PARTY.md](THIRD_PARTY.md). |
@@ -69,6 +75,7 @@ LMEnt
     > ember_eval
     > environment.yml
     > mlp_erasure
+    > paper
     > retrieval-index
     > setup.sh
     > third_party
