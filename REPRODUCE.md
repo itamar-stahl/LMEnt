@@ -145,3 +145,22 @@ is available` on the Pascal-era cards in the login node).
 
 These suites check structure and unit behaviour. They do not execute the
 pipeline: no training, erasure or scoring run is exercised by them.
+
+## The reproduction check
+
+`ember_eval/nll_kl/verify_reproduction.py` is the one check here that does run a
+model. It re-scores a topic from the frozen sets file and asserts the result
+against `results_accwinners/<topic>/results.json` — the file Panel B and C are
+printed from — with the expected values read from that file rather than written
+into the script.
+
+It exists because everything else in this repository compares committed
+artifacts against each other, so nothing else would notice if the scoring code
+stopped producing the numbers it is supposed to. It is a regression test for
+whoever maintains this, not a step a reader needs to take: running it needs both
+5 GB checkpoints and a GPU, and about 45 minutes.
+
+The one run of it is recorded in
+[`ember_eval/nll_kl/REPRODUCTION_CHECK.md`](ember_eval/nll_kl/REPRODUCTION_CHECK.md)
+— Ancient Rome, 2026-09-29, **18/18 reproduced** at a tolerance of 5e-4,
+including the `+1.016 ± 1.001` and `0.955 ± 0.725` that Panel C prints.
