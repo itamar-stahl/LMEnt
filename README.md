@@ -6,6 +6,10 @@ Erasure Reproduce Concept Exclusion? A Matched Evaluation of EMBER, RMU, and
 SNMF". Its LaTeX source is in [`paper/`](paper/), and the code behind it is
 `Untaught/`, `Ember-on-LMEnt/`, `mlp_erasure/` and `ember_eval/` below.
 
+**If you are here to read or check that paper, start with
+[REPRODUCE.md](REPRODUCE.md)** — it maps every table and figure to the
+committed file its numbers come from, and shows how to verify one.
+
 ---
 
 ## Setup
@@ -56,6 +60,8 @@ Supporting files at the root:
 | `setup.sh` | Prepares a downloaded `LMEnt-Dataset` for use. Run it once, after the download. |
 | `environment.yml`, `environment.windows.yml` | Conda environments for Linux and Windows. |
 | `third_party/` | Vendored forks of dolma, OLMo-core, olmes, ReFinED and maverick-coref. See [THIRD_PARTY.md](THIRD_PARTY.md). |
+| [`REPRODUCE.md`](REPRODUCE.md) | Where each number in the paper comes from, and what can and cannot be re-run from this clone. |
+| [`archive/`](archive/) | Work not reported in the paper, moved aside and indexed. See [archive/README.md](archive/README.md). |
 | `PRE_PUBLICATION.md` | Checklist of steps to complete before this repository's visibility changes. |
 
 ## Pretraining Dataset

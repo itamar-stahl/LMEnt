@@ -4,6 +4,18 @@ This repository is private. These are the steps to complete **before** its
 visibility is changed to public. Each one is cheap to do while the repo is
 private and expensive or impossible to undo afterwards.
 
+> **Scope, as of 2026-09-29.** This work is a university course project and
+> there is no plan to publish the repository. Under that audience most of this
+> checklist does not apply: sections 1 (identity scrub), 3 (licence) and the
+> third-party licence questions all govern redistribution and reuse, not
+> reading, and graders only need to read. They are kept here because the
+> decision could change, not because they are outstanding work.
+>
+> Two items remain worth doing regardless of publication. Section 0 -- the
+> Elasticsearch password is a live cluster credential sitting in a file handed
+> to whoever receives this repository. And section 4's open branch question,
+> because `main` is what a reader clones by default.
+
 ## 0. Rotate the Elasticsearch credential
 
 `Untaught/framework/env.sh` assigns a real password for the cluster
@@ -160,12 +172,10 @@ That settles the content, not the branch:
   banks under `Ember-on-LMEnt/data/`. The `paper ACL Template` directory is
   gone: it was an unmodified copy of `acl-org/acl-style-files`, and `paper/`
   vendors byte-identical copies of the only two files a build needs.
-- **Kept on purpose.** `NLP_course_2025b___project_guidelines.pdf` stays at the
-  root. It is course material with no build or code role, so if the audience
-  for publication is not the course, it is still a candidate for removal --
-  but that is now a deliberate keep, not an oversight. Note it cannot be
-  removed from *history* by a delete commit; it would have to ride along with
-  the rewrite in section 1.
+- **Removed.** `NLP_course_2025b___project_guidelines.pdf` is no longer at the
+  root. It was course material with no build or code role. Note that deleting
+  it does not remove it from *history*; that would need the rewrite in section
+  1, which this project is not doing.
 - **Still open.** `origin/latex_paper` itself is unchanged and still advertises
   the pre-reorganisation layout. Merging into this branch did not move it. It
   needs the same publish / delete / keep-private decision as every other
