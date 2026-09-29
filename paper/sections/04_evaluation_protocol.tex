@@ -21,10 +21,12 @@ answer-to-label binding. OLMES similarly recommends completion-based
 evaluation for smaller base models, and OLMo~2 uses the OLMES evaluation
 framework \citep{gu2025olmes,walsh2025olmo2}.
 
-We therefore used Claude Opus 5 in a dedicated session to rewrite all target,
-neighboring, and SciQ questions as incomplete declarative statements, which we
+We therefore used Claude Opus 5 in a dedicated session to rewrite the target
+and neighboring questions as incomplete declarative statements, which we
 refer to as sentence stems, while retaining the original correct answer and
-three distractors. For example, ``Which river is
+three distractors. The SciQ items remained in their original question format
+because of a preprocessing error identified after evaluation; we discuss its
+implications in Section~\ref{sec:limitations}. For example, ``Which river is
 associated with the founding of Rome?'' became ``The river associated with the
 founding of Rome is'', with ``The Tiber River'' as the correct continuation.
 In every group, however, answer options were scored as continuations of the

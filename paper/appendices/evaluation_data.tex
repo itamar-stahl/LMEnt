@@ -3,9 +3,11 @@
 
 Table~\ref{tab:evaluation-data} summarizes the evaluation groups. The
 target and neighboring sets use EMBER's original validation/test division. We
-rewrote every target, neighboring, and SciQ context as a declarative sentence
-stem while retaining the original correct answer and three distractors. We
-drew the shared SciQ set from its validation split with seed
+rewrote every target and neighboring context as a declarative sentence stem
+while retaining the original correct answer and three distractors. The SciQ
+contexts remained in their original question format because of the
+preprocessing error discussed in Section~\ref{sec:limitations}. We drew the
+shared SciQ set from its validation split with seed
 \texttt{20260923}; the first 50 retained items form the selection set and the
 next 50 form the test set.
 
@@ -18,7 +20,7 @@ next 50 form the test set.
     \midrule
     Target & EMBER, declarative stem & 50 & 50 \\
     Neighboring & EMBER, declarative stem & 50 & 50 \\
-    SciQ & Validation, declarative stem & 50 & 50 \\
+    SciQ & Validation, original question & 50 & 50 \\
     \bottomrule
   \end{tabular}
   \caption{Evaluation-set construction for each concept. The same SciQ items
