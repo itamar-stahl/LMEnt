@@ -20,11 +20,10 @@ answer-to-label binding. OLMES similarly recommends completion-based
 evaluation for smaller base models, and OLMo~2 uses the OLMES evaluation
 framework \citep{gu2025olmes,walsh2025olmo2}.
 
-% Before submission, rerun selection and test evaluation after the planned
-% SciQ stem conversion; the current saved SciQ results use the earlier wording.
 We therefore used Claude Opus 5 in a dedicated session to rewrite all target,
-neighboring, and SciQ questions as declarative sentence stems while retaining
-the original correct answer and three distractors. For example, ``Which river is
+neighboring, and SciQ questions as incomplete declarative statements, which we
+refer to as sentence stems, while retaining the original correct answer and
+three distractors. For example, ``Which river is
 associated with the founding of Rome?'' became ``The river associated with the
 founding of Rome is'', with ``The Tiber River'' as the correct continuation.
 In every group, however, answer options were scored as continuations of the
@@ -123,9 +122,10 @@ $H_{\mathrm{test}}$ was calculated on the test questions for performance evaluat
 
 These metrics evaluate target suppression and preservation relative to the
 full model. They do not measure whether an edited model resembles its
-concept-excluded twin. Moreover, likelihood-ranked accuracy depends on the
-three supplied distractors: changing them can change which option ranks first
-even if the likelihood of the correct answer remains unchanged.
+concept-excluded twin. Moreover, likelihood-ranked accuracy depends on the three supplied
+distractors, which we retained from the original EMBER and SciQ items:
+changing them can change which option ranks first even if the likelihood of
+the correct answer remains unchanged.
 
 \subsection{Correct-Answer NLL and NLL Proximity to the Twin}
 
@@ -169,7 +169,8 @@ R_{\mathrm{NLL}}(M,c)
 \right|
 }.
 \end{equation}
-
+Here, the overline denotes the mean paired NLL difference across the target
+questions.
 Because the absolute value is
 taken only after averaging, opposing question-level differences can cancel;
 we therefore treat this ratio as diagnostic.
@@ -224,6 +225,9 @@ p_{T,t}\,\|\,p_{M,t}
 \right).
 \end{equation}
 
+Here,
+$D_{\mathrm{KL}}(p\|q)=\sum_{v\in V}p(v)\log\frac{p(v)}{q(v)}$
+measures the discrepancy between two distributions over vocabulary $V$.
 Because KL is asymmetric, we kept the twin on the left in every comparison.
 This asks how closely each model reproduces the twin's predictions, weighting
 deviations by the twin's probability distribution. Lower KL indicates greater

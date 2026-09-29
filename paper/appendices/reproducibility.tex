@@ -14,12 +14,22 @@ lengths ranged from 64 to 2,048 tokens under the \texttt{grow\_p2} curriculum
 with eight cycles. Initialization and data-order seeds were 12,536 and 0.
 
 The full model and three twins shared this recipe, initialization, and batch
-order; only the loss mask over concept-associated chunks differed. The exact
-QID lists are \path{Untaught/blacklists/ancient_rome_core.json},
+order; the intended training-signal difference was the loss mask over
+concept-associated chunks. The exact QID lists are
+\path{Untaught/blacklists/ancient_rome_core.json},
 \path{Untaught/blacklists/baseball_core_teams.json}, and
-\path{Untaught/blacklists/ai_core.json}. Accelerator histories were not
-identical for every pair, and the study used one training seed per condition,
-as discussed in Section~\ref{sec:limitations}.
+\path{Untaught/blacklists/ai_core.json}. The study used one training seed per
+condition, as discussed in Section~\ref{sec:limitations}.
+
+\paragraph{Accelerator configuration.}
+Each pretraining run used one GPU on one compute node at a time. The accelerator
+types were NVIDIA H200 (141 GB), H100 (80 GB), and RTX A6000 (48 GB). The full
+model and Rome twin completed all 54,832 optimizer steps on H200 GPUs. The
+Baseball twin ran its first four training windows on H100 GPUs and its final
+2,832 steps on an H200. The AI twin ran primarily on H200 GPUs but included
+approximately 11 hours and 53 minutes of training on an RTX A6000. The training
+configuration remained unchanged when a run resumed on a different
+accelerator.
 
 \subsection{Erasure Data and Fixed Settings}
 

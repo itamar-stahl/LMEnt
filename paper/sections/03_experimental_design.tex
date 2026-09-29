@@ -4,7 +4,8 @@
 \subsection{Models and Matched Training}
 
 We trained OLMo-2 1B models on LMEnt's entity-annotated Wikipedia corpus
-\citep{walsh2025olmo2,gottesman2025lment}. The shared full model received
+\citep{walsh2025olmo2,gottesman2025lment}; full training and reproducibility
+details appear in Appendix~\ref{app:reproducibility}. The shared full model received
 loss on the full corpus. For each target concept, we trained a
 concept-excluded twin from the same initialization, using the same batch
 order, optimizer, learning-rate schedule, and two-epoch duration. Exclusion
@@ -78,8 +79,9 @@ SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
 
 We selected the candidate with the largest accuracy-based
-$H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
-deterministic order to break exact ties. We initially considered an NLL-based selection criterion, but rejected it
+$H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using the
+deterministic tie-breaking procedure described in
+Appendix~\ref{app:checkpoint-selection}. We initially considered an NLL-based selection criterion, but rejected it
 because for EMBER, it increased monotonically with edit strength and selected
 extreme hyper-parameters at the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
 \citep{suslik2026ember}. Neighboring-topic questions measure specificity,

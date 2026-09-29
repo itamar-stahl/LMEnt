@@ -52,11 +52,10 @@ selection.
 \end{table}
 
 Selection used 50 target questions, 50 neighboring questions, and the
-same 50 SciQ questions for every concept. For each question, we scored all
-four options with the character-normalized likelihood ranking defined in
-Section~\ref{sec:evaluation}. We then calculated the normalized accuracies,
-efficacy, preservation, and $H_{\mathrm{selection}}$ values defined in
-Section~\ref{sec:evaluation}. The full model exceeded the four-choice
+same 50 SciQ questions for every concept. For each candidate, we ranked the four answer options using the
+character-normalized likelihood score defined in Section~\ref{sec:evaluation}.
+We converted the resulting group accuracies into the normalized efficacy,
+preservation, and $H_{\mathrm{selection}}$ values defined there. The full model exceeded the four-choice
 chance level in every selection group. Because the score is a nested harmonic
 mean, a low target-efficacy or preservation component limits the final value.
 
