@@ -97,7 +97,7 @@ score () {
   tag=$1; model=$2
   echo
   echo "================ chunk loss: $tag ================"
-  "$PY" "$ROOT/ember_eval/heldout_ppl/heldout_ppl.py" \
+  "$PY" "$ROOT/archive/ember_eval/heldout_ppl/heldout_ppl.py" \
     --model "$model" \
     --blacklist "$BLACKLIST" \
     --n-control 5000 \

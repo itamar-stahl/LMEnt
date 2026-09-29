@@ -130,7 +130,7 @@ cleared the filter and all 24 failed the judge.
 
 `screen_feature_grid.py` uses **Rome-distinctive vocabulary** instead: the
 `ROME_MARKERS` alternation copied verbatim from
-`ember_eval/run_rome_heldout.slurm`, where it proved `chunk_id -> Roman text`
+`archive/ember_eval/run_rome_heldout.slurm`, where it proved `chunk_id -> Roman text`
 before the held-out measurement was trusted. `caesar`, `legion*`, `aqueduct*`,
 `denarius`, `carthag*` — words that are *about* Rome, not merely near it.
 

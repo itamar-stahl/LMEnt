@@ -123,7 +123,7 @@ def main() -> None:
             "source": "ember_eval/acc_selection/results_sciq/selected_checkpoints.json",
             "rule": sel["rule"],
             "supersedes": "the answer-NLL selection whose outputs are "
-                          "ember_eval/nll_kl/paper_tables/ and ember_eval/nll_kl/export_20260922/ "
+                          "archive/ember_eval/nll_kl/paper_tables/ and archive/ember_eval/nll_kl/export_20260922/ "
                           "-- neither is used here",
         },
         "inputs": {

@@ -17,5 +17,5 @@ export HF_HOME=/home/dcor/galbarak2/hf_cache
 export TOKENIZERS_PARALLELISM=false PYTHONUNBUFFERED=1
 nvidia-smi --query-gpu=name --format=csv,noheader | head -1 || true
 /home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python \
-  /home/morg/NLP_2526b/galbarak2/LMEnt/ember_eval/fewshot_probe/hp_popqa_peek.py
+  /home/morg/NLP_2526b/galbarak2/LMEnt/archive/ember_eval/fewshot_probe/hp_popqa_peek.py
 echo "=== peek rc=$?"

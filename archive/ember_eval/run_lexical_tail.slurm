@@ -26,7 +26,7 @@ export PYTHONUNBUFFERED=1
 export PYTHONPATH="$OLMO_CORE_SRC:${PYTHONPATH:-}"
 echo "node=$(hostname)  LMENT_ROOT=$LMENT_ROOT"
 R=/home/dcor/galbarak2/lment-rome-check/results
-exec "$PY" "$LMENT/ember_eval/heldout_ppl/lexical_tail.py" \
+exec "$PY" "$LMENT/archive/ember_eval/heldout_ppl/lexical_tail.py" \
   --report /home/morg/NLP_2526b/galbarak2/LMEnt-ember/Ember-on-LMEnt/runs/Ancient_Rome_lment-1b-control-2e-b131k_20260908_045242/outputs/report.json \
   --ppl-glob "$R/ppl_rome_erased_d*.json $R/ppl_erased2e_final_870356.json" \
   --control-ppl "$R/ppl_control2e_final_858234.json" \

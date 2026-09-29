@@ -31,7 +31,7 @@ feature about negation that happens to appear in Rome articles.
 WHAT THIS USES INSTEAD
 ----------------------
 Rome-*distinctive* vocabulary: the `ROME_MARKERS` alternation already used by
-`ember_eval/run_rome_heldout.slurm` to prove chunk_id -> Roman text before that
+`archive/ember_eval/run_rome_heldout.slurm` to prove chunk_id -> Roman text before that
 measurement was trusted. `caesar`, `legion*`, `aqueduct*`, `denarius`,
 `carthag*` and so on -- words that are about Rome rather than merely nearby.
 
@@ -66,7 +66,7 @@ from pathlib import Path
 
 import pandas as pd
 
-# Copied verbatim from ember_eval/run_rome_heldout.slurm, where it gated the
+# Copied verbatim from archive/ember_eval/run_rome_heldout.slurm, where it gated the
 # held-out perplexity measurement. Kept identical on purpose: if the two ever
 # disagree about what counts as Roman vocabulary, the audit that validated the
 # held-out numbers no longer describes this screen.

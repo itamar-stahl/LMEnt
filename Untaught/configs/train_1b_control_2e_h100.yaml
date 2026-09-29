@@ -1,7 +1,7 @@
 # TWO EPOCHS. Same ablation, same everything else, twice the passes.
 #
 # Why 2 and not 1, 4 or 6: measured, not assumed. The authors released 1E/2E/4E/6E
-# of this 1B on this corpus, and scoring all four on EMBER (ember_eval/epoch_curve.py)
+# of this 1B on this corpus, and scoring all four on EMBER (archive/ember_eval/epoch_curve.py)
 # shows knowledge of the ablated concept gaining +0.516 nats from 1E to 2E -- the
 # second-largest gain of any of the 18 concepts -- and then going backwards: -0.172
 # by 4E and -0.131 by 6E, dead last of 18. The corpus is saturated for a 1B after

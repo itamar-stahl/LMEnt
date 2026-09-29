@@ -7,7 +7,7 @@ A second, independent screen over the same 27 cells as
 WHY A SECOND SCREEN
 -------------------
 `screen_feature_grid.py` matches a hand-written list of Roman words
-(`ROME_MARKERS`, borrowed from `ember_eval/run_rome_heldout.slurm`). That list
+(`ROME_MARKERS`, borrowed from `archive/ember_eval/run_rome_heldout.slurm`). That list
 was written to audit paragraphs of prose, and at the level of subword tokens it
 demonstrably undercounts. Its own top-scoring feature in the grid (rank 300,
 g_sparsity 0.005, seed 42, feature 254) reads:

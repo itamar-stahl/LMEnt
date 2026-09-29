@@ -15,7 +15,7 @@
 # Held-out-chunk loss for the ANCIENT ROME twins, at a matched step.
 #
 # Same three-stage shape as the August Pornography measurement
-# (ember_eval/HELDOUT_RESULTS.md), pointed at the LMEnt-initfix checkout and the
+# (archive/ember_eval/HELDOUT_RESULTS.md), pointed at the LMEnt-initfix checkout and the
 # no-rome pair. MODE selects the stage:
 #
 #   sbatch --export=ALL,MODE=check   ...            prove chunk_id -> Rome text

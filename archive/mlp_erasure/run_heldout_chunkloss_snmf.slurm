@@ -1,10 +1,10 @@
 #! /bin/sh
-#SBATCH --job-name=chunkjudge-snmf
+#SBATCH --job-name=chunkloss-snmf
 #SBATCH --output=/home/dcor/galbarak2/runs/mlp_erasure/%x_%j.out
 #SBATCH --error=/home/dcor/galbarak2/runs/mlp_erasure/%x_%j.err
 #SBATCH --account=gpu-research
 #SBATCH --partition=killable
-#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-202,n-203,n-204,n-205,n-602,n-301,n-102,n-307
+#SBATCH --exclude=rack-bgw-dgx1,rack-gww-dgx1,rack-omerl-g01,n-202,n-203,n-204,n-205,n-602,n-301,n-102
 #SBATCH --time=360
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -28,11 +28,7 @@
 # numbers do not carry an argument and the MC comparison should be withdrawn
 # rather than defended.
 #
-# --exclude=n-102: dead card that poisons NVML for the whole node (job 897181
-# died there at distributed init while assigned a healthy GPU6).
-# --exclude=n-307: job 897155 died there with 'CUDA error: unspecified launch
-# failure' after cleanly scoring all 16,915 held-out chunks -- a card fault,
-# not a code fault, but no reason to draw that node again.
+# --exclude=n-102: physically dead GPU0, silent CPU fallback or a hang.
 
 # ROOT: the checkout whose code this job runs. Walk up from the directory you
 # submitted from, so a second checkout runs its own code rather than whichever
@@ -49,7 +45,7 @@ HF=/home/dcor/galbarak2/hf-models
 
 CTRL=$HF/lment-1b-control-2e-b131k
 BLACKLIST=/home/morg/NLP_2526b/galbarak2/LMEnt-initfix/Untaught/runs/untaught-no-rome-core-1b-2e-b131k_20260904_183200/untaught_blacklist.json
-OUTDIR="$RUNS/chunkloss_judge_${SLURM_JOB_ID}"
+OUTDIR="$RUNS/chunkloss_snmf_${SLURM_JOB_ID}"
 SCRATCH="$OUTDIR/scratch"
 mkdir -p "$OUTDIR" "$SCRATCH"
 
@@ -79,7 +75,7 @@ score () {
   tag=$1; model=$2
   echo
   echo "================ chunk loss: $tag ================"
-  "$PY" "$ROOT/ember_eval/heldout_ppl/heldout_ppl.py" \
+  "$PY" "$ROOT/archive/ember_eval/heldout_ppl/heldout_ppl.py" \
     --model "$model" \
     --blacklist "$BLACKLIST" \
     --n-control 5000 \
@@ -118,6 +114,7 @@ gen_and_score () {
   fi
 }
 
+gen_and_score snmf_ratio44_d1 "$RUNS/snmf_rome_883188"     4 6
 gen_and_score snmf_judge_d1   "$RUNS/snmf_romeband_871493" 5 6
 
 echo

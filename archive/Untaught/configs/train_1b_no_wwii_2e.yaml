@@ -17,7 +17,7 @@
 # tier that ember_eval/aggregate_completion.py wants does not really exist here.
 #
 # Submitted 2026-08-27 at Gal's explicit direction with these caveats raised and
-# restated. The held-out-chunk measurement (ember_eval/HELDOUT_RESULTS.md) is the
+# restated. The held-out-chunk measurement (archive/ember_eval/HELDOUT_RESULTS.md) is the
 # instrument least damaged by the above, since it needs no question set.
 #
 # COST AND THE RESUME BOUNDARY -- rewritten 2026-08-29, when the batch went back

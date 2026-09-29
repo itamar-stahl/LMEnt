@@ -118,7 +118,7 @@
  "selection_rule": {
   "source": "ember_eval/acc_selection/results_sciq/selected_checkpoints.json",
   "rule": "H = HM(1 - Acc~_target, HM(Acc~_neighbour, Acc~_unrelated)), Acc~ = clip01((Acc - 0.25)/(Acc_full - 0.25)); selection sets only; twin never loaded",
-  "supersedes": "the answer-NLL selection whose outputs are ember_eval/nll_kl/paper_tables/ and ember_eval/nll_kl/export_20260922/ -- neither is used here"
+  "supersedes": "the answer-NLL selection whose outputs are archive/ember_eval/nll_kl/paper_tables/ and archive/ember_eval/nll_kl/export_20260922/ -- neither is used here"
  },
  "inputs": {
   "nll_kl_scored_tree": "/home/morg/NLP_2526b/galbarak2/runs/nll_kl/scored/<model>/<topic>/{records.json,dists.npy,dists_index.json}",
