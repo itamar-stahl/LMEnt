@@ -97,6 +97,9 @@ train:
   # with no usable geometry.
   optim_lr: 0.0003              # kas_config.json  optim.lr
   optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
+                                # Reaches embeddings.weight ONLY -- kas/train.py passes it as a group
+                                # override and leaves AdamW's top-level 0.01 for everything else.
+                                # See Untaught/OPERATIONS.md. Do not tune this as a global knob.
   optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
   optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
 

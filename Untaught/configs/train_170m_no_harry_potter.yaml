@@ -31,6 +31,9 @@ train:
   # shipped artifacts say 3e-4. See COMPARABILITY.md before changing it.
   optim_lr: 0.0005
   optim_weight_decay: 0.05
+                                # Reaches embeddings.weight ONLY -- kas/train.py passes it as a group
+                                # override and leaves AdamW's top-level 0.01 for everything else.
+                                # See Untaught/OPERATIONS.md. Do not tune this as a global knob.
   optim_warmup_steps: 1000
   optim_max_grad_norm: 1.0
 

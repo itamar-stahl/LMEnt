@@ -117,6 +117,9 @@ train:
   # with no usable geometry.
   optim_lr: 0.0004              # pre-94e42ab. kas_config.json says 3e-4; this does not.
   optim_weight_decay: 0.05      # pre-94e42ab, taken from paper appendix B.4.
+                                # Reaches embeddings.weight ONLY -- kas/train.py passes it as a group
+                                # override and leaves AdamW's top-level 0.01 for everything else.
+                                # See Untaught/OPERATIONS.md. Do not tune this as a global knob.
   optim_warmup_steps: 2000      # pre-94e42ab. 2000 of 54,832 steps is 3.6% of training;
                                 # at the authors' batch it was 1.8% of 219,344. Neither
                                 # matches the other, which is why the batch and the warmup
