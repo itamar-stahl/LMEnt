@@ -4,11 +4,12 @@
 
 Table~\ref{tab:evaluation-data} summarizes the evaluation groups. The
 target and neighboring sets use EMBER's original validation/test division. We
-rewrote every target, neighboring, and SciQ context as a declarative sentence
-stem while retaining the original correct answer and three distractors. We
-drew the shared SciQ set from its validation split with seed
-\texttt{20260923}; the first 50 retained items form the selection set and the
-next 50 form the test set.
+rewrote the target and neighboring contexts as declarative sentence stems while
+retaining the original correct answer and three distractors; the SciQ items
+were scored in their original interrogative form, which is how the instrument
+was validated (Section~\ref{sec:evaluation}). We drew the shared SciQ set from
+its validation split with seed \texttt{20260923}; the first 50 retained items
+form the selection set and the next 50 form the test set.
 
 \begin{center}
   \centering
@@ -19,7 +20,7 @@ next 50 form the test set.
     \midrule
     Target & EMBER, declarative stem & 50 & 50 \\
     Neighboring & EMBER, declarative stem & 50 & 50 \\
-    SciQ & Validation, declarative stem & 50 & 50 \\
+    SciQ & Validation, original question & 50 & 50 \\
     \bottomrule
   \end{tabular}
   \captionof{table}{Evaluation-set construction for each concept. The same SciQ items
@@ -29,8 +30,10 @@ next 50 form the test set.
 \end{center}
 
 We verified that selection and test sets share neither question IDs nor
-identical question--answer pairs. Each model for a concept
-was scored with the same frozen strings and option order. For example,
+identical question--answer pairs. Two of the 50 SciQ selection items are
+natively declarative fill-in-the-blank prompts rather than questions. Each
+model for a concept was scored with the same frozen strings and option
+order. For example,
 ``Which river is associated with the founding of Rome?'' was presented as
 ``The river associated with the founding of Rome is'', and the four candidate
 answers included the correct continuation ``The Tiber River''.

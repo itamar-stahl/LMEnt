@@ -31,9 +31,12 @@ per question. It does not measure generated answers, and likelihood-ranked
 accuracy depends on the supplied alternatives. Teacher-forced KL covers the
 full next-token distribution along the correct continuation, but does not
 follow predictions after an alternative token. SciQ measures one aspect of
-general preservation. Each group contains only 50 questions, so accuracy
-changes in steps of 0.02 and the reported uncertainty does not include
-variation across training seeds.
+general preservation. The context format is also not uniform across groups:
+target and neighboring contexts are declarative stems, whereas SciQ retains its
+original question form. Absolute accuracies are therefore not comparable
+between groups, although no reported metric makes that comparison. Each group
+contains only 50 questions, so accuracy changes in steps of 0.02 and the
+reported uncertainty does not include variation across training seeds.
 
 Checkpoint selection also has two specific limitations. No Rome or Baseball
 SNMF candidate reduced target selection accuracy, so tie-breaking rather than

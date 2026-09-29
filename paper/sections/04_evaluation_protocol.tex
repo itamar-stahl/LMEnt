@@ -20,15 +20,24 @@ answer-to-label binding. OLMES similarly recommends completion-based
 evaluation for smaller base models, and OLMo~2 uses the OLMES evaluation
 framework \citep{gu2025olmes,walsh2025olmo2}.
 
-% Before submission, rerun selection and test evaluation after the planned
-% SciQ stem conversion; the current saved SciQ results use the earlier wording.
-We therefore used Claude in a dedicated session to rewrite all target,
-neighboring, and SciQ questions as declarative sentence stems while retaining
-the original correct answer and three distractors. For example, ``Which river is
-associated with the founding of Rome?'' became ``The river associated with the
-founding of Rome is'', with ``The Tiber River'' as the correct continuation.
-In every group, however, answer options were scored as continuations of the
-supplied context; the model did not generate an answer or select an answer label.
+We therefore scored every group by likelihood-ranked completion rather than
+generation. For the target and neighboring groups we additionally used Claude
+in a dedicated session to rewrite the questions as declarative sentence stems
+while retaining the original correct answer and three distractors. For example,
+``Which river is associated with the founding of Rome?'' became ``The river
+associated with the founding of Rome is'', with ``The Tiber River'' as the
+correct continuation.
+
+The shared SciQ items retain their original interrogative form. Completion
+scoring, not stem form, is what avoids the generation limitation above: in
+every group the answer options were scored as continuations of the supplied
+context, and the model neither generated an answer nor selected an answer
+label. On SciQ the full model scores 0.60 on the selection split and 0.52 on
+the test split against a four-choice chance level of 0.25, the widest margin of
+any group in this study, so the general-preservation instrument is informative
+in this form. Because every reported quantity contrasts models on identical
+strings within a group, the context format is held fixed inside each comparison
+and does not enter the reported contrasts.
 
 This formulation better matches the models' next-token objective, but it is
 not equivalent to conventional multiple-choice evaluation. The alternatives
