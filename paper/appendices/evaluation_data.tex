@@ -1,4 +1,3 @@
-\onecolumn
 \section{Evaluation Data Details}
 \label{app:data}
 
@@ -10,7 +9,7 @@ drew the shared SciQ set from its validation split with seed
 \texttt{20260923}; the first 50 retained items form the selection set and the
 next 50 form the test set.
 
-\begin{center}
+\begin{table}[t]
   \centering
   \scriptsize
   \begin{tabular}{llrr}
@@ -22,11 +21,11 @@ next 50 form the test set.
     SciQ & Validation, declarative stem & 50 & 50 \\
     \bottomrule
   \end{tabular}
-  \captionof{table}{Evaluation-set construction for each concept. The same SciQ items
+  \caption{Evaluation-set construction for each concept. The same SciQ items
   are shared across concepts; target and neighboring items are concept
   specific.}
   \label{tab:evaluation-data}
-\end{center}
+\end{table}
 
 We verified that selection and test sets share neither question IDs nor
 identical question--answer pairs. Each model for a concept

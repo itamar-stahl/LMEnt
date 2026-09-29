@@ -31,8 +31,16 @@ The evaluation uses one supplied correct continuation and three distractors
 per question. It does not measure generated answers, and likelihood-ranked
 accuracy depends on the supplied alternatives. Teacher-forced KL covers the
 full next-token distribution along the correct continuation, but does not
-follow predictions after an alternative token. SciQ measures one aspect of
-general preservation. Each group contains only 50 questions, so accuracy
+follow predictions after an alternative token. SciQ measures only one aspect
+of general preservation. Due to a preprocessing error, its items remained in
+their original question format while target and neighboring items were
+converted to declarative stems. We discovered the mismatch too close to the
+submission deadline to rerun selection and evaluation. We expect limited
+qualitative impact: full-model SciQ accuracy was 0.52 and remained between
+0.50 and 0.52 across the selected erasure models, while
+$R_{\mathrm{abs}}$ and $R_{\mathrm{KL}}$ use only target items. The mismatch
+may nevertheless affect the exact checkpoint selections and
+$H_{\mathrm{test}}$ values. In addition, each group contains only 50 questions, so accuracy
 changes in steps of 0.02 and the reported uncertainty does not include
 variation across training seeds.
 

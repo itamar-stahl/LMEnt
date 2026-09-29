@@ -1,5 +1,6 @@
 \section{Uncertainty and Additional Diagnostics}
 \label{app:diagnostics}
+\raggedbottom
 
 The main text treats $H_{\mathrm{test}}$, $R_{\mathrm{abs}}$, and
 $R_{\mathrm{KL}}$ as primary. Table~\ref{tab:metric-agreement} reports the
@@ -8,9 +9,7 @@ Table~\ref{tab:question-level-similarity} gives paired-bootstrap intervals for
 both twin-similarity ratios and $P_{\mathrm{closer}}$, and
 Table~\ref{tab:nll-selectivity} reports the post-hoc NLL selectivity contrast.
 
-\clearpage
-
-\begin{table}[h]
+\begin{table}[t]
   \centering
   \small
   \begin{tabular}{llrrr}
@@ -44,7 +43,7 @@ Table~\ref{tab:nll-selectivity} reports the post-hoc NLL selectivity contrast.
   \label{tab:metric-agreement}
 \end{table}
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \small
   \begin{tabular}{llccc}
@@ -81,12 +80,10 @@ Table~\ref{tab:nll-selectivity} reports the post-hoc NLL selectivity contrast.
   resamples, seed 0). Bold marks the best erasure condition in each concept
   and column.}
   \label{tab:question-level-similarity}
-\end{table}
+\end{table*}
 
 Section~\ref{sec:results} discusses the main disagreements among these
 diagnostics.
-
-\clearpage
 
 We used a post-hoc NLL contrast to summarize whether a method changed target
 answers more than the two preservation groups. For method $M$ and concept
@@ -115,7 +112,7 @@ $S_{\mathrm{NLL}}\pm1.96\operatorname{SE}$. These intervals describe
 variation across the fixed test questions for one trained checkpoint; they do
 not capture variation across training seeds.
 
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \footnotesize
   \renewcommand{\arraystretch}{1.05}
@@ -151,4 +148,4 @@ not capture variation across training seeds.
   selection. All intervals use the normal approximation defined above.
   Bold marks the largest value in each concept and column.}
   \label{tab:nll-selectivity}
-\end{table}
+\end{table*}
