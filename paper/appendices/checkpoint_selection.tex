@@ -1,4 +1,4 @@
-\section{Checkpoint Selection}
+\section{Hyper-Parameters Selection}
 \label{app:checkpoint-selection}
 
 \begin{table}[h]
@@ -24,7 +24,7 @@
 
 \subsection{Candidate Grid and Selection Procedure}
 
-We selected checkpoints separately for each combination of concept and
+We selected hyper-parameters separately for each combination of concept and
 erasure method. Table~\ref{tab:hyperparameter-grid} defines the hyperparameter
 values, and Table~\ref{tab:selection-grid-size} gives the resulting distribution
 of 97 precomputed checkpoints. No candidate was trained or modified during
@@ -46,7 +46,7 @@ selection.
     Total & 35 & 31 & 31 & 97 \\
     \bottomrule
   \end{tabular}
-  \caption{Number of candidate checkpoints evaluated for each method and
+  \caption{Number of candidate configurations evaluated for each method and
   concept.}
   \label{tab:selection-grid-size}
 \end{table}
@@ -69,7 +69,7 @@ test result. Table~\ref{tab:selected-checkpoints} records the resulting
 configurations.
 
 For each ensemble, the independently selected EMBER winner was fixed first,
-after which the RMU or SNMF grid was applied to that edited checkpoint. SNMF
+after which the RMU or SNMF grid was applied to that edited model. SNMF
 features were re-derived from the EMBER-edited model. Ensemble selection used
 the same score and tie-breaking order as the corresponding standalone method.
 
@@ -88,7 +88,7 @@ therefore invoked the judge directly. The semantic selection criterion was
 the same across concepts; only the mechanism used to reproduce its output in
 the final grid differed.
 
-\subsection{Selected Checkpoints}
+\subsection{Selected Configurations}
 
 \begin{center}
   \centering
@@ -123,7 +123,7 @@ the final grid differed.
   $^{\dagger}$ All SNMF candidates for this concept had zero efficacy and hence
   $H_{\mathrm{selection}}=0$; the displayed configuration was determined by
   the fixed tie-breaking order rather than a measured efficacy difference.
-  $^{\ddagger}$ The selected RMU+EMBER checkpoint remained weakly aligned with
+  $^{\ddagger}$ The selected RMU+EMBER checkpoints remained weakly aligned with
   RMU's control direction; see Section~\ref{sec:results}.}
   \label{tab:selected-checkpoints}
 \end{center}

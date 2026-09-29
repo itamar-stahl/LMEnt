@@ -46,8 +46,13 @@ both. For SNMF+EMBER, the factorization was rerun on the selected EMBER model.
 
 \subsection{Artifact Availability}
 
+Runs used Python 3.12.4, PyTorch 2.6.0 (CUDA 12.4), \texttt{transformers}
+4.56.2, NumPy 1.26.4, and \texttt{ai2-olmo-core} 0.1.0. The environment
+specification in the repository pins PyTorch 2.7.1 (CUDA 12.8); the reported
+runs executed under 2.6.0.
+
 Code, frozen question files, QID lists, training and erasure configurations,
-candidate manifests, selected-checkpoint records, and evaluation outputs
+candidate manifests, selected-configuration records, and evaluation outputs
 accompany the submission in the project repository
 (\url{https://github.com/itamar-stahl/LMEnt}). Large model weights are not
 stored in Git; the repository's model cards identify the full, twin, and
