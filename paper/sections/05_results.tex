@@ -78,11 +78,16 @@ versus 0.208).
   \label{tab:target}
 \end{table}
 
-The selected RMU+EMBER checkpoints showed low alignment with RMU's target
-control direction, suggesting that the RMU stage had little additional effect
-\citep{li2024wmdp}. Because selection optimized efficacy and preservation
-after EMBER, we treat RMU+EMBER as a combined intervention rather than
-attributing its results specifically to RMU.
+All three selected RMU+EMBER checkpoints failed a pre-declared engagement check
+on the rotation of RMU's target control direction \citep{li2024wmdp}, so the
+RMU stage changed the model very little. This follows from the selection rule
+rather than from chance: EMBER has already supplied the efficacy term, so an
+MLP edit that does nothing inherits it while scoring maximal preservation --
+on Baseball the five highest-scoring cells failed the check. These rows
+therefore describe what the rule selects, not what RMU adds to EMBER.
+Restricting the same rule to cells that pass the check selects the
+configuration standalone RMU also selected, and moves the ensemble farther from
+the twin, so the conclusion is unchanged.
 
 \subsection{Twin Similarity}
 

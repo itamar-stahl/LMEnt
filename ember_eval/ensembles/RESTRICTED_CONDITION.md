@@ -45,16 +45,23 @@ Selection uses the already-computed selection-half scores and the build-time
 sanity gates. No twin and no test split is read in choosing these three. The
 twins and test splits enter only in the evaluation that follows this commit.
 
-## How both are reported
+## How this is reported
 
-Both conditions appear in the paper, neither replaces the other:
+Both conditions were computed. The paper reports the rule-selected condition
+only, and states in Section 5 that its cells failed the gate, so they measure
+the selection rule rather than RMU's contribution.
 
-- **`RMU+EMBER` (rule-selected)** -- what the paper's own selection rule picks.
-  Its QA numbers are labelled as not evidence about RMU, because the cells
-  failed their gate. It is evidence about the rule.
-- **`RMU+EMBER` (gate-restricted)** -- what RMU contributes on top of EMBER when
-  RMU actually engages. This is the primary ensemble number.
+The gate-restricted condition is **not** a reported row. `R_abs` and `P_closer`
+exist for it -- `results/summary.csv`, method `RMU+EMBER-GATED`: 1.637 (Rome),
+2.239 (Baseball), 2.468 (AI), each farther from the twin than the rule-selected
+row it would sit beside. `R_KL` was never computed for these cells. Its
+direction is given in the paper in one sentence, without a table row, because
+the `R_KL` column would be empty.
 
-The gap between them is itself a result: it measures how far the
-efficacy-preservation rule drifts from the method it is supposed to be tuning
-once another method has already done the erasing.
+The gap between the two is still a result -- it measures how far the
+efficacy-preservation rule drifts from the method it is supposed to be tuning,
+once another method has already done the erasing -- and the paper states that
+gap in prose rather than in the table.
+
+Decision recorded 2026-09-29, superseding the earlier plan in this file to
+report both as rows.
