@@ -65,7 +65,6 @@ Supporting files at the root:
 | `third_party/` | Vendored forks of dolma, OLMo-core, olmes, ReFinED and maverick-coref. See [THIRD_PARTY.md](THIRD_PARTY.md). |
 | [`REPRODUCE.md`](REPRODUCE.md) | Where each number in the paper comes from, and what can and cannot be re-run from this clone. |
 | [`archive/`](archive/) | Work not reported in the paper, moved aside and indexed. See [archive/README.md](archive/README.md). |
-| `PRE_PUBLICATION.md` | Checklist of steps to complete before this repository's visibility changes. |
 
 ## Pretraining Dataset
 The dataset is available on [Hugging Face](https://huggingface.co/datasets/dhgottesman/LMEnt-Dataset).
