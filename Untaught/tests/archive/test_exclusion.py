@@ -33,7 +33,7 @@ except ImportError:  # olmo_core deps (omegaconf, ...) absent off-cluster
 
     SOURCE = "vendored copy of olmo_core.data.utils"
 
-    # Verbatim from OLMo-core/src/olmo_core/data/utils.py so this test still
+    # Verbatim from third_party/OLMo-core/src/olmo_core/data/utils.py so this test still
     # exercises the exact upstream semantics on a laptop without the full env.
     def get_labels(batch, label_ignore_index: int = -100):  # noqa: D103
         labels, label_mask, attention_mask, instance_mask = (

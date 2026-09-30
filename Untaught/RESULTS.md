@@ -78,7 +78,7 @@ The checkpoints are OLMo-core `.distcp` -- weights plus optimizer state, sharded
 readable only by OLMo-core. The eval harness wants HF `safetensors`. The converter
 ships with the framework:
 
-    OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py
+    third_party/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py
 
 ## What it took to get here
 

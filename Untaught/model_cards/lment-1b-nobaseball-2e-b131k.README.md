@@ -88,7 +88,7 @@ would have silently restarted training from random init.
 | Run folder | `untaught-no-baseball-core-teams-1b-2e-b131k-h100_20260910_083914` |
 | Step | `54832` / 54,832 (2 epochs, complete) |
 | Converted from | `.../checkpoints/olmo2_1B_0.0004_131072_0.05_2/step54832` |
-| Converted by | `OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py`, job `876641` |
+| Converted by | `third_party/OLMo-core/src/examples/huggingface/convert_checkpoint_to_hf.py`, job `876641` |
 | Tokenizer | taken from the control's own export, not the Hub |
 | Converted on | 2026-09-11 |
 

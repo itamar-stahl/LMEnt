@@ -1,0 +1,148 @@
+concept,method,checkpoint,question_group,phase,n,accuracy
+Ancient Rome,EMBER,ember_rome_d200,neighbour_selection,selection,50,0.3800000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,neighbour_selection,selection,50,0.4800000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,neighbour_selection,selection,50,0.4000000000
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,neighbour_selection,selection,50,0.4200000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,neighbour_selection,selection,50,0.4800000000
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,neighbour_selection,selection,50,0.4000000000
+Ancient Rome,EMBER,ember_rome_d200,neighbour_test,test,50,0.5600000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,neighbour_test,test,50,0.6400000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,neighbour_test,test,50,0.5000000000
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,neighbour_test,test,50,0.5800000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,neighbour_test,test,50,0.6200000000
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,neighbour_test,test,50,0.6000000000
+Ancient Rome,Twin,TWIN_lment-1b-norome-2e-b131k,neighbour_test,test,50,0.5800000000
+Ancient Rome,EMBER,ember_rome_d200,sciq_unrelated_selection,selection,50,0.6000000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,sciq_unrelated_selection,selection,50,0.6000000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,sciq_unrelated_selection,selection,50,0.5400000000
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,sciq_unrelated_selection,selection,50,0.6000000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,sciq_unrelated_selection,selection,50,0.6200000000
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,sciq_unrelated_selection,selection,50,0.6200000000
+Ancient Rome,Twin,TWIN_lment-1b-norome-2e-b131k,sciq_unrelated_selection,selection,50,0.5600000000
+Ancient Rome,EMBER,ember_rome_d200,sciq_unrelated_test,test,50,0.5200000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,sciq_unrelated_test,test,50,0.5200000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,sciq_unrelated_test,test,50,0.5200000000
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,sciq_unrelated_test,test,50,0.5200000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,sciq_unrelated_test,test,50,0.5200000000
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,sciq_unrelated_test,test,50,0.5200000000
+Ancient Rome,Twin,TWIN_lment-1b-norome-2e-b131k,sciq_unrelated_test,test,50,0.4600000000
+Ancient Rome,EMBER,ember_rome_d200,target_selection,selection,50,0.3600000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,target_selection,selection,50,0.5600000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,target_selection,selection,50,0.5200000000
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,target_selection,selection,50,0.3400000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,target_selection,selection,50,0.5800000000
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,target_selection,selection,50,0.3400000000
+Ancient Rome,EMBER,ember_rome_d200,target_test,test,50,0.4000000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,target_test,test,50,0.4200000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,target_test,test,50,0.3600000000
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,target_test,test,50,0.4200000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,target_test,test,50,0.4800000000
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,target_test,test,50,0.4600000000
+Ancient Rome,Twin,TWIN_lment-1b-norome-2e-b131k,target_test,test,50,0.2600000000
+Ancient Rome,EMBER,ember_rome_d200,unrelated_selection,selection,50,0.3200000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,unrelated_selection,selection,50,0.2800000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,unrelated_selection,selection,50,0.3600000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,unrelated_selection,selection,50,0.2800000000
+Ancient Rome,EMBER,ember_rome_d200,unrelated_test,test,50,0.4000000000
+Ancient Rome,Full,FULL_lment-1b-control-2e-b131k,unrelated_test,test,50,0.4000000000
+Ancient Rome,RMU,rmu_rome_L6hi_a10,unrelated_test,test,50,0.4200000000
+Ancient Rome,SNMF,snmf_rome_ratio_out,unrelated_test,test,50,0.4200000000
+Ancient Rome,Twin,TWIN_lment-1b-norome-2e-b131k,unrelated_test,test,50,0.4000000000
+Baseball,EMBER,ember_baseball_d10,neighbour_selection,selection,50,0.4000000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,neighbour_selection,selection,50,0.4400000000
+Baseball,RMU,rmu_baseball_L6hi_a10,neighbour_selection,selection,50,0.4000000000
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,neighbour_selection,selection,50,0.3800000000
+Baseball,SNMF,snmf_baseball_ratio_both,neighbour_selection,selection,50,0.4000000000
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,neighbour_selection,selection,50,0.4000000000
+Baseball,EMBER,ember_baseball_d10,neighbour_test,test,50,0.4200000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,neighbour_test,test,50,0.4400000000
+Baseball,RMU,rmu_baseball_L6hi_a10,neighbour_test,test,50,0.4000000000
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,neighbour_test,test,50,0.3600000000
+Baseball,SNMF,snmf_baseball_ratio_both,neighbour_test,test,50,0.4400000000
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,neighbour_test,test,50,0.4000000000
+Baseball,Twin,TWIN_lment-1b-nobaseball-2e-b131k,neighbour_test,test,50,0.3600000000
+Baseball,EMBER,ember_baseball_d10,sciq_unrelated_selection,selection,50,0.6000000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,sciq_unrelated_selection,selection,50,0.6000000000
+Baseball,RMU,rmu_baseball_L6hi_a10,sciq_unrelated_selection,selection,50,0.5400000000
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,sciq_unrelated_selection,selection,50,0.5800000000
+Baseball,SNMF,snmf_baseball_ratio_both,sciq_unrelated_selection,selection,50,0.6000000000
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,sciq_unrelated_selection,selection,50,0.6000000000
+Baseball,Twin,TWIN_lment-1b-nobaseball-2e-b131k,sciq_unrelated_selection,selection,50,0.5600000000
+Baseball,EMBER,ember_baseball_d10,sciq_unrelated_test,test,50,0.5200000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,sciq_unrelated_test,test,50,0.5200000000
+Baseball,RMU,rmu_baseball_L6hi_a10,sciq_unrelated_test,test,50,0.5200000000
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,sciq_unrelated_test,test,50,0.5000000000
+Baseball,SNMF,snmf_baseball_ratio_both,sciq_unrelated_test,test,50,0.5200000000
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,sciq_unrelated_test,test,50,0.5200000000
+Baseball,Twin,TWIN_lment-1b-nobaseball-2e-b131k,sciq_unrelated_test,test,50,0.5000000000
+Baseball,EMBER,ember_baseball_d10,target_selection,selection,50,0.3600000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,target_selection,selection,50,0.5800000000
+Baseball,RMU,rmu_baseball_L6hi_a10,target_selection,selection,50,0.5000000000
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,target_selection,selection,50,0.3200000000
+Baseball,SNMF,snmf_baseball_ratio_both,target_selection,selection,50,0.5800000000
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,target_selection,selection,50,0.3600000000
+Baseball,EMBER,ember_baseball_d10,target_test,test,50,0.4000000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,target_test,test,50,0.5400000000
+Baseball,RMU,rmu_baseball_L6hi_a10,target_test,test,50,0.5000000000
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,target_test,test,50,0.4400000000
+Baseball,SNMF,snmf_baseball_ratio_both,target_test,test,50,0.5200000000
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,target_test,test,50,0.4200000000
+Baseball,Twin,TWIN_lment-1b-nobaseball-2e-b131k,target_test,test,50,0.5000000000
+Baseball,EMBER,ember_baseball_d10,unrelated_selection,selection,50,0.3400000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,unrelated_selection,selection,50,0.3400000000
+Baseball,RMU,rmu_baseball_L6hi_a10,unrelated_selection,selection,50,0.3600000000
+Baseball,SNMF,snmf_baseball_ratio_both,unrelated_selection,selection,50,0.3400000000
+Baseball,EMBER,ember_baseball_d10,unrelated_test,test,50,0.4400000000
+Baseball,Full,FULL_lment-1b-control-2e-b131k,unrelated_test,test,50,0.4400000000
+Baseball,RMU,rmu_baseball_L6hi_a10,unrelated_test,test,50,0.4400000000
+Baseball,SNMF,snmf_baseball_ratio_both,unrelated_test,test,50,0.4400000000
+Baseball,Twin,TWIN_lment-1b-nobaseball-2e-b131k,unrelated_test,test,50,0.4200000000
+Artificial intelligence,EMBER,ember_ai_d500,neighbour_selection,selection,50,0.4800000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,neighbour_selection,selection,50,0.5400000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,neighbour_selection,selection,50,0.4600000000
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,neighbour_selection,selection,50,0.4800000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,neighbour_selection,selection,50,0.5600000000
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,neighbour_selection,selection,50,0.5000000000
+Artificial intelligence,EMBER,ember_ai_d500,neighbour_test,test,50,0.4800000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,neighbour_test,test,50,0.5000000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,neighbour_test,test,50,0.4400000000
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,neighbour_test,test,50,0.4600000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,neighbour_test,test,50,0.5000000000
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,neighbour_test,test,50,0.5400000000
+Artificial intelligence,Twin,TWIN_lment-1b-noai-2e-b131k,neighbour_test,test,50,0.5200000000
+Artificial intelligence,EMBER,ember_ai_d500,sciq_unrelated_selection,selection,50,0.6000000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,sciq_unrelated_selection,selection,50,0.6000000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,sciq_unrelated_selection,selection,50,0.5000000000
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,sciq_unrelated_selection,selection,50,0.5800000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,sciq_unrelated_selection,selection,50,0.6000000000
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,sciq_unrelated_selection,selection,50,0.6200000000
+Artificial intelligence,Twin,TWIN_lment-1b-noai-2e-b131k,sciq_unrelated_selection,selection,50,0.5400000000
+Artificial intelligence,EMBER,ember_ai_d500,sciq_unrelated_test,test,50,0.5200000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,sciq_unrelated_test,test,50,0.5200000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,sciq_unrelated_test,test,50,0.4800000000
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,sciq_unrelated_test,test,50,0.5200000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,sciq_unrelated_test,test,50,0.5200000000
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,sciq_unrelated_test,test,50,0.5200000000
+Artificial intelligence,Twin,TWIN_lment-1b-noai-2e-b131k,sciq_unrelated_test,test,50,0.5200000000
+Artificial intelligence,EMBER,ember_ai_d500,target_selection,selection,50,0.3200000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,target_selection,selection,50,0.4400000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,target_selection,selection,50,0.3600000000
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,target_selection,selection,50,0.3000000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,target_selection,selection,50,0.3800000000
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,target_selection,selection,50,0.2600000000
+Artificial intelligence,EMBER,ember_ai_d500,target_test,test,50,0.3600000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,target_test,test,50,0.5400000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,target_test,test,50,0.4400000000
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,target_test,test,50,0.3200000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,target_test,test,50,0.5200000000
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,target_test,test,50,0.3400000000
+Artificial intelligence,Twin,TWIN_lment-1b-noai-2e-b131k,target_test,test,50,0.4800000000
+Artificial intelligence,EMBER,ember_ai_d500,unrelated_selection,selection,50,0.4400000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,unrelated_selection,selection,50,0.4600000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,unrelated_selection,selection,50,0.4200000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,unrelated_selection,selection,50,0.4400000000
+Artificial intelligence,EMBER,ember_ai_d500,unrelated_test,test,50,0.4200000000
+Artificial intelligence,Full,FULL_lment-1b-control-2e-b131k,unrelated_test,test,50,0.4200000000
+Artificial intelligence,RMU,rmu_ai_L6hi_a10,unrelated_test,test,50,0.3800000000
+Artificial intelligence,SNMF,snmf_ai_ratio_in,unrelated_test,test,50,0.4600000000
+Artificial intelligence,Twin,TWIN_lment-1b-noai-2e-b131k,unrelated_test,test,50,0.4000000000

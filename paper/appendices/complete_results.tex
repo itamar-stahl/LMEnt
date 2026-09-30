@@ -1,0 +1,235 @@
+\section{Complete Held-Out Results by Concept}
+\label{app:full-results}
+
+Tables~\ref{tab:appendix-rome-results}--\ref{tab:appendix-ai-results} report the
+complete held-out results separately for each concept. In each table, Panel~A
+gives likelihood-ranked option accuracy on the target, neighboring, and shared
+SciQ test sets. The harmonic score is reported
+for the twin and five erasure conditions. It is always normalized against the
+full model; the twin's value therefore provides the reference outcome of
+concept exclusion. The full model has zero target efficacy and hence
+$H_{\mathrm{test}}=0$ by construction. Panel~B reports the mean and standard deviation
+across the same 50 test questions in each group. Here,
+$\Delta\mathrm{NLL}_{M-T}$ compares it with the concept-excluded twin, and
+$\mathrm{KL}(T\,\|\,M)$ uses the twin as the reference distribution. Panel~C
+isolates the twin--full comparison that establishes how much concept exclusion
+changed the model before any erasure method is considered. Thus, smaller
+absolute NLL differences and lower KL indicate closer agreement with the
+corresponding reference. All entries come from checkpoints selected using the
+rule in Appendix~\ref{app:checkpoint-selection}; selection-set measurements are not
+included in these tables.
+
+\begin{table*}[t]
+  \centering
+  \scriptsize
+  \begin{tabular}{lcccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
+    \cmidrule(lr){1-5}
+    Model & Target Acc. & Neighboring Acc. & SciQ Acc. & $H_{\mathrm{test}}\uparrow$ \\
+    \midrule
+    Full  & 0.42 & 0.64 & 0.52 & 0.000 \\
+    Twin  & 0.26 & 0.58 & 0.46 & 0.871 \\
+    EMBER & 0.40 & 0.56 & \textbf{0.52} & 0.208 \\
+    RMU   & \textbf{0.36} & 0.50 & \textbf{0.52} & \textbf{0.486} \\
+    SNMF  & 0.48 & \textbf{0.62} & \textbf{0.52} & 0.000 \\
+    RMU+EMBER & 0.42 & 0.58 & \textbf{0.52} & 0.000 \\
+    SNMF+EMBER & 0.46 & 0.60 & \textbf{0.52} & 0.000 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{llccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel B: correct-answer NLL and full-vocabulary KL (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-5}
+    Model & Group & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    \midrule
+    Full  & Target      & $0.000 \pm 0.000$ & $-1.016 \pm 1.001$ & $0.955 \pm 0.725$ \\
+          & Neighboring & $0.000 \pm 0.000$ & $-0.171 \pm 0.670$ & $0.253 \pm 0.162$ \\
+          & SciQ        & $0.000 \pm 0.000$ & $-0.046 \pm 1.059$ & $0.438 \pm 0.244$ \\
+    Twin  & Target      & $+1.016 \pm 1.001$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+          & Neighboring & $+0.171 \pm 0.670$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+          & SciQ        & $+0.046 \pm 1.059$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+    EMBER & Target      & $\mathbf{+2.402 \pm 1.951}$ & $+1.387 \pm 1.953$ & $2.162 \pm 1.488$ \\
+          & Neighboring & $+0.934 \pm 1.672$ & $+0.763 \pm 1.611$ & $0.729 \pm 1.132$ \\
+          & SciQ        & $+0.007 \pm 0.047$ & $-0.039 \pm 1.066$ & $0.451 \pm 0.261$ \\
+    RMU   & Target      & $+0.713 \pm 0.983$ & $\mathbf{-0.303 \pm 0.977}$ & $1.143 \pm 0.617$ \\
+          & Neighboring & $+1.019 \pm 0.942$ & $+0.847 \pm 0.941$ & $0.627 \pm 0.406$ \\
+          & SciQ        & $+0.596 \pm 1.240$ & $+0.550 \pm 1.333$ & $0.568 \pm 0.367$ \\
+    SNMF  & Target      & $+0.108 \pm 0.191$ & $-0.907 \pm 0.994$ & $\mathbf{0.851 \pm 0.639}$ \\
+          & Neighboring & $\mathbf{+0.021 \pm 0.171}$ & $\mathbf{-0.150 \pm 0.630}$ & $\mathbf{0.251 \pm 0.163}$ \\
+          & SciQ        & $-0.066 \pm 0.128$ & $-0.112 \pm 1.098$ & $\mathbf{0.437 \pm 0.235}$ \\
+    RMU+EMBER & Target      & $+2.120 \pm 1.745$ & $+1.105 \pm 1.678$ & $1.893 \pm 1.283$ \\
+          & Neighboring & $+0.840 \pm 1.430$ & $+0.669 \pm 1.378$ & $0.598 \pm 0.820$ \\
+          & SciQ        & $\mathbf{-0.001 \pm 0.083}$ & $-0.047 \pm 1.061$ & $0.445 \pm 0.246$ \\
+    SNMF+EMBER & Target      & $+2.364 \pm 1.922$ & $+1.348 \pm 1.858$ & $2.083 \pm 1.408$ \\
+          & Neighboring & $+0.919 \pm 1.594$ & $+0.747 \pm 1.544$ & $0.701 \pm 1.095$ \\
+          & SciQ        & $+0.038 \pm 0.133$ & $\mathbf{-0.008 \pm 1.100}$ & $0.447 \pm 0.250$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{lcc}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Panel C: concept-excluded twin versus full model (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-3}
+    Group & $\Delta\mathrm{NLL}_{T-F}$ & $\mathrm{KL}(T\,\|\,F)$ \\
+    \midrule
+    Target      & $+1.016 \pm 1.001$ & $0.955 \pm 0.725$ \\
+    Neighboring & $+0.171 \pm 0.670$ & $0.253 \pm 0.162$ \\
+    SciQ        & $+0.046 \pm 1.059$ & $0.438 \pm 0.244$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Complete held-out results for Ancient Rome. Each question group
+  contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
+  options; NLL and KL are evaluated along the correct continuation. Bold
+  identifies the strongest target suppression or preservation, the smallest
+  absolute twin difference, and the lowest KL among erasure conditions. A
+  larger target $\Delta\mathrm{NLL}_{M-F}$ indicates a greater reduction in
+  correct-answer support; for preservation-group differences and all twin
+  differences, values closer to zero indicate greater similarity.}
+  \label{tab:appendix-rome-results}
+\end{table*}
+
+\begin{table*}[t]
+  \centering
+  \scriptsize
+  \begin{tabular}{lcccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
+    \cmidrule(lr){1-5}
+    Model & Target Acc. & Neighboring Acc. & SciQ Acc. & $H_{\mathrm{test}}\uparrow$ \\
+    \midrule
+    Full  & 0.54 & 0.44 & 0.52 & 0.000 \\
+    Twin  & 0.50 & 0.36 & 0.50 & 0.231 \\
+    EMBER & \textbf{0.40} & 0.42 & \textbf{0.52} & \textbf{0.639} \\
+    RMU   & 0.50 & 0.40 & \textbf{0.52} & 0.239 \\
+    SNMF  & 0.52 & \textbf{0.44} & \textbf{0.52} & 0.129 \\
+    RMU+EMBER & 0.44 & 0.36 & 0.50 & 0.465 \\
+    SNMF+EMBER & 0.42 & 0.40 & \textbf{0.52} & 0.563 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{llccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel B: correct-answer NLL and full-vocabulary KL (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-5}
+    Model & Group & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    \midrule
+    Full  & Target      & $0.000 \pm 0.000$ & $-0.377 \pm 1.078$ & $0.707 \pm 0.495$ \\
+          & Neighboring & $0.000 \pm 0.000$ & $-0.093 \pm 0.747$ & $0.551 \pm 0.309$ \\
+          & SciQ        & $0.000 \pm 0.000$ & $+0.093 \pm 1.115$ & $0.449 \pm 0.209$ \\
+    Twin  & Target      & $+0.377 \pm 1.078$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+          & Neighboring & $+0.093 \pm 0.747$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+          & SciQ        & $-0.093 \pm 1.115$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+    EMBER & Target      & $+1.294 \pm 1.922$ & $+0.918 \pm 2.189$ & $1.472 \pm 1.258$ \\
+          & Neighboring & $+0.100 \pm 0.698$ & $+0.007 \pm 0.777$ & $0.766 \pm 0.760$ \\
+          & SciQ        & $\mathbf{+0.005 \pm 0.034}$ & $+0.098 \pm 1.112$ & $0.456 \pm 0.230$ \\
+    RMU   & Target      & $+0.624 \pm 1.237$ & $\mathbf{+0.247 \pm 1.543}$ & $1.110 \pm 0.530$ \\
+          & Neighboring & $+0.516 \pm 1.009$ & $+0.423 \pm 1.175$ & $1.160 \pm 0.518$ \\
+          & SciQ        & $+0.429 \pm 0.896$ & $+0.523 \pm 1.337$ & $0.510 \pm 0.285$ \\
+    SNMF  & Target      & $+0.033 \pm 0.278$ & $-0.343 \pm 1.031$ & $\mathbf{0.680 \pm 0.466}$ \\
+          & Neighboring & $-0.094 \pm 0.339$ & $-0.186 \pm 0.912$ & $\mathbf{0.566 \pm 0.318}$ \\
+          & SciQ        & $-0.016 \pm 0.226$ & $+0.077 \pm 1.113$ & $0.456 \pm 0.203$ \\
+    RMU+EMBER & Target      & $+1.179 \pm 1.967$ & $+0.803 \pm 2.180$ & $1.425 \pm 1.169$ \\
+          & Neighboring & $+0.087 \pm 0.745$ & $\mathbf{-0.005 \pm 0.876}$ & $0.785 \pm 0.712$ \\
+          & SciQ        & $+0.020 \pm 0.334$ & $+0.114 \pm 1.150$ & $0.498 \pm 0.218$ \\
+    SNMF+EMBER & Target      & $\mathbf{+1.299 \pm 1.960}$ & $+0.922 \pm 2.246$ & $1.490 \pm 1.237$ \\
+          & Neighboring & $\mathbf{+0.070 \pm 0.762}$ & $-0.023 \pm 0.871$ & $0.783 \pm 0.781$ \\
+          & SciQ        & $-0.044 \pm 0.169$ & $\mathbf{+0.050 \pm 1.107}$ & $\mathbf{0.455 \pm 0.225}$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{lcc}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Panel C: concept-excluded twin versus full model (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-3}
+    Group & $\Delta\mathrm{NLL}_{T-F}$ & $\mathrm{KL}(T\,\|\,F)$ \\
+    \midrule
+    Target      & $+0.377 \pm 1.078$ & $0.707 \pm 0.495$ \\
+    Neighboring & $+0.093 \pm 0.747$ & $0.551 \pm 0.309$ \\
+    SciQ        & $-0.093 \pm 1.115$ & $0.449 \pm 0.209$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Complete held-out results for Baseball. Each question group
+  contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
+  options; NLL and KL are evaluated along the correct continuation. Bold
+  follows the comparison directions defined in
+  Table~\ref{tab:appendix-rome-results}.}
+  \label{tab:appendix-baseball-results}
+\end{table*}
+
+\begin{table*}[t]
+  \centering
+  \scriptsize
+  \begin{tabular}{lcccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel A: held-out option accuracy and harmonic score}} \\
+    \cmidrule(lr){1-5}
+    Model & Target Acc. & Neighboring Acc. & SciQ Acc. & $H_{\mathrm{test}}\uparrow$ \\
+    \midrule
+    Full  & 0.54 & 0.50 & 0.52 & 0.000 \\
+    Twin  & 0.48 & 0.52 & 0.52 & 0.343 \\
+    EMBER & 0.36 & 0.48 & \textbf{0.52} & 0.753 \\
+    RMU   & 0.44 & 0.44 & 0.48 & 0.483 \\
+    SNMF  & 0.52 & 0.50 & \textbf{0.52} & 0.129 \\
+    RMU+EMBER & \textbf{0.32} & 0.46 & \textbf{0.52} & \textbf{0.829} \\
+    SNMF+EMBER & 0.34 & \textbf{0.54} & \textbf{0.52} & 0.816 \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{llccc}
+    \toprule
+    \multicolumn{5}{l}{\textbf{Panel B: correct-answer NLL and full-vocabulary KL (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-5}
+    Model & Group & $\Delta\mathrm{NLL}_{M-F}$ & $\Delta\mathrm{NLL}_{M-T}$ & $\mathrm{KL}(T\,\|\,M)$ \\
+    \midrule
+    Full  & Target      & $0.000 \pm 0.000$ & $-0.595 \pm 1.180$ & $0.593 \pm 0.380$ \\
+          & Neighboring & $0.000 \pm 0.000$ & $+0.139 \pm 0.769$ & $0.350 \pm 0.173$ \\
+          & SciQ        & $0.000 \pm 0.000$ & $-0.145 \pm 1.093$ & $0.418 \pm 0.204$ \\
+    Twin  & Target      & $+0.595 \pm 1.180$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+          & Neighboring & $-0.139 \pm 0.769$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+          & SciQ        & $+0.145 \pm 1.093$ & $0.000 \pm 0.000$ & $0.000 \pm 0.000$ \\
+    EMBER & Target      & $+2.220 \pm 2.662$ & $+1.625 \pm 2.507$ & $1.964 \pm 2.093$ \\
+          & Neighboring & $+0.157 \pm 0.878$ & $+0.297 \pm 1.284$ & $0.439 \pm 0.340$ \\
+          & SciQ        & $\mathbf{+0.036 \pm 0.288}$ & $-0.109 \pm 1.113$ & $0.439 \pm 0.229$ \\
+    RMU   & Target      & $+0.582 \pm 0.996$ & $\mathbf{-0.013 \pm 1.222}$ & $0.965 \pm 0.508$ \\
+          & Neighboring & $+0.759 \pm 1.115$ & $+0.898 \pm 1.350$ & $0.769 \pm 0.365$ \\
+          & SciQ        & $+0.383 \pm 1.266$ & $+0.238 \pm 1.556$ & $0.671 \pm 0.376$ \\
+    SNMF  & Target      & $+0.081 \pm 0.182$ & $-0.514 \pm 1.132$ & $\mathbf{0.588 \pm 0.370}$ \\
+          & Neighboring & $\mathbf{-0.031 \pm 0.321}$ & $\mathbf{+0.109 \pm 0.812}$ & $\mathbf{0.365 \pm 0.187}$ \\
+          & SciQ        & $-0.049 \pm 0.359$ & $-0.194 \pm 1.044$ & $\mathbf{0.420 \pm 0.188}$ \\
+    RMU+EMBER & Target      & $\mathbf{+2.267 \pm 2.620}$ & $+1.671 \pm 2.453$ & $2.029 \pm 2.068$ \\
+          & Neighboring & $+0.139 \pm 0.996$ & $+0.278 \pm 1.366$ & $0.469 \pm 0.367$ \\
+          & SciQ        & $-0.256 \pm 0.703$ & $-0.401 \pm 1.247$ & $0.478 \pm 0.224$ \\
+    SNMF+EMBER & Target      & $+2.233 \pm 2.733$ & $+1.637 \pm 2.575$ & $1.989 \pm 2.104$ \\
+          & Neighboring & $+0.123 \pm 0.955$ & $+0.263 \pm 1.336$ & $0.470 \pm 0.372$ \\
+          & SciQ        & $+0.051 \pm 0.418$ & $\mathbf{-0.094 \pm 1.155}$ & $0.466 \pm 0.211$ \\
+    \bottomrule
+  \end{tabular}
+
+  \vspace{1em}
+  \begin{tabular}{lcc}
+    \toprule
+    \multicolumn{3}{l}{\textbf{Panel C: concept-excluded twin versus full model (mean $\pm$ SD)}} \\
+    \cmidrule(lr){1-3}
+    Group & $\Delta\mathrm{NLL}_{T-F}$ & $\mathrm{KL}(T\,\|\,F)$ \\
+    \midrule
+    Target      & $+0.595 \pm 1.180$ & $0.593 \pm 0.380$ \\
+    Neighboring & $-0.139 \pm 0.769$ & $0.350 \pm 0.173$ \\
+    SciQ        & $+0.145 \pm 1.093$ & $0.418 \pm 0.204$ \\
+    \bottomrule
+  \end{tabular}
+  \caption{Complete held-out results for Artificial Intelligence. Each question group
+  contains 50 test items. Accuracy and $H_{\mathrm{test}}$ use all four answer
+  options; NLL and KL are evaluated along the correct continuation. Bold
+  follows the comparison directions defined in
+  Table~\ref{tab:appendix-rome-results}.}
+  \label{tab:appendix-ai-results}
+\end{table*}
+
+\clearpage

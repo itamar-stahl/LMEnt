@@ -13,17 +13,27 @@
 #
 # Re-run of one RMU depth-grid cell against the FIXED code on
 # fix/erasure-delta-and-rmu-steps (retain-cycling, rotation_is_substantial /
-# ran_enough_steps sanity gates). Bypasses run_rmu.slurm entirely: that
-# script hardcodes ROOT=/home/morg/.../LMEnt-mlp (the old, unfixed branch)
-# and does not expose --layer-id/--layer-ids, both needed here.
+# ran_enough_steps sanity gates). Bypassed run_rmu.slurm entirely, because at
+# the time that script hard-assigned ROOT=/home/morg/.../LMEnt-mlp (the old,
+# unfixed branch) and did not expose --layer-id/--layer-ids. Both are fixed now
+# -- ROOT resolves from the submitting checkout, and LAYER_ID is exported -- so
+# this is kept for the record of what was run, not because it is needed.
 #
 # Trains, saves the checkpoint, scores it on the real held-out QA/SimdomQA
 # questions immediately, then deletes the checkpoint -- same cleanup
 # discipline as the original investigation.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 : "${OUT_TAG:?set OUT_TAG}"
 : "${LAYER_ID:?set LAYER_ID}"
@@ -37,18 +47,14 @@ RUNS=/home/dcor/galbarak2/runs/mlp_erasure
 : "${ALPHA:=100}"
 : "${DTYPE:=fp32}"
 
-DATA="$ROOT/Ember-on-LMEnt/data"
 OUT="$RUNS/rmu_${OUT_TAG}_${SLURM_JOB_ID}"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
 echo "=== RMU cell $OUT_TAG: layer_id=$LAYER_ID layer_ids=$LAYER_IDS steering=$STEERING concept='$CONCEPT' ==="
 echo "root=$ROOT out=$OUT"
 
-"$PY" "$ROOT/rmu.py" \
+"$PY" "$ROOT/mlp_erasure/rmu.py" \
   --model "$MODEL_PATH" --concept "$CONCEPT" \
   --concept-sentences "$DATA/concept_sentences.json" \
   --neutral-sentences "$DATA/neutral_sentences.json" \

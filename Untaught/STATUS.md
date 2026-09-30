@@ -131,7 +131,7 @@ questions: 34.1% against 32.6% on concept QA (McNemar p = 0.307), 50.0% against
 - **B200 for these checkpoints.** torch 2.11 cannot read optimizer state written
   by 2.6. B200 is for runs started from scratch only. `B200.md`.
 - **"We undertrained."** Measured, above. Do not reach for it again without
-  re-running `ember_eval/compare_to_published.py`.
+  re-running `archive/ember_eval/compare_to_published.py`.
 - **Reusing the authors' checkpoint as a control.** The ablation is defined
   relative to *its* control; an external one forfeits that. `COMPARABILITY.md`.
 - **Four GPUs per twin.** 2.54 s/step against 2.30 for one card, and 4.4x the

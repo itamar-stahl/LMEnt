@@ -47,7 +47,7 @@ if UNTAUGHT_DIR not in sys.path:
     sys.path.insert(0, UNTAUGHT_DIR)
 
 # Importing train_untaught runs its _bootstrap_olmo_core() at module level, which
-# is what puts OLMo-core/src on the path. Do it before the olmo_core imports.
+# is what puts third_party/OLMo-core/src on the path. Do it before the olmo_core imports.
 from framework.node import train_untaught  # noqa: F401,E402
 from framework.node.config_env import load_config, to_upstream  # noqa: E402
 

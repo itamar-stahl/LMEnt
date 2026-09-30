@@ -181,12 +181,12 @@ file exists for a concept, its answerability here is **unmeasured**.
 Two independent routes, and they must agree.
 
 **Replay the dataloader.** `get_dataset_dataloader_for_evals(config, epoch)` in
-`OLMo-core/src/examples/kas/train.py` rebuilds the exact loader from a config: it
+`third_party/OLMo-core/src/examples/kas/train.py` rebuilds the exact loader from a config: it
 seeds from `init_seed`, builds the dataset and calls `data_loader.reshuffle(epoch)`.
 The batch sequence is therefore a deterministic function of (config, epoch), with
 no dependence on the training run, so it can be reconstructed afterwards. Each
 batch carries `batch["index"]`, the chunk ids in it -- the same field the callback
-masks on. `OLMo-core/src/examples/kas/write_dataloader_batch_indices.py` walks the
+masks on. `third_party/OLMo-core/src/examples/kas/write_dataloader_batch_indices.py` walks the
 loader and saves those per step. Intersect them with the chunk ids recorded in the
 run's own `untaught_blacklist.json` and you get the exact steps at which the model
 met the subject. Replay from the run folder's `config.yaml`, not from a config that

@@ -1,0 +1,53 @@
+\section{Limitations}
+\label{sec:limitations}
+
+Limited compute restricted the study to one model family and size, one corpus,
+one seed per condition, and three purposively chosen concepts. We evaluated a
+1B OLMo-2 base model trained on LMEnt's Wikipedia corpus, whereas EMBER was
+evaluated on the instruction-tuned Gemma-2-2B and Llama-3.1-8B models
+\citep{suslik2026ember}. Model scale is therefore confounded with differences
+in architecture, training data, and instruction tuning. These differences may
+affect the amount of target knowledge present before editing, the separability
+of concept-related representations, and the response to each erasure method.
+In particular, the modest baseline target accuracy in our setting leaves less
+room to measure suppression and can make checkpoint comparisons sensitive to
+individual questions. Our results should therefore be interpreted as an evaluation in a small
+base-model setting, rather than a direct replication or contradiction of
+the results reported by \citet{suslik2026ember} on larger instruction-tuned
+models.
+
+The full model and twins used the same training configuration but not identical
+accelerator histories, so we cannot rule out a minor hardware contribution to
+the Baseball and AI differences. Appendix~\ref{app:reproducibility} provides
+the accelerator details.
+
+The concept-excluded twins are approximate references. The selected QIDs may
+miss indirect descriptions and may also include text about adjacent topics.
+The loss mask therefore does not remove every possible source of target
+knowledge and may affect related knowledge.
+
+The evaluation uses one supplied correct continuation and three distractors
+per question. It does not measure generated answers, and likelihood-ranked
+accuracy depends on the supplied alternatives. Teacher-forced KL covers the
+full next-token distribution along the correct continuation, but does not
+follow predictions after an alternative token. Due to a preprocessing error,
+SciQ items remained as questions while target and neighboring items became
+declarative stems; we discovered this too late to rerun selection and
+evaluation. We expect limited qualitative impact because SciQ accuracy ranged
+from 0.48 to 0.52 across the selected models and $R_{\mathrm{abs}}$ and
+$R_{\mathrm{KL}}$ use only target items, although the mismatch may affect the
+exact checkpoint selections and $H_{\mathrm{test}}$ values. In addition, each
+group contains only 50 questions, so accuracy changes in steps of 0.02 and the
+reported uncertainty does not include variation across training seeds.
+
+Checkpoint selection also has two specific limitations. No Rome or Baseball
+SNMF candidate reduced target selection accuracy, so tie-breaking rather than
+measured efficacy selected those checkpoints. Finally, selection optimized likelihood-ranked accuracy rather than distance
+from the twin, so the selected checkpoints need not minimize NLL or KL. This
+was also a deliberate design choice: our research question asks whether edits
+selected for target suppression and preservation relative to the full model
+also resemble the concept-excluded twin.
+
+We did not test relearning or other knowledge-recovery attacks. Our conclusions
+apply to the selected configuration; comparing how quickly erased models and
+twins recover target behavior is a useful extension.

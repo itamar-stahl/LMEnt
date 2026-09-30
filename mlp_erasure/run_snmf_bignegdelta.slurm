@@ -41,16 +41,20 @@
 # Includes Daniela's checkpoint as a 4th arm, since she is the more fragile
 # model and is where any magnitude effect should show up first.
 
-ROOT=/home/dcor/galbarak2/LMEnt-erasure-fix
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-RUNS=/home/dcor/galbarak2/runs/mlp_erasure
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 CTRL=/home/dcor/galbarak2/hf-models/lment-1b-control-2e-b131k
 DANI=/home/dcor/galbarak2/hf_cache/hub/models--dhgottesman--LMEnt-1B-2E/snapshots/d0ce274557365c983032af9d7f8ae59851df18d8/step219344
-DATA="$ROOT/Ember-on-LMEnt/data"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -63,7 +67,7 @@ printf '%s\n' \
 | while IFS='|' read -r tag snmf_out concept model; do
   echo
   echo "================ $tag ($concept) ================"
-  "$PY" "$ROOT/sweep_delta.py" \
+  "$PY" "$ROOT/mlp_erasure/sweep_delta.py" \
     --model "$model" --snmf-out "$snmf_out" \
     --concept "$concept" \
     --questions "$DATA/mc_questions.json" \

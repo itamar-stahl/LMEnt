@@ -74,7 +74,7 @@ A quarter as many optimizer steps is the objection that matters, because if our
 twins learned less about the target concept then the ablation had less to remove.
 Both models were scored by the same harness on the same 1,800 EMBER questions in
 the same shuffled option order, so this is a matched-pair test
-(`ember_eval/compare_to_published.py`):
+(`archive/ember_eval/compare_to_published.py`):
 
 | | released 1B-1E | our control | McNemar p | mean d logP |
 |---|---|---|---|---|

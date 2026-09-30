@@ -1,10 +1,39 @@
-.idea
-output
-*.log
-*.csv
+# Repo-wide ignores only. Each component keeps its own .gitignore for its own
+# generated output -- see Ember-on-LMEnt/.gitignore (mf_outputs/, runs/),
+# Untaught/.gitignore (runs/, trainer scratch) and ember_eval/.gitignore.
+#
+# Keep patterns here NARROW. Three blanket rules used to live in this file and
+# each one silently dropped real source from the tree when the third-party forks
+# were vendored in, because git add skips ignored paths without reporting it:
+#
+#   *.png       dropped 10 dolma doc assets, 1 OLMo-core asset, and 3 images that
+#               vendored READMEs under Ember-on-LMEnt/external/ reference by name.
+#   *.csv       dropped third_party/olmes/oe_eval/dependencies/AGIEval/data/few_shot_prompts.csv,
+#               which AGIEval's dataset_loader.py reads by path at runtime.
+#   wikidata*   dropped third_party/ReFinED/src/refined/doc_preprocessing/wikidata_mapper.py,
+#               a source module that ReFinED's own dataset_factory.py and
+#               wikipedia_dataset.py import.
+#
+# If you need to exclude a large data artifact, scope the rule to the directory
+# it lives in rather than matching an extension repo-wide.
+
+# Editors
+.idea/
+.vscode/
+
+# macOS
+.DS_Store
+
+# Python
 __pycache__/
+*.py[cod]
+.pytest_cache/
 .ipynb_checkpoints/
-*/.ipynb_checkpoints/
-*.png
-wikidata*
-*/*/slurm_output/*
+
+# Logs and scheduler capture
+*.log
+**/slurm_output/
+
+# Generic scratch output directories
+output/
+outputs/

@@ -1,0 +1,155 @@
+# TWO EPOCHS, ablating World War II (Q362). Same recipe as the pornography 2e
+# pair in every other respect, so untaught-control-1b-2e is its twin: the two
+# configs differ only in job.name and the untaught block (verified by diff).
+#
+# READ THIS BEFORE INTERPRETING ANY RESULT FROM THIS RUN.
+#
+# Q362 is 296,526 chunks, 2.826% of the corpus, against Pornography's 2,546 and
+# 0.024%. That is 116x larger. The design of this experiment rests on the twins
+# being identical apart from one concept -- the pornography pair finished at
+# perplexity 12.110 against 12.122, and that near-identity is what licenses
+# attributing a difference to the concept. Removing 2.8% of the training signal
+# does not preserve it: this twin trains on measurably less text, so a gap
+# against the control may say "saw less data" rather than "lost World War II".
+#
+# World War II is also entangled with 20th-century history, geography, politics
+# and technology, so no EMBER concept is cleanly unrelated to it and the far
+# tier that ember_eval/aggregate_completion.py wants does not really exist here.
+#
+# Submitted 2026-08-27 at Gal's explicit direction with these caveats raised and
+# restated. The held-out-chunk measurement (archive/ember_eval/HELDOUT_RESULTS.md) is the
+# instrument least damaged by the above, since it needs no question set.
+#
+# COST AND THE RESUME BOUNDARY -- rewritten 2026-08-29, when the batch went back
+# to the authors' 32,768 (see the train block). Until then this header said:
+# "54,832 steps at the 1.22 s/step measured on an H100 is ~18.6 h, inside the
+# partition's 24 h limit, so one window per twin with no resume boundary." That
+# was true of the 131,072-token batch and is not true any more.
+#
+# The same two epochs are the same tokens and the same FLOPs, but at a quarter
+# the batch they are ~219,300 optimizer steps (4 x 54,832 = 219,328) instead of
+# 54,832. What grows is the fixed per-step cost -- optimizer step, FSDP
+# reduce-scatter, LR scheduler, metrics -- now amortised over a quarter as much
+# work. 18.6 h is therefore a floor, not an estimate: 0.1 s of per-step overhead
+# alone adds 6.1 h, putting the run past the partition's 24 h limit that the old
+# batch was chosen to fit under.
+#
+# So expect a resume boundary, and on a killable partition expect preemptions on
+# top of it. This is a supported path, not a new experiment: resume restores
+# model, optimizer, scheduler and dataloader state, resume_from_previous_run is
+# already true, and every scheduling field is resume-ignored. But the seam is
+# real and the old "one window, no resume" claim is gone rather than quietly
+# left standing. Time it before trusting it -- the 0.1 s figure above is an
+# illustration, not a measurement. See OPERATIONS.md.
+#
+# One incidental safety net: kas/train.py names the checkpoint folder after the
+# hyperparameters, so these values save into olmo2_1B_0.0003_32768_0.01_2 rather
+# than the old olmo2_1B_0.0004_131072_0.05_2. A run at these settings cannot
+# silently continue one at the old ones -- and resume_identity would refuse it
+# anyway, since optim_lr and the batch are not resume-ignored fields.
+
+job:
+  name: "untaught-no-wwii-1b-2e"
+  dataset_paths: "${LMENT_DATASET}/dataset-tokenized/*.npy"
+  dataset_cache: "${LMENT_DATASET}/dataset-cache"
+  resume_from_previous_run: true
+  mail_user: "galll.barak@gmail.com"   # SLURM emails on the events below;
+  mail_type: "END,FAIL,TIME_LIMIT"     # resume-ignored, so it is safe to add mid-run
+
+  account: "gpu-research"           # gpu-h100-killable is gated on the research association
+  partition: "gpu-h100-killable"    # h100 is sm_90, so the lment env (torch 2.6+cu124)
+                                    # runs there and the banked checkpoints still load.
+  max_time_minutes: 1440            # the partition maximum; 18.6h of training fits in one
+  nodes: 1
+  ntasks: 1
+  cpu_mem_mb: 40000                 # measured, not guessed: VmHWM peaked at 27 GiB during a
+                                    # checkpoint load (main trainer 19-25 GiB plus 4 dataloader
+                                    # workers). Slurm does not enforce --mem here, so 24000 also
+                                    # "worked" -- it was simply never applied. 40000 covers the
+                                    # measured peak with headroom and still lets two twins share
+                                    # a node, where the original 128000 needed 256 GB for the pair.
+  cpus_per_task: 8
+  gpus: 1                           # not a courtesy: measured at 2.30 s/step against 2.54 for
+                                    # four, because FSDP all-gathers every layer and 4 ranks
+                                    # leave only 2 microsteps to amortise it. One card is
+                                    # faster AND 4.4x cheaper in GPU-hours. See B200.md.
+  constraint: ""                    # the partition already contains only h100 nodes, and
+                                    # empty is what matches the recorded "h200" runs --
+                                    # naming a different card restarts from random init.
+
+train:
+  model: "olmo2_1B"
+  init_seed: 12536
+  max_duration_value: 2               # two epochs; see the header
+  max_duration_unit: "epochs"
+
+  # optimizer: AdamW, cosine schedule with warmup. Every value below is the LMEnt
+  # authors' own, taken from third_party/OLMo-core/src/examples/kas/kas_config.json -- the
+  # config their kas/train.py ran, and the one whose save-folder naming produced
+  # the run dir name olmo2_1B_0.0004_131072_0.05_2 we have been reproducing.
+  # Adopted wholesale 2026-08-29.
+  #
+  # What was here before mixed three sources and matched none of them end to end:
+  # weight decay 0.05 from paper appendix B.4, LR 4e-4 from neither B.4 (which
+  # says 5e-3) nor the shipped artifacts (which say 3e-4), and a 131,072-token
+  # batch chosen for throughput. The batch was defended on the grounds that 4x
+  # "cost nothing measurable" -- but what was measured was downstream QA
+  # accuracy, an instrument that is blind to embedding geometry, which is the one
+  # thing this experiment reads out. Evidence from an instrument that cannot see
+  # the target is not evidence, so the batch goes back to the authors' value too.
+  #
+  # See COMPARABILITY.md: the finished 1-epoch and 2-epoch twin pairs were
+  # trained at the OLD values, so nothing trained here is weight-comparable to
+  # them. That is accepted -- those pairs are the ones whose embeddings came out
+  # with no usable geometry.
+  optim_lr: 0.0003              # kas_config.json  optim.lr
+  optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
+                                # Reaches embeddings.weight ONLY -- kas/train.py passes it as a group
+                                # override and leaves AdamW's top-level 0.01 for everything else.
+                                # See Untaught/OPERATIONS.md. Do not tune this as a global knob.
+  optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
+  optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
+
+  data_global_batch_size: 32768     # kas_config.json  data_loader.global_batch_size
+  data_rank_microbatch_size: 8192   # kas_config.json  trainer.rank_microbatch_size.
+                                    # Memory only: 4 microsteps per optimizer step
+                                    # instead of 8, same optimizer math either way.
+  data_seed: 0
+  data_num_workers: 4
+  data_prefetch_factor: 8
+
+  dataset_name: "kas_vsl"
+  dataset_max_sequence_length: 2048
+  dataset_min_sequence_length: 64
+  dataset_include_instance_metadata: true   # kas_config.json dataset.include_instance_metadata
+  vsl_curriculum: "grow_p2"
+  vsl_num_cycles: 8
+  vsl_balanced: false
+
+  checkpoint_save_interval: 20000    # was 5000, scaled with the 4x step count so
+                                     # the run still banks ~11 permanent 1B
+                                     # checkpoints rather than ~44. Resume-ignored,
+                                     # so it can be retuned between submissions.
+  checkpoint_ephemeral_save_interval: 2000   # was 500, scaled the same way. This is
+                                     # the preemption-recovery granularity and it
+                                     # overwrites, so it costs time rather than
+                                     # disk -- 500 would pay that ~439 times.
+  checkpoint_save_async: true
+  checkpoint_save_overwrite: true
+  metrics_collect_interval: 10
+  cancel_check_interval: 25
+  wandb_cancel_check_interval: 10
+  eval_tasks: ["arc_easy"]
+  eval_interval: 100000
+
+untaught:
+  blacklist: "blacklists/world_war_ii.json"   # QIDs; resolved against ES before submission
+  case_sensitive: true
+  threshold_hyperlinks: 1.0
+  threshold_entity_linking: 0.6
+  threshold_coref: 0.6
+  threshold_coref_cluster: 0.6
+  enabled: true
+  adapt_to_gpu: true
+  disable_wandb: true
+  disable_downstream_eval: true

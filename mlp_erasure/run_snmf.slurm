@@ -59,11 +59,17 @@
 #   sbatch --export=ALL,MODE=factorize,OUT_TAG=rome,LAYERS='4 9 14' run_snmf.slurm
 #   sbatch --export=ALL,MODE=select,OUT_TAG=rome,SNMF_OUT=<dir> run_snmf.slurm
 
-# ROOT is overridable: it was a hard assignment, so submitting from any other
-# checkout silently ran the code in LMEnt-mlp instead of the tree you were in.
-: "${ROOT:=/home/morg/NLP_2526b/galbarak2/LMEnt-mlp}"
-PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
-: "${RUNS:=/home/dcor/galbarak2/runs/mlp_erasure}"   # overridable, see run_rmu.slurm
+# ROOT: the checkout whose code this job runs. Walk up from the directory you
+# submitted from, so a second checkout runs its own code rather than whichever
+# tree was hard-coded here; export ROOT=<checkout> to pin one deliberately.
+if [ -z "${ROOT:-}" ]; then
+  ROOT=${SLURM_SUBMIT_DIR:-$PWD}
+  while [ "$ROOT" != "/" ] && [ ! -f "$ROOT/mlp_erasure/env.sh" ]; do
+    ROOT=$(dirname "$ROOT")
+  done
+fi
+[ -f "$ROOT/mlp_erasure/env.sh" ] || { echo "not an LMEnt checkout: ${SLURM_SUBMIT_DIR:-$PWD}; export ROOT=<checkout>" >&2; exit 1; }
+. "$ROOT/mlp_erasure/env.sh"
 
 : "${MODE:=factorize}"
 : "${OUT_TAG:?set OUT_TAG}"
@@ -89,11 +95,6 @@ PY=/home/morg/NLP_2526b/stahli/anaconda3/envs/lment/bin/python
 : "${LAYERS:=}"
 # factorize creates the run directory; every later stage must be pointed at it.
 : "${SNMF_OUT:=$RUNS/snmf_${OUT_TAG}_${SLURM_JOB_ID}}"
-
-DATA="$ROOT/Ember-on-LMEnt/data"
-
-export HF_HOME=/home/dcor/galbarak2/hf_cache
-export TOKENIZERS_PARALLELISM=false
 
 nvidia-smi --query-gpu=name,memory.total --format=csv,noheader | head -1 || echo "no nvidia-smi"
 
@@ -134,7 +135,7 @@ factorize)
   # $LAYERS is deliberately unquoted: it is a list of layer indices, or empty
   # for every layer.
   # shellcheck disable=SC2086
-  exec "$PY" "$ROOT/snmf.py" factorize \
+  exec "$PY" "$ROOT/mlp_erasure/snmf.py" factorize \
     --model "$MODEL_PATH" --concept "$CONCEPT" \
     --concept-sentences "$DATA/concept_sentences.json" \
     --neutral-sentences "$DATA/neutral_sentences.json" \
@@ -146,13 +147,13 @@ factorize)
     ${LAYERS:+--layers $LAYERS}
   ;;
 select)
-  exec "$PY" "$ROOT/snmf.py" select \
+  exec "$PY" "$ROOT/mlp_erasure/snmf.py" select \
     --out "$SNMF_OUT" --concept "$CONCEPT" --judge gemma \
     --judge-top-tokens "$JUDGE_TOP_TOKENS" \
     --fork-root "$ROOT/Ember-on-LMEnt"
   ;;
 select-ratio)
-  exec "$PY" "$ROOT/snmf.py" select --out "$SNMF_OUT" --skip-llm
+  exec "$PY" "$ROOT/mlp_erasure/snmf.py" select --out "$SNMF_OUT" --skip-llm
   ;;
 erase)
   : "${SAVE_TO:?set SAVE_TO}"
@@ -160,7 +161,7 @@ erase)
   # output range on 18 layers is [0,5] and silently skips features at layer 6;
   # pass "4 6" on both sides to cover every layer the caches hold features at.
   # shellcheck disable=SC2086
-  exec "$PY" "$ROOT/snmf.py" erase \
+  exec "$PY" "$ROOT/mlp_erasure/snmf.py" erase \
     --model "$MODEL_PATH" --out "$SNMF_OUT" --dtype "$DTYPE" \
     --delta-in "$DELTA_IN" --delta-out "$DELTA_OUT" \
     --range-cell "$RANGE_CELL" \
@@ -180,7 +181,7 @@ judge-smoke)
   exec "$PY" "$ROOT/mlp_erasure/tests/judge_gpu_smoke.py"
   ;;
 verify)
-  exec "$PY" "$ROOT/snmf.py" verify \
+  exec "$PY" "$ROOT/mlp_erasure/snmf.py" verify \
     --model "$MODEL_PATH" --concept "$CONCEPT" \
     --concept-sentences "$DATA/concept_sentences.json" \
     --neutral-sentences "$DATA/neutral_sentences.json" \
@@ -198,7 +199,7 @@ sweep)
   #
   # Loads the model once and rolls the weights back between cells, so it costs
   # one checkpoint read rather than one per cell.
-  exec "$PY" "$ROOT/sweep_delta.py" \
+  exec "$PY" "$ROOT/mlp_erasure/sweep_delta.py" \
     --model "$MODEL_PATH" --snmf-out "$SNMF_OUT" \
     --concept "$CONCEPT" \
     --questions "$DATA/mc_questions.json" \

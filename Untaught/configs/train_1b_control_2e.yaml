@@ -1,7 +1,7 @@
 # TWO EPOCHS. Same ablation, same everything else, twice the passes.
 #
 # Why 2 and not 1, 4 or 6: measured, not assumed. The authors released 1E/2E/4E/6E
-# of this 1B on this corpus, and scoring all four on EMBER (ember_eval/epoch_curve.py)
+# of this 1B on this corpus, and scoring all four on EMBER (archive/ember_eval/epoch_curve.py)
 # shows knowledge of the ablated concept gaining +0.516 nats from 1E to 2E -- the
 # second-largest gain of any of the 18 concepts -- and then going backwards: -0.172
 # by 4E and -0.131 by 6E, dead last of 18. The corpus is saturated for a 1B after
@@ -128,7 +128,7 @@ train:
   max_duration_unit: "epochs"
 
   # optimizer: AdamW, cosine schedule with warmup. Every value below is the LMEnt
-  # authors' own, taken from OLMo-core/src/examples/kas/kas_config.json -- the
+  # authors' own, taken from third_party/OLMo-core/src/examples/kas/kas_config.json -- the
   # config their kas/train.py ran, and the one whose save-folder naming produced
   # the run dir name olmo2_1B_0.0004_131072_0.05_2 we have been reproducing.
   # Adopted wholesale 2026-08-29.
@@ -148,6 +148,9 @@ train:
   # with no usable geometry.
   optim_lr: 0.0003              # kas_config.json  optim.lr
   optim_weight_decay: 0.01      # kas_config.json  optim.weight_decay
+                                # Reaches embeddings.weight ONLY -- kas/train.py passes it as a group
+                                # override and leaves AdamW's top-level 0.01 for everything else.
+                                # See Untaught/OPERATIONS.md. Do not tune this as a global knob.
   optim_warmup_steps: 1000      # kas_config.json  callbacks.lr_scheduler.warmup_steps
   optim_max_grad_norm: 1.0      # unchanged; kas_config.json grad_clipper agrees
 

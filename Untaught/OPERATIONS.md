@@ -30,7 +30,7 @@ training script builds the optimizer as
                                             opts=dict(weight_decay=weight_decay))]
     )  # Daniela, need to double check this.
 
--- that trailing comment is theirs, in `OLMo-core/src/examples/kas/train.py`. The
+-- that trailing comment is theirs, in `third_party/OLMo-core/src/examples/kas/train.py`. The
 top-level `weight_decay` is never passed, so it falls to `AdamWConfig`'s default
 of **0.01** for every parameter in the model, and the configured value applies to
 `embeddings.weight` alone. Confirmed in the running 1B's own config dump:
@@ -166,7 +166,7 @@ by a machine rather than by hand.
 
 **Did the embeddings learn, or only shrink.** `check_embedding_init` proves the
 draw was right at step 0 and can say nothing about the other end.
-`ember_eval/embedding_health.py` closes that: decoupled weight decay multiplies
+`archive/ember_eval/embedding_health.py` closes that: decoupled weight decay multiplies
 every parameter by `(1 - lr_t * wd)` each step regardless of gradient, so the
 product over the schedule predicts the row-norm a matrix would reach having
 learned nothing. Observed/predicted near 1.00 is the pre-fix failure (0.5492

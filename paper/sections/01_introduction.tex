@@ -1,0 +1,37 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Post-training unlearning aims to suppress targeted knowledge or training-data
+influence while preserving behavior elsewhere
+\citep{yao2024machineunlearning,li2024wmdp}. Comparisons with the original
+model measure suppression and preservation, but do not show whether an edited
+model resembles one trained without the target learning signal. We ask whether
+post-training erasure can reproduce the behavior of a matched model trained
+without loss on concept-associated chunks while preserving behavior on
+neighboring concepts and general science.
+
+Using LMEnt's entity-annotated corpus, we construct matched references for
+Ancient Rome, Baseball, and artificial intelligence
+\citep{gottesman2025lment}. Alongside a full-corpus model, we train one
+concept-excluded twin per concept with the same initialization and training
+procedure, masking loss on linked chunks. We apply EMBER, RMU, and an
+SNMF-based MLP erasure to copies of the full model and also evaluate RMU+EMBER
+and SNMF+EMBER ensembles
+\citep{suslik2026ember,li2024wmdp,shafran2026snmf}. Each edit is compared with
+both the full model and its matched twin.
+
+We evaluate target and neighboring questions with a shared SciQ
+general-science set. Our primary metrics are a harmonic efficacy--preservation score, normalized
+absolute question-level negative log-likelihood (NLL) distance from the twin,
+and normalized teacher-forced full-vocabulary Kullback--Leibler (KL)
+divergence from the twin. Signed mean NLL
+proximity and the frequency of question-level improvement provide
+complementary diagnostics.
+
+The highest-scoring efficacy--preservation method is also closest under
+absolute NLL only for Rome and never has the lowest normalized KL. SNMF often
+has the most favorable similarity ratios but little target suppression,
+whereas EMBER-based edits with larger target NLL changes usually move beyond
+the twin. Target suppression and preservation did not consistently correspond to greater
+similarity to the concept-excluded twin. Evaluating all three properties
+separately therefore provides a more complete account of concept erasure.

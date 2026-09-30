@@ -114,7 +114,7 @@ in those windows, so it is self-inflicted congestion, not an outage.
 `checkpoint_preflight.sh` in the run folder contains the damage — it refuses to
 resume from a checkpoint with fewer than 16 shards and moves it aside — but the
 underlying fragility is **unfixed**. A retry-with-backoff around `_write_items`
-in `OLMo-core/.../checkpoint/filesystem.py` would turn a dead job into a
+in `third_party/OLMo-core/.../checkpoint/filesystem.py` would turn a dead job into a
 30-second pause, and is the recommended fix before the next twin.
 
 ## Is this model readable at all

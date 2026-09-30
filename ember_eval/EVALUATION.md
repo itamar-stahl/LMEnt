@@ -44,7 +44,7 @@ Compute `log P(option | context)` for each option as a continuation, take the
 argmax. This is what OLMES calls **CF** (cloze formulation), against **MCF**
 (listing A–D and asking for a letter), and OLMES exists partly to document that
 small models score near-random under MCF because it needs symbol-binding that
-only emerges with scale. `olmes/` is a submodule of this repo.
+only emerges with scale. `third_party/olmes/` is vendored into this repo.
 
 **The phrasing of the context matters more than anything else we measured.**
 A declarative stem beats `"Question: …\nAnswer:"` by a wide margin — six models,
@@ -69,7 +69,7 @@ Facts that only appear under the stem include *Miller test*, *Pompeii*,
 models were trained on continuous Wikipedia prose and have never seen a Q&A
 transcript, so the stem is in-distribution and the question is not.
 
-`ember_eval/stem_probe.py` and `format_metric_bakeoff.py` reproduce this.
+`archive/ember_eval/stem_probe.py` and `format_metric_bakeoff.py` reproduce this.
 
 ## Normalisation: use `acc_per_char`, and report the family
 
@@ -263,10 +263,10 @@ indistinguishable (perplexity 12.110 vs 12.122).
 
 ## Reproducing
 
-    python3 ember_eval/loglik_twins.py --tag twins4  --metric text_char   # 1 epoch
-    python3 ember_eval/loglik_twins.py --tag twins2e --metric text_char   # 2 epochs
-    python3 ember_eval/paired_twins.py --tag twins2e --metric text_char
-    python3 ember_eval/epoch_curve.py                                     # released 1E/2E/4E/6E
+    python3 archive/ember_eval/loglik_twins.py --tag twins4  --metric text_char   # 1 epoch
+    python3 archive/ember_eval/loglik_twins.py --tag twins2e --metric text_char   # 2 epochs
+    python3 archive/ember_eval/paired_twins.py --tag twins2e --metric text_char
+    python3 archive/ember_eval/epoch_curve.py                                     # released 1E/2E/4E/6E
 
 Records are gitignored under `ember_eval/results/` (3.5 MB each); rebuild with
 `run_one_eval.slurm` (one model) or `run_twins_eval.slurm` (a pair).

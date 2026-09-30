@@ -30,7 +30,7 @@
 : "${UNTAUGHT_ROOT:=${LMENT_ROOT}/Untaught}"
 
 # OLMo-core sources, needed to import examples.kas.train
-: "${OLMO_CORE_SRC:=${LMENT_ROOT}/OLMo-core/src}"
+: "${OLMO_CORE_SRC:=${LMENT_ROOT}/third_party/OLMo-core/src}"
 
 # Referenced by the configs: ${UNTAUGHT_BLACKLIST_DIR} in blacklist,
 # ${UNTAUGHT_RUNS_DIR} in save_folder.
@@ -66,7 +66,7 @@ if [ -f "${LMENT_USER_ROOT}/.condarc" ]; then
 fi
 
 # --- python -------------------------------------------------------------------
-# framework/ for our package, OLMo-core/src for examples.kas.train
+# framework/ for our package, third_party/OLMo-core/src for examples.kas.train
 PYTHONPATH="${UNTAUGHT_ROOT}:${OLMO_CORE_SRC}:${PYTHONPATH:-}"
 
 # W&B off by default; a node without WANDB_API_KEY otherwise stalls.

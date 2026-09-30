@@ -1,0 +1,254 @@
+\section{Results}
+\label{sec:results}
+
+\subsection{Effect and Strength of Concept Exclusion}
+
+Concept exclusion had its largest target effect for Rome: on-topic accuracy fell from
+0.42 to 0.26, while correct-answer NLL increased by 1.016 nats per token,
+indicating substantially lower probability assigned to the correct continuation. The
+effects were smaller for Baseball (0.54 to 0.50; +0.377 NLL) and AI (0.54 to
+0.48; +0.595 NLL). Rome also had the largest full--twin mean absolute NLL
+distance and target KL: $D_{\mathrm{abs}}(F,T)=1.127$ and
+$\mathrm{KL}(T\,\|\,F)=0.955$, compared with 0.817 and 0.707 for Baseball and
+0.947 and 0.593 for AI. The Rome twin therefore provides the clearest target
+contrast with the full model across these measures.
+
+The similarity ratios are relative to metric-specific full--twin gaps. When
+that gap is small, a ratio near one can result from an edit remaining close to
+the full model rather than reproducing a substantial exclusion effect. Raw
+full--twin differences, target suppression, and normalized proximity must
+therefore be interpreted together. This qualification is particularly
+important for SNMF on Baseball and AI, where favorable similarity rankings
+coincide with limited target suppression.
+
+The twins also differed from the full model on neighboring and SciQ questions,
+and their $H_{\mathrm{test}}$ scores were 0.871 for Rome, 0.231 for Baseball,
+and 0.343 for AI. A twin is therefore a reference for the specified exclusion
+intervention, not an optimizer of efficacy--preservation. Complete comparisons
+appear in Appendix~\ref{app:full-results}.
+
+\subsection{Erasure Efficacy and Preservation}
+
+Table~\ref{tab:target} summarizes the three primary metrics. The leading erasure
+method under $H_{\mathrm{test}}$ differed by concept: RMU for Rome (0.486),
+EMBER for Baseball (0.639), and RMU+EMBER for AI (0.829), only 0.013 above
+SNMF+EMBER. These results should not be treated as stable method rankings:
+each accuracy changes by 0.02 per answer, and EMBER led RMU on Rome's
+selection split (0.682 versus 0.219) before RMU led on the test split (0.486
+versus 0.208).
+
+\begin{table}[t]
+  \centering
+  \small
+  \begin{tabular}{llccc}
+    \toprule
+    Concept & Model & $H_{\mathrm{test}}\uparrow$
+      & $R_{\mathrm{abs}}\downarrow$
+      & $R_{\mathrm{KL}}\downarrow$ \\
+    \midrule
+    Rome & Twin & 0.871 & 0.000 & 0.000 \\
+    & EMBER & 0.208 & 1.613 & 2.264 \\
+    & RMU & \textbf{0.486} & \textbf{0.660} & 1.196 \\
+    & SNMF & 0.000 & 0.940 & \textbf{0.891} \\
+    & RMU+E & 0.000 & 1.384 & 1.982 \\
+    & SNMF+E & 0.000 & 1.558 & 2.181 \\
+    \midrule
+    Baseball & Twin & 0.231 & 0.000 & 0.000 \\
+    & EMBER & \textbf{0.639} & 2.128 & 2.082 \\
+    & RMU & 0.239 & 1.227 & 1.569 \\
+    & SNMF & 0.129 & \textbf{0.967} & \textbf{0.962} \\
+    & RMU+E & 0.465 & 2.079 & 2.015 \\
+    & SNMF+E & 0.563 & 2.241 & 2.108 \\
+    \midrule
+    AI & Twin & 0.343 & 0.000 & 0.000 \\
+    & EMBER & 0.753 & 2.112 & 3.310 \\
+    & RMU & 0.483 & 1.006 & 1.628 \\
+    & SNMF & 0.129 & \textbf{0.927} & \textbf{0.992} \\
+    & RMU+E & \textbf{0.829} & 2.196 & 3.420 \\
+    & SNMF+E & 0.816 & 2.152 & 3.354 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Primary held-out metrics. $H_{\mathrm{test}}$ combines target
+  efficacy with neighboring and SciQ preservation. $R_{\mathrm{abs}}$ and
+  $R_{\mathrm{KL}}$ measure target-question proximity to the concept-excluded
+  twin relative to the full model; values below one indicate improvement.
+  Twin ratios are zero by definition; an erasure condition has
+$H_{\mathrm{test}}=0$ when it does not reduce target accuracy relative to the
+full model, making its target-efficacy component zero. E abbreviates EMBER. Bold marks the best
+  erasure condition in each concept and column. Confidence intervals for both
+  ratios are shown in Figure~\ref{fig:efficacy-similarity}; complete intervals
+  and diagnostics appear in Appendix~\ref{app:diagnostics}.}
+  \label{tab:target}
+\end{table}
+
+The selected RMU+EMBER checkpoints remained weakly aligned with RMU's control
+direction, indicating that the RMU representation-misdirection objective was
+only weakly realized \citep{li2024wmdp}. Because selection optimized efficacy
+and preservation after EMBER, we treat RMU+EMBER as a combined intervention
+rather than attributing its results specifically to RMU.
+
+\subsection{Twin Similarity}
+
+The two primary twin-similarity metrics favored RMU or SNMF rather than the
+EMBER-based conditions. For $R_{\mathrm{abs}}$, RMU was best for Rome (0.660),
+while SNMF was best for Baseball (0.967) and AI (0.927). Only RMU on Rome and
+SNMF on Rome and AI had $R_{\mathrm{abs}}$ intervals entirely below one. SNMF
+also had the lowest $R_{\mathrm{KL}}$ for every concept (0.891--0.992), but
+only its Rome interval, $[0.838,0.940]$, lay entirely below one. The Baseball
+$[0.923,1.003]$ and AI $[0.954,1.030]$ intervals included one, providing no
+clear separation from the full-model reference under this procedure. EMBER
+and both ensembles exceeded one on both ratios for every concept, with
+intervals entirely above one.
+
+\begin{figure*}[t]
+  \centering
+  \definecolor{romeblue}{RGB}{0,114,178}
+  \definecolor{baseballorange}{RGB}{213,94,0}
+  \definecolor{aigreen}{RGB}{0,130,95}
+  \newcommand{\resultpoint}[4]{%
+    \addplot+[forget plot, only marks, mark=#4, mark size=2.2pt, color=#3,
+      mark options={solid, fill=#3}] coordinates {(#1,#2)};}
+  \newcommand{\resultpointci}[6]{%
+    \addplot+[forget plot, only marks, mark=#6, mark size=2.2pt, color=#5,
+      mark options={solid, fill=#5},
+      error bars/.cd, y dir=both, y explicit,
+      error bar style={line width=0.45pt, color=#5},
+      error mark options={rotate=90, mark size=1.8pt, line width=0.45pt,
+        color=#5}]
+      coordinates {(#1,#2) += (0,#4) -= (0,#3)};}
+  \begin{tikzpicture}
+    \begin{axis}[
+      name=absplot,
+      width=0.47\textwidth,
+      height=4.8cm,
+      xmin=-0.04, xmax=0.88,
+      ymin=0, ymax=3.35,
+      xlabel={Efficacy--preservation $H_{\mathrm{test}}$},
+      ylabel={$R_{\mathrm{abs}}$ (lower is closer)},
+      grid=both,
+      grid style={gray!25, line width=0.2pt},
+      axis line style={black!70},
+      tick label style={font=\scriptsize},
+      label style={font=\small},
+      legend style={at={(0.5,-0.27)}, anchor=north, draw=none,
+        font=\scriptsize, legend columns=3, /tikz/every even column/.append style={column sep=4pt}},
+      clip=false,
+    ]
+      \fill[gray!12] (axis cs:-0.04,0) rectangle (axis cs:0.88,1);
+      \addplot[dashed, black!60, line width=0.6pt, forget plot]
+        coordinates {(-0.04,1) (0.88,1)};
+      \resultpointci{0.208}{1.613}{0.462}{0.631}{romeblue}{*}
+      \resultpointci{0.486}{0.660}{0.147}{0.167}{romeblue}{square*}
+      \resultpointci{0.000}{0.940}{0.049}{0.046}{romeblue}{triangle*}
+      \resultpointci{0.000}{1.384}{0.369}{0.489}{romeblue}{diamond*}
+      \resultpointci{0.000}{1.558}{0.430}{0.585}{romeblue}{pentagon*}
+      \resultpointci{0.639}{2.128}{0.586}{0.850}{baseballorange}{*}
+      \resultpointci{0.239}{1.227}{0.350}{0.453}{baseballorange}{square*}
+      \resultpointci{0.129}{0.967}{0.079}{0.093}{baseballorange}{triangle*}
+      \resultpointci{0.465}{2.079}{0.569}{0.824}{baseballorange}{diamond*}
+      \resultpointci{0.563}{2.241}{0.583}{0.860}{baseballorange}{pentagon*}
+      \resultpointci{0.753}{2.112}{0.710}{1.055}{aigreen}{*}
+      \resultpointci{0.483}{1.006}{0.252}{0.338}{aigreen}{square*}
+      \resultpointci{0.129}{0.927}{0.051}{0.049}{aigreen}{triangle*}
+      \resultpointci{0.829}{2.196}{0.712}{1.055}{aigreen}{diamond*}
+      \resultpointci{0.816}{2.152}{0.732}{1.087}{aigreen}{pentagon*}
+      \addlegendimage{only marks, mark=*, mark options={fill=romeblue}, romeblue}
+      \addlegendentry{Rome}
+      \addlegendimage{only marks, mark=*, mark options={fill=baseballorange}, baseballorange}
+      \addlegendentry{Baseball}
+      \addlegendimage{only marks, mark=*, mark options={fill=aigreen}, aigreen}
+      \addlegendentry{AI}
+    \end{axis}
+    \begin{axis}[
+      at={(absplot.east)}, anchor=west, xshift=0.055\textwidth,
+      width=0.47\textwidth,
+      height=4.8cm,
+      xmin=-0.04, xmax=0.88,
+      ymin=0, ymax=4.85,
+      xlabel={Efficacy--preservation $H_{\mathrm{test}}$},
+      ylabel={$R_{\mathrm{KL}}$ (lower is closer)},
+      grid=both,
+      grid style={gray!25, line width=0.2pt},
+      axis line style={black!70},
+      tick label style={font=\scriptsize},
+      label style={font=\small},
+      legend style={at={(0.5,-0.27)}, anchor=north, draw=none,
+        font=\scriptsize, legend columns=5, /tikz/every even column/.append style={column sep=3pt}},
+      clip=false,
+    ]
+      \fill[gray!12] (axis cs:-0.04,0) rectangle (axis cs:0.88,1);
+      \addplot[dashed, black!60, line width=0.6pt, forget plot]
+        coordinates {(-0.04,1) (0.88,1)};
+      \resultpointci{0.208}{2.264}{0.517}{0.706}{romeblue}{*}
+      \resultpointci{0.486}{1.196}{0.159}{0.216}{romeblue}{square*}
+      \resultpointci{0.000}{0.891}{0.053}{0.049}{romeblue}{triangle*}
+      \resultpointci{0.000}{1.982}{0.422}{0.567}{romeblue}{diamond*}
+      \resultpointci{0.000}{2.181}{0.495}{0.670}{romeblue}{pentagon*}
+      \resultpointci{0.639}{2.082}{0.504}{0.688}{baseballorange}{*}
+      \resultpointci{0.239}{1.569}{0.226}{0.254}{baseballorange}{square*}
+      \resultpointci{0.129}{0.962}{0.039}{0.041}{baseballorange}{triangle*}
+      \resultpointci{0.465}{2.015}{0.478}{0.639}{baseballorange}{diamond*}
+      \resultpointci{0.563}{2.108}{0.498}{0.676}{baseballorange}{pentagon*}
+      \resultpointci{0.753}{3.310}{0.926}{1.248}{aigreen}{*}
+      \resultpointci{0.483}{1.628}{0.194}{0.239}{aigreen}{square*}
+      \resultpointci{0.129}{0.992}{0.038}{0.038}{aigreen}{triangle*}
+      \resultpointci{0.829}{3.420}{0.928}{1.224}{aigreen}{diamond*}
+      \resultpointci{0.816}{3.354}{0.941}{1.255}{aigreen}{pentagon*}
+      \addlegendimage{only marks, mark=*, mark options={fill=black}, black}
+      \addlegendentry{EMBER}
+      \addlegendimage{only marks, mark=square*, mark options={fill=black}, black}
+      \addlegendentry{RMU}
+      \addlegendimage{only marks, mark=triangle*, mark options={fill=black}, black}
+      \addlegendentry{SNMF}
+      \addlegendimage{only marks, mark=diamond*, mark options={fill=black}, black}
+      \addlegendentry{RMU+E}
+      \addlegendimage{only marks, mark=pentagon*, mark options={fill=black}, black}
+      \addlegendentry{SNMF+E}
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Efficacy--preservation versus twin similarity for the 15 selected
+  erasure conditions. Each point represents one method--concept pair; color
+  identifies the concept and marker shape identifies the method. The dashed
+  line at one marks the full model's normalized distance from the twin, and
+  the shaded region indicates improvement over that reference. Vertical bars
+  in both panels are paired-bootstrap percentile 95\% confidence intervals
+  over the 50 target questions.}
+  \label{fig:efficacy-similarity}
+\end{figure*}
+
+\subsection{Diagnostic Agreement and Cancellation}
+
+The complementary diagnostics reveal differences that the primary ratios
+alone do not. For AI, RMU had $R_{\mathrm{NLL}}=0.022$, indicating a near-zero
+signed-mean discrepancy from the twin, but
+$R_{\mathrm{abs}}=1.006$. Its positive and negative question-level
+differences therefore largely canceled. For Baseball, SNMF was closer to the
+twin on 66\% of questions, yet its $R_{\mathrm{abs}}=0.967$ confidence interval
+included one. Its frequent question-level improvements therefore did not yield
+a clear reduction in aggregate distance. Rome RMU gave the most consistent
+evidence:
+$R_{\mathrm{abs}}=0.660$ with an interval entirely below one, and it was closer
+on 64\% of questions.
+
+Signed-mean agreement, mean absolute distance, and the frequency of
+question-level improvement thus capture different forms of similarity.
+Agreement under one diagnostic alone is insufficient evidence that an edit
+reproduces concept exclusion. Complete diagnostic results appear in
+Appendix~\ref{app:diagnostics}.
+
+\subsection{Cross-Concept Interpretation}
+
+Figure~\ref{fig:efficacy-similarity} shows no consistent alignment between
+efficacy--preservation and either measure of twin similarity. Rome RMU is the
+clearest exception: it combines moderate $H_{\mathrm{test}}$ with lower
+question-level distance from the twin. By contrast, the high-$H_{\mathrm{test}}$
+Baseball and AI conditions lie above one on both similarity ratios, while the
+SNMF points lie near or below one but have low $H_{\mathrm{test}}$.
+
+This pattern reflects two distinct failure modes. A weak edit can remain close
+to both the full model and the twin without reproducing the target effect of
+concept exclusion. A stronger edit can suppress target behavior but move past
+the twin, changing the model more than exclusion did at the evaluated
+positions. Efficacy and twin similarity therefore provide complementary rather
+than interchangeable evidence. Complete raw results appear in
+Appendix~\ref{app:full-results}.

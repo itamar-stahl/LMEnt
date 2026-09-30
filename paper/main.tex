@@ -1,0 +1,46 @@
+\documentclass[11pt]{article}
+\usepackage{acl}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage{pgfplots}
+\usetikzlibrary{plotmarks}
+\pgfplotsset{compat=1.18}
+
+\title{Can Concept Erasure Reproduce Concept Exclusion?\\
+A Matched Evaluation of EMBER, RMU, and SNMF}
+\author{
+  Gal Barak \and Tamar Tabbach \and Itamar Stahl \and Adam Fleisher \\
+  Tel Aviv University \\
+  \texttt{Gal.Barak@mail.tau.ac.il} \quad
+  \texttt{Tamar.Tabbach@mail.tau.ac.il} \\
+  \texttt{itamar.stahl@mail.huji.ac.il} \quad
+  \texttt{Adam.Fleisher@mail.tau.ac.il}
+}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\input{sections/01_introduction}
+\input{sections/02_background}
+\input{sections/03_experimental_design}
+\input{sections/04_evaluation_protocol}
+\input{sections/05_results}
+\input{sections/07_limitations}
+\input{sections/08_conclusion}
+
+\bibliography{references}
+\clearpage
+\appendix
+\input{appendices/appendix}
+\end{document}

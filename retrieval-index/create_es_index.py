@@ -1,4 +1,5 @@
 import sys
+import os
 import random
 import time
 import torch
@@ -13,8 +14,20 @@ from threading import Thread
 
 # Make sure to set http.max_content_length: 1GB in elasticsearch.yml.
 
-# Add the OLMo-core path to system path
-sys.path.append("/home/morg/students/gottesman3/knowledge-analysis-suite/OLMo-core/src")
+# Add the OLMo-core path to system path. Resolved relative to this file so the
+# script runs from any clone; OLMO_CORE_SRC (set by Untaught/framework/env.sh)
+# wins if present. Inserted at the front so the vendored fork is preferred over
+# any olmo_core installed into site-packages.
+_OLMO_CORE_SRC = os.environ.get(
+    "OLMO_CORE_SRC",
+    str(Path(__file__).resolve().parents[1] / "third_party" / "OLMo-core" / "src"),
+)
+if not Path(_OLMO_CORE_SRC).is_dir():
+    raise SystemExit(
+        f"OLMo-core sources not found at {_OLMO_CORE_SRC}. "
+        "Set OLMO_CORE_SRC, or source Untaught/framework/env.sh."
+    )
+sys.path.insert(0, _OLMO_CORE_SRC)
 
 from examples.kas.train import build_config, seed_all, set_random_seeds
 from transformers import AutoTokenizer
@@ -389,7 +402,12 @@ def main():
     with concurrent.futures.ProcessPoolExecutor(
         max_workers=max_workers,
         initializer=process_init,
-        initargs=(dataset_config_dict)
+        # Trailing comma matters: initargs must be a tuple. Without it this is
+        # just a parenthesised dict, and ProcessPoolExecutor's initializer(*initargs)
+        # unpacks the dict's keys as positional arguments -- every worker dies in
+        # process_init with "takes 1 positional argument but 14 were given", the
+        # pool breaks, and nothing is ever indexed.
+        initargs=(dataset_config_dict,)
     ) as executor:
         future_to_idx = {
             executor.submit(fetch_and_prepare, idx + start): idx + start

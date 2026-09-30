@@ -29,6 +29,14 @@ completion given the stem, plus the full next-token distribution at each answer
 position, which gives KL against a reference. Two metrics, three sets, two
 phases.
 
+**KL's reference is always the twin** — `KL(twin ‖ model)` — so every model is
+asked the same question: how closely does it reproduce the twin, with deviations
+weighted by the twin's own distribution. KL is asymmetric and the choice is not
+cosmetic: on Rome's target set the reversed form reads 0.761 where this one reads
+0.955, a 26% difference, and reversing can reorder models as well as rescale
+them. The NLL difference keeps its own reference, named per row, because it is
+signed and the reference is what fixes the direction of the sign.
+
 Scoring is **100% I/O**. The model load takes 7-63 minutes; the scoring itself
 takes 1 second. Plan any sweep around the reads, not the compute.
 
@@ -66,6 +74,24 @@ Twelve contrasts, twelve CIs excluding zero, and the sign is determined entirely
 by the method: EMBER above, RMU and SNMF below, on every concept. This is not a
 tuning problem that a finer grid would fix — the two families miss in opposite
 directions.
+
+KL says the same thing without needing a sign. Distance from the twin on the
+target set, with the full model's own distance as the baseline any erasure has to
+beat by moving *below* it:
+
+| KL(twin ‖ model), target, test | Rome | Baseball | AI |
+|---|---|---|---|
+| Full — no erasure at all | 0.955 | 0.707 | 0.593 |
+| EMBER (selected) | **6.128** | **1.715** | **1.964** |
+| EMBER (released) | **2.162** | **1.472** | **0.987** |
+| RMU | 1.143 | 0.679 | 0.579 |
+| SNMF | 0.835 | 0.691 | 0.588 |
+
+Every EMBER cell is *further* from the twin than not erasing at all — on Rome the
+selected one is 6.4x as far. RMU and SNMF sit within noise of the full model on
+all three concepts; the largest move is SNMF on Rome at 0.12 nats closer, with
+the two CIs overlapping over most of their range. Neither metric finds an erasure
+that lands on the twin, and they do not disagree about which way anything moved.
 
 ### EMBER overshoots, and the selection rule cannot stop it
 
@@ -119,10 +145,11 @@ across concepts.
 
 Rome RMU is the only cell that moves at all, and it moves the wrong thing:
 **+1.019 on the neighbour set against +0.713 on the target**. It damages the
-neighbourhood more than the concept. KL says the same thing about the collateral, though it
-cannot speak to direction: against the full control RMU sits at 0.782 target and
-0.567 neighbour, where the twin sits at 0.761 and 0.259. Comparable divergence on
-the concept, 2.2x the divergence next door.
+neighbourhood more than the concept. KL says the same thing about the collateral,
+though it cannot speak to direction: measured from the twin, RMU sits at 1.143 on
+target and 0.628 next door, where the full control sits at 0.955 and 0.253. On
+the concept RMU is 1.2x as far from the twin as doing nothing at all; next door,
+2.5x.
 
 The selection rule's own scores say this plainly — four of the six RMU/SNMF cells
 have a **negative** winning S, meaning the best candidate in the grid is worse
@@ -157,7 +184,9 @@ cells the builder itself flagged as never having rotated the representation.
   "EMBER (selected)" rows characterise the rule, not the method. The "EMBER
   (released)" rows are the ones to cite for EMBER itself.
 - **KL is reported but not leaned on.** Both metrics agree everywhere they are
-  compared here, so nothing turns on the choice.
+  compared here, so nothing turns on the choice. They are not independent
+  evidence either: both read the same model on the same 50 completions, so
+  agreement between them is not replication.
 
 ## The data this rests on
 

@@ -17,7 +17,8 @@ from tokenizers import Tokenizer, models, pre_tokenizers
 from transformers import (Olmo2Config, Olmo2ForCausalLM,
                           PreTrainedTokenizerFast)
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+# rmu.py and snmf.py sit beside this tests/ directory, in mlp_erasure/.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import rmu    # noqa: E402
 import snmf   # noqa: E402

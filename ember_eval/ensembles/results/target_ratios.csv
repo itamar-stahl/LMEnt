@@ -1,0 +1,7 @@
+concept,method,checkpoint,n,R_NLL,R_KL
+Ancient Rome,RMU+EMBER,rmuember_rome_L5mid_a100,50,1.0876171231,1.9823374799
+Ancient Rome,SNMF+EMBER,snmfv2_rome_ratio_in,50,1.3273837012,2.1812846571
+Baseball,RMU+EMBER,rmuember_baseball_L5mid_a100,50,2.1307386383,2.0149008236
+Baseball,SNMF+EMBER,snmfv2_baseball_ratio_both,50,2.4483133213,2.1078281181
+Artificial intelligence,RMU+EMBER,rmuember_ai_L5mid_a10,50,2.8069506637,3.4204968976
+Artificial intelligence,SNMF+EMBER,snmfv2_ai_ratio_in,50,2.7495917165,3.3537656598

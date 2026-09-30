@@ -1,6 +1,6 @@
 # Why SNMF's features were weak, and what changed
 
-Written against `snmf.py` and `rmu.py` at the repo root, checked line by line
+Written against `snmf.py` and `rmu.py` in this directory, checked line by line
 against three references already in this tree:
 
 - `Ember-on-LMEnt/ember/erasure/mlp_edit.py`, `features.py`, `methods/snmf.py`,

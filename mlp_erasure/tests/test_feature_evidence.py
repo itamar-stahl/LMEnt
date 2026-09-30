@@ -12,7 +12,7 @@ from pathlib import Path
 import torch
 from transformers import Olmo2Config, Olmo2ForCausalLM
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import snmf   # noqa: E402
 
 

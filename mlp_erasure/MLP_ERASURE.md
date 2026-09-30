@@ -11,7 +11,7 @@ Branch `feature/mlp-erasure`, worktree
 
 ## Which two scripts, and why not the other pair
 
-"The MLP erasure methods" here are `rmu.py` and `snmf.py` **at the repo root**,
+"The MLP erasure methods" here are `rmu.py` and `snmf.py` **in this directory**,
 uploaded by Tamar on 2026-08-16 and identical on `main` and
 `itamars/Ember-on-LMEnt`. They are written for these models -- OLMo-2, layers
 picked from depth, `down_proj` looked up by name because WMDP's positional
@@ -28,7 +28,7 @@ both structural rather than cosmetic:
 - `SNMFMethod` reads its features through `features.ConceptContext`, which
   loads a potential-features CSV and SNMF pickles produced by the upstream
   `external/snmf` factorization for a specific model. No such artifact exists
-  for the LMEnt 1B, and producing one is the job the root `snmf.py factorize`
+  for the LMEnt 1B, and producing one is the job this directory's `snmf.py factorize`
   already does for itself.
 - `RMUMethod` hardcodes `FIXED_PARAM_IDS = [6]` and Gemma/Llama layer settings,
   and the fork's LMEnt entry point (`ember/lment_pipeline.py`,
@@ -631,7 +631,7 @@ is at **8** -- which job 871246 already measured on the real 1B
 `down_proj`; with the published index it optimised `gate_proj` and left
 `down_proj` bit-identical.
 
-The root `rmu.py` was never affected -- it looks the matrix up by name. The
+Our `rmu.py` was never affected -- it looks the matrix up by name. The
 fork's copy now resolves the index from the loaded model
 (`_down_proj_param_ids`) and logs when it disagrees with WMDP's constant.
 
@@ -787,5 +787,7 @@ code in `LMEnt-mlp` and said nothing. Since `LMEnt-mlp` sits on
 `feature/mlp-erasure` at `fa16e08`, which does **not** contain `97443fe`, running
 the verification sequence from a checkout of `main` would have factorized with
 the OLD `snmf.py` and reported a meaningless accept rate that looked entirely
-normal. Now `: "${ROOT:=...}"`, default unchanged. Same class as
+normal. Every driver here now resolves `ROOT` by walking up from the directory
+you submitted from, so a checkout runs its own code; `export ROOT=` still pins a
+specific tree. Same class as
 `activate_env.sh`'s `LMENT_ROOT` default.

@@ -30,12 +30,12 @@ gradient**. The model reads it in the forward pass but learns nothing from it.
 
 | Claim | Where it is proven |
 |---|---|
-| ES `chunk_id` is the dataset index | [`create_es_index.py:286`](../retrieval-index/create_es_index.py#L286) stores `'chunk_id': idx` while iterating a `NumpyDatasetConfig` **identical** to the trainer's ([lines 302-320](../retrieval-index/create_es_index.py#L302-L320) vs [`train.py:203-212`](../OLMo-core/src/examples/kas/train.py#L203-L212)) |
-| Batches carry that id | [`data_loader.py:466`](../OLMo-core/src/olmo_core/data/data_loader.py#L466) — `return dict(**item, index=idx)` |
-| `instance_mask` kills the loss for a row | [`data/utils.py:576-577`](../OLMo-core/src/olmo_core/data/utils.py#L576-L577) — `labels.masked_fill_(~instance_mask.unsqueeze(-1), label_ignore_index)` |
-| OLMo-core supports this natively | [`trainer.py:1173-1175`](../OLMo-core/src/olmo_core/train/trainer.py#L1173-L1175) already logs a `train/masked instances` metric when an `instance_mask` is present |
-| `pre_step` can mutate the batch in time | [`trainer.py:1325`](../OLMo-core/src/olmo_core/train/trainer.py#L1325) calls `pre_step(batch)`, [`:1327`](../OLMo-core/src/olmo_core/train/trainer.py#L1327) then calls `_train_batch(batch)`, which builds labels at [`:1185`](../OLMo-core/src/olmo_core/train/trainer.py#L1185) |
-| The mask survives micro-batching | [`data/utils.py:43-45`](../OLMo-core/src/olmo_core/data/utils.py#L43-L45) — `split_batch` splits every tensor key along dim 0 |
+| ES `chunk_id` is the dataset index | [`create_es_index.py:286`](../retrieval-index/create_es_index.py#L286) stores `'chunk_id': idx` while iterating a `NumpyDatasetConfig` **identical** to the trainer's ([lines 302-320](../retrieval-index/create_es_index.py#L302-L320) vs [`train.py:203-212`](../third_party/OLMo-core/src/examples/kas/train.py#L203-L212)) |
+| Batches carry that id | [`data_loader.py:466`](../third_party/OLMo-core/src/olmo_core/data/data_loader.py#L466) — `return dict(**item, index=idx)` |
+| `instance_mask` kills the loss for a row | [`data/utils.py:576-577`](../third_party/OLMo-core/src/olmo_core/data/utils.py#L576-L577) — `labels.masked_fill_(~instance_mask.unsqueeze(-1), label_ignore_index)` |
+| OLMo-core supports this natively | [`trainer.py:1173-1175`](../third_party/OLMo-core/src/olmo_core/train/trainer.py#L1173-L1175) already logs a `train/masked instances` metric when an `instance_mask` is present |
+| `pre_step` can mutate the batch in time | [`trainer.py:1325`](../third_party/OLMo-core/src/olmo_core/train/trainer.py#L1325) calls `pre_step(batch)`, [`:1327`](../third_party/OLMo-core/src/olmo_core/train/trainer.py#L1327) then calls `_train_batch(batch)`, which builds labels at [`:1185`](../third_party/OLMo-core/src/olmo_core/train/trainer.py#L1185) |
+| The mask survives micro-batching | [`data/utils.py:43-45`](../third_party/OLMo-core/src/olmo_core/data/utils.py#L43-L45) — `split_batch` splits every tensor key along dim 0 |
 
 This is the LMEnt paper's §3.2 capability — *"retrieve all chunks that mention
 certain entities"* — pointed at training instead of analysis.
@@ -44,7 +44,7 @@ certain entities"* — pointed at training instead of analysis.
 
 VSL batches are **token-constant, instance-variable**:
 `instances_per_batch = global_batch_size // bucket_seq_len`, and
-[`_batch_index_to_local_instance_indices`](../OLMo-core/src/olmo_core/data/data_loader.py#L763-L788)
+[`_batch_index_to_local_instance_indices`](../third_party/OLMo-core/src/olmo_core/data/data_loader.py#L763-L788)
 slices them **per rank**. Physically dropping instances would give different
 ranks different instance counts — desynchronising FSDP collectives — and would
 change the effective batch size versus the control.

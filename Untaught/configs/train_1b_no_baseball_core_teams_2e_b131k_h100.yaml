@@ -115,7 +115,7 @@ train:
   max_duration_unit: "epochs"
 
   # optimizer: AdamW, cosine schedule with warmup. Every value below is the LMEnt
-  # authors' own, taken from OLMo-core/src/examples/kas/kas_config.json -- the
+  # authors' own, taken from third_party/OLMo-core/src/examples/kas/kas_config.json -- the
   # config their kas/train.py ran, and the one whose save-folder naming produced
   # the run dir name olmo2_1B_0.0004_131072_0.05_2 we have been reproducing.
   # Adopted wholesale 2026-08-29.
@@ -135,6 +135,9 @@ train:
   # with no usable geometry.
   optim_lr: 0.0004              # pre-94e42ab. kas_config.json says 3e-4; this does not.
   optim_weight_decay: 0.05      # pre-94e42ab, taken from paper appendix B.4.
+                                # Reaches embeddings.weight ONLY -- kas/train.py passes it as a group
+                                # override and leaves AdamW's top-level 0.01 for everything else.
+                                # See Untaught/OPERATIONS.md. Do not tune this as a global knob.
   optim_warmup_steps: 2000      # pre-94e42ab. 2000 of 54,832 steps is 3.6% of training;
                                 # at the authors' batch it was 1.8% of 219,344. Neither
                                 # matches the other, which is why the batch and the warmup
