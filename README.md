@@ -6,6 +6,9 @@ Erasure Reproduce Concept Exclusion? A Matched Evaluation of EMBER, RMU, and
 SNMF". Its LaTeX source is in [`paper/`](paper/), and the code behind it is
 `Untaught/`, `Ember-on-LMEnt/`, `mlp_erasure/` and `ember_eval/` below.
 
+The models are published in a Hugging Face collection:
+<https://huggingface.co/collections/itamarstahl/can-concept-erasure-reproduce-concept-exclusion>
+
 **If you are here to read or check that paper, start with
 [REPRODUCE.md](REPRODUCE.md)** — it maps every table and figure to the
 committed file its numbers come from, and shows how to verify one.

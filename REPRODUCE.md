@@ -107,6 +107,50 @@ an answer or selects a label. `sets/*.json` carries both the original `question`
 and the `stem` actually scored, so you can see this directly. Section 4 of the
 paper explains why the distinction does not affect the reported contrasts.
 
+## The models
+
+Every model the paper reports is published in one Hugging Face collection:
+
+**<https://huggingface.co/collections/itamarstahl/can-concept-erasure-reproduce-concept-exclusion>**
+
+Nineteen repositories: the full model, the three concept-excluded twins, and the
+fifteen selected erasure checkpoints. The repository names encode the
+configuration, so a row of Table 2 maps to exactly one of them.
+
+| Concept | Method | Checkpoint in the results files | Hugging Face repo |
+|---|---|---|---|
+| Ancient Rome | Full | `FULL_lment-1b-control-2e-b131k` | `itamarstahl/lment-1b-control-2e-b131k` |
+| Ancient Rome | Twin | `TWIN_lment-1b-norome-2e-b131k` | `itamarstahl/lment-1b-norome-2e-b131k` |
+| Ancient Rome | EMBER | `ember_rome_d200` | `itamarstahl/lment-1b-rome-ember-d200-b131k` |
+| Ancient Rome | RMU | `rmu_rome_L6hi_a10` | `itamarstahl/lment-1b-rome-rmu-l6hi-a10-b131k` |
+| Ancient Rome | SNMF | `snmf_rome_ratio_out` | `itamarstahl/lment-1b-rome-snmf-ratio-out-b131k` |
+| Ancient Rome | RMU+EMBER | `rmuember_rome_L5mid_a100` | `itamarstahl/lment-1b-rome-rmu-ember-l5mid-a100-b131k` |
+| Ancient Rome | SNMF+EMBER | `snmfv2_rome_ratio_in` | `itamarstahl/lment-1b-rome-snmf-ember-ratio-in-b131k` |
+| Baseball | Full | `FULL_lment-1b-control-2e-b131k` | `itamarstahl/lment-1b-control-2e-b131k` |
+| Baseball | Twin | `TWIN_lment-1b-nobaseball-2e-b131k` | `itamarstahl/lment-1b-nobaseball-2e-b131k` |
+| Baseball | EMBER | `ember_baseball_d10` | `itamarstahl/lment-1b-baseball-ember-d10-b131k` |
+| Baseball | RMU | `rmu_baseball_L6hi_a10` | `itamarstahl/lment-1b-baseball-rmu-l6hi-a10-b131k` |
+| Baseball | SNMF | `snmf_baseball_ratio_both` | `itamarstahl/lment-1b-baseball-snmf-ratio-both-b131k` |
+| Baseball | RMU+EMBER | `rmuember_baseball_L5mid_a100` | `itamarstahl/lment-1b-baseball-rmu-ember-l5mid-a100-b131k` |
+| Baseball | SNMF+EMBER | `snmfv2_baseball_ratio_both` | `itamarstahl/lment-1b-baseball-snmf-ember-ratio-both-b131k` |
+| Artificial intelligence | Full | `FULL_lment-1b-control-2e-b131k` | `itamarstahl/lment-1b-control-2e-b131k` |
+| Artificial intelligence | Twin | `TWIN_lment-1b-noai-2e-b131k` | `itamarstahl/lment-1b-noai-2e-b131k` |
+| Artificial intelligence | EMBER | `ember_ai_d500` | `itamarstahl/lment-1b-ai-ember-d500-b131k` |
+| Artificial intelligence | RMU | `rmu_ai_L6hi_a10` | `itamarstahl/lment-1b-ai-rmu-l6hi-a10-b131k` |
+| Artificial intelligence | SNMF | `snmf_ai_ratio_in` | `itamarstahl/lment-1b-ai-snmf-ratio-in-b131k` |
+| Artificial intelligence | RMU+EMBER | `rmuember_ai_L5mid_a10` | `itamarstahl/lment-1b-ai-rmu-ember-l5mid-a10-b131k` |
+| Artificial intelligence | SNMF+EMBER | `snmfv2_ai_ratio_in` | `itamarstahl/lment-1b-ai-snmf-ember-ratio-in-b131k` |
+
+Two notes on names. `snmfv2_*` in the results files is the SNMF+EMBER condition;
+`v2` distinguishes it from an earlier grid that the paper does not report. And
+`Untaught/model_cards/lment-1b-{rome,baseball,ai}-erased-b131k` describe a
+*different* set of checkpoints -- the ones EMBER's own delta search selected,
+before the accuracy-based reselection. Those are scored in the results files as
+`EMBER-released` and are a comparison condition, not the paper's selections. For
+Rome and Baseball the two procedures happened to agree (delta 200 and 10); for
+AI they did not, so the paper's AI checkpoint is delta 500 while EMBER's own
+search had picked delta 5.
+
 ## What you cannot run here, and why
 
 The evaluation **results** are committed, so every claim is checkable. The

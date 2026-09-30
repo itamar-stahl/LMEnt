@@ -13,6 +13,29 @@ Every file is `<directory name>.README.md`, deployed to
 `/home/dcor/galbarak2/hf-models/<directory name>/README.md`; `hf-models.README.md`
 is the top-level `hf-models/README.md`.
 
+## These are local directories, not the published models
+
+The published models are a Hugging Face collection:
+<https://huggingface.co/collections/itamarstahl/can-concept-erasure-reproduce-concept-exclusion>
+— nineteen repositories named for their configuration, e.g.
+`itamarstahl/lment-1b-ai-ember-d500-b131k`. `REPRODUCE.md` maps each one to the
+checkpoint name used in the results files. Names here do not match names there,
+and the sets are not the same.
+
+The difference is not cosmetic. The cards named `lment-1b-<concept>-erased-b131k`
+describe the checkpoints **EMBER's own delta search** selected, in September,
+before the accuracy-based reselection that the paper uses. For Rome and Baseball
+the two procedures landed on the same delta (200 and 10). For AI they did not:
+EMBER's search chose delta 5.0, the paper's rule chose delta 500, and it is
+delta 500 that the published collection contains and that every AI number in the
+paper comes from.
+
+So `lment-1b-ai-erased-b131k` is not a stale card and not a mistake. It is a
+model the study still scores, as the `EMBER-released` row in
+`ember_eval/nll_kl/results_accwinners/*/results.json`, to show what EMBER's own
+selection would have given. Read "released" there as "released in September",
+not as "what the collection publishes".
+
 ## Twins — batch 131,072, 2 epochs
 
 | file here | what |
