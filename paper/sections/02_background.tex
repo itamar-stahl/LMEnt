@@ -63,7 +63,7 @@ are left unchanged.
 
 Representation Misdirection for Unlearning (RMU) modifies internal model
 representations \citep{li2024wmdp}. It fine-tunes selected transformer weights
-so that representations of forget-set inputs approach a random control
+so that representations of forget-set inputs approach a scaled random control
 direction, while a retain objective encourages representations on non-target
 inputs to remain close to those of the original model. RMU therefore combines
 a target-directed intervention with an explicit preservation objective.
@@ -71,7 +71,8 @@ a target-directed intervention with an explicit preservation objective.
 Semi-nonnegative matrix factorization (SNMF) identifies interpretable features
 from groups of co-activated MLP neurons \citep{shafran2026snmf}. In the
 erasure adaptation evaluated by EMBER, concept-associated features are mapped
-to directions that can be removed through edits to MLP weights
+to directions that are removed from the MLP weights by directional ablation
+\citep{arditi2024refusal}, following EMBER's formulation
 \citep{suslik2026ember}. Because EMBER acts on token embeddings whereas RMU
 and the SNMF-based method act on internal weights, EMBER can also be combined
 with either MLP-level method in a staged intervention.
