@@ -4,7 +4,8 @@
 \subsection{Models and Matched Training}
 
 We trained OLMo-2 1B models on LMEnt's entity-annotated Wikipedia corpus
-\citep{walsh2025olmo2,gottesman2025lment}. The shared full model received
+\citep{walsh2025olmo2,gottesman2025lment}; full training and reproducibility
+details appear in Appendix~\ref{app:reproducibility}. The shared full model received
 loss on the full corpus. For each target concept, we trained a
 concept-excluded twin from the same initialization, using the same batch
 order, optimizer, learning-rate schedule, and two-epoch duration. Exclusion
@@ -21,7 +22,7 @@ questions helped us avoid concepts with little measurable knowledge; we also
 sought manageable breadth and variation across domains. Results on these
 three concepts may not generalize to other concepts.
 
-For each concept, we used Claude in a dedicated session to propose
+For each concept, we used Claude Opus 5 in a dedicated session to propose
 Wikidata entity IDs (QIDs) \citep{vrandecic2014wikidata}, then reviewed their
 coverage in LMEnt's corpus \citep{gottesman2025lment}. A single ID missed text
 linked to related entities, while an overly broad set risked masking loss on
@@ -47,16 +48,16 @@ reports the resulting ID counts, unique excluded chunks, and corpus shares.
   \label{tab:exclusion-sets}
 \end{table}
 
-\subsection{Post-Training Erasure and Checkpoint Selection}
+\subsection{Post-Training Erasure and Configuration Selection}
 
 We applied EMBER, RMU, and an SNMF-based erasure independently to copies of
 the completed full model for each concept. We also evaluated RMU+EMBER and
-SNMF+EMBER. For each ensemble, we fixed the selected EMBER checkpoint and
+SNMF+EMBER. For each ensemble, we fixed the selected EMBER-edited model and
 then applied the MLP method to the edited model, following EMBER's staged
 ensemble design \citep{suslik2026ember}. EMBER modified selected input
 embeddings, whereas RMU and SNMF edited MLP weights. For both ensembles, we
 reran the MLP method's model-dependent setup on the EMBER-edited model. We
-used the same method definitions and checkpoint-selection rule for every
+used the same method definitions and hyper-parameters-selection rules for every
 concept.
 
 EMBER's factorization produced candidate semantic features from target and
@@ -68,9 +69,9 @@ least 0.85. This judgment determined which embedding directions EMBER edited;
 Appendix~\ref{app:ember-feature-selection} records how the selections were
 reproduced in the final runs.
 
-We evaluated 97 candidate checkpoints: 30 for EMBER, 24 for RMU,
+We evaluated 97 candidate configurations: 30 for EMBER, 24 for RMU,
 10 for SNMF, 24 for RMU+EMBER, and 9 for SNMF+EMBER. We selected one
-checkpoint for each method and concept using
+configuration for each method and concept using
 likelihood-ranked accuracy on the selection splits described in
 Section~\ref{sec:evaluation}. Selection used target questions,
 neighboring questions, and a shared general-capability set drawn from
@@ -78,15 +79,16 @@ SciQ \citep{welbl2017sciq}. The concept-excluded twins and all test questions
 were withheld from this procedure.
 
 We selected the candidate with the largest accuracy-based
-$H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using a fixed
-deterministic order to break exact ties. We initially considered an NLL-based selection criterion, but rejected it
-because, for EMBER, it increased monotonically with edit strength and selected
-a checkpoint at the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
+$H_{\mathrm{selection}}$ defined in Section~\ref{sec:evaluation}, using the
+deterministic tie-breaking procedure described in
+Appendix~\ref{app:checkpoint-selection}. We initially considered an NLL-based selection criterion, but rejected it
+because for EMBER, it increased monotonically with edit strength and selected
+extreme hyper-parameters at the edge of the grid. The selection score adapts EMBER's validation rule to our base-model setting
 \citep{suslik2026ember}. Neighboring-topic questions measure specificity,
 while SciQ replaces MMLU as a shared general-preservation benchmark on which
 the full model performed reliably above chance. We omitted AlpacaEval
 coherence because our model was not trained to follow instructions, so low
 scores could reflect this baseline limitation rather than erasure-induced
-degradation. All checkpoint choices used only the selection split. We then
+degradation. All configuration choices used only the selection split. We then
 evaluated the 15 selected checkpoints against the full model and corresponding
 concept-excluded twins on the held-out test split.

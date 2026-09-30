@@ -11,15 +11,15 @@ affect the amount of target knowledge present before editing, the separability
 of concept-related representations, and the response to each erasure method.
 In particular, the modest baseline target accuracy in our setting leaves less
 room to measure suppression and can make checkpoint comparisons sensitive to
-individual questions. Our results should therefore be interpreted as an
-evaluation in a small base-model setting, rather than a direct replication or
-contradiction of EMBER's findings on larger instruction-tuned models.
+individual questions. Our results should therefore be interpreted as an evaluation in a small
+base-model setting, rather than a direct replication or contradiction of
+the results reported by \citet{suslik2026ember} on larger instruction-tuned
+models.
 
-The full model and each twin used the same training configuration, but not
-always the same accelerator. The full model and Rome twin trained entirely on
-H200 GPUs; the Baseball twin also used H100s, and the AI twin included roughly
-12 hours on an A6000. We therefore cannot rule out a minor hardware contribution
-to the numerical differences for Baseball and AI.
+The full model and twins used the same training configuration but not identical
+accelerator histories, so we cannot rule out a minor hardware contribution to
+the Baseball and AI differences. Appendix~\ref{app:reproducibility} provides
+the accelerator details.
 
 The concept-excluded twins are approximate references. The selected QIDs may
 miss indirect descriptions and may also include text about adjacent topics.
@@ -30,12 +30,14 @@ The evaluation uses one supplied correct continuation and three distractors
 per question. It does not measure generated answers, and likelihood-ranked
 accuracy depends on the supplied alternatives. Teacher-forced KL covers the
 full next-token distribution along the correct continuation, but does not
-follow predictions after an alternative token. SciQ measures one aspect of
-general preservation. The context format is also not uniform across groups:
-target and neighboring contexts are declarative stems, whereas SciQ retains its
-original question form. Absolute accuracies are therefore not comparable
-between groups, although no reported metric makes that comparison. Each group
-contains only 50 questions, so accuracy changes in steps of 0.02 and the
+follow predictions after an alternative token. Due to a preprocessing error,
+SciQ items remained as questions while target and neighboring items became
+declarative stems; we discovered this too late to rerun selection and
+evaluation. We expect limited qualitative impact because SciQ accuracy ranged
+from 0.48 to 0.52 across the selected models and $R_{\mathrm{abs}}$ and
+$R_{\mathrm{KL}}$ use only target items, although the mismatch may affect the
+exact checkpoint selections and $H_{\mathrm{test}}$ values. In addition, each
+group contains only 50 questions, so accuracy changes in steps of 0.02 and the
 reported uncertainty does not include variation across training seeds.
 
 Checkpoint selection also has two specific limitations. No Rome or Baseball
@@ -47,5 +49,5 @@ selected for target suppression and preservation relative to the full model
 also resemble the concept-excluded twin.
 
 We did not test relearning or other knowledge-recovery attacks. Our conclusions
-apply to the selected checkpoints; comparing how quickly erased models and
+apply to the selected configuration; comparing how quickly erased models and
 twins recover target behavior is a useful extension.

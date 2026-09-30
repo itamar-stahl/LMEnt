@@ -1,10 +1,11 @@
-\section{Results and Analysis}
+\section{Results}
 \label{sec:results}
 
 \subsection{Effect and Strength of Concept Exclusion}
 
-Concept exclusion had its largest target effect for Rome: accuracy fell from
-0.42 to 0.26 and correct-answer NLL increased by 1.016 nats per token. The
+Concept exclusion had its largest target effect for Rome: on-topic accuracy fell from
+0.42 to 0.26, while correct-answer NLL increased by 1.016 nats per token,
+indicating substantially lower probability assigned to the correct continuation. The
 effects were smaller for Baseball (0.54 to 0.50; +0.377 NLL) and AI (0.54 to
 0.48; +0.595 NLL). Rome also had the largest full--twin mean absolute NLL
 distance and target KL: $D_{\mathrm{abs}}(F,T)=1.127$ and
@@ -71,23 +72,24 @@ versus 0.208).
   efficacy with neighboring and SciQ preservation. $R_{\mathrm{abs}}$ and
   $R_{\mathrm{KL}}$ measure target-question proximity to the concept-excluded
   twin relative to the full model; values below one indicate improvement.
-  Twin ratios are zero by definition. E abbreviates EMBER. Bold marks the best
+  Twin ratios are zero by definition; an erasure condition has
+$H_{\mathrm{test}}=0$ when it does not reduce target accuracy relative to the
+full model, making its target-efficacy component zero. E abbreviates EMBER. Bold marks the best
   erasure condition in each concept and column. Confidence intervals for both
   ratios are shown in Figure~\ref{fig:efficacy-similarity}; complete intervals
   and diagnostics appear in Appendix~\ref{app:diagnostics}.}
   \label{tab:target}
 \end{table}
 
-All three selected RMU+EMBER checkpoints failed a pre-declared engagement check
-on the rotation of RMU's target control direction \citep{li2024wmdp}, so the
-RMU stage changed the model very little. This follows from the selection rule
-rather than from chance: EMBER has already supplied the efficacy term, so an
-MLP edit that does nothing inherits it while scoring maximal preservation --
-on Baseball the five highest-scoring cells failed the check. These rows
-therefore describe what the rule selects, not what RMU adds to EMBER.
-Restricting the same rule to cells that pass the check selects the
-configuration standalone RMU also selected, and moves the ensemble farther from
-the twin, so the conclusion is unchanged.
+The selected RMU+EMBER checkpoints remained weakly aligned with RMU's control
+direction, indicating that the RMU representation-misdirection objective was
+only weakly realized \citep{li2024wmdp}. This follows from the selection rule
+rather than chance: EMBER has already supplied the efficacy term, so an MLP
+edit that does little inherits it while scoring high preservation. These rows
+therefore characterize what the rule selects rather than what RMU adds to
+EMBER. Restricting the rule to cells that pass a pre-declared alignment check
+selects the configuration standalone RMU also selected and moves the ensemble
+farther from the twin, leaving the conclusion unchanged.
 
 \subsection{Twin Similarity}
 

@@ -1,14 +1,1 @@
-Post-training concept erasure aims to suppress target knowledge while
-preserving other behavior, but comparison with the original model does not
-show whether erasure resembles training without the concept. We evaluate five
-erasure conditions based on EMBER, RMU, and SNMF for Ancient Rome, Baseball, and
-artificial intelligence against both a full model and matched concept-excluded
-twins. Our primary metrics measure efficacy--preservation, absolute
-question-level NLL proximity to the twin, and full-vocabulary KL proximity.
-The methods that best balance suppression and preservation are generally not
-those closest to the twin. SNMF often has the most favorable similarity ratios
-but produces little target suppression, whereas EMBER-based edits with larger
-target NLL changes typically move farther from the twin than the full model.
-Thus, effective target suppression with preserved neighboring and
-general-science performance does not necessarily reproduce the outcome of
-concept exclusion.
+Post-training concept erasure aims to suppress target knowledge while preserving other behavior, but comparing an erased model to its original counterpart does not reveal whether the erasure truly mimics training without the concept. We evaluate a suite of erasure methods (including EMBER, RMU, and SNMF) across three different concepts, comparing them against both a full model and matched, concept-excluded "twin" models. Our primary metrics go beyond standard efficacy and preservation to measure the probabilistic proximity of the erased models to their twins. We find that the methods that best balance suppression and preservation are generally not those that most closely resemble the twin. Mild edits often fail to achieve sufficient target suppression, whereas more aggressive edits successfully suppress knowledge but drive the model's behavior further away from the twin baseline. Thus, effective target suppression - even when it preserves neighboring and general performance - does not necessarily reproduce the true outcome of concept exclusion.

@@ -1,15 +1,15 @@
 \section{Complete Held-Out Results by Concept}
 \label{app:full-results}
 
-This appendix reports the complete held-out results separately for each
-concept. In each table, Panel~A gives likelihood-ranked option accuracy on the
-target, neighboring, and shared SciQ test sets. The harmonic score is reported
+Tables~\ref{tab:appendix-rome-results}--\ref{tab:appendix-ai-results} report the
+complete held-out results separately for each concept. In each table, Panel~A
+gives likelihood-ranked option accuracy on the target, neighboring, and shared
+SciQ test sets. The harmonic score is reported
 for the twin and five erasure conditions. It is always normalized against the
 full model; the twin's value therefore provides the reference outcome of
 concept exclusion. The full model has zero target efficacy and hence
 $H_{\mathrm{test}}=0$ by construction. Panel~B reports the mean and standard deviation
 across the same 50 test questions in each group. Here,
-$\Delta\mathrm{NLL}_{M-F}$ compares the evaluated model with the full model,
 $\Delta\mathrm{NLL}_{M-T}$ compares it with the concept-excluded twin, and
 $\mathrm{KL}(T\,\|\,M)$ uses the twin as the reference distribution. Panel~C
 isolates the twin--full comparison that establishes how much concept exclusion
@@ -19,10 +19,7 @@ corresponding reference. All entries come from checkpoints selected using the
 rule in Appendix~\ref{app:checkpoint-selection}; selection-set measurements are not
 included in these tables.
 
-\clearpage
-\subsection{Ancient Rome}
-
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \scriptsize
   \begin{tabular}{lcccc}
@@ -93,12 +90,9 @@ included in these tables.
   correct-answer support; for preservation-group differences and all twin
   differences, values closer to zero indicate greater similarity.}
   \label{tab:appendix-rome-results}
-\end{table}
+\end{table*}
 
-\clearpage
-\subsection{Baseball}
-
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \scriptsize
   \begin{tabular}{lcccc}
@@ -166,12 +160,9 @@ included in these tables.
   follows the comparison directions defined in
   Table~\ref{tab:appendix-rome-results}.}
   \label{tab:appendix-baseball-results}
-\end{table}
+\end{table*}
 
-\clearpage
-\subsection{Artificial Intelligence}
-
-\begin{table}[h]
+\begin{table*}[t]
   \centering
   \scriptsize
   \begin{tabular}{lcccc}
@@ -239,4 +230,6 @@ included in these tables.
   follows the comparison directions defined in
   Table~\ref{tab:appendix-rome-results}.}
   \label{tab:appendix-ai-results}
-\end{table}
+\end{table*}
+
+\clearpage
