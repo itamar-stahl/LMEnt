@@ -1,3 +1,21 @@
+> **Archived 2026-09-30.** This audit was run against the PDF build of
+> 2026-09-24 and does not describe the current paper, which was substantially
+> rewritten on the 27th and 29th. It is kept as the record that 24 attributions
+> were checked against primary text.
+>
+> Status of what it raised:
+>
+> - **1.1 Arditi citation** and **1.2 RMU's scaling term** — fixed in Overleaf on
+>   2026-09-30, not yet synced to git at the time of archiving.
+> - **Section 4, Broken** — resolved. `score_mc.py`, `finalize_tables.py`,
+>   `questions_with_options_TEST.csv` and `sciq_unrelated.csv` are all in `main`.
+> - **Section 4, Mismatch** — resolved, and its premise was wrong. The paper's AI
+>   checkpoint is delta 500 and is published as
+>   `itamarstahl/lment-1b-ai-ember-d500-b131k`. The delta 5.0 card describes
+>   EMBER's own delta-search pick, a separate comparison condition. See
+>   `REPRODUCE.md`.
+> - **Section 2** — judgment calls, left as written.
+
 # Reference and citation audit
 
 **Paper:** "Can Concept Erasure Reproduce Concept Exclusion? A Matched Evaluation of EMBER,

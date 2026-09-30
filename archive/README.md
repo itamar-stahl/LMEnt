@@ -22,7 +22,9 @@ Paths mirror the original layout: `archive/ember_eval/heldout_ppl/` was
 | `ember_eval/cross_concept_null.py`, `NULL_CONCEPT_CONTROL.md`, `OLMES_RESULTS.md`, `run_olmes.slurm`, `embedding_health.py`, `epoch_curve.py`, `twin_vs_twin.py`, `paired_twins.py`, `loglik_twins.py`, `compare_to_published.py`, the generation/stem probes, `run_step45000_diag.slurm` and their drivers | 16 | Questions the paper does not ask: cross-concept nulls, OLMES benchmarking, embedding health, epoch curves, twin-versus-twin comparison, comparison against the released LMEnt models, and free-generation probes. |
 | `Untaught/configs/train_1b_no_pornography_2e.yaml`, `train_1b_no_wwii_2e.yaml`, `train_1b_control_bench.yaml`, and the `noporn`/`step45000`/1-epoch model cards | 8 | Models outside the study. The paper uses one full model and three twins, all 2-epoch at batch 131,072. The 1-epoch pair was retired, and Pornography and WWII were earlier subjects. |
 
-74 files.
+| `REFERENCE_AUDIT.md` | 1 | The citation audit of the 2026-09-24 build, superseded by the rewrites of the 27th and 29th. Its header records what it raised and how each item was resolved. |
+
+75 files.
 
 ## What is deliberately **not** archived
 
