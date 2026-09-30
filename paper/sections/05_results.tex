@@ -83,13 +83,9 @@ full model, making its target-efficacy component zero. E abbreviates EMBER. Bold
 
 The selected RMU+EMBER checkpoints remained weakly aligned with RMU's control
 direction, indicating that the RMU representation-misdirection objective was
-only weakly realized \citep{li2024wmdp}. This follows from the selection rule
-rather than chance: EMBER has already supplied the efficacy term, so an MLP
-edit that does little inherits it while scoring high preservation. These rows
-therefore characterize what the rule selects rather than what RMU adds to
-EMBER. Restricting the rule to cells that pass a pre-declared alignment check
-selects the configuration standalone RMU also selected and moves the ensemble
-farther from the twin, leaving the conclusion unchanged.
+only weakly realized \citep{li2024wmdp}. Because selection optimized efficacy
+and preservation after EMBER, we treat RMU+EMBER as a combined intervention
+rather than attributing its results specifically to RMU.
 
 \subsection{Twin Similarity}
 

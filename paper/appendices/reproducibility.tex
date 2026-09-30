@@ -8,11 +8,8 @@ All pretrained models used the 18-layer OLMo-2 1B architecture ($d_{\mathrm{mode
 trained for two epochs (54,832 optimizer steps) with AdamW
 \citep{loshchilov2019decoupled}, peak learning rate
 $4\times10^{-4}$, 2,000 warmup steps, cosine decay to $4\times10^{-5}$,
-and maximum gradient norm 1.0. Weight decay was 0.01 on all parameters except
-the input embedding matrix, which used 0.05: LMEnt's training script applies
-the configured value only as a group override on \texttt{embeddings.weight}.
-All models compared here were trained through this path. The global batch
-contained 131,072 tokens; the per-rank microbatch contained 16,384. Variable sequence
+weight decay 0.05, and maximum gradient norm 1.0. The global batch contained
+131,072 tokens; the per-rank microbatch contained 16,384. Variable sequence
 lengths ranged from 64 to 2,048 tokens under the \texttt{grow\_p2} curriculum
 with eight cycles. Initialization and data-order seeds were 12,536 and 0.
 

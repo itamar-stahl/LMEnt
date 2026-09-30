@@ -8,14 +8,10 @@ Rome, Baseball, and artificial intelligence.
 
 - `main.tex`: document entry point, title, authors, and section order
 - `sections/`: main-paper sections
-- `appendices/`: appendix material. `appendix.tex` is only a wrapper that
-  inputs `reproducibility`, `checkpoint_selection`, `evaluation_data`,
-  `complete_results` and `diagnostics`
+- `appendices/appendix.tex`: appendix material
 - `references.bib`: bibliography
-- `acl.sty` and `acl_natbib.bst`: ACL template files, vendored here so this
-  directory builds on its own
-- `main.pdf`: the compiled paper. Build output, not tracked -- `.gitignore`
-  lists it, so a fresh clone has to build it
+- `acl.sty` and `acl_natbib.bst`: ACL template files
+- `main.pdf`: latest compiled paper
 
 ## Build
 
